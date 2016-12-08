@@ -287,35 +287,39 @@ $('#fade').editableSelect({ effects: 'fade' });</pre>
 			<div class="span6">
 				<h3>onSelect</h3>
 				<select id="onselect">
-					<option>Alfa Romeo</option>
-					<option>Audi</option>
-					<option>BMW</option>
-					<option>Citroen</option>
-					<option>Fiat</option>
-					<option>Ford</option>
-					<option>Jaguar</option>
-					<option>Jeep</option>
-					<option>Lancia</option>
-					<option>Land Rover</option>
-					<option>Mercedes</option>
-					<option>Mini</option>
-					<option>Nissan</option>
-					<option>Opel</option>
-					<option>Peugeot</option>
-					<option>Porsche</option>
-					<option>Renault</option>
-					<option>Smart</option>
-					<option>Volkswagen</option>
-					<option>Volvo</option>
+					<option value="0">Alfa Romeo</option>
+					<option value="1">Audi</option>
+					<option value="2">BMW</option>
+					<option value="3">Citroen</option>
+					<option value="4">Fiat</option>
+					<option value="5">Ford</option>
+					<option value="6">Jaguar</option>
+					<option value="7">Jeep</option>
+					<option value="8">Lancia</option>
+					<option value="9">Land Rover</option>
+					<option value="10">Mercedes</option>
+					<option value="11">Mini</option>
+					<option value="12">Nissan</option>
+					<option value="13">Opel</option>
+					<option value="14">Peugeot</option>
+					<option value="15">Porsche</option>
+					<option value="16">Renault</option>
+					<option value="17">Smart</option>
+					<option value="18">Volkswagen</option>
+					<option value="19">Volvo</option>
 				</select> &nbsp; Selected: &nbsp; <span id="afterSelect" class="text-success"></span>
 			</div>
 			<div class="span6">
 				<h4>Code</h4>
-				<pre>$('#onselect').editableSelect({
-  onSelect: function (element) {
-    $('#afterSelect').html($(this).val());
-  }
-});</pre>
+				<pre>
+$('#onselect')
+    .editableSelect()
+    .on('select.editable-select', function (e, li) {
+        $('#afterSelect').html(
+            li.val() + '. ' + li.text()
+        );
+    });
+</pre>
 			</div>
 		</div>
 
@@ -335,10 +339,11 @@ $('#fade').editableSelect({ effects: 'fade' });</pre>
 					filter : false
 				});
 				$('#html').editableSelect();
-				$('#onselect').editableSelect({
-					onSelect : function(element) {
-						$('#afterSelect').html($(this).val());
-					}
+				$('#onselect').editableSelect()
+					.on('select.editable-select', function (e, li) {
+						$('#afterSelect').html(
+							li.val() + '. ' + li.text()
+					);
 				});
 			}
 		</script>
