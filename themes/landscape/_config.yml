@@ -1,21 +1,25 @@
 # Header
 menu:
   Home: /
-  Archives: /archives
-rss: /atom.xml
-
+  Archives: /archives/
+  Categories: /categories/
+  Tags: /tags/
+  About: /about/
+#rss: /atom.xml
+since: 2016
 # Content
 excerpt_link: Read More
 fancybox: true
 
 # Sidebar
-sidebar: right
+sidebar: left
 widgets:
 - category
 - tag
-- tagcloud
+#- tagcloud
 - archive
 - recent_posts
+- links
 
 # display widgets at the bottom of index pages (pagination == 2)
 index_widgets:
