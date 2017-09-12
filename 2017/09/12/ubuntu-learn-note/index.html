@@ -3,18 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tim Ho&#39;s Blog</title>
+  <title>ubuntu 学习笔记 | Tim Ho&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="my personal blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Tim Ho&#39;s Blog">
-<meta property="og:url" content="https://github.com/hewentian/index.html">
+  <meta name="description" content="Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-get install opensshserver正在读取软件包列表… 完成正在分析软件包的依赖关系树正在读取状态信息… 完成现在没有可用的软件包 openssh-server， 但是他被其他的软件包引用了这可能意味着这个缺失的软件包可能已被废弃，或者只能在其他发布源中找到">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ubuntu 学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2017/09/12/ubuntu-learn-note/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Blog">
-<meta property="og:description" content="my personal blog">
+<meta property="og:description" content="Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-get install opensshserver正在读取软件包列表… 完成正在分析软件包的依赖关系树正在读取状态信息… 完成现在没有可用的软件包 openssh-server， 但是他被其他的软件包引用了这可能意味着这个缺失的软件包可能已被废弃，或者只能在其他发布源中找到">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-09-12T12:42:21.149Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Tim Ho&#39;s Blog">
-<meta name="twitter:description" content="my personal blog">
+<meta name="twitter:title" content="ubuntu 学习笔记">
+<meta name="twitter:description" content="Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-get install opensshserver正在读取软件包列表… 完成正在分析软件包的依赖关系树正在读取状态信息… 完成现在没有可用的软件包 openssh-server， 但是他被其他的软件包引用了这可能意味着这个缺失的软件包可能已被废弃，或者只能在其他发布源中找到">
   
   
     <link rel="icon" href="/favicon.png">
@@ -69,9 +71,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-ubuntu-learn-note" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-ubuntu-learn-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/09/12/ubuntu-learn-note/" class="article-date">
   <time datetime="2017-09-12T12:41:37.000Z" itemprop="datePublished">2017-09-12</time>
@@ -84,8 +84,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/12/ubuntu-learn-note/">ubuntu 学习笔记</a>
+    <h1 class="article-title" itemprop="name">
+      ubuntu 学习笔记
     </h1>
   
 
@@ -135,140 +135,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-online-implementing" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/09/12/online-implementing/" class="article-date">
-  <time datetime="2017-09-12T12:22:54.000Z" itemprop="datePublished">2017-09-12</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/java/">java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/12/online-implementing/">系统上线注意事项</a>
-    </h1>
+    <a href="/2017/09/12/online-implementing/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">系统上线注意事项</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="上线总结："><a href="#上线总结：" class="headerlink" title="上线总结："></a>上线总结：</h2><p>今天下午准备上线，折腾了很久， 不过， 终于成功上线，期间发现了很多问题。所谓好记性，不如烂笔头，故记之。有时候，系统上线，如果发现还是旧的页面，可能会是缓存，这时候，要检查下下面的地方：</p>
-<h3 id="1-你浏览器的缓存是否已经清掉了；"><a href="#1-你浏览器的缓存是否已经清掉了；" class="headerlink" title="1. 你浏览器的缓存是否已经清掉了；"></a>1. 你浏览器的缓存是否已经清掉了；</h3><h3 id="2-Tomcat-的缓存是否清掉了-TOMCAT-HOME-work-这个目录，放的就是-Tomcat-的缓存；"><a href="#2-Tomcat-的缓存是否清掉了-TOMCAT-HOME-work-这个目录，放的就是-Tomcat-的缓存；" class="headerlink" title="2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；"></a>2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；</h3><h3 id="3-如果-IP-PORT-访问，没问题的话，有可能是-CDN-缓存了，这时候也要刷下-CDN；"><a href="#3-如果-IP-PORT-访问，没问题的话，有可能是-CDN-缓存了，这时候也要刷下-CDN；" class="headerlink" title="3. 如果 IP + PORT 访问，没问题的话，有可能是 CDN 缓存了，这时候也要刷下 CDN；"></a>3. 如果 IP + PORT 访问，没问题的话，有可能是 CDN 缓存了，这时候也要刷下 CDN；</h3>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cj7hlj0qs0002dkf7girjjwg7" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-
-    </footer>
-  </div>
   
 </article>
-
-
-  
-    <article id="post-test" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/09/11/test/" class="article-date">
-  <time datetime="2017-09-11T09:52:15.000Z" itemprop="datePublished">2017-09-11</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/java/">java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/11/test/">test</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/test/" data-id="cj7hlj0qw0004dkf7dttld18f" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/09/11/hello-world/" class="article-date">
-  <time datetime="2017-09-11T08:29:25.597Z" itemprop="datePublished">2017-09-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/11/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/hello-world/" data-id="cj7hlj0ql0000dkf7atwgnz8m" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 </section>
         
