@@ -71,6 +71,234 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-markdown-learn-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/27/markdown-learn-note/" class="article-date">
+  <time datetime="2017-09-27T08:56:35.000Z" itemprop="datePublished">2017-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/27/markdown-learn-note/">markdown 学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天开始学习下 <strong>markdown</strong> 这种标记语言，我习惯了学习一门语言，会去看它的官方文档里面的语法说明，<strong>markdown</strong> 作者的官方网站：</p>
+<p><a href="https://daringfireball.net/projects/markdown/syntax" title="点击将跳到目标页" target="_blank" rel="external">https://daringfireball.net/projects/markdown/syntax</a></p>
+<p>极力推荐大家去看下。方便自己以后查看，摘录如下：</p>
+<p>在 markdown 中插入 <code>&lt;br /&gt;</code>，只需在行尾添加 2 个空格，然后回车，即可</p>
+<p>要使 markdown 中的#，<code>&gt;</code> 等，显示原义，只要在它们前置 4 个空格即可</p>
+<h3 id="1-标题"><a href="#1-标题" class="headerlink" title="1. 标题"></a>1. 标题</h3><p>标题有1-6级，使用下面这种方式产生：</p>
+<pre><code># This is an H1
+## This is an H2
+###### This is an H6
+</code></pre><p><strong>Example as below:</strong>    </p>
+<h1 id="This-is-an-H1"><a href="#This-is-an-H1" class="headerlink" title="This is an H1"></a>This is an H1</h1><h2 id="This-is-an-H2"><a href="#This-is-an-H2" class="headerlink" title="This is an H2"></a>This is an H2</h2><h6 id="This-is-an-H6"><a href="#This-is-an-H6" class="headerlink" title="This is an H6"></a>This is an H6</h6><hr>
+<h3 id="2-blockquote"><a href="#2-blockquote" class="headerlink" title="2. blockquote"></a>2. blockquote</h3><p>blockquote 以 <code>&gt;</code> 开头，一段当中每一行的开头都加上，你也可以偷懒，只在段落的第一行加上，并且它可以 nested 其他<br>markdown 标记，</p>
+<pre><code>&gt; This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+&gt; consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+&gt; Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+&gt; 
+&gt; Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+&gt; id sem consectetuer libero luctus adipiscing.
+</code></pre><p><strong>Example as below:</strong></p>
+<blockquote>
+<p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,<br>consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.<br>Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse<br>id sem consectetuer libero luctus adipiscing.    </p>
+</blockquote>
+<p>blockquote 还可以 nested 其他 blockquote</p>
+<pre><code>&gt; This is the first level of quoting.
+&gt;
+&gt; &gt; This is nested blockquote.
+&gt;
+&gt; Back to the first level.
+</code></pre><p><strong>Example as below:</strong></p>
+<blockquote>
+<p>This is the first level of quoting.</p>
+<blockquote>
+<p>This is nested blockquote.</p>
+</blockquote>
+<p>Back to the first level.</p>
+</blockquote>
+<hr>
+<h3 id="3-List"><a href="#3-List" class="headerlink" title="3. List"></a>3. List</h3><p>列表分为有序和无序</p>
+<h4 id="3-1-无序列表写法如下："><a href="#3-1-无序列表写法如下：" class="headerlink" title="3.1 无序列表写法如下："></a>3.1 无序列表写法如下：</h4><pre><code>* Red
+* Green
+* Blue
+</code></pre><p><strong>Example as below:</strong></p>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<h4 id="3-2-有序列表写法如下："><a href="#3-2-有序列表写法如下：" class="headerlink" title="3.2 有序列表写法如下："></a>3.2 有序列表写法如下：</h4><pre><code>1. Red
+2. Green
+3. Blue
+</code></pre><p><strong>Example as below:</strong></p>
+<ol>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ol>
+<p>其中的序号，不影响它的效果，你也可以像下面这样写，它的效果是一样的。</p>
+<pre><code>1. Red
+1. Green
+1. Blue
+或
+1. Red
+6. Green
+8. Blue
+</code></pre><p>List items may consist of multiple paragraphs. Each subsequent paragraph in a list item must be indented by either 4 spaces or one tab:</p>
+<pre><code>1.  This is a list item with two paragraphs. Lorem ipsum dolor
+    sit amet, consectetuer adipiscing elit. Aliquam hendrerit
+    mi posuere lectus.
+
+    Vestibulum enim wisi, viverra nec, fringilla in, laoreet
+    vitae, risus. Donec sit amet nisl. Aliquam semper ipsum
+    sit amet velit.
+
+2.  Suspendisse id sem consectetuer libero luctus adipiscing.
+</code></pre><p><strong>Example as below:</strong></p>
+<ol>
+<li><p>This is a list item with two paragraphs. Lorem ipsum dolor<br>sit amet, consectetuer adipiscing elit. Aliquam hendrerit<br>mi posuere lectus.</p>
+<p>Vestibulum enim wisi, viverra nec, fringilla in, laoreet<br>vitae, risus. Donec sit amet nisl. Aliquam semper ipsum<br>sit amet velit.</p>
+</li>
+<li><p>Suspendisse id sem consectetuer libero luctus adipiscing.</p>
+</li>
+</ol>
+<p>To put a code block within a list item, the code block needs<br>to be indented <em>twice</em> – 8 spaces or two tabs:</p>
+<pre><code>* A list item with a code block:
+        &lt;code goes here&gt;
+</code></pre><p><strong>Example as below:</strong></p>
+<ul>
+<li>A list item with a code block:<pre><code>printf(&quot;hello world&quot;)
+</code></pre></li>
+</ul>
+<hr>
+<h3 id="4-CODE-BLOCKS"><a href="#4-CODE-BLOCKS" class="headerlink" title="4. CODE BLOCKS"></a>4. CODE BLOCKS</h3><p>To produce a code block in Markdown, simply indent every line of the block by at least 4 spaces or 1 tab. For example, given this input:</p>
+<pre><code>This is a normal paragraph:
+    This is a code block.
+</code></pre><p><strong>Example as below:</strong><br>This is a normal paragraph:</p>
+<pre><code>This is a code block.
+</code></pre><hr>
+<h3 id="5-HORIZONTAL-RULES"><a href="#5-HORIZONTAL-RULES" class="headerlink" title="5. HORIZONTAL RULES"></a>5. HORIZONTAL RULES</h3><p>产生水平分割线的方法有以下几种，它们的效果都是一样的</p>
+<pre><code>* * * 
+***
+******
+- - -
+------
+</code></pre><hr>
+<h3 id="6-LINKS"><a href="#6-LINKS" class="headerlink" title="6. LINKS"></a>6. LINKS</h3><pre><code>This is [an example](http://example.com/ &quot;Title&quot;) inline link.
+
+[This link](http://example.net/) has no title attribute.
+</code></pre><p><strong>Example as below:</strong><br>This is <a href="http://example.com/" title="Title" target="_blank" rel="external">an example</a> inline link.</p>
+<p><a href="http://example.net/" target="_blank" rel="external">This link</a> has no title attribute.</p>
+<p>If you’re referring to a local resource on the same server, you can use relative paths:</p>
+<pre><code>See my [About](/about/) page for details.   
+</code></pre><p><strong>Example as below:</strong><br>See my <a href="/about/">About</a> page for details.</p>
+<p>你还可以这样写 links<br>Reference-style links use a second set of square brackets, inside which you place a label of your choosing to identify the link:</p>
+<pre><code>This is [an example][id] reference-style link.
+</code></pre><p>Then, anywhere in the document, you define your link label like this, on a line by itself:</p>
+<pre><code>[id]: http://example.com/  &quot;Optional Title Here&quot;
+</code></pre><p><strong>Example as below:</strong><br>This is <a href="http://example.com/" title="Optional Title Here" target="_blank" rel="external">an example</a> reference-style link.</p>
+<p>Link definition names may consist of letters, numbers, spaces, and punctuation — but they are not case sensitive. E.g. these two links:</p>
+<pre><code>[link text][a]
+[link text][A]
+</code></pre><p>are equivalent.</p>
+<p>The implicit link name shortcut allows you to omit the name of the link, in which case the link text itself is used as the name. Just use an empty set of square brackets — e.g., to link the word “Google” to the google.com web site, you could simply write:</p>
+<pre><code>[Google][]
+</code></pre><p>And then define the link:</p>
+<pre><code>[Google]: http://google.com/
+</code></pre><p><strong>Example as below:</strong><br>In china, you can’t use <a href="http://google.com/" target="_blank" rel="external">Google</a>, hahaha…</p>
+<hr>
+<h3 id="7-EMPHASIS"><a href="#7-EMPHASIS" class="headerlink" title="7. EMPHASIS"></a>7. EMPHASIS</h3><p>Markdown treats asterisks (<em>) and underscores (_) as indicators of emphasis. Text wrapped with one </em> or <em> will be wrapped with an HTML <em> tag; double *’s or </em>’s will be wrapped with an HTML <strong> tag. E.g., this input:</strong></em></p>
+<pre><code>*single asterisks*
+_single underscores_
+**double asterisks**
+__double underscores__
+</code></pre><p>will produce:</p>
+<pre><code>&lt;em&gt;single asterisks&lt;/em&gt;
+&lt;em&gt;single underscores&lt;/em&gt;
+&lt;strong&gt;double asterisks&lt;/strong&gt;
+&lt;strong&gt;double underscores&lt;/strong&gt;
+</code></pre><p><strong>Example as below:</strong><br><em>single asterisks</em><br><em>single underscores</em><br><strong>double asterisks</strong><br><strong>double underscores</strong></p>
+<p>To produce a literal asterisk or underscore at a position where it would otherwise be used as an emphasis delimiter, you can backslash escape it:</p>
+<pre><code>\*this text is surrounded by literal asterisks\*
+</code></pre><hr>
+<h3 id="8-CODE"><a href="#8-CODE" class="headerlink" title="8. CODE"></a>8. CODE</h3><p>To indicate a span of code, wrap it with backtick quotes (`). Unlike a pre-formatted code block, a code span indicates code within a normal paragraph. For example:</p>
+<pre><code>Use the `printf()` function.
+</code></pre><p>will produce:</p>
+<pre><code>&lt;p&gt;Use the &lt;code&gt;printf()&lt;/code&gt; function.&lt;/p&gt;
+</code></pre><p><strong>Example as below:</strong><br>Use the <code>printf()</code> function.</p>
+<p>To include a literal backtick character within a code span, you can use multiple backticks as the opening and closing delimiters:</p>
+<pre><code>``There is a literal backtick (`) here.``
+</code></pre><p>which will produce this:</p>
+<pre><code>&lt;p&gt;&lt;code&gt;There is a literal backtick (`) here.&lt;/code&gt;&lt;/p&gt;
+</code></pre><p><strong>Example as below:</strong><br><code>There is a literal backtick (`) here.</code></p>
+<p>Other code format:</p>
+<pre><code>` `` java
+    public static void main(String[] args) {
+        System.out.println(&quot;hello world.&quot;);
+    }
+    注意：请将这里的`之间的空格去掉
+` ``
+</code></pre><p><strong>Example as below:</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">	System.out.println(<span class="string">"hello world."</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="9-IMAGES"><a href="#9-IMAGES" class="headerlink" title="9. IMAGES"></a>9. IMAGES</h3><p>Inline image syntax looks like this:</p>
+<pre><code>![Alt text](/path/to/img.jpg)
+![Alt text](/path/to/img.jpg &quot;Optional title&quot;)
+</code></pre><p><strong>Example as below:</strong><br><img src="http://www.apache.org/img/asf_logo.png" alt="Alt text" title="Optional title"></p>
+<p>Reference-style image syntax looks like this:</p>
+<pre><code>![Alt text][id]
+</code></pre><p>Where “id” is the name of a defined image reference. Image references are defined using syntax identical to link references:</p>
+<pre><code>[id]: url/to/image  &quot;Optional title attribute&quot;
+</code></pre><hr>
+<h3 id="10-MISCELLANEOUS"><a href="#10-MISCELLANEOUS" class="headerlink" title="10. MISCELLANEOUS"></a>10. MISCELLANEOUS</h3><p>AUTOMATIC LINKS</p>
+<p>Markdown supports a shortcut style for creating “automatic” links for URLs and email addresses: simply surround the URL or email address with angle brackets. What this means is that if you want to show the actual text of a URL or email address, and also have it be a clickable link, you can do this:</p>
+<pre><code>&lt;http://example.com/&gt;
+</code></pre><p>Markdown will turn this into:</p>
+<pre><code>&lt;a href=&quot;http://example.com/&quot;&gt;http://example.com/&lt;/a&gt;
+</code></pre><p>BACKSLASH ESCAPES</p>
+<p>Markdown allows you to use backslash escapes to generate literal characters which would otherwise have special meaning in Markdown’s formatting syntax. For example, if you wanted to surround a word with literal asterisks (instead of an HTML <em> tag), you can use backslashes before the asterisks, like this:</em></p>
+<pre><code>\*literal asterisks\*
+</code></pre><p>Markdown provides backslash escapes for the following characters:</p>
+<pre><code>\   backslash
+`   backtick
+*   asterisk
+_   underscore
+{}  curly braces
+[]  square brackets
+()  parentheses
+#   hash mark
++   plus sign
+-   minus sign (hyphen)
+.   dot
+!   exclamation mark
+</code></pre><p>end.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cj842aajh0004h4f7gl9a6lic" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-ubuntu-learn-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/09/12/ubuntu-learn-note/" class="article-date">
@@ -131,7 +359,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/ubuntu-learn-note/" data-id="cj7id77u10007iof709jzsw9m" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/ubuntu-learn-note/" data-id="cj842aajt0008h4f7vj1134eb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -174,7 +402,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cj7id77u10002iof771vt4nn6" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cj842aaje0002h4f7drneqbwp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -186,9 +414,9 @@
 
 
   
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-install-hexo" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2017/09/11/hello-world/" class="article-date">
+    <a href="/2017/09/11/install-hexo/" class="article-date">
   <time datetime="2017-09-11T08:29:25.597Z" itemprop="datePublished">2017-09-11</time>
 </a>
     
@@ -200,7 +428,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/11/hello-world/">Hello World</a>
+      <a class="article-title" href="/2017/09/11/install-hexo/">安装 Hexo</a>
     </h1>
   
 
@@ -217,11 +445,35 @@
 <p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
 <h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+<h2 id="下面将详细说说安装过程："><a href="#下面将详细说说安装过程：" class="headerlink" title="下面将详细说说安装过程："></a>下面将详细说说安装过程：</h2><h3 id="1-安装-Git-略"><a href="#1-安装-Git-略" class="headerlink" title="1. 安装 Git 略"></a>1. 安装 Git 略</h3><h3 id="2-安装-Node-js-略"><a href="#2-安装-Node-js-略" class="headerlink" title="2. 安装 Node.js 略"></a>2. 安装 Node.js 略</h3><h3 id="3-安装Hexo"><a href="#3-安装Hexo" class="headerlink" title="3. 安装Hexo"></a>3. 安装Hexo</h3><p>在桌面空白处右键打开Git Bash Here，可以先测试一下Node.js是否安装成功，直接输入node可以看到提示符变成了一个向右<br>的箭头就表示成功了，然后按ctrl + c退出node模式，出现$符号才表示正常了</p>
+<p>输入以下命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install -g hexo-cli</div></pre></td></tr></table></figure></p>
+<p>敲完回车可能没有任何提示，请一定要耐心等待<br>安装成功后，可以输入以下命令测试一下Hexo是否安装成功<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo version</div></pre></td></tr></table></figure></p>
+<p>如果能看到hexo的版本号信息，就表示安装成功了<br>接下来，进入到我们刚刚创建的文件夹，右键打开Git Bash Here</p>
+<p>然后依次输入以下命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ hexo init  <span class="comment"># 注意此命令，要求当前仓库为空，可以先将仓库的文件移走，再执行此命令，然后再移回来</span></div><div class="line">$ npm install</div><div class="line">$ hexo g</div><div class="line">$ hexo s</div></pre></td></tr></table></figure></p>
+<p>这时候在浏览器输入<a href="http://localhost:4000/" target="_blank" rel="external">http://localhost:4000/</a> 就可以看到hexo已经成功生成了博客，当然这只是我们本地可以看到的</p>
+<p>配置Hexo到Github</p>
+<p>找到我们刚刚创建的文件夹，在里面找到_config.yml文件，用notepad++打开，直接拖到最后，添加如下：</p>
+<pre><code>deploy:
+  type: git
+  repository: git@github.com:hewentian/hewentian.github.io.git
+  branch: master
+</code></pre><p>发布到 github<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ hexo clean</div><div class="line">$ hexo g</div><div class="line">$ hexo d</div></pre></td></tr></table></figure></p>
+<p>如果出现以下异常</p>
+<pre><code>ERROR Deployer not found: git
+</code></pre><p>尝试输入以下命令，然后重新执行刚刚的两条命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install hexo-deployer-git --save</div></pre></td></tr></table></figure></p>
+<p>这时候我们就可以在浏览器输入 <a href="https://hewentian.github.io" target="_blank" rel="external">https://hewentian.github.io</a> 就可以看到博客已经搭建成功了。</p>
+<p>使用以下命令验证是否安装成功<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ node -v</div><div class="line">$ npm -v</div><div class="line">$ hexo -v</div></pre></td></tr></table></figure></p>
+<p>解释一下：<br>node_modules：是依赖包<br>public：存放的是生成的页面<br>scaffolds：命令生成文章等的模板<br>source：用命令创建的各种文章<br>themes：主题<br>_config.yml：整个博客的配置<br>db.json：source解析所得到的<br>package.json：项目所需模块项目的配置信息</p>
+<p>添加博文<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo new <span class="string">"postName"</span>  <span class="comment">#新建博文,其中postName是博文题目</span></div></pre></td></tr></table></figure></p>
+<p>博文会自动生成在博客目录下source/_posts/postName.md</p>
+<p>注意事项</p>
+<p>所有键的冒号后面留一个空格，如 <code>language: zh-CN</code></p>
+<p>一些常用命令：<br>hexo new “postName” #新建文章<br>hexo new page “pageName” #新建页面<br>hexo generate #生成静态页面至public目录, hexo g<br>hexo server #开启预览访问端口（默认端口4000，’ctrl + c’关闭server）, hexo s<br>hexo deploy #将.deploy目录部署到GitHub, hexo d<br>hexo help # 查看帮助<br>hexo version #查看Hexo的版本</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/hello-world/" data-id="cj7id77tl0000iof7omztb26n" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/11/install-hexo/" data-id="cj842aaj70000h4f7sj9m2ce4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -237,6 +489,10 @@
   <time datetime="2017-09-11T02:21:02.000Z" itemprop="datePublished">2017-09-11</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/tomcat/">tomcat</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -264,7 +520,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-set-username-password/" data-id="cj7id77u10004iof7wco228ff" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-set-username-password/" data-id="cj842aajp0007h4f7z0wka21g" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tomcat/">tomcat</a></li></ul>
@@ -285,7 +541,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/tomcat/">tomcat</a></li></ul>
     </div>
   </div>
 
@@ -318,6 +574,10 @@
       <ul>
         
           <li>
+            <a href="/2017/09/27/markdown-learn-note/">markdown 学习笔记</a>
+          </li>
+        
+          <li>
             <a href="/2017/09/12/ubuntu-learn-note/">ubuntu 学习笔记</a>
           </li>
         
@@ -326,7 +586,7 @@
           </li>
         
           <li>
-            <a href="/2017/09/11/hello-world/">Hello World</a>
+            <a href="/2017/09/11/install-hexo/">安装 Hexo</a>
           </li>
         
           <li>
