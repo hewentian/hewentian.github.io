@@ -63,3 +63,54 @@ $ git fetch
 ``` bash
 $ git checkout -b 本地分支名 origin/远程分支名
 ```
+
+Git 比较不同版本文件差异的常用命令格式：
+``` bash
+$ git diff	查看尚未暂存的文件中更新了哪些部分
+$ git diff filename	查看尚未暂存的某个文件更新了哪些部分
+$ git diff –cached	查看已经暂存起来的文件中和上次提交的版本之间的差异
+$ git diff –cached filename	查看已经暂存起来的某个文件和上次提交的版本之间的差异
+$ git diff <commitId1> <commitId2>	查看某两个版本之间的差异
+$ git diff <commitId1>:filename <commitId2>:filename	查看某两个版本的某个文件之间的差异，方式一
+$ git diff <commitId1> <commitId2> -- filename	查看某两个版本的某个文件之间的差异，方式二
+```
+
+在git中查看历史的命令主要是git log，要查看某个文件的修改历史：
+``` bash
+$ git log -- begin.txt
+```
+
+可以添加不同的选项让输出的内容或格式有所不同。
+``` bash
+$ git log -p -- begin.txt
+```
+-p 选项可以输出每次提交中的diff， -p会把输出搞得很长、很乱，不容易找到重点。
+还有另外一种方式是：
+``` bash
+$ git log --pretty=oneline -- filename
+```
+在log 命令中加入 --pretty=oneline 选项只能看到comments，看不到提交的用户和日期。
+这也能够让我们集中注意力快速找到关注的提交记录。
+
+然后使用 git show命令查看完整的提交内容。
+
+当然，除了命令行工具您也可以使用GUI程序查看文件的历史记录：
+gitk filename
+
+
+查看历史中的文件内容
+
+当我们使用 git log 命令找到了某次提交，并且想看看这次提交时文件的完整内容。
+这时，我们需要使用 git show 命令：
+``` bash
+$ git show <commitId>:filename
+```
+也许此时你并不是看看就算了，你想要使用这个版本的文件更新工作区中的文件。
+直接从 git show 命令的输出中拷贝内容是个不错的选择。
+但也可以通过组合使用不同的命令来实现：
+``` bash
+$ git checkout <commitId> --filename
+$ git reset filename
+```
+此时只有工作区被更新了(你也可以把他当做是一次回滚操作)。
+
