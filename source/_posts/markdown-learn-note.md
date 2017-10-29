@@ -294,4 +294,17 @@ Markdown provides backslash escapes for the following characters:
     .   dot
     !   exclamation mark
 
+
+创建表格语法如下：
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+
+Markdown 生成表格时，可以给一整列的单元格设置同样的对齐样式
+| 第一列 	| 第二列	| 第三列	|
+| -------:	| :------:	| :-------	|
+| 右对齐	| 居中		| 左对齐	|
+
 end.
