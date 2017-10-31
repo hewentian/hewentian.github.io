@@ -2,6 +2,7 @@
 title: solr学习笔记
 date: 2017-10-29 12:12:26
 tags: solr
+categories: solr
 ---
 
 ### HttpSolrClient
@@ -174,7 +175,7 @@ for (GroupCommand gc : groupCommands) {
 最后分词匹配成功，那么索引的那句话就会被查询出来，这里需要注意：索引和查询的分词器必须使用一样的！！！
 
 ## 下面说说Solr基础
-详情请参阅：
+部分内容转载自如下网址，详情请参阅：
 http://blog.csdn.net/awj3584/article/details/16963525
 https://lucene.apache.org/solr/guide/
 以下部分为抄录内容

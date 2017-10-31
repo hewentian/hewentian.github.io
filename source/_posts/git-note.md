@@ -1,7 +1,7 @@
 ---
 title: git常用操作
 date: 2017-10-17 10:17:07
-tags: java
+categories: other
 ---
 ## 下面记录一些经常会用到的命令：
 

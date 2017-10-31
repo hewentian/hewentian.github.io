@@ -1,7 +1,7 @@
 ---
 title: markdown 学习笔记
 date: 2017-09-27 16:56:35
-tags:
+categories: other
 ---
 
 今天开始学习下 **markdown** 这种标记语言，我习惯了学习一门语言，会去看它的官方文档里面的语法说明，**markdown** 作者的官方网站：

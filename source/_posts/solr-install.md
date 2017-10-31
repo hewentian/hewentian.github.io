@@ -2,6 +2,7 @@
 title: solr的安装使用
 date: 2017-10-28 10:57:27
 tags: solr
+categories: solr
 ---
 
 下面说说我的solr学习笔记之 solr6.5.0 + jetty + mysql 使用 DIH 搭建 solr 服务
