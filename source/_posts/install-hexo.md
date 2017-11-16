@@ -38,19 +38,28 @@ $ hexo deploy
 
 More info: [Deployment](https://hexo.io/docs/deployment.html)
 
-## 下面将详细说说安装过程：
-### 1. 安装 Git 略
+## 下面将详细说说安装过程，基于 Ubuntu 16.04 LTS：
+### 1. 安装 Git
+在 Ubuntu 下面安裝非常方便，可以先在命令行中輸入`git`，如果没显示命令，则输入如下命令安装即可：
+``` bash
+$ sudo apt-get install git
+```
 
-### 2. 安装 Node.js 略
-
-### 3. 安装Hexo
-
-在桌面空白处右键打开Git Bash Here，可以先测试一下Node.js是否安装成功，直接输入node可以看到提示符变成了一个向右
+### 2. 安装 Node.js
+先测试一下Node.js是否已安装，在命令行中直接输入`node`可以看到提示符变成了一个向右
 的箭头就表示成功了，然后按ctrl + c退出node模式，出现$符号才表示正常了
 
+如果未安裝 node，安裝方法如下：
+``` bash
+$ sudo apt-get install nodejs-legacy
+```
+
+### 3. 安装 Hexo
 输入以下命令
 ``` bash
-$ npm install -g hexo-cli
+$ sudo npm install -g hexo-cli
+或者
+$ sudo npm install hexo --save  # 或者去掉 sudo
 ```
 敲完回车可能没有任何提示，请一定要耐心等待
 安装成功后，可以输入以下命令测试一下Hexo是否安装成功
@@ -58,11 +67,16 @@ $ npm install -g hexo-cli
 $ hexo version
 ```
 如果能看到hexo的版本号信息，就表示安装成功了
-接下来，进入到我们刚刚创建的文件夹，右键打开Git Bash Here
+接下来，进入到我们进入博客的仓库
 
 然后依次输入以下命令
 ``` bash
-$ hexo init  # 注意此命令，要求当前仓库为空，可以先将仓库的文件移走，再执行此命令，然后再移回来
+$ hexo init  # 注意此命令，要求当前仓库为空，可以先将仓库的文件移走，再执行此命令，然后再将文件移回来。
+# 如果之前在其他机器已经执行过`init`方法，并且同步到 github，并且这次是从 github clone 来的，则不必再执行`hexo init`这个命令
+可以先在当前目录的父目录创建临时目录hgi
+$ mkdir ../hgi
+$ mv * ../hgi # 这个命令不会将 .git .gitignore这两个文件夹移走，所以，还要执行如下命令
+$ mv .git .gitignore ../hgi/
 $ npm install
 $ hexo g
 $ hexo s
