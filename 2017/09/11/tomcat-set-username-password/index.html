@@ -5,7 +5,11 @@
   
   <title>tomcat 登录用户名 与 密码设置 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<<<<<<< HEAD
   <meta name="description" content="123456789101112131415161718192021403 Access DeniedYou are not authorized to view this page.If you have already configured the Host Manager application to allow access and you have used your browsers b">
+=======
+  <meta name="description" content="123456789101112131415161718192021403 Access DeniedYou are not authorized to view this page.If you have already configured the Host Manager application to allow ">
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
 <meta name="keywords" content="tomcat">
 <meta property="og:type" content="article">
 <meta property="og:title" content="tomcat 登录用户名 与 密码设置">
@@ -13,7 +17,11 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="123456789101112131415161718192021403 Access DeniedYou are not authorized to view this page.If you have already configured the Host Manager application to allow access and you have used your browsers b">
 <meta property="og:locale" content="zh-CN">
+<<<<<<< HEAD
 <meta property="og:updated_time" content="2017-09-28T06:02:38.803Z">
+=======
+<meta property="og:updated_time" content="2017-11-16T00:44:03.252Z">
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="tomcat 登录用户名 与 密码设置">
 <meta name="twitter:description" content="123456789101112131415161718192021403 Access DeniedYou are not authorized to view this page.If you have already configured the Host Manager application to allow access and you have used your browsers b">
@@ -97,18 +105,31 @@
     
     <div class="article-entry" itemprop="articleBody">
       
+<<<<<<< HEAD
         <figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">403 Access Denied</div><div class="line"></div><div class="line">You are not authorized to view this page.</div><div class="line"></div><div class="line">If you have already configured the Host Manager application to allow access and you have used your browsers back button, used a saved book-mark or similar then you may have triggered the cross-site request forgery (CSRF) protection that has been enabled for the HTML interface of the Host Manager application. You will need to reset this protection by returning to the main Host Manager page. Once you return to this page, you will be able to continue using the Host Manager application's HTML interface normally. If you continue to see this access denied message, check that you have the necessary permissions to access this application.</div><div class="line"></div><div class="line">If you have not changed any configuration files, please examine the file conf/tomcat-users.xml in your installation. That file must contain the credentials to let you use this webapp.</div><div class="line"></div><div class="line">For example, to add the admin-gui role to a user named tomcat with a password of s3cret, add the following to the config file listed above.</div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"admin-gui"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">user</span> <span class="attr">username</span>=<span class="string">"tomcat"</span> <span class="attr">password</span>=<span class="string">"s3cret"</span> <span class="attr">roles</span>=<span class="string">"admin-gui"</span>/&gt;</span></div><div class="line"></div><div class="line">Note that for Tomcat 7 onwards, the roles required to use the host manager application were changed from the single admin role to the following two roles. You will need to assign the role(s) required for the functionality you wish to access.</div><div class="line"></div><div class="line">admin-gui - allows access to the HTML GUI</div><div class="line">admin-script - allows access to the text interface</div><div class="line">The HTML interface is protected against CSRF but the text interface is not. To maintain the CSRF protection:</div><div class="line"></div><div class="line">Users with the admin-gui role should not be granted the admin-script role.</div><div class="line">If the text interface is accessed through a browser (e.g. for testing since this interface is intended for tools not humans) then the browser must be closed afterwards to terminate the session.</div></pre></td></tr></table></figure>
 <p>Tomcat Manager是Tomcat自带的、用于对Tomcat自身以及部署在Tomcat上的应用进行管理的web应用。<br>在默认情况下，Tomcat Manager是处于禁用状态的。准确地说，Tomcat Manager需要以用户角色进行<br>登录并授权才能使用相应的功能，不过Tomcat并没有配置任何默认的用户，因此需要我们进行相应的<br>用户配置之后才能使用Tomcat Manager。</p>
 <p>在使用Tomcat时，我们通过点击 <a href="http://localhost:8080/" target="_blank" rel="external">http://localhost:8080/</a> 下面的【Host Manager】可以管理Tomcat服务器中的web工程；</p>
 <p>设置用户名、有密码的方法：</p>
 <p>1、登录用户名和密码我们需要在 目录：${TOMCAT_HOME}/conf/tomcat-users.xml 中修改如下配置：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"admin-gui"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">user</span> <span class="attr">username</span>=<span class="string">"tomcat"</span> <span class="attr">password</span>=<span class="string">"s3cret"</span> <span class="attr">roles</span>=<span class="string">"admin-gui"</span>/&gt;</span></div></pre></td></tr></table></figure></p>
 <p>2、进入当前目录下的：context.xml 文件，并作如下修改（其实这一步，可以省略的）<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;  </div><div class="line">    <span class="tag">&lt;<span class="name">WatchedResource</span>&gt;</span>WEB-INF/web.xml<span class="tag">&lt;/<span class="name">WatchedResource</span>&gt;</span>  </div><div class="line">    <span class="tag">&lt;<span class="name">Manager</span> <span class="attr">pathname</span>=<span class="string">"/manager"</span> <span class="attr">debug</span>=<span class="string">"0"</span>  <span class="attr">privileged</span>=<span class="string">"true"</span> <span class="attr">docBase</span>=<span class="string">"$&#123;TOMCAT_HOME&#125;/webapps/manager"</span> /&gt;</span>      </div><div class="line">    <span class="tag">&lt;<span class="name">Valve</span> <span class="attr">className</span>=<span class="string">"org.apache.catalina.valves.CometConnectionManagerValve"</span> /&gt;</span>    </div><div class="line"><span class="tag">&lt;/<span class="name">Context</span>&gt;</span></div></pre></td></tr></table></figure></p>
+=======
+        <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">403 Access Denied</span><br><span class="line"></span><br><span class="line">You are not authorized to view this page.</span><br><span class="line"></span><br><span class="line">If you have already configured the Host Manager application to allow access and you have used your browsers back button, used a saved book-mark or similar then you may have triggered the cross-site request forgery (CSRF) protection that has been enabled for the HTML interface of the Host Manager application. You will need to reset this protection by returning to the main Host Manager page. Once you return to this page, you will be able to continue using the Host Manager application's HTML interface normally. If you continue to see this access denied message, check that you have the necessary permissions to access this application.</span><br><span class="line"></span><br><span class="line">If you have not changed any configuration files, please examine the file conf/tomcat-users.xml in your installation. That file must contain the credentials to let you use this webapp.</span><br><span class="line"></span><br><span class="line">For example, to add the admin-gui role to a user named tomcat with a password of s3cret, add the following to the config file listed above.</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"admin-gui"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span> <span class="attr">username</span>=<span class="string">"tomcat"</span> <span class="attr">password</span>=<span class="string">"s3cret"</span> <span class="attr">roles</span>=<span class="string">"admin-gui"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">Note that for Tomcat 7 onwards, the roles required to use the host manager application were changed from the single admin role to the following two roles. You will need to assign the role(s) required for the functionality you wish to access.</span><br><span class="line"></span><br><span class="line">admin-gui - allows access to the HTML GUI</span><br><span class="line">admin-script - allows access to the text interface</span><br><span class="line">The HTML interface is protected against CSRF but the text interface is not. To maintain the CSRF protection:</span><br><span class="line"></span><br><span class="line">Users with the admin-gui role should not be granted the admin-script role.</span><br><span class="line">If the text interface is accessed through a browser (e.g. for testing since this interface is intended for tools not humans) then the browser must be closed afterwards to terminate the session.</span><br></pre></td></tr></table></figure>
+<p>Tomcat Manager是Tomcat自带的、用于对Tomcat自身以及部署在Tomcat上的应用进行管理的web应用。<br>在默认情况下，Tomcat Manager是处于禁用状态的。准确地说，Tomcat Manager需要以用户角色进行<br>登录并授权才能使用相应的功能，不过Tomcat并没有配置任何默认的用户，因此需要我们进行相应的<br>用户配置之后才能使用Tomcat Manager。</p>
+<p>在使用Tomcat时，我们通过点击 <a href="http://localhost:8080/" target="_blank" rel="noopener">http://localhost:8080/</a> 下面的【Host Manager】可以管理Tomcat服务器中的web工程；</p>
+<p>设置用户名、有密码的方法：</p>
+<p>1、登录用户名和密码我们需要在 目录：${TOMCAT_HOME}/conf/tomcat-users.xml 中修改如下配置：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"admin-gui"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span> <span class="attr">username</span>=<span class="string">"tomcat"</span> <span class="attr">password</span>=<span class="string">"s3cret"</span> <span class="attr">roles</span>=<span class="string">"admin-gui"</span>/&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>2、进入当前目录下的：context.xml 文件，并作如下修改（其实这一步，可以省略的）<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;  </span><br><span class="line">    <span class="tag">&lt;<span class="name">WatchedResource</span>&gt;</span>WEB-INF/web.xml<span class="tag">&lt;/<span class="name">WatchedResource</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">Manager</span> <span class="attr">pathname</span>=<span class="string">"/manager"</span> <span class="attr">debug</span>=<span class="string">"0"</span>  <span class="attr">privileged</span>=<span class="string">"true"</span> <span class="attr">docBase</span>=<span class="string">"$&#123;TOMCAT_HOME&#125;/webapps/manager"</span> /&gt;</span>      </span><br><span class="line">    <span class="tag">&lt;<span class="name">Valve</span> <span class="attr">className</span>=<span class="string">"org.apache.catalina.valves.CometConnectionManagerValve"</span> /&gt;</span>    </span><br><span class="line"><span class="tag">&lt;/<span class="name">Context</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
 <p>完成这两步之后，重启tomcat ，输入刚才设置的用户名和密码，即可登录Tomcat 管理web project</p>
 
       
     </div>
     <footer class="article-footer">
+<<<<<<< HEAD
       <a data-url="https://github.com/hewentian/2017/09/11/tomcat-set-username-password/" data-id="cj9fjlm2t000eb8f7bpafvewe" class="article-share-link">Share</a>
+=======
+      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-set-username-password/" data-id="cja2gjs5s000rj02ixun7w50s" class="article-share-link">Share</a>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tomcat/">tomcat</a></li></ul>
@@ -119,11 +140,19 @@
     
 <nav id="article-nav">
   
+<<<<<<< HEAD
     <a href="/2017/09/11/install-hexo/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           安装 Hexo
+=======
+    <a href="/2017/09/12/online-implementing/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          系统上线注意事项
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
         
       </div>
     </a>
@@ -142,7 +171,11 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
+<<<<<<< HEAD
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/solr/">solr</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tomcat/">tomcat</a><span class="category-list-count">1</span></li></ul>
+=======
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/solr/">solr</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tomcat/">tomcat</a><span class="category-list-count">1</span></li></ul>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
     </div>
   </div>
 
@@ -152,7 +185,11 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
+<<<<<<< HEAD
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li></ul>
+=======
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
     </div>
   </div>
 
@@ -165,6 +202,7 @@
       <ul>
         
           <li>
+<<<<<<< HEAD
             <a href="/2017/10/29/solr-note/">solr学习笔记</a>
           </li>
         
@@ -182,6 +220,25 @@
         
           <li>
             <a href="/2017/09/27/markdown-learn-note/">markdown 学习笔记</a>
+=======
+            <a href="/2017/11/16/java-note/">java一些常用笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/16/install-hexo/">安装 Hexo</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/10/maven-note/">maven-note</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/10/html-css/">html-css前端相关</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/10/java-get-entity-property-and-value/">java 获取对象的所有属性和它们的值</a>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
           </li>
         
       </ul>

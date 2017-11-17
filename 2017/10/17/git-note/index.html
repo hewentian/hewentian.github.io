@@ -5,14 +5,22 @@
   
   <title>git常用操作 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<<<<<<< HEAD
   <meta name="description" content="下面记录一些经常会用到的命令：查看远程分支, 加上 -a 参数可以查看远程分支，远程分支会用红色表示出来（如果你开了颜色支持的话），不加 -a 则查看本地分支：123456$ git branch -a  dev* master  remotes/origin/HEAD -&amp;gt; origin/master  remotes/origin/master  remotes/origin/prod">
+=======
+  <meta name="description" content="下面记录一些经常会用到的命令：查看远程分支, 加上 -a 参数可以查看远程分支，远程分支会用红色表示出来（如果你开了颜色支持的话），不加 -a 则查看本地分支：123456$ git branch -a  dev* master  remotes/origin/HEAD -&amp;gt; origin/master ">
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
 <meta property="og:type" content="article">
 <meta property="og:title" content="git常用操作">
 <meta property="og:url" content="https://github.com/hewentian/2017/10/17/git-note/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="下面记录一些经常会用到的命令：查看远程分支, 加上 -a 参数可以查看远程分支，远程分支会用红色表示出来（如果你开了颜色支持的话），不加 -a 则查看本地分支：123456$ git branch -a  dev* master  remotes/origin/HEAD -&amp;gt; origin/master  remotes/origin/master  remotes/origin/prod">
 <meta property="og:locale" content="zh-CN">
+<<<<<<< HEAD
 <meta property="og:updated_time" content="2017-10-31T06:06:09.420Z">
+=======
+<meta property="og:updated_time" content="2017-11-16T00:44:03.252Z">
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git常用操作">
 <meta name="twitter:description" content="下面记录一些经常会用到的命令：查看远程分支, 加上 -a 参数可以查看远程分支，远程分支会用红色表示出来（如果你开了颜色支持的话），不加 -a 则查看本地分支：123456$ git branch -a  dev* master  remotes/origin/HEAD -&amp;gt; origin/master  remotes/origin/master  remotes/origin/prod">
@@ -96,6 +104,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
+<<<<<<< HEAD
         <h2 id="下面记录一些经常会用到的命令："><a href="#下面记录一些经常会用到的命令：" class="headerlink" title="下面记录一些经常会用到的命令："></a>下面记录一些经常会用到的命令：</h2><p>查看远程分支, 加上 -a 参数可以查看远程分支，远程分支会用红色表示出来（如果你开了颜色支持的话），不加 -a 则查看本地分支：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ git branch -a</div><div class="line">  dev</div><div class="line">* master</div><div class="line">  remotes/origin/HEAD -&gt; origin/master</div><div class="line">  remotes/origin/master</div><div class="line">  remotes/origin/prod</div></pre></td></tr></table></figure></p>
 <p>删除远程分支和tag, 在Git v1.7.0 之后，可以使用这种语法删除远程分支：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git push origin --delete &lt;branchName&gt;</div></pre></td></tr></table></figure></p>
 <p>删除tag这么用：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git push origin --delete tag &lt;tagname&gt;</div></pre></td></tr></table></figure></p>
@@ -114,18 +123,47 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
 <p>在git中查看历史的命令主要是git log，要查看某个文件的修改历史：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git <span class="built_in">log</span> -- begin.txt</div></pre></td></tr></table></figure></p>
 <p>可以添加不同的选项让输出的内容或格式有所不同。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git <span class="built_in">log</span> -p -- begin.txt</div></pre></td></tr></table></figure></p>
 <p>-p 选项可以输出每次提交中的diff， -p会把输出搞得很长、很乱，不容易找到重点。<br>还有另外一种方式是：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git <span class="built_in">log</span> --pretty=oneline -- filename</div></pre></td></tr></table></figure></p>
+=======
+        <h2 id="下面记录一些经常会用到的命令："><a href="#下面记录一些经常会用到的命令：" class="headerlink" title="下面记录一些经常会用到的命令："></a>下面记录一些经常会用到的命令：</h2><p>查看远程分支, 加上 -a 参数可以查看远程分支，远程分支会用红色表示出来（如果你开了颜色支持的话），不加 -a 则查看本地分支：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -a</span><br><span class="line">  dev</span><br><span class="line">* master</span><br><span class="line">  remotes/origin/HEAD -&gt; origin/master</span><br><span class="line">  remotes/origin/master</span><br><span class="line">  remotes/origin/prod</span><br></pre></td></tr></table></figure></p>
+<p>删除远程分支和tag, 在Git v1.7.0 之后，可以使用这种语法删除远程分支：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git push origin --delete &lt;branchName&gt;</span><br></pre></td></tr></table></figure></p>
+<p>删除tag这么用：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git push origin --delete tag &lt;tagname&gt;</span><br></pre></td></tr></table></figure></p>
+<p>否则，可以使用这种语法，推送一个空分支到远程分支，其实就相当于删除远程分支：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git push origin :&lt;branchName&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这是删除tag的方法，推送一个空tag到远程tag：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git tag -d &lt;tagname&gt;</span><br><span class="line">$ git push origin :refs/tags/&lt;tagname&gt;</span><br></pre></td></tr></table></figure></p>
+<p>两种语法作用完全相同。</p>
+<p>将远程git仓库里的指定分支拉取到本地（本地不存在的分支）<br>当我想从远程仓库里拉取一条本地不存在的分支时：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b 本地分支名 origin/远程分支名</span><br></pre></td></tr></table></figure></p>
+<p>这个将会自动创建一个新的本地分支，并与指定的远程分支关联起来。</p>
+<p>例如远程仓库里有个分支dev2,我本地没有该分支，我要把dev2拉到我本地：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b dev2 origin/dev2</span><br></pre></td></tr></table></figure></p>
+<p>若成功，将会在本地创建新分支dev2,并自动切到dev2上。<br>如果出现提示：</p>
+<pre><code>fatal: Cannot update paths and switch to branch &apos;dev2&apos; at the same time.
+Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as commit?
+</code></pre><p>表示拉取不成功。我们需要先执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git fetch</span><br></pre></td></tr></table></figure></p>
+<p>然后再执行下面的命令即可<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b 本地分支名 origin/远程分支名</span><br></pre></td></tr></table></figure></p>
+<p>Git 比较不同版本文件差异的常用命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git diff	查看尚未暂存的文件中更新了哪些部分</span><br><span class="line">$ git diff filename	查看尚未暂存的某个文件更新了哪些部分</span><br><span class="line">$ git diff –cached	查看已经暂存起来的文件中和上次提交的版本之间的差异</span><br><span class="line">$ git diff –cached filename	查看已经暂存起来的某个文件和上次提交的版本之间的差异</span><br><span class="line">$ git diff &lt;commitId1&gt; &lt;commitId2&gt;	查看某两个版本之间的差异</span><br><span class="line">$ git diff &lt;commitId1&gt;:filename &lt;commitId2&gt;:filename	查看某两个版本的某个文件之间的差异，方式一</span><br><span class="line">$ git diff &lt;commitId1&gt; &lt;commitId2&gt; -- filename	查看某两个版本的某个文件之间的差异，方式二</span><br></pre></td></tr></table></figure></p>
+<p>在git中查看历史的命令主要是git log，要查看某个文件的修改历史：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> -- begin.txt</span><br></pre></td></tr></table></figure></p>
+<p>可以添加不同的选项让输出的内容或格式有所不同。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> -p -- begin.txt</span><br></pre></td></tr></table></figure></p>
+<p>-p 选项可以输出每次提交中的diff， -p会把输出搞得很长、很乱，不容易找到重点。<br>还有另外一种方式是：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> --pretty=oneline -- filename</span><br></pre></td></tr></table></figure></p>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
 <p>在log 命令中加入 –pretty=oneline 选项只能看到comments，看不到提交的用户和日期。<br>这也能够让我们集中注意力快速找到关注的提交记录。</p>
 <p>然后使用 git show命令查看完整的提交内容。</p>
 <p>当然，除了命令行工具您也可以使用GUI程序查看文件的历史记录：<br>gitk filename</p>
 <p>查看历史中的文件内容</p>
+<<<<<<< HEAD
 <p>当我们使用 git log 命令找到了某次提交，并且想看看这次提交时文件的完整内容。<br>这时，我们需要使用 git show 命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git show &lt;commitId&gt;:filename</div></pre></td></tr></table></figure></p>
 <p>也许此时你并不是看看就算了，你想要使用这个版本的文件更新工作区中的文件。<br>直接从 git show 命令的输出中拷贝内容是个不错的选择。<br>但也可以通过组合使用不同的命令来实现：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git checkout &lt;commitId&gt; --filename</div><div class="line">$ git reset filename</div></pre></td></tr></table></figure></p>
+=======
+<p>当我们使用 git log 命令找到了某次提交，并且想看看这次提交时文件的完整内容。<br>这时，我们需要使用 git show 命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git show &lt;commitId&gt;:filename</span><br></pre></td></tr></table></figure></p>
+<p>也许此时你并不是看看就算了，你想要使用这个版本的文件更新工作区中的文件。<br>直接从 git show 命令的输出中拷贝内容是个不错的选择。<br>但也可以通过组合使用不同的命令来实现：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout &lt;commitId&gt; --filename</span><br><span class="line">$ git reset filename</span><br></pre></td></tr></table></figure></p>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
 <p>此时只有工作区被更新了(你也可以把他当做是一次回滚操作)。</p>
 
       
     </div>
     <footer class="article-footer">
+<<<<<<< HEAD
       <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cj9fjlm220000b8f7enke91jp" class="article-share-link">Share</a>
+=======
+      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cja2gjs3x0000j02ihkblyupf" class="article-share-link">Share</a>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
       
       
     </footer>
@@ -162,7 +200,11 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
+<<<<<<< HEAD
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/solr/">solr</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tomcat/">tomcat</a><span class="category-list-count">1</span></li></ul>
+=======
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/solr/">solr</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tomcat/">tomcat</a><span class="category-list-count">1</span></li></ul>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
     </div>
   </div>
 
@@ -172,7 +214,11 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
+<<<<<<< HEAD
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li></ul>
+=======
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
     </div>
   </div>
 
@@ -185,6 +231,7 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
       <ul>
         
           <li>
+<<<<<<< HEAD
             <a href="/2017/10/29/solr-note/">solr学习笔记</a>
           </li>
         
@@ -202,6 +249,25 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
         
           <li>
             <a href="/2017/09/27/markdown-learn-note/">markdown 学习笔记</a>
+=======
+            <a href="/2017/11/16/java-note/">java一些常用笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/16/install-hexo/">安装 Hexo</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/10/maven-note/">maven-note</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/10/html-css/">html-css前端相关</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/10/java-get-entity-property-and-value/">java 获取对象的所有属性和它们的值</a>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
           </li>
         
       </ul>

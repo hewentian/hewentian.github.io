@@ -5,7 +5,11 @@
   
   <title>ubuntu 学习笔记 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<<<<<<< HEAD
   <meta name="description" content="Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-get install opensshserver正在读取软件包列表… 完成正在分析软件包的依赖关系树正在读取状态信息… 完成现在没有可用的软件包 openssh-server， 但是他被其他的软件包引用了这可能意味着这个缺失的软件包可能已被废弃，或者只能在其他发布源中找到">
+=======
+  <meta name="description" content="Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-get install opensshserver正在读取软件包列表… 完成正在分析软件包的依赖关系树正在读取状态信息… 完成现在没有可用的软件包 openssh-server， 但是他被其他的软">
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
 <meta name="keywords" content="Linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ubuntu 学习笔记">
@@ -13,7 +17,11 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-get install opensshserver正在读取软件包列表… 完成正在分析软件包的依赖关系树正在读取状态信息… 完成现在没有可用的软件包 openssh-server， 但是他被其他的软件包引用了这可能意味着这个缺失的软件包可能已被废弃，或者只能在其他发布源中找到">
 <meta property="og:locale" content="zh-CN">
+<<<<<<< HEAD
 <meta property="og:updated_time" content="2017-09-13T01:43:29.131Z">
+=======
+<meta property="og:updated_time" content="2017-11-16T12:29:55.111Z">
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ubuntu 学习笔记">
 <meta name="twitter:description" content="Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-get install opensshserver正在读取软件包列表… 完成正在分析软件包的依赖关系树正在读取状态信息… 完成现在没有可用的软件包 openssh-server， 但是他被其他的软件包引用了这可能意味着这个缺失的软件包可能已被废弃，或者只能在其他发布源中找到">
@@ -104,6 +112,7 @@
 <p>完成现在没有可用的软件包 openssh-server，</p>
 <p>但是他被其他的软件包引用了这可能意味着这个缺失的软件包可能已被废弃，或者只能在其他发布源中找到</p>
 <p>E:软件包 openssh-server 还没有可供安装的候选者</p>
+<<<<<<< HEAD
 <p>解决方案：分析原因是我们的apt-get没有更新，当然如果你的是最新的系统不用更新也行，但是我相信很多人都是需要更新的吧，操作命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get update</div></pre></td></tr></table></figure></p>
 <p>更新完毕后执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install openssh-server</div></pre></td></tr></table></figure></p>
 <p>最后我们用命令ps -e|grep ssh 来看下open-server安装成功没有，如果出现如下截图红色标出的部分，说明安装成功了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ps -e|grep ssh</div></pre></td></tr></table></figure></p>
@@ -127,11 +136,81 @@
 <p>解决依赖包openssl安装，命令：<br>[cpp] view plain copy 在CODE上查看代码片派生到我的代码片<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install openssl libssl-dev</div></pre></td></tr></table></figure></p>
 <p>解决依赖包pcre安装，命令：<br>[cpp] view plain copy 在CODE上查看代码片派生到我的代码片<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install libpcre3 libpcre3-dev</div></pre></td></tr></table></figure></p>
 <p>解决依赖包zlib安装，命令：<br>[cpp] view plain copy 在CODE上查看代码片派生到我的代码片<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install zlib1g-dev</div></pre></td></tr></table></figure></p>
+=======
+<p>解决方案：分析原因是我们的apt-get没有更新，当然如果你的是最新的系统不用更新也行，但是我相信很多人都是需要更新的吧，操作命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get update</span><br></pre></td></tr></table></figure></p>
+<p>更新完毕后执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install openssh-server</span><br></pre></td></tr></table></figure></p>
+<p>最后我们用命令ps -e|grep ssh 来看下open-server安装成功没有，如果出现如下截图红色标出的部分，说明安装成功了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps -e|grep ssh</span><br></pre></td></tr></table></figure></p>
+<p>在ubuntu中的vi编辑器中怎么使用<br>默认情况下ubuntu上也安装有vi但是奇怪的是这个vi是vim-common版本，基本上用不了所以要先把这个版本的vi卸载掉才可以，卸载命令是<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get remove vim-common</span><br></pre></td></tr></table></figure></p>
+<p>卸载成功之后接着执行 sudo apt-get install vim,安装好之后就能使用了</p>
+<p>要检查特定的包，比如firefox是否安装了，使用这个命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ dpkg -s firefox</span><br><span class="line"></span><br><span class="line">ubuntu下useradd与adduser区别，新建用户不再home目录下</span><br><span class="line">useradd username不会在/home下建立一个文件夹username</span><br><span class="line">adduser username会在/home下建立一个文件夹username</span><br><span class="line">useradd -m username跟adduser一样，可以建立一个文件夹username</span><br></pre></td></tr></table></figure></p>
+<p>永久性删除用户账号<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ userdel peter</span><br></pre></td></tr></table></figure></p>
+<p>还有的就是文件编码的问题，在windows下默认都是用ANSI格式编码，但是在ubuntu下面可能会是其他格式的编码，如果两个系统的编码不一致，就会产生乱码。<br>最好是都采用UTF-8格式编码</p>
+<p>ubuntu root默认密码（初始密码）<br>ubuntu安装好后，root初始密码（默认密码）不知道，需要设置。</p>
+<p>1、先用安装时候的用户登录进入系统</p>
+<p>2、输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo passwd</span><br></pre></td></tr></table></figure></p>
+<p>按回车</p>
+<p>3、输入新密码，重复输入密码，最后提示passwd：password updated sucessfully</p>
+<p>此时已完成root密码的设置</p>
+<p>4、输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ su root</span><br></pre></td></tr></table></figure></p>
+<p>切换用户到root试试…….</p>
+<p>如果执行./configure无法执行，<br>要安装：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install build-essential</span><br></pre></td></tr></table></figure></p>
+<p>在ubuntu软件源里zlib和zlib-devel叫做zlib1g zlib1g.dev<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install zlib1g</span><br><span class="line">$ sudo apt-get install zlib1g.dev</span><br></pre></td></tr></table></figure></p>
+<p>直接输入上述命令后还是不能安装。这就要求我们先装ruby.<br>在ubuntu里，zlib叫zlib1g，相应的zlib-devel叫zlib1g.dev。默认的安装源里没有zlib1g.dev。要在packages.ubuntu.com上找。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install ruby</span><br></pre></td></tr></table></figure></p>
+<p>然后再装zlib1g-dev就可以了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install zlib1g-dev</span><br></pre></td></tr></table></figure></p>
+<p>解决依赖包openssl安装，命令：<br>[cpp] view plain copy 在CODE上查看代码片派生到我的代码片<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install openssl libssl-dev</span><br></pre></td></tr></table></figure></p>
+<p>解决依赖包pcre安装，命令：<br>[cpp] view plain copy 在CODE上查看代码片派生到我的代码片<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install libpcre3 libpcre3-dev</span><br></pre></td></tr></table></figure></p>
+<p>解决依赖包zlib安装，命令：<br>[cpp] view plain copy 在CODE上查看代码片派生到我的代码片<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install zlib1g-dev</span><br></pre></td></tr></table></figure></p>
+<h3 id="当你安装完ubuntu后，安装五笔输入法："><a href="#当你安装完ubuntu后，安装五笔输入法：" class="headerlink" title="当你安装完ubuntu后，安装五笔输入法："></a>当你安装完ubuntu后，安装五笔输入法：</h3><p>1.打开命令行输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install fcitx-table-wubi</span><br></pre></td></tr></table></figure></p>
+<p>安装完后，重启（也可以在下面的设置完毕之后，再重启）</p>
+<p>2.<code>System Settings -&gt; language support</code> 在 Keyboard input method system 中选中 fcitx<br>然后点击 Apply System-Wide, 然后重启</p>
+<p>3.重启后，<code>System Settings -&gt; Text Entry</code>, 中输入 Wubi(Fcitx)，这样，就完成了五笔输入法的安装。</p>
+<h3 id="ubuntu-安装-Robo3t-出现-Available-platform-plugins-are-xcb"><a href="#ubuntu-安装-Robo3t-出现-Available-platform-plugins-are-xcb" class="headerlink" title="ubuntu 安装 Robo3t 出现 Available platform plugins are: xcb."></a>ubuntu 安装 Robo3t 出现 Available platform plugins are: xcb.</h3><p>解决办法,打开终端输入一下命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir ~/robo-backup</span><br><span class="line">$ mv robo3t-1.1.1-linux-x86_64-c93c6b0/lib/libstdc++* ~/robo-backup/</span><br></pre></td></tr></table></figure></p>
+<p>输入命令之后会在robo-backup中出现两个文件 libstdc++.so.6 和 libstdc++.so.6.0.22，然后启动robo3t就ok了</p>
+<p>其实，也可以將其删掉，只要你还有压缩包，即可。</p>
+<h3 id="ubuntu-下-Eclipse-中-syso-快捷键-Alt-不能使用的问题"><a href="#ubuntu-下-Eclipse-中-syso-快捷键-Alt-不能使用的问题" class="headerlink" title="ubuntu 下 Eclipse 中 syso 快捷键 Alt + / 不能使用的问题"></a>ubuntu 下 Eclipse 中 syso 快捷键 Alt + / 不能使用的问题</h3><p>在<code>window -&gt; Preferences -&gt; general -&gt; keys</code>中，<br>找到 content asist 修改下边值<br>Binding 改成 Alt+/           输入的时候要注意，长按Alt键，然后按下/键即可<br>When 改为 Editing Text<br>ok.</p>
+<h3 id="ubuntu-使用switchHosts修改host后启动eclipse项目报错"><a href="#ubuntu-使用switchHosts修改host后启动eclipse项目报错" class="headerlink" title="ubuntu 使用switchHosts修改host后启动eclipse项目报错"></a>ubuntu 使用<code>switchHosts</code>修改host后启动<code>eclipse</code>项目报错</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">错误: 抛出异常错误: `java.net.MalformedURLException: Local host name unknown: java.net.UnknownHostException:</span><br><span class="line">localhost: hewentian-Lenovo-IdeaPad-Y470`: 未知的名称或服务</span><br><span class="line">Error: Exception thrown by the agent : java.net.MalformedURLException: Local host name unknown: </span><br><span class="line">java.net.UnknownHostException: localhost: hewentian-Lenovo-IdeaPad-Y470: Name or service not known</span><br></pre></td></tr></table></figure>
+<p>原因是/etc/hosts文件里没有主机名为：hewentian-Lenovo-IdeaPad-Y470，解决方法就是在<code>switchHosts</code>中增加如下代码：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1  hewentian-Lenovo-IdeaPad-Y470</span><br><span class="line">localhost  hewentian-Lenovo-IdeaPad-Y470</span><br></pre></td></tr></table></figure></p>
+<h3 id="Linux查看程序端口占用情况"><a href="#Linux查看程序端口占用情况" class="headerlink" title="Linux查看程序端口占用情况"></a>Linux查看程序端口占用情况</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ netstat -apn | grep 8761</span><br><span class="line">(Not all processes could be identified, non-owned process info</span><br><span class="line"> will not be shown, you would have to be root to see it all.)</span><br><span class="line">tcp6       0      0 :::8761                 :::*                    LISTEN      24831/java      </span><br><span class="line">tcp6       0      0 127.0.0.1:49958         127.0.0.1:8761          ESTABLISHED 24824/java      </span><br><span class="line">tcp6       0      0 127.0.0.1:50494         127.0.0.1:8761          TIME_WAIT   -               </span><br><span class="line">tcp6       0      0 127.0.0.1:50502         127.0.0.1:8761          TIME_WAIT   -               </span><br><span class="line">tcp6       0      0 127.0.0.1:50484         127.0.0.1:8761          TIME_WAIT   -               </span><br><span class="line">tcp6       0      0 127.0.0.1:8761          127.0.0.1:49958         ESTABLISHED 24831/java      </span><br><span class="line">unix  3      [ ]         STREAM     CONNECTED     2887618  21883/chrome        </span><br><span class="line">unix  3      [ ]         STREAM     CONNECTED     2887619  22047/chrome --<span class="built_in">type</span></span><br></pre></td></tr></table></figure>
+<p>其中最后一栏是PID/Program name </p>
+<h3 id="ubuntu下安装notepadqq"><a href="#ubuntu下安装notepadqq" class="headerlink" title="ubuntu下安装notepadqq"></a>ubuntu下安装notepadqq</h3><p>安装过程中参考了如下文章：<br><a href="https://www.linuxtechi.com/notepadqq-notepad-for-ubuntu-linux/" target="_blank" rel="noopener">https://www.linuxtechi.com/notepadqq-notepad-for-ubuntu-linux/</a></p>
+<p>Step:1 Add Ubuntu PPA Repository</p>
+<p>‘notpadqq‘ package is not available in the default Ubuntu repository, we will add Ubuntu PPA repository using below command.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo add-apt-repository ppa:notepadqq-team/notepadqq</span><br></pre></td></tr></table></figure></p>
+<p>Step:2 Refresh the Repositories using below apt-get command.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get update</span><br></pre></td></tr></table></figure></p>
+<p>Step:3 Install notepaddqq Debian package<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install notepadqq</span><br></pre></td></tr></table></figure></p>
+<p>成功。</p>
+<h3 id="ubuntu-Navicat-for-MySQL-安装以及破解方案"><a href="#ubuntu-Navicat-for-MySQL-安装以及破解方案" class="headerlink" title="ubuntu Navicat for MySQL 安装以及破解方案"></a>ubuntu Navicat for MySQL 安装以及破解方案</h3><p>首先上官网上下载LINUX版本： <a href="http://www.navicat.com/download/navicat-for-mysql" target="_blank" rel="noopener">http://www.navicat.com/download/navicat-for-mysql</a></p>
+<ol>
+<li><p>下载 navicat120_mysql_en_x64.tar.gz 文件</p>
+</li>
+<li><p>下载后解压tar文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xzvf /home/hewentian/Downloads/navicat120_mysql_en_x64.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解压后  进入解压后的目录运行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./start_navicat</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这样OK啦</p>
+<p>连接上数据库后里面的中文数据是乱码,把Ubuntu的字符集修改为<code>zh_CN.utf8</code>就行了,修改方法:</p>
+<ol>
+<li>查看当前系统的字符集：echo $LANG</li>
+<li>查看系统支持的字符集: locale -a  </li>
+<li>修改字符集: export LANG=zh_CN.utf8  </li>
+<li>打开start_navicat文件，会看到 export LANG=”en_US.UTF-8” 将这句话改为 export LANG=”zh_CN.UTF-8”</li>
+</ol>
+<p>经过以上修改，我的还是有中文乱码。</p>
+<p>破解试用期方案：<br>第一次执行start_navicat时，会在用户主目录下生成一个名为.navicat的隐藏文件夹。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/hewentian/.navicat/</span><br></pre></td></tr></table></figure></p>
+<p>此文件夹下有一个system.reg文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm system.reg</span><br></pre></td></tr></table></figure></p>
+<p>把此文件删除后，下次启动navicat 会重新生成此文件，14天试用期会按新的时间开始计算。</p>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
 
       
     </div>
     <footer class="article-footer">
+<<<<<<< HEAD
       <a data-url="https://github.com/hewentian/2017/09/12/ubuntu-learn-note/" data-id="cj9fjlm2v000hb8f7sb0clhg2" class="article-share-link">Share</a>
+=======
+      <a data-url="https://github.com/hewentian/2017/09/12/ubuntu-learn-note/" data-id="cja2gjs5z000vj02ilh098r0u" class="article-share-link">Share</a>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -170,7 +249,11 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
+<<<<<<< HEAD
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/solr/">solr</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tomcat/">tomcat</a><span class="category-list-count">1</span></li></ul>
+=======
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/solr/">solr</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tomcat/">tomcat</a><span class="category-list-count">1</span></li></ul>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
     </div>
   </div>
 
@@ -180,7 +263,11 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
+<<<<<<< HEAD
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li></ul>
+=======
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
     </div>
   </div>
 
@@ -193,6 +280,7 @@
       <ul>
         
           <li>
+<<<<<<< HEAD
             <a href="/2017/10/29/solr-note/">solr学习笔记</a>
           </li>
         
@@ -210,6 +298,25 @@
         
           <li>
             <a href="/2017/09/27/markdown-learn-note/">markdown 学习笔记</a>
+=======
+            <a href="/2017/11/16/java-note/">java一些常用笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/16/install-hexo/">安装 Hexo</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/10/maven-note/">maven-note</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/10/html-css/">html-css前端相关</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/10/java-get-entity-property-and-value/">java 获取对象的所有属性和它们的值</a>
+>>>>>>> 1fe9683a2e8d0496cd367a1c235a868cf6def1d3
           </li>
         
       </ul>
