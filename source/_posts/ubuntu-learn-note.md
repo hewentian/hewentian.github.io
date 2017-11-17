@@ -246,5 +246,50 @@ rm system.reg
 把此文件删除后，下次启动navicat 会重新生成此文件，14天试用期会按新的时间开始计算。
 
 
+### linux中解压rar文件
+可以先执行如下命令，看系统是否已经安装 rar 命令
+``` bash
+hewentian@hewentian-Lenovo-IdeaPad-Y470:~/Downloads$ rar
+The program 'rar' is currently not installed. You can install it by typing:
+sudo apt install rar
+```
+如果输出如上面，则`Linux`中未安装`rar`命令，按提示安装即可
+``` bash
+hewentian@hewentian-Lenovo-IdeaPad-Y470:~/Downloads$ sudo apt install rar
+[sudo] password for hewentian: 
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Suggested packages:
+  unrar
+The following NEW packages will be installed:
+  rar
+0 upgraded, 1 newly installed, 0 to remove and 142 no
+```
+等待安装完成即可，验证是否成功安装，输入`rar`即可，看到如下输出，即证明安装成功。
+``` bash
+hewentian@hewentian-Lenovo-IdeaPad-Y470:~/Downloads$ rar
+
+RAR 5.30 beta 2   Copyright (c) 1993-2015 Alexander Roshal   4 Aug 2015
+Trial version             Type RAR -? for help
+
+Usage:     rar <command> -<switch 1> -<switch N> <archive> <files...>
+               <@listfiles...> <path_to_extract\>
+
+<Commands>
+  a             Add files to archive
+  c             Add archive comment
+  ch            Change archive parameters
+  cw            Write archive comment to file
+  d             Delete files from archive
+
+```
+解压方法很简单：
+``` bash
+hewentian@hewentian-Lenovo-IdeaPad-Y470:~/Downloads$ rar x 要解压的文件名.rar
+```
+这将压缩包解压在当前目录下
+
+
 
 
