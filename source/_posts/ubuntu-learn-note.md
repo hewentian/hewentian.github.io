@@ -292,4 +292,59 @@ hewentian@hewentian-Lenovo-IdeaPad-Y470:~/Downloads$ rar x 要解压的文件名
 
 
 
+### 当安装软件的时候出现如下错误的时候
+``` bash
+linux-image-extra-4.10.0-38-generic depends on linux-image-4.10.0-38-generic; however:
+  Package linux-image-4.10.0-38-generic is not configured yet.
+```
+解决方法如下：
+``` bash
+$ sudo dpkg --configure -a
+```
+
+
+### 在Ubuntu上检查一个软件包是否安装
+
+要检查特定的包，比如firefox是否安装了，使用这个命令：
+``` bash
+$ dpkg -s firefox
+```
+同样，你可以使用dpkg-query 命令。这个命令会有更好的输出，当然，你可以用通配符。
+``` bash
+$ dpkg-query -l firefox
+```
+要列出你系统中安装的所有包，输入下面的命令：
+``` bash
+$ dpkg --get-selections
+```
+你同样可以通过grep来过滤割到更精确的包。比如，我想要使用dpkg命令查看系统中安装的gcc包：
+``` bash
+$ dpkg --get-selections | grep gcc
+```
+
+### ubuntu 解压zip文件出现乱码
+由于zip格式中并没有指定编码格式，Windows下生成的zip文件中的编码是GBK/GB2312等，因此，导致这些zip文件在Linux下解压时出现乱码问题，因为Linux下的默认编码是UTF8
+
+有2种方式解决问题：
+
+1. 通过unzip行命令解压，指定字符集
+unzip -O CP936 {要解压的文件名}.zip (用GBK, GB18030也可以)
+
+2. 在环境变量中，指定unzip参数，总是以指定的字符集显示和解压文件
+/etc/environment中加入2行
+UNZIP="-O CP936"
+ZIPINFO="-O CP936"
+
+
+### 在 Ubuntu 上面远程连回 Windows 7
+1. 首先需要开启 Windows 7 上的远程桌面: 打开[控制面板] -> [管理工具] -> [服务] -> [Terminal Services], 开启该服务（有可能找不到）;
+2. 然后右击 [我的电脑] -> 选择[属性] -> 远程设置 -> 远程 -> 选择远程协助中的 [允许远程协助连接这台计算机]，下面的远程桌面选择 [允许运行任意版本远程桌面的计算机连接];
+3. 有可能还需要关闭[防火墙];
+4. 在 Ubuntu 上面使用如下命令连回 Windows 7; 
+``` bash
+$ rdesktop {Windows7_IP}
+或者 
+$ rdesktop {Windows7_IP} -f -u {YOUR_LOGIN_NAME} -p {YOUR_PASSWD} 
+# -f 全屏，直接输入用户名和密码, 以全屏方式进入 windows 的退出方式是 [开始] -> [断开连接]
+```
 
