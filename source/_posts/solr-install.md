@@ -13,7 +13,7 @@ categories: solr
 
 截至写该笔记时，solr的版本为6.5.0，下载后，将其解压到任意一个目录。当然，目录路径不要有中文。
 
-我解压到 E:\solr-6.5.0，目录结构如下：
+我解压到`/home/hewentian/ProjectD/solr-6.5.0`，目录结构如下：
 bin
 contrib
 dist
@@ -30,14 +30,14 @@ README.txt
 solr的软件包，默认使用jetty部署，SOLR6要求JDK8，启动solr的命令很简单：
 在DOS窗口中命令如下：
 ``` bash
-E:\solr-6.5.0\bin\solr start
+$ /home/hewentian/ProjectD/solr-6.5.0/bin/solr start
 ```
 然后在浏览器中可以访问：
 http://localhost:8983/solr
 
 
 在server/solr目录下，有一个README.txt的文件，其中说明了如何建立solr core。
-最简单的建立是直接复制solr中为我们提供好的例子，打开server/solr/configsets目录会发现里面已经有三个例子，如下：
+最简单的建立是直接复制solr中为我们提供好的例子，打开`server/solr/configsets`目录会发现里面已经有三个例子，如下：
 basic_configs
 data_driven_schema_configs
 sample_techproducts_configs
@@ -45,14 +45,14 @@ sample_techproducts_configs
 因为我们是要从数据库导入数据，所以选择以 “data_driven_schema_configs” 这个例子为模板创建我们的core: mysqlCore。
 在DOS窗口中命令如下：
 ``` bash
-E:\solr-6.5.0\bin\solr create -c mysqlCore -d data_driven_schema_configs
+$ /home/hewentian/ProjectD/solr-6.5.0/bin/solr create -c mysqlCore -d data_driven_schema_configs
 ```
 
 说明：
 -c: 指定创建的core为mysqlCore
 -d：指定以data_driven_schema_configs为模板
 
-执行上面的命令后在E:\solr-6.5.0\server\solr目录下会有一个文件夹mysqlCore
+执行上面的命令后在`/home/hewentian/ProjectD/solr-6.5.0/server/solr`目录下会有一个文件夹mysqlCore
 
 然后在浏览器中可以访问：
 http://localhost:8983/solr
@@ -93,7 +93,7 @@ values
 ```
 
 为了使用mysql导入数据，我们还需要导入两个重要的jar包。由于mysql的jar包并没有在项目中，于是我复制了一份
-放到了server/lib/ext目录下面了。我加的是mysql-connector-java-5.1.25.jar，如果你的是另外的版本，要修改下
+放到了`server/lib/ext`目录下面了。我加的是mysql-connector-java-5.1.25.jar，如果你的是另外的版本，要修改下
 面的lib中正则的部分。另外两个需要的jar包就是dist目录下带有“dataimport”标识的jar包。
 然后打开mysqlCore/conf/solrconfig.xml，引用上面提到的jar包，如下。
 ``` xml
@@ -167,8 +167,8 @@ values
 ```
 由于修改了配置文件，所以要重启solr，命令如下：
 ``` bash
-E:\solr-6.5.0>bin\solr stop -all
-E:\solr-6.5.0>bin\solr start
+$ /home/hewentian/ProjectD/solr-6.5.0/bin/solr stop -all
+$ /home/hewentian/ProjectD/solr-6.5.0/bin/solr start
 ```
 然后在浏览器中可以访问：
 http://localhost:8983/solr

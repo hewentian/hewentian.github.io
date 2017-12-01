@@ -235,15 +235,14 @@ tar -xzvf /home/hewentian/Downloads/navicat120_mysql_en_x64.tar.gz
 经过以上修改，我的还是有中文乱码。
 
 破解试用期方案：
-第一次执行start_navicat时，会在用户主目录下生成一个名为.navicat的隐藏文件夹。
+第一次执行start_navicat时，会在用户主目录下生成一个名为`.navicat64`的隐藏文件夹，只要重新删除该文件即可重新计算14天试用期。
 ``` bash
-cd /home/hewentian/.navicat/  
+$ cd /home/hewentian
+$ ls -a 				# 显示隐藏文件内的所有文件
+$ rm -rf .navicat64 	# 删除该文件
+$ 						# 或者删除此目录下的system.reg文件，但是没有效果
 ```
-此文件夹下有一个system.reg文件
-``` bash
-rm system.reg
-```
-把此文件删除后，下次启动navicat 会重新生成此文件，14天试用期会按新的时间开始计算。
+把文件夹删除后，下次启动navicat 会重新生成此文件，14天试用期会按新的时间开始计算。
 
 
 ### linux中解压rar文件
@@ -347,4 +346,72 @@ $ rdesktop {Windows7_IP}
 $ rdesktop {Windows7_IP} -f -u {YOUR_LOGIN_NAME} -p {YOUR_PASSWD} 
 # -f 全屏，直接输入用户名和密码, 以全屏方式进入 windows 的退出方式是 [开始] -> [断开连接]
 ```
+
+### Linux下的任务调度分为两类，系统任务调度和用户任务调度。
+1. 系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。
+/etc/crontab文件包括下面几行：
+``` bash
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# m h dom mon dow user	command
+17 *	* * *	root    cd / && run-parts --report /etc/cron.hourly
+25 6	* * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6	* * 7	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6	1 * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+#
+```
+
+2. 用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。所有用户定义的crontab 文件都被保存在 /var/spool/cron目录中。其文件名与用户名一致
+
+查看crontab服务状态：
+``` bash
+$ /etc/init.d/cron status  # 可用的参数 force-reload | reload | restart | start | status | stop
+```
+### crontab 的用法
+``` bash
+usage:	crontab [-u user] file
+	crontab [ -u user ] [ -i ] { -e | -l | -r }
+		(default operation is replace, per 1003.2)
+	-e	(edit user's crontab)
+	-l	(list user's crontab)
+	-r	(delete user's crontab)
+	-i	(prompt before deleting user's crontab)
+```
+例子如下：
+``` bash
+$ crontab -e
+```
+在打开的文件中输入如下内容，这将会在每分钟往文件中输出时间
+``` bash
+*/1 * * * * /bin/date >> /home/hewentian/Documents/a.txt
+```
+
+在资源浏览器 [Connect to Server] 窗口输入：smb://需要访问的机器IP
+等同于Windows下输入：\\IP
+
+
+### curl模拟http发送get或post请求
+参照：http://www.voidcn.com/blog/Vindra/article/p-4917667.html
+
+1. get请求 
+curl "http://www.baidu.com"  如果这里的URL指向的是一个文件或者一幅图都可以直接下载到本地
+curl -i "http://www.baidu.com"  显示全部信息
+curl -l "http://www.baidu.com" 只显示头部信息
+curl -v "http://www.baidu.com" 显示get请求全过程解析
+
+wget "http://www.baidu.com"也可以
+
+2. post请求
+curl -d "param1=value1&param2=value2" "http://www.baidu.com"
+
+3. json格式的post请求
+curl -l -H "Content-type: application/json" -X POST -d '{"phone":"13800138000","password":"passwd"}' http://domain/apis/users.json
+
 
