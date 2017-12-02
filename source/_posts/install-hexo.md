@@ -55,7 +55,7 @@ $ sudo apt-get install nodejs-legacy
 ```
 
 ### 3. 安装 Hexo
-输入以下命令
+进入到我们博客的仓库, 输入以下命令
 ``` bash
 $ sudo npm install -g hexo-cli
 或者
@@ -67,13 +67,12 @@ $ sudo npm install hexo --save  # 或者去掉 sudo
 $ hexo version
 ```
 如果能看到hexo的版本号信息，就表示安装成功了
-接下来，进入到我们进入博客的仓库
+接下来，进入到我们博客的仓库
 
 然后依次输入以下命令
 ``` bash
 $ hexo init  # 注意此命令，要求当前仓库为空，可以先将仓库的文件移走，再执行此命令，然后再将文件移回来。
-# 如果之前在其他机器已经执行过`init`方法，并且同步到 github，并且这次是从 github clone 来的，则不必再执行`hexo init`这个命令
-可以先在当前目录的父目录创建临时目录hgi
+$ # 可以先在当前目录的父目录创建临时目录hgi
 $ mkdir ../hgi
 $ mv * ../hgi # 这个命令不会将 .git .gitignore这两个文件夹移走，所以，还要执行如下命令
 $ mv .git .gitignore ../hgi/
@@ -83,6 +82,8 @@ $ hexo s
 ```
 这时候在浏览器输入http://localhost:4000/ 就可以看到hexo已经成功生成了博客，当然这只是我们本地可以看到的
 
+最后将博客的仓库目录下除了`node_modules`之外的文件都删掉，然后将 ../hgi 中的除了`node_modules`之外的文件都复制回来(不要忘记.git .gitignore)，大功告成。
+重启hexo
 
 配置Hexo到Github
 

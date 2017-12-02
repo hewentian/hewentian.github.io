@@ -5,6 +5,12 @@ tags: Linux
 categories: Linux
 ---
 
+在安装ubuntu的过程中的分区顺序: /boot -> / -> swap:
+
+	/boot	primary		512M
+	/		primary		剩下的容量减去内存2倍
+	swap	logic		内存2倍
+
 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误
 
 错误如下：
@@ -414,4 +420,52 @@ curl -d "param1=value1&param2=value2" "http://www.baidu.com"
 3. json格式的post请求
 curl -l -H "Content-type: application/json" -X POST -d '{"phone":"13800138000","password":"passwd"}' http://domain/apis/users.json
 
+### 在ubuntu上面安装 maven
+``` bash
+$ su root 	# 切换到 root 用户
+$ cd /home/hewentian/Downloads	# 进入到 maven 下载的目录
+$ tar xzvf apache-maven-3.3.9-bin.tar.gz
+# cd /usr/local
+# mv /home/hewentian/Downloads/apache-maven-3.3.9 ./
+$# 在 /etc/profile 文件中添加 maven 路径
+# vi /etc/profile
+$ # 在打开的文件中添加如下代码
+# add maven
+export M2_HOME=/usr/local/apache-maven-3.3.9
+export PATH=${M2_HOME}/bin:$PATH$
+
+保存，并退出，执行如下语句，验证安装结果
+$ sour$ce /etc/profile
+$ mvn -version
+
+$ # 如无意外，你将看到如下输出
+Maven home: /usr/local/apache-maven-3.3.9
+Java version: 1.8.0_102, vendor: Oracle Corporation
+Java home: /usr/local/java/jdk1.8.0_102/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "4.10.0-28-generic", arch: "amd64", family: "unix"
+```
+
+### ubuntu 16.04 安装 google-chrome-stable_current_amd64.deb 方法
+``` bash
+$ cd {google-chome所在目录}
+$ sudo dpkg -i google-chrome-stable_current_amd64.deb
+$ # 如果安装过程输出如下错误
+$ # google-chrome-stable depends on libappindicator1; however:
+$ # 那么执行如下命令
+$ sudo apt-get -f install libappindicator1 libindicator7
+$ # 然后再执行原来的安装命令
+$ sudo dpkg -i google-chrome-stable_current_amd64.deb
+```
+
+### Ubuntu 16.04 关闭笔记本触摸板
+1. 禁用触摸板
+``` bash
+$ sudo rmmod psmouse
+```
+
+2. 重启触摸板
+``` bash
+$ sudo modprobe psmouse
+```
 
