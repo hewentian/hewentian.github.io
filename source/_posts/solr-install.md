@@ -11,7 +11,11 @@ categories: solr
 
 首先下载solr，下载地址为：http://lucene.apache.org/solr/
 
-截至写该笔记时，solr的版本为6.5.0，下载后，将其解压到任意一个目录。当然，目录路径不要有中文。
+截至写该笔记时，solr的版本为6.5.0，下载`solr-6.5.0.tgz`后，将其解压到任意一个目录。当然，目录路径不要有中文。
+``` bash
+# cd /home/hewentian/ProjectD
+$ tar xzvf solr-6.5.0.tgz
+```
 
 我解压到`/home/hewentian/ProjectD/solr-6.5.0`，目录结构如下：
 bin

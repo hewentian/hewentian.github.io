@@ -432,7 +432,7 @@ $# 在 /etc/profile 文件中添加 maven 路径
 $ # 在打开的文件中添加如下代码
 # add maven
 export M2_HOME=/usr/local/apache-maven-3.3.9
-export PATH=${M2_HOME}/bin:$PATH$
+export PATH=$M2_HOME/bin:$PATH
 
 保存，并退出，执行如下语句，验证安装结果
 $ sour$ce /etc/profile
