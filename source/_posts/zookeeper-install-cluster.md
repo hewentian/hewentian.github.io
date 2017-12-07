@@ -1,8 +1,8 @@
 ---
 title: zookeeper 集群版安装方法
 date: 2017-12-06 16:33:35
-tags: java
-categories: java
+tags: zookeeper
+categories: bigdata
 ---
 ### 计划在一台`Ubuntu Linux`服务器上部署3台`zookeeper`服务器，分别为`server1`, `server2`, `server3`
 因为三台`zookeeper`服务器的配置都差不多，所以我们先设置好一台`server1`的配置，再将其复制成`server2`, `server3`并修改其中的配置即可。

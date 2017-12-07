@@ -1,8 +1,8 @@
 ---
 title: zookeeper 单机版安装方法
 date: 2017-12-06 16:33:23
-tags: java
-categories: java
+tags: zookeeper
+categories: bigdata
 ---
 ### 下面演示在 Ubuntu 16.04 LTS 下面安装 zookeeper
 将`zookeeper-3.4.6.tar.gz`放到一个目录下，如`/home/hewentian/ProjectD`
