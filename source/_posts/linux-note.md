@@ -1,5 +1,5 @@
 ---
-title: ubuntu 学习笔记
+title: Linux 学习笔记
 date: 2017-09-12 20:41:37
 tags: Linux
 categories: Linux
@@ -45,16 +45,11 @@ $ sudo apt-get remove vim-common
 ```
 卸载成功之后接着执行 sudo apt-get install vim,安装好之后就能使用了
 
-
-要检查特定的包，比如firefox是否安装了，使用这个命令：
-``` bash
-$ dpkg -s firefox
-
-ubuntu下useradd与adduser区别，新建用户不再home目录下
+### ubuntu下useradd与adduser区别，新建用户不再home目录下
 useradd username不会在/home下建立一个文件夹username
 adduser username会在/home下建立一个文件夹username
 useradd -m username跟adduser一样，可以建立一个文件夹username
-```
+
 永久性删除用户账号
 ``` bash
 $ userdel peter
@@ -468,4 +463,77 @@ $ sudo rmmod psmouse
 ``` bash
 $ sudo modprobe psmouse
 ```
+
+### linux下查看某命令的具体位置使用which，如：
+``` bash
+$ which ab
+```
+
+
+### 在Linux/unix 平台上的`sqlplus`中，如果输错了字符，要想删除，习惯性的按下`backspace`键后，发现非但没有删除想要删掉的字符，还多出了两个字符^H。当然，我们可以同时按下`ctrl+backspace`键来删除，但对于习惯了用`backspace`来删除的用户，这样很不爽。这可以通过修改tty终端的设置来实现`backspace`删除功能。通过使用stty命令，就可以查看或者修改终端的按键设置。
+例如，设置backspace为删除键：
+``` bash
+$ stty erase ^h
+```
+如果要改回使用ctrl+backspace为删除键
+``` bash
+$ stty erase ^?
+```
+如果需要重启后自动设置终端，可以将上述命令加入到profile中。可以通过stty -a命令来查看所有的终端设置。下面是在linux下执行的输出：
+``` bash
+$ stty -a
+$ cat /etc/os-release
+```
+
+### 关于Linux中的so文件
+1. so文件就是通常说的动态链接库，就跟windows下的dll文件差不多；
+2. ko是内核模块文件，驱动之类的啥的；
+3. 不过在linux系统下文件的后缀多数情况下只是个标识，有可能代表不了文件的真实属性的。
+
+
+### linux下采用LD_PRELOAD机制动态修改方法和注入代码
+LD_PRELOAD是Linux下的一个环境变量，动态链接器在载入一个程序所需的所有动态库之前，
+首先会载入LD_PRELOAD环境变量所指定的动态库。运用这个机制，我们可以修改/替换已有动态库中的方法，
+加入我们自己的逻辑，从而改变程序的执行行为。不过该方法只对动态链接的程序有效，对静态链接的程序无效。
+
+
+### linux下面查看文件的MD5值，用命令：md5sum
+用法一，产生MD5值：
+``` bash
+$ md5sum [文件]
+```
+用法二，从文件中读取MD5的校验值并予以检查，要求同目录下面要有如下两个文件：
+
+	solr-6.5.0.zip
+	solr-6.5.0.zip.md5
+
+命令如下：
+``` bash
+$ md5sum -c solr-6.5.0.zip.md5
+如果相同，输出：
+solr-6.5.0.zip: OK
+```
+md5值重定向将生成md5值重定向到指定的文件，通常文件的扩展名我们会命为.md5
+``` bash
+$ md5sum data > data.md5
+$ md5sum data
+0a6de444981b68d6a049053296491e49  data
+
+$ cat data.md5 
+0a6de444981b68d6a049053296491e49  data
+```
+
+### linux查找一个目录的命令
+``` bash
+查找目录：find /（查找范围） -name '查找关键字' -type d
+```
+
+### Linux查找含有某字符串的所有文件
+	grep -rn "hello,world!" *
+ 
+	* : 表示当前目录所有文件，也可以是某个文件名
+	-r 是递归查找
+	-n 是显示行号
+	-R 查找所有文件包含子目录
+	-i 忽略大小写
 
