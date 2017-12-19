@@ -6,7 +6,7 @@ comments: false
 ---
 个人爱好: 弹吉它、跑步、旅行、看书
 
-编程语言: Java, Python, JavaScript
+编程语言: C/C++, Java, Python, JavaScript
 
 研究方向: Java, Linux
 

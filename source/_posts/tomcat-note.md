@@ -1,9 +1,11 @@
 ---
-title: tomcat 登录用户名 与 密码设置
+title: tomcat 学习笔记
 date: 2017-09-11 10:21:02
 tags: tomcat
-categories: tomcat
+categories: java
 ---
+
+### tomcat 登录用户名 与 密码设置
 ``` xml
 403 Access Denied
 
@@ -53,3 +55,21 @@ Tomcat Manager是Tomcat自带的、用于对Tomcat自身以及部署在Tomcat上
 
 完成这两步之后，重启tomcat ，输入刚才设置的用户名和密码，即可登录Tomcat 管理web project
 
+
+### tomcat配置访问项目时不需要加项目名称
+访问JAVA WEB项目的时候，需要在地址中添加项目名称，可以去掉项目名称直接访问项目
+目前有两种方式：
+方式1: 修改`${TOMCAT_HOME}/conf`目录下的`server.xml`配置
+``` xml
+<Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">
+	<!-- path留空代表访问域名后面不需要带项目的名称 -->
+	<Context path="" docBase="/home/hewentian/ProjectD/brandSearch" reloadable="true" />  
+</Host>
+
+说明：
+path: 代表访问时的项目名称
+docBase: 代表项目的绝对路径，也可以使用相对路径
+```
+
+方式2：将项目下的文件复制放到`${TOMCAT_HOME}/webapps/ROOT`目录下
+所有的项目都在webapps目录里面，ROOT是其中的一个项目，浏览器访问`http://localhost:8080/`其实是默认访问ROOT项目。

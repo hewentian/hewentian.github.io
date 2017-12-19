@@ -327,7 +327,7 @@ $ dpkg --get-selections | grep gcc
 
 有2种方式解决问题：
 
-1. 通过unzip行命令解压，指定字符集
+1. 通过`unzip`命令解压，指定字符集
 unzip -O CP936 {要解压的文件名}.zip (用GBK, GB18030也可以)
 
 2. 在环境变量中，指定unzip参数，总是以指定的字符集显示和解压文件
@@ -537,3 +537,86 @@ $ cat data.md5
 	-R 查找所有文件包含子目录
 	-i 忽略大小写
 
+### md5sum的使用
+``` bash
+对一个文件计算MD5值
+$ md5sum apache-tomcat-8.0.47.tar.gz
+0fd249576c33fa71947bc7d296d5b0a9  apache-tomcat-8.0.47.tar.gz
+
+对一个文件计算MD5值，并保存到文件中
+$ md5sum apache-tomcat-8.0.47.tar.gz > apache-tomcat-8.0.47.tar.gz.md5
+
+用MD5文件校验原来的文件是否被修改过
+$ md5sum -c apache-tomcat-8.0.47.tar.gz.md5
+apache-tomcat-8.0.47.tar.gz: OK
+```
+
+### 端口的分类： 
+端口在报头中占两个字节，也就是16位。端口号用来表示和区别网络中的不同应用程序。端口分为三大类： 
+
+1. 公认端口（Well Known Ports）：0-1023之间的端口号，在LINUX中这些端口你不能随便使用。这些端口由 IANA 分配管理。IANA 把这些端口分配给最重要的一些应用程序，让所有的用户都知道，当一种新的应用程序出现后，IANA必须为它指派一个公认端口。 常用的公认端口有：
+
+		FTP:	21
+		TELNET:	23
+		SMTP:	25
+		DNS:	53
+		TFTP:	69
+		HTTP:	80
+		SNMP:	161
+
+2. 注册端口（Registered Ports）：从1024-49151，是公司和其他用户向互联网名称与数字地址分配机构（ICANN）登记的端口号，利用因特网的传输控制协议（TCP）和用户数据报协议（UDP）进行通信的应用软件需要使用这些端口。在大多数情况下，这些应用软件和普通程序一样可以被非特权用户打开。
+
+3. 客户端使用的端口号：49152~65535，这类端口号仅在客户进程运行时才动态选择，因此又叫做短暂端口号。被保留给客户端进程选择暂时使用的。也可以理解为，客户端启动的时候操作系统随机分配一个端口用来和服务器通信，客户端进程关闭下次打开时，又重新分配一个新的端口。
+
+端口就像一道门，外部可以通过不同的端口和本机上不同服务的进程进行交流。而IP 地址和端口号标识了接入互联网主机的唯一 一个进程
+
+
+### ubuntu 中使用 SQuirreL 连接各种 RDBMS
+参考：http://www.opensoce.com/367.html
+
+使用`SQuirreL SQL Client`连接各种`RDBMS`数据库，其官方网站为：http://sourceforge.net/projects/squirrel-sql，
+截至写本文时，其最新版本为：squirrel-sql-snapshot-20171121_2249，其最大的魅力在于：
+
+1. 基于Java，具备良好的夸平台特性，在Windows下一样可以很好的使用；
+2. 只要具备相应数据库的类库，就可以连接对应的数据库，例如SQL Server、MySQL、Oracle、Sybase、DB2等等。
+
+首先下载：
+http://sourceforge.net/projects/squirrel-sql
+
+然后确保系统已经安装java，然后切换到`squirrel-sql-snapshot-20171121_2249-standard.jar`所在目录执行：
+``` bash
+$ java -jar squirrel-sql-snapshot-20171121_2249-standard.jar
+```
+然后根据提示选择安装路径，我安装到`/home/hewentian/ProjectD/squirrel-sql-snapshot-20171121_2249`，后续安装步骤中，插件我选择了
+
+	Data import
+	DBCopy
+	DBDiff
+	Microsoft SQL Server
+	MySQL
+	Oracle
+安装完成之后，需要去下载相应的`RDBMS`的jar包：
+SQL Server(jtds):
+http://sourceforge.net/projects/jtds/files/
+
+mysql(MySQL Connector):
+http://dev.mysql.com/downloads/connector/j/
+
+oracle(JDBC):
+http://www.oracle.com/technology/global/cn/software/tech/java/sqlj_jdbc/index.html
+
+然后将`jtds-1.3.1.jar`、`ojdbc14.jar`、`mysql-connector-java-5.1.25.jar`复制到`SQuirrel SQL`安装目录下的`lib`目录，这样`SQuirrel SQL`就具备了连接`SQL Server`、`Oracle`、`MySQL`的能力。
+
+最后，到`SQuirreL`的目录重启SQuirreL：
+``` bash
+$ cd /home/hewentian/ProjectD/squirrel-sql-snapshot-20171121_2249
+$ ./squirrel-sql.sh
+```
+之后在左侧Aliases中添加一个Alias，填入正确的连接信息内容类似于：
+
+	Name: 输入连接的名字
+	Driver: jTDS Microsoft SQL
+	URL: 
+	User Name: 
+	Password: 
+这样就可以连接了。

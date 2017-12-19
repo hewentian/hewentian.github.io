@@ -25,9 +25,9 @@ EmbeddedSolrServer 提供和 HttpSolrClient 相同的接口，它不需要http�
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.core.CoreContainer;
 
-System.setProperty("solr.solr.home", "E:\\solr-6.5.0\\server\\solr");
+System.setProperty("solr.solr.home", "/home/hewentian/ProjectD/solr-6.5.0/server/solr");
 		
-CoreContainer coreContainer = new CoreContainer("E:\\solr-6.5.0\\server\\solr");
+CoreContainer coreContainer = new CoreContainer("/home/hewentian/ProjectD/solr-6.5.0/server/solr");
 coreContainer.load(); // don't forge to invoke this method since solr 4.4.0
 		
 EmbeddedSolrServer embeddedSolrServer = new EmbeddedSolrServer(coreContainer, coreName);
@@ -256,7 +256,7 @@ defaultSearchField: 默认搜索属性，如q=solr就是默认的搜索那个字
 solrQueryParser: 查询转换模式，是并且还是或者（AND/OR必须大写）
 
 ## solr配置solrconfig.xml
-对于我的机器来说，是在以下目录：E:\solr-6.5.0\server\solr\mysqlCore\conf\solrconfig.xml
+对于我的机器来说，是在以下目录：/home/hewentian/ProjectD/solr-6.5.0/server/solr/mysqlCore/conf/solrconfig.xml
 
 ### 索引indexConfig
 Solr 性能因素，来了解与各种更改相关的性能权衡。 下表概括了可控制 Solr 索引处理的各种因素：

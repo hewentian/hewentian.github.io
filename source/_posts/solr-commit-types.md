@@ -40,7 +40,7 @@ solrClient.commit();
 
 ## 3.AutoCommit
 参考：http://wiki.apache.org/solr/SolrConfigXml
-例如，我的配置文件在 E:\solr-6.5.0\server\solr\mysqlCore\conf\solrconfig.xml 中已有默认配置，如下：
+例如，我的配置文件在 /home/hewentian/ProjectD/solr-6.5.0/server/solr/mysqlCore/conf/solrconfig.xml 中已有默认配置，如下：
 ``` xml
 <!-- The default high-performance update handler -->
   <updateHandler class="solr.DirectUpdateHandler2">
