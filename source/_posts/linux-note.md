@@ -620,3 +620,34 @@ $ ./squirrel-sql.sh
 	User Name: 
 	Password: 
 这样就可以连接了。
+
+
+### 修改SSH的默认22端口
+``` bash
+首先查看是否有使用22端口
+$ lsof -i:22
+COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+sshd     934 root    3u  IPv4   8688      0t0  TCP *:ssh (LISTEN)
+sshd    2305 root    3r  IPv4  25836      0t0  TCP 123.57.238.142:ssh->66.133.135.219.broad.gz.gd.dynamic.163data.com.cn:60064 (ESTABLISHED)
+
+查看防火墙的情况，看下是否会允许你要修改的端口通过
+$ iptables -nL
+
+$ vim /etc/ssh/sshd_config
+找到Port这一行，修改为你想要的端口，这里设置为：12022，前提是该端口还没被其他程序使用
+
+重启SSH
+$ /etc/init.d/sshd restart
+Stopping sshd:                                             [  OK  ]
+Starting sshd:                                             [  OK  ]
+
+$ lsof -i:12022
+COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+sshd    2382 root    3u  IPv4  28005      0t0  TCP *:12022 (LISTEN)
+sshd    2388 root    3r  IPv4  28216      0t0  TCP 123.57.238.142:12022->66.133.135.219.broad.gz.gd.dynamic.163data.com.cn:41068 (ESTABLISHED)
+
+可以看到端口已经修改过来了，再使用之前的命令就无法登录了
+$ ssh -p 22 root@123.57.238.142
+ssh: connect to host 123.57.238.142 port 22: Connection refused
+```
+

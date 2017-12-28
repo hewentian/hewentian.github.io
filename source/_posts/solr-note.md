@@ -483,4 +483,13 @@ Solr 提供了解决这种问题的方案：临近查询。在上面的例子中
 2）设置q参数为搜索关键词，这里不要再写搜索表达式了 
 3）设置qf参数，指定不同字段的权重，例如：title^10 keywords^10 content^1 表示title字段的权重设置为10，keywords为10，content权重设置为1 
 
-
+---
+### solr删除数据的快捷方式
+在solr的WEB客户端，访问你的索引库
+1)documents type 选择 XML 
+2)documents 输入下面语句
+``` xml
+<delete><query>*:*</query></delete>
+<commit/>
+```
+点击`Submit Document`即可
