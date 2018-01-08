@@ -11,12 +11,12 @@
 <meta property="og:title" content="solr的安装使用">
 <meta property="og:url" content="https://github.com/hewentian/2017/10/28/solr-install/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="下面说说我的solr学习笔记之 solr6.5.0 + jetty + mysql 使用 DIH 搭建 solr 服务 参考：https://wiki.apache.org/solr/DIHQuickStart 首先下载solr，下载地址为：http://lucene.apache.org/solr/ 截至写该笔记时，solr的版本为6.5.0，下载后，将其解压到任意一个目录。当然，目录路径不要有">
+<meta property="og:description" content="下面说说我的solr学习笔记之 solr6.5.0 + jetty + mysql 使用 DIH 搭建 solr 服务 参考：https://wiki.apache.org/solr/DIHQuickStart 首先下载solr，下载地址为：http://lucene.apache.org/solr/ 截至写该笔记时，solr的版本为6.5.0，下载solr-6.5.0.tgz后，将其解压到任意一">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-12-01T14:06:07.648Z">
+<meta property="og:updated_time" content="2017-12-07T02:22:13.922Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="solr的安装使用">
-<meta name="twitter:description" content="下面说说我的solr学习笔记之 solr6.5.0 + jetty + mysql 使用 DIH 搭建 solr 服务 参考：https://wiki.apache.org/solr/DIHQuickStart 首先下载solr，下载地址为：http://lucene.apache.org/solr/ 截至写该笔记时，solr的版本为6.5.0，下载后，将其解压到任意一个目录。当然，目录路径不要有">
+<meta name="twitter:description" content="下面说说我的solr学习笔记之 solr6.5.0 + jetty + mysql 使用 DIH 搭建 solr 服务 参考：https://wiki.apache.org/solr/DIHQuickStart 首先下载solr，下载地址为：http://lucene.apache.org/solr/ 截至写该笔记时，solr的版本为6.5.0，下载solr-6.5.0.tgz后，将其解压到任意一">
   
   
     <link rel="icon" href="/favicon.png">
@@ -78,7 +78,7 @@
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/solr/">solr</a>
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
   </div>
 
   </div>
@@ -100,7 +100,7 @@
         <p>下面说说我的solr学习笔记之 solr6.5.0 + jetty + mysql 使用 DIH 搭建 solr 服务</p>
 <p>参考：<a href="https://wiki.apache.org/solr/DIHQuickStart" target="_blank" rel="noopener">https://wiki.apache.org/solr/DIHQuickStart</a></p>
 <p>首先下载solr，下载地址为：<a href="http://lucene.apache.org/solr/" target="_blank" rel="noopener">http://lucene.apache.org/solr/</a></p>
-<p>截至写该笔记时，solr的版本为6.5.0，下载后，将其解压到任意一个目录。当然，目录路径不要有中文。</p>
+<p>截至写该笔记时，solr的版本为6.5.0，下载<code>solr-6.5.0.tgz</code>后，将其解压到任意一个目录。当然，目录路径不要有中文。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cd /home/hewentian/ProjectD</span></span><br><span class="line">$ tar xzvf solr-6.5.0.tgz</span><br></pre></td></tr></table></figure></p>
 <p>我解压到<code>/home/hewentian/ProjectD/solr-6.5.0</code>，目录结构如下：<br>bin<br>contrib<br>dist<br>docs<br>example<br>licenses<br>server<br>CHANGES.txt<br>LICENSE.txt<br>LUCENE_CHANGES.txt<br>NOTICE.txt<br>README.txt</p>
 <p>solr的软件包，默认使用jetty部署，SOLR6要求JDK8，启动solr的命令很简单：<br>在DOS窗口中命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ /home/hewentian/ProjectD/solr-6.5.0/bin/solr start</span><br></pre></td></tr></table></figure></p>
 <p>然后在浏览器中可以访问：<br><a href="http://localhost:8983/solr" target="_blank" rel="noopener">http://localhost:8983/solr</a></p>
@@ -124,7 +124,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjap2rnp6000ous2i81y2iamc" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjc5yn4a4000z4c2iijvacc9y" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -163,7 +163,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/solr/">solr</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tomcat/">tomcat</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -173,7 +173,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -186,23 +186,23 @@
       <ul>
         
           <li>
-            <a href="/2017/12/02/install-hexo/">安装 Hexo</a>
+            <a href="/2018/01/08/solr-ikanalyzer/">solr配置IKAnalyzer的中文分词</a>
           </li>
         
           <li>
-            <a href="/2017/11/16/java-note/">java一些常用笔记</a>
+            <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
           </li>
         
           <li>
-            <a href="/2017/11/10/maven-note/">maven-note</a>
+            <a href="/2017/12/08/install-jdk/">安装 JDK</a>
           </li>
         
           <li>
-            <a href="/2017/11/10/html-css/">html-css前端相关</a>
+            <a href="/2017/12/07/mysql-note/">mysql 笔记</a>
           </li>
         
           <li>
-            <a href="/2017/11/10/java-get-entity-property-and-value/">java 获取对象的所有属性和它们的值</a>
+            <a href="/2017/12/06/zookeeper-install-cluster/">zookeeper 集群版安装方法</a>
           </li>
         
       </ul>
@@ -227,7 +227,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2017 Tim Ho<br>
+      &copy; 2018 Tim Ho<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

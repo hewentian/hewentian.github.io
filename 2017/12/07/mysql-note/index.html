@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>mysql 笔记 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos">
+<meta name="keywords" content="mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql 笔记">
+<meta property="og:url" content="https://github.com/hewentian/2017/12/07/mysql-note/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos;, last_name) AS user_name, COUNT(*) AS c FROM user_ta">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-01-02T01:25:25.495Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql 笔记">
+<meta name="twitter:description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos;, last_name) AS user_name, COUNT(*) AS c FROM user_ta">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mysql-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/07/mysql-note/" class="article-date">
+  <time datetime="2017-12-07T02:26:13.000Z" itemprop="datePublished">2017-12-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/db/">db</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mysql 笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="mysql-查询重复数据"><a href="#mysql-查询重复数据" class="headerlink" title="mysql 查询重复数据"></a>mysql 查询重复数据</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> user_name, <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> c <span class="keyword">FROM</span> user_table <span class="keyword">GROUP</span> <span class="keyword">BY</span> user_name <span class="keyword">HAVING</span> c &gt; <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>当查询几个列的组合的时候，可以这样<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">CONCAT</span>(first_name, <span class="string">'_'</span>, last_name) <span class="keyword">AS</span> user_name, <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> c </span><br><span class="line"><span class="keyword">FROM</span> user_table </span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> user_name </span><br><span class="line"><span class="keyword">HAVING</span> c &gt; <span class="number">1</span>;</span><br></pre></td></tr></table></figure></p>
+<p>当使用<code>CONCAT(str1,str2,...)</code>函数的时候，只要有一个参数为<code>null</code>，则整个结果为<code>null</code>，而有时候这不是我们所想要的结果，这时候，我们可以使用<code>IFNULL(expr1,expr2)</code>函数来做一个转换，当<code>expr1</code>为<code>null</code>的时候，表达式的结果为<code>expr2</code>，否则为<code>expr1</code>，示例如下：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT CONCAT('Tim', ' ', 'Ho') FROM DUAL;	# Tim Ho</span><br><span class="line">SELECT IFNULL(null, 'expr2') FROM DUAL;		# expr2</span><br><span class="line">SELECT IFNULL('expr1', 'expr2') FROM DUAL;	# expr1</span><br></pre></td></tr></table></figure></p>
+<h3 id="mysql-添加唯一约束"><a href="#mysql-添加唯一约束" class="headerlink" title="mysql 添加唯一约束"></a>mysql 添加唯一约束</h3><p>表<code>t_user</code>结构如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Field        Type          Collation        Null    Key     Default            Extra           Privileges                       <span class="keyword">Comment</span>               </span><br><span class="line"><span class="comment">-----------  ------------  ---------------  ------  ------  -----------------  --------------  -------------------------------  ----------------------</span></span><br><span class="line"><span class="keyword">id</span>           <span class="built_in">int</span>(<span class="number">11</span>)       (<span class="literal">NULL</span>)           <span class="keyword">NO</span>      PRI     (<span class="literal">NULL</span>)             auto_increment  <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>,<span class="keyword">references</span>  用户<span class="keyword">ID</span>              </span><br><span class="line">login_name   <span class="built_in">varchar</span>(<span class="number">100</span>)  utf8_general_ci  <span class="keyword">NO</span>              (<span class="literal">NULL</span>)                             <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>,<span class="keyword">references</span>  登录名             </span><br><span class="line">passwd       <span class="built_in">varchar</span>(<span class="number">100</span>)  utf8_general_ci  <span class="keyword">NO</span>              (<span class="literal">NULL</span>)                             <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>,<span class="keyword">references</span>  登录密码          </span><br><span class="line">nick_name    <span class="built_in">varchar</span>(<span class="number">100</span>)  utf8_general_ci  YES             (<span class="literal">NULL</span>)                             <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>,<span class="keyword">references</span>  别名                </span><br><span class="line">gender       tinyint(<span class="number">4</span>)    (<span class="literal">NULL</span>)           YES             <span class="number">1</span>                                  <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>,<span class="keyword">references</span>  性别：<span class="number">1.</span>男；<span class="number">2.</span>女</span><br><span class="line">phone        <span class="built_in">varchar</span>(<span class="number">20</span>)   utf8_general_ci  YES             (<span class="literal">NULL</span>)                             <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>,<span class="keyword">references</span>  手机号码          </span><br><span class="line">address      <span class="built_in">varchar</span>(<span class="number">255</span>)  utf8_general_ci  YES             (<span class="literal">NULL</span>)                             <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>,<span class="keyword">references</span>  地址                </span><br><span class="line">create_time  <span class="keyword">timestamp</span>     (<span class="literal">NULL</span>)           YES             <span class="keyword">CURRENT_TIMESTAMP</span>                  <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>,<span class="keyword">references</span>  创建时间          </span><br><span class="line">update_time  <span class="keyword">timestamp</span>     (<span class="literal">NULL</span>)           YES             (<span class="literal">NULL</span>)                             <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>,<span class="keyword">references</span>  修改时间</span><br></pre></td></tr></table></figure></p>
+<p>给 login_name 和 phone 添加联合唯一约束<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> t_user <span class="keyword">ADD</span> <span class="keyword">UNIQUE</span> <span class="keyword">KEY</span> (login_name, phone);</span><br></pre></td></tr></table></figure></p>
+<p>你也可以在创建唯一约束的时候，给唯一约束起名<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> t_user <span class="keyword">ADD</span> <span class="keyword">UNIQUE</span> <span class="keyword">KEY</span> <span class="string">`uk_login_name_phone`</span> (login_name, phone);</span><br></pre></td></tr></table></figure></p>
+<p>查看结果：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">create</span> <span class="keyword">table</span> t_user;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`t_user`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT <span class="keyword">COMMENT</span> <span class="string">'用户ID'</span>,</span><br><span class="line">  <span class="string">`login_name`</span> <span class="built_in">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'登录名'</span>,</span><br><span class="line">  <span class="string">`passwd`</span> <span class="built_in">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'登录密码'</span>,</span><br><span class="line">  <span class="string">`nick_name`</span> <span class="built_in">varchar</span>(<span class="number">100</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'别名'</span>,</span><br><span class="line">  <span class="string">`gender`</span> tinyint(<span class="number">4</span>) <span class="keyword">DEFAULT</span> <span class="string">'1'</span> <span class="keyword">COMMENT</span> <span class="string">'性别：1.男；2.女'</span>,</span><br><span class="line">  <span class="string">`phone`</span> <span class="built_in">varchar</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'手机号码'</span>,</span><br><span class="line">  <span class="string">`address`</span> <span class="built_in">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'地址'</span>,</span><br><span class="line">  <span class="string">`create_time`</span> <span class="keyword">timestamp</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="keyword">CURRENT_TIMESTAMP</span> <span class="keyword">COMMENT</span> <span class="string">'创建时间'</span>,</span><br><span class="line">  <span class="string">`update_time`</span> <span class="keyword">timestamp</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'修改时间'</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>),</span><br><span class="line">  <span class="keyword">UNIQUE</span> <span class="keyword">KEY</span> <span class="string">`uk_login_name_phone`</span> (<span class="string">`login_name`</span>,<span class="string">`phone`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> AUTO_INCREMENT=<span class="number">2</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8</span><br></pre></td></tr></table></figure></p>
+<p>删除唯一约束:<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> t_user <span class="keyword">DROP</span> <span class="keyword">INDEX</span> uk_login_name_phone;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="MySQL中GROUP-CONCAT函数"><a href="#MySQL中GROUP-CONCAT函数" class="headerlink" title="MySQL中GROUP_CONCAT函数"></a>MySQL中GROUP_CONCAT函数</h3><p>参考：<a href="http://hchmsguo.iteye.com/blog/555543" target="_blank" rel="noopener">http://hchmsguo.iteye.com/blog/555543</a><br>完整的语法如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GROUP_CONCAT([DISTINCT] 要连接的字段 [Order BY ASC/DESC 排序字段] [Separator '分隔符'])</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li><p>基本查询</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> aa;  </span><br><span class="line"></span><br><span class="line">+<span class="comment">------+------+</span></span><br><span class="line">| id| name |</span><br><span class="line">+<span class="comment">------+------+</span></span><br><span class="line">|1 | 10|</span><br><span class="line">|1 | 20|</span><br><span class="line">|1 | 20|</span><br><span class="line">|2 | 20|</span><br><span class="line">|3 | 200 |</span><br><span class="line">|3 | 500 |</span><br><span class="line">+<span class="comment">------+------+</span></span><br><span class="line">6 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>以id分组，把name字段的值打印在一行，逗号分隔(默认)</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">group_concat</span>(<span class="keyword">name</span>) <span class="keyword">from</span> aa <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">id</span>;  </span><br><span class="line"></span><br><span class="line">+<span class="comment">------+--------------------+</span></span><br><span class="line">| id| group_concat(name) |</span><br><span class="line">+<span class="comment">------+--------------------+</span></span><br><span class="line">|1 | 10,20,20|</span><br><span class="line">|2 | 20 |</span><br><span class="line">|3 | 200,500|</span><br><span class="line">+<span class="comment">------+--------------------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>以id分组，把name字段的值打印在一行，分号分隔</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">group_concat</span>(<span class="keyword">name</span> separator <span class="string">';'</span>) <span class="keyword">from</span> aa <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">id</span>;  </span><br><span class="line"></span><br><span class="line">+<span class="comment">------+----------------------------------+</span></span><br><span class="line">| id| group_concat(name separator ';') |</span><br><span class="line">+<span class="comment">------+----------------------------------+</span></span><br><span class="line">|1 | 10;20;20 |</span><br><span class="line">|2 | 20|</span><br><span class="line">|3 | 200;500 |</span><br><span class="line">+<span class="comment">------+----------------------------------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>以id分组，把去冗余的name字段的值打印在一行，逗号分隔</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">group_concat</span>(<span class="keyword">distinct</span> <span class="keyword">name</span>) <span class="keyword">from</span> aa <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">id</span>;  </span><br><span class="line"></span><br><span class="line">+<span class="comment">------+-----------------------------+</span></span><br><span class="line">| id| group_concat(distinct name) |</span><br><span class="line">+<span class="comment">------+-----------------------------+</span></span><br><span class="line">|1 | 10,20|</span><br><span class="line">|2 | 20 |</span><br><span class="line">|3 | 200,500 |</span><br><span class="line">+<span class="comment">------+-----------------------------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>以id分组，把name字段的值打印在一行，逗号分隔，以name排倒序</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">group_concat</span>(<span class="keyword">name</span> <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">name</span> <span class="keyword">desc</span>) <span class="keyword">from</span> aa <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">id</span>;  </span><br><span class="line"></span><br><span class="line">+<span class="comment">------+---------------------------------------+</span></span><br><span class="line">| id| group_concat(name order by name desc) |</span><br><span class="line">+<span class="comment">------+---------------------------------------+</span></span><br><span class="line">|1 | 20,20,10 |</span><br><span class="line">|2 | 20|</span><br><span class="line">|3 | 500,200|</span><br><span class="line">+<span class="comment">------+---------------------------------------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<hr>
+<h3 id="GROUP-CONCAT使用及报错分析"><a href="#GROUP-CONCAT使用及报错分析" class="headerlink" title="GROUP_CONCAT使用及报错分析"></a>GROUP_CONCAT使用及报错分析</h3><p>函数GROUP_CONCAT，但在使用时，结果报了如下错误。</p>
+<pre><code>ERROR 1260 (HY000): Row 17 was cut by GROUP_CONCAT()
+</code></pre><p>原因：GROUP_CONCAT截断了结果，GROUP_CONCAT有个最大长度的限制，超过最大长度就会被截断掉。可以用下面命令查看其内存限制。<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> @@global.group_concat_max_len;</span><br><span class="line"></span><br><span class="line">+<span class="comment">-------------------------------+</span></span><br><span class="line">| @@global.group_concat_max_len |</span><br><span class="line">+<span class="comment">-------------------------------+</span></span><br><span class="line">|                      1024     |</span><br><span class="line">+<span class="comment">-------------------------------+</span></span><br></pre></td></tr></table></figure></p>
+<p>1024这就是一般MySQL系统默认的最大长度，解决限制方法有二：<br>方法一：在MySQL配置文件中加上<br>group_concat_max_len = 102400 #你要的最大长度</p>
+<p>方法二：可以简单一点，执行语句：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> <span class="keyword">GLOBAL</span> group_concat_max_len=<span class="number">102400</span>;</span><br></pre></td></tr></table></figure></p>
+<p>我是用方法一解决的</p>
+<h3 id="对连接要注意的事项"><a href="#对连接要注意的事项" class="headerlink" title="对连接要注意的事项"></a>对连接要注意的事项</h3><p>当用多个值连接起来产生一个MD5值、或其他用于确定唯一性的时候，几个值之间一定要加分隔符，否则不同记录可能会产生一样的MD5值。如下表：</p>
+<pre><code>NAME    AGE    FAMLY_NUM
+张三    51    5
+李四    5    15
+</code></pre><p>如果用AGE， FAMLY_NUM来产生一个MD5值来唯一确定这一条记录，在它们之间一定要加分隔符，否则连接结果都是515</p>
+<h3 id="创建数据库"><a href="#创建数据库" class="headerlink" title="创建数据库"></a>创建数据库</h3><p>在MYSQL中用<code>数据库管理员</code>用户创建了一个db，其他MYSQL用户是暂时看不到的，除非得到<code>数据库管理员</code>用户的授权<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> bfg_db <span class="keyword">COLLATE</span> = <span class="string">'utf8_general_ci'</span> <span class="built_in">CHARACTER</span> <span class="keyword">SET</span> = <span class="string">'utf8'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">GRANT</span> ALL <span class="keyword">ON</span> bfg_db.* <span class="keyword">TO</span> <span class="string">'bfg_user'</span>@<span class="string">'%'</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">BY</span> <span class="string">'iE1zNB?A91*YbQ9hK'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">GRANT</span> ALL <span class="keyword">ON</span> bfg_db.* <span class="keyword">TO</span> <span class="string">'bfg_user'</span>@<span class="string">'localhost'</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">BY</span> <span class="string">'iE1zNB?A91*YbQ9hK'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">FLUSH</span> <span class="keyword">PRIVILEGES</span>;</span><br></pre></td></tr></table></figure></p>
+<h3 id="mysql添加、删除主键"><a href="#mysql添加、删除主键" class="headerlink" title="mysql添加、删除主键"></a>mysql添加、删除主键</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">添加自增长的主键id</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb <span class="keyword">ADD</span> PRIMARY <span class="keyword">KEY</span>(<span class="keyword">id</span>);</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb <span class="keyword">CHANGE</span> <span class="keyword">id</span> <span class="keyword">id</span> <span class="built_in">INT</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT=<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">删除自增长的主键id，先删除自增长，再删除主键</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb <span class="keyword">CHANGE</span> <span class="keyword">id</span> <span class="keyword">id</span> <span class="built_in">int</span>(<span class="number">10</span>); //删除自增长</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb <span class="keyword">DROP</span> PRIMARY <span class="keyword">KEY</span>; //删除主建</span><br></pre></td></tr></table></figure>
+<h3 id="mysql查找删除重复数据并只保留一条"><a href="#mysql查找删除重复数据并只保留一条" class="headerlink" title="mysql查找删除重复数据并只保留一条"></a>mysql查找删除重复数据并只保留一条</h3><p>有表数据如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from t_user;</span><br><span class="line">+<span class="comment">------+-------+------+</span></span><br><span class="line">| id   | name  | age  |</span><br><span class="line">+<span class="comment">------+-------+------+</span></span><br><span class="line">|    1 | zhang |   21 |</span><br><span class="line">|    2 | li    |   22 |</span><br><span class="line">|    3 | zhang |   23 |</span><br><span class="line">+<span class="comment">------+-------+------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></p>
+<p>从上面可知，name字段有两条相同的记录zhang，我们要删除重复记录,保存id最小的一条<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	t_user </span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line">	<span class="keyword">name</span> <span class="keyword">IN</span> ( <span class="keyword">SELECT</span> t1.name <span class="keyword">FROM</span> ( <span class="keyword">SELECT</span> <span class="keyword">name</span> <span class="keyword">FROM</span> t_user <span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="keyword">name</span> <span class="keyword">HAVING</span> <span class="keyword">COUNT</span>( * ) &gt; <span class="number">1</span> ) t1 ) </span><br><span class="line">	<span class="keyword">AND</span> </span><br><span class="line">	<span class="keyword">id</span> <span class="keyword">NOT</span> <span class="keyword">IN</span> (<span class="keyword">SELECT</span> t2.id <span class="keyword">FROM</span> ( <span class="keyword">SELECT</span> <span class="keyword">min</span>( <span class="keyword">id</span> ) <span class="keyword">id</span> <span class="keyword">FROM</span> t_user <span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="keyword">name</span> <span class="keyword">HAVING</span> <span class="keyword">count</span>( * ) &gt; <span class="number">1</span> ) t2 );</span><br><span class="line">	</span><br><span class="line">然后再执行查询语句：</span><br><span class="line">mysql&gt; select * from t_user;</span><br><span class="line">+<span class="comment">------+-------+------+</span></span><br><span class="line">| id   | name  | age  |</span><br><span class="line">+<span class="comment">------+-------+------+</span></span><br><span class="line">|    1 | zhang |   21 |</span><br><span class="line">|    2 | li    |   22 |</span><br><span class="line">+<span class="comment">------+-------+------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></p>
+<p>可知，id为3的记录已经被删掉了。</p>
+<h3 id="char-varchar-nvarchar区别"><a href="#char-varchar-nvarchar区别" class="headerlink" title="char varchar nvarchar区别"></a>char varchar nvarchar区别</h3><p>参考：<a href="https://www.cnblogs.com/yelaiju/archive/2010/05/29/1746826.html" target="_blank" rel="noopener">https://www.cnblogs.com/yelaiju/archive/2010/05/29/1746826.html</a><br>Unicode字符集就是为了解决字符集的不兼容的问题而产生的，它所有的字符都用两个字节表示，即英文字符也是用两个字节表示</p>
+<p>varchar(n)<br>长度为 n 个字节的可变长度且非 Unicode 的字符数据。n 必须是一个介于 1 和 8,000 之间的数值。存储大小为输入数据的字节的实际长度，而不是 n 个字节。</p>
+<p>nvarchar(n)<br>包含 n 个字符的可变长度 Unicode 字符数据。n 的值必须介于 1 与 4,000 之间。字节的存储大小是所输入字符个数的两倍。</p>
+<p>两字段分别有字段值：我和coffee<br>那么varchar字段占2×2+6=10个字节的存储空间，而nvarchar字段占8×2=16个字节的存储空间。</p>
+<p>一般来说，如果含有中文字符，用nchar/nvarchar，如果纯英文和数字，用char/varchar</p>
+<p>联机帮助上的：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>长度</th>
+<th>使用说明</th>
+<th>长度说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>char(n)</td>
+<td>定长</td>
+<td>索引效率高 程序里面使用trim去除多余的空白</td>
+<td>n 必须是一个介于 1 和 8,000 之间的数值,存储大小为 n 个字节</td>
+</tr>
+<tr>
+<td>varchar(n)</td>
+<td>变长</td>
+<td>效率没char高 灵活</td>
+<td>n 必须是一个介于 1 和 8,000 之间的数值。存储大小为输入数据的字节的实际长度，而不是 n 个字节</td>
+</tr>
+<tr>
+<td>text(n)</td>
+<td>变长</td>
+<td>非Unicode数据</td>
+<td>不用指定长度</td>
+</tr>
+<tr>
+<td>nchar(n)</td>
+<td>定长</td>
+<td>处理unicode数据类型(所有的字符使用两个字节表示)</td>
+<td>n 的值必须介于 1 与 4,000 之间。存储大小为 n 字节的两倍</td>
+</tr>
+<tr>
+<td>nvarchar(n)</td>
+<td>变长</td>
+<td>处理unicode数据类型(所有的字符使用两个字节表示)</td>
+<td>n 的值必须介于 1 与 4,000 之间。字节的存储大小是所输入字符个数的两倍。所输入的数据字符长度可以为零</td>
+</tr>
+<tr>
+<td>ntext(n)</td>
+<td>变长</td>
+<td>处理unicode数据类型(所有的字符使用两个字节表示)</td>
+<td>不用指定长度</td>
+</tr>
+</tbody>
+</table>
+<p>很多开发者进行数据库设计的时候往往并没有太多的考虑char， varchar类型，有的是根本就没注意，因为存储价格变得越来越便宜了，忘记了最开始的一些基本设计理论和原则，这点让我想到了现在的年轻人，大手一挥一把人民币就从他手里溜走了，其实我想不管是做人也好，做开发也好，细节的把握直接决定很多东西。当然还有一部分人是根本就没弄清楚他们的区别，也就随便选一个。在这里我想对他们做个简单的分析，当然如果有不对的地方希望大家指教。<br>1、CHAR。CHAR存储定长数据很方便，CHAR字段上的索引效率级高，比如定义char(10)，那么不论你存储的数据是否达到了10个字节，都要占去10个字节的空间,不足的自动用空格填充，所以在读取的时候可能要多次用到trim（）。</p>
+<p>2、VARCHAR。存储变长数据，但存储效率没有CHAR高。如果一个字段可能的值是不固定长度的，我们只知道它不可能超过10个字符，把它定义为 VARCHAR(10)是最合算的。VARCHAR类型的实际长度是它的值的实际长度+1。为什么“+1”呢？这一个字节用于保存实际使用了多大的长度。从空间上考虑，用varchar合适；从效率上考虑，用char合适，关键是根据实际情况找到权衡点。</p>
+<p>3、TEXT。text存储可变长度的非Unicode数据，最大长度为2^31-1(2,147,483,647)个字符。</p>
+<p>4、NCHAR、NVARCHAR、NTEXT。这三种从名字上看比前面三种多了个“N”。它表示存储的是Unicode数据类型的字符。我们知道字符中，英文字符只需要一个字节存储就足够了，但汉字众多，需要两个字节存储，英文与汉字同时存在时容易造成混乱，Unicode字符集就是为了解决字符集这种不兼容的问题而产生的，它所有的字符都用两个字节表示，即英文字符也是用两个字节表示。nchar、nvarchar的长度是在1到4000之间。和char、varchar比较起来，nchar、nvarchar则最多存储4000个字符，不论是英文还是汉字；而char、varchar最多能存储8000个英文，4000个汉字。可以看出使用nchar、nvarchar数据类型时不用担心输入的字符是英文还是汉字，较为方便，但在存储英文时数量上有些损失。</p>
+<p>所以一般来说，如果含有中文字符，用nchar/nvarchar，如果纯英文和数字，用char/varchar</p>
+<p>它们的区别概括成：<br>CHAR，NCHAR 定长，速度快，占空间大，需处理<br>VARCHAR，NVARCHAR，TEXT 不定长，空间小，速度慢，无需处理<br>NCHAR、NVARCHAR、NTEXT处理Unicode码</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjc5yn49k000l4c2ij8mhtv3j" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/12/08/install-jdk/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          安装 JDK
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/12/06/zookeeper-install-cluster/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">zookeeper 集群版安装方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/01/08/solr-ikanalyzer/">solr配置IKAnalyzer的中文分词</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/08/install-jdk/">安装 JDK</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/07/mysql-note/">mysql 笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/06/zookeeper-install-cluster/">zookeeper 集群版安装方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

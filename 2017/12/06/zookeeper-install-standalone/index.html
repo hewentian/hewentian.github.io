@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zookeeper 单机版安装方法 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="下面演示在 Ubuntu 16.04 LTS 下面安装 zookeeper将zookeeper-3.4.6.tar.gz放到一个目录下，如/home/hewentian/ProjectD执行如下脚本解压12$ cd /home/hewentian/ProjectD$ tar xzvf zookeeper-3.4.6.t">
+<meta name="keywords" content="zookeeper">
+<meta property="og:type" content="article">
+<meta property="og:title" content="zookeeper 单机版安装方法">
+<meta property="og:url" content="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="下面演示在 Ubuntu 16.04 LTS 下面安装 zookeeper将zookeeper-3.4.6.tar.gz放到一个目录下，如/home/hewentian/ProjectD执行如下脚本解压12$ cd /home/hewentian/ProjectD$ tar xzvf zookeeper-3.4.6.tar.gz 解压后得到zookeeper-3.4.6文件夹，进入conf目录1$">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-12-07T02:30:16.227Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="zookeeper 单机版安装方法">
+<meta name="twitter:description" content="下面演示在 Ubuntu 16.04 LTS 下面安装 zookeeper将zookeeper-3.4.6.tar.gz放到一个目录下，如/home/hewentian/ProjectD执行如下脚本解压12$ cd /home/hewentian/ProjectD$ tar xzvf zookeeper-3.4.6.tar.gz 解压后得到zookeeper-3.4.6文件夹，进入conf目录1$">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-zookeeper-install-standalone" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/06/zookeeper-install-standalone/" class="article-date">
+  <time datetime="2017-12-06T08:33:23.000Z" itemprop="datePublished">2017-12-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      zookeeper 单机版安装方法
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="下面演示在-Ubuntu-16-04-LTS-下面安装-zookeeper"><a href="#下面演示在-Ubuntu-16-04-LTS-下面安装-zookeeper" class="headerlink" title="下面演示在 Ubuntu 16.04 LTS 下面安装 zookeeper"></a>下面演示在 Ubuntu 16.04 LTS 下面安装 zookeeper</h3><p>将<code>zookeeper-3.4.6.tar.gz</code>放到一个目录下，如<code>/home/hewentian/ProjectD</code><br>执行如下脚本解压<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ tar xzvf zookeeper-3.4.6.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>解压后得到zookeeper-3.4.6文件夹，进入conf目录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> zookeeper-3.4.6/conf/</span><br></pre></td></tr></table></figure></p>
+<p>执行如下命令，新建一个配置文件zoo.cfg<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp zoo_sample.cfg zoo.cfg</span><br></pre></td></tr></table></figure></p>
+<p>修改zoo.cfg并在其中修改如下内容：</p>
+<pre><code>tickTime=2000
+dataDir=/var/lib/zookeeper
+clientPort=2181
+</code></pre><p>如果<code>/var/lib/zookeeper</code>这个目录没有，就要执行如下命令创建<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p /var/lib/zookeeper</span><br></pre></td></tr></table></figure></p>
+<p>修改好后，我们就可以进入bin目录下启动zookeeper了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/zookeeper-3.4.6/bin</span><br><span class="line">$ ./zkServer.sh start</span><br></pre></td></tr></table></figure></p>
+<p>启动后，我们可以连到zookeeper服务器，命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/zookeeper-3.4.6/bin</span><br><span class="line">$ ./zkCli.sh -server 127.0.0.1:2181</span><br></pre></td></tr></table></figure></p>
+<h3 id="一些操作例子，如下："><a href="#一些操作例子，如下：" class="headerlink" title="一些操作例子，如下："></a>一些操作例子，如下：</h3><p>From here, you can try a few simple commands to get a feel for this simple command line interface. First, start by issuing the list command, as in ls, yielding:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 8] ls /</span><br><span class="line">[zookeeper]</span><br></pre></td></tr></table></figure></p>
+<p>Next, create a new znode by running create /zk_test my_data. This creates a new znode and associates the string “my_data” with the node. You should see:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 9] create /zk_test my_data</span><br><span class="line">Created /zk_test</span><br></pre></td></tr></table></figure></p>
+<p>Issue another ls / command to see what the directory looks like:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 11] ls /</span><br><span class="line">[zookeeper, zk_test]</span><br></pre></td></tr></table></figure></p>
+<p>Notice that the zk_test directory has now been created.<br>Next, verify that the data was associated with the znode by running the get command, as in:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 12] get /zk_test</span><br><span class="line">my_data</span><br><span class="line">cZxid = 5</span><br><span class="line">ctime = Fri Jun 05 13:57:06 PDT 2009</span><br><span class="line">mZxid = 5</span><br><span class="line">mtime = Fri Jun 05 13:57:06 PDT 2009</span><br><span class="line">pZxid = 5</span><br><span class="line">cversion = 0</span><br><span class="line">dataVersion = 0</span><br><span class="line">aclVersion = 0</span><br><span class="line">ephemeralOwner = 0</span><br><span class="line">dataLength = 7</span><br><span class="line">numChildren = 0</span><br></pre></td></tr></table></figure></p>
+<p>We can change the data associated with zk_test by issuing the set command, as in:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 14] <span class="built_in">set</span> /zk_test junk</span><br><span class="line">cZxid = 5</span><br><span class="line">ctime = Fri Jun 05 13:57:06 PDT 2009</span><br><span class="line">mZxid = 6</span><br><span class="line">mtime = Fri Jun 05 14:01:52 PDT 2009</span><br><span class="line">pZxid = 5</span><br><span class="line">cversion = 0</span><br><span class="line">dataVersion = 1</span><br><span class="line">aclVersion = 0</span><br><span class="line">ephemeralOwner = 0</span><br><span class="line">dataLength = 4</span><br><span class="line">numChildren = 0</span><br><span class="line">[zkshell: 15] get /zk_test</span><br><span class="line">junk</span><br><span class="line">cZxid = 5</span><br><span class="line">ctime = Fri Jun 05 13:57:06 PDT 2009</span><br><span class="line">mZxid = 6</span><br><span class="line">mtime = Fri Jun 05 14:01:52 PDT 2009</span><br><span class="line">pZxid = 5</span><br><span class="line">cversion = 0</span><br><span class="line">dataVersion = 1</span><br><span class="line">aclVersion = 0</span><br><span class="line">ephemeralOwner = 0</span><br><span class="line">dataLength = 4</span><br><span class="line">numChildren = 0</span><br></pre></td></tr></table></figure></p>
+<p>(Notice we did a get after setting the data and it did, indeed, change.</p>
+<p>Finally, let’s delete the node by issuing:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 16] delete /zk_test</span><br><span class="line">[zkshell: 17] ls /</span><br><span class="line">[zookeeper]</span><br><span class="line">[zkshell: 18]</span><br></pre></td></tr></table></figure></p>
+<p>That’s it for now. To explore more, continue with the rest of this document and see the Programmer’s Guide.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjc5yn4b0001f4c2iikkh748z" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/12/06/zookeeper-install-cluster/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          zookeeper 集群版安装方法
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/12/02/install-hexo/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">安装 Hexo</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/01/08/solr-ikanalyzer/">solr配置IKAnalyzer的中文分词</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/08/install-jdk/">安装 JDK</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/07/mysql-note/">mysql 笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/06/zookeeper-install-cluster/">zookeeper 集群版安装方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

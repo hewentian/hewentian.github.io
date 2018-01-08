@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="HttpSolrClientHttpSolrClient 使用 HTTPClient 和 solr 服务器进行通信。12345678import org.apache.solr.client.solrj.impl.HttpSolrClient;String baseSolrUrl = &quot;http://localhost:8983/solr/&quot;;HttpSolrClient solrClient =">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-12-01T14:06:07.648Z">
+<meta property="og:updated_time" content="2017-12-19T14:32:57.340Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="solr学习笔记">
 <meta name="twitter:description" content="HttpSolrClientHttpSolrClient 使用 HTTPClient 和 solr 服务器进行通信。12345678import org.apache.solr.client.solrj.impl.HttpSolrClient;String baseSolrUrl = &quot;http://localhost:8983/solr/&quot;;HttpSolrClient solrClient =">
@@ -78,7 +78,7 @@
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/solr/">solr</a>
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
   </div>
 
   </div>
@@ -99,7 +99,7 @@
       
         <h3 id="HttpSolrClient"><a href="#HttpSolrClient" class="headerlink" title="HttpSolrClient"></a>HttpSolrClient</h3><p>HttpSolrClient 使用 HTTPClient 和 solr 服务器进行通信。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.impl.HttpSolrClient;</span><br><span class="line"></span><br><span class="line">String baseSolrUrl = <span class="string">"http://localhost:8983/solr/"</span>;</span><br><span class="line"></span><br><span class="line">HttpSolrClient solrClient = <span class="keyword">new</span> HttpSolrClient.Builder().withBaseSolrUrl(baseSolrUrl).build();</span><br><span class="line">solrClient.setConnectionTimeout(<span class="number">1000</span>);</span><br><span class="line">solrClient.setDefaultMaxConnectionsPerHost(<span class="number">100</span>);</span><br><span class="line">solrClient.setMaxTotalConnections(<span class="number">100</span>);</span><br></pre></td></tr></table></figure></p>
 <p>HttpSolrClient 是线程安全的，建议重复使用 HttpSolrClient 实例。</p>
-<h3 id="EmbeddedSolrServer"><a href="#EmbeddedSolrServer" class="headerlink" title="EmbeddedSolrServer"></a>EmbeddedSolrServer</h3><p>EmbeddedSolrServer 提供和 HttpSolrClient 相同的接口，它不需要http连接。如果，你使用的是一个本地的 solrServer 的话，这是一个不错的选择。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.core.CoreContainer;</span><br><span class="line"></span><br><span class="line">System.setProperty(<span class="string">"solr.solr.home"</span>, <span class="string">"E:\\solr-6.5.0\\server\\solr"</span>);</span><br><span class="line">		</span><br><span class="line">CoreContainer coreContainer = <span class="keyword">new</span> CoreContainer(<span class="string">"E:\\solr-6.5.0\\server\\solr"</span>);</span><br><span class="line">coreContainer.load(); <span class="comment">// don't forge to invoke this method since solr 4.4.0</span></span><br><span class="line">		</span><br><span class="line">EmbeddedSolrServer embeddedSolrServer = <span class="keyword">new</span> EmbeddedSolrServer(coreContainer, coreName);</span><br></pre></td></tr></table></figure></p>
+<h3 id="EmbeddedSolrServer"><a href="#EmbeddedSolrServer" class="headerlink" title="EmbeddedSolrServer"></a>EmbeddedSolrServer</h3><p>EmbeddedSolrServer 提供和 HttpSolrClient 相同的接口，它不需要http连接。如果，你使用的是一个本地的 solrServer 的话，这是一个不错的选择。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.core.CoreContainer;</span><br><span class="line"></span><br><span class="line">System.setProperty(<span class="string">"solr.solr.home"</span>, <span class="string">"/home/hewentian/ProjectD/solr-6.5.0/server/solr"</span>);</span><br><span class="line">		</span><br><span class="line">CoreContainer coreContainer = <span class="keyword">new</span> CoreContainer(<span class="string">"/home/hewentian/ProjectD/solr-6.5.0/server/solr"</span>);</span><br><span class="line">coreContainer.load(); <span class="comment">// don't forge to invoke this method since solr 4.4.0</span></span><br><span class="line">		</span><br><span class="line">EmbeddedSolrServer embeddedSolrServer = <span class="keyword">new</span> EmbeddedSolrServer(coreContainer, coreName);</span><br></pre></td></tr></table></figure></p>
 <p>通过 POJO 方式往 Solr 中添加 doc 时，要使用 注解<code>@org.apache.solr.client.solrj.beans.Field</code>，@Field 可以被用在域上，或者是setter方法上。如果一个域的名称跟bean的名称是不一样的，那么在java注释中填写别名，具体的，可以参照下面的例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">	<span class="comment">/** 用户id */</span></span><br><span class="line">	<span class="meta">@Field</span></span><br><span class="line">	<span class="keyword">private</span> String id;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/** 名字 */</span></span><br><span class="line">	<span class="meta">@Field</span></span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/** 年龄 */</span></span><br><span class="line">	<span class="meta">@Field</span></span><br><span class="line">	<span class="keyword">private</span> Integer age;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// getter setter method</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>当将一个 doc 往 solr 中添加之后，要记得调用 commit 方法，当然，如果在 solrconfig.xml 中有配置硬/软提交的，可以省略<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SolrClient solrClient = createSolrClient(baseSolrUrl);</span><br><span class="line">UpdateResponse response = solrClient.addBean(collection, user);</span><br><span class="line"></span><br><span class="line">solrClient.commit(collection);</span><br><span class="line">solrClient.close();</span><br></pre></td></tr></table></figure></p>
 <p>Group 分组划分结果，返回的是分组结果；<br>Facet 分组统计，侧重统计，返回的是分组后的数量；<br>下面分别说下</p>
@@ -211,7 +211,7 @@
 </table>
 <p>注意:<em>version</em> 是一个特殊字段,不能删除,是记录当前索引版本号的.</p>
 <p>uniqueKey: 唯一键，这里配置的是上面出现的fileds，一般是id、url等不重复的。在更新、删除的时候可以用到。<br>defaultSearchField: 默认搜索属性，如q=solr就是默认的搜索那个字段（默认搜text，其他字段的值会copy到这个field）<br>solrQueryParser: 查询转换模式，是并且还是或者（AND/OR必须大写）</p>
-<h2 id="solr配置solrconfig-xml"><a href="#solr配置solrconfig-xml" class="headerlink" title="solr配置solrconfig.xml"></a>solr配置solrconfig.xml</h2><p>对于我的机器来说，是在以下目录：E:\solr-6.5.0\server\solr\mysqlCore\conf\solrconfig.xml</p>
+<h2 id="solr配置solrconfig-xml"><a href="#solr配置solrconfig-xml" class="headerlink" title="solr配置solrconfig.xml"></a>solr配置solrconfig.xml</h2><p>对于我的机器来说，是在以下目录：/home/hewentian/ProjectD/solr-6.5.0/server/solr/mysqlCore/conf/solrconfig.xml</p>
 <h3 id="索引indexConfig"><a href="#索引indexConfig" class="headerlink" title="索引indexConfig"></a>索引indexConfig</h3><p>Solr 性能因素，来了解与各种更改相关的性能权衡。 下表概括了可控制 Solr 索引处理的各种因素：</p>
 <table>
 <thead>
@@ -509,11 +509,14 @@
 <li>临近查询 是对两个字符串进行查询，并且它们被”包围着</li>
 </ol>
 <h3 id="Solr文本匹配不同字段的相关度权重设置需要做如下设置："><a href="#Solr文本匹配不同字段的相关度权重设置需要做如下设置：" class="headerlink" title="Solr文本匹配不同字段的相关度权重设置需要做如下设置："></a>Solr文本匹配不同字段的相关度权重设置需要做如下设置：</h3><p>1）启用edismax选项，在检索url上添加defType=edismax参数<br>2）设置q参数为搜索关键词，这里不要再写搜索表达式了<br>3）设置qf参数，指定不同字段的权重，例如：title^10 keywords^10 content^1 表示title字段的权重设置为10，keywords为10，content权重设置为1 </p>
+<hr>
+<h3 id="solr删除数据的快捷方式"><a href="#solr删除数据的快捷方式" class="headerlink" title="solr删除数据的快捷方式"></a>solr删除数据的快捷方式</h3><p>在solr的WEB客户端，访问你的索引库<br>1)documents type 选择 XML<br>2)documents 输入下面语句<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">delete</span>&gt;</span><span class="tag">&lt;<span class="name">query</span>&gt;</span>*:*<span class="tag">&lt;/<span class="name">query</span>&gt;</span><span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">commit</span>/&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>点击<code>Submit Document</code>即可</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjap2rnpe000sus2i7x6ie7s2" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjc5yn4a800124c2it0fl6cif" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -524,11 +527,11 @@
     
 <nav id="article-nav">
   
-    <a href="/2017/11/07/mysql-unique-key/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/11/10/java-get-entity-property-and-value/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          mysql 添加唯一约束
+          java 获取对象的所有属性和它们的值
         
       </div>
     </a>
@@ -552,7 +555,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/solr/">solr</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tomcat/">tomcat</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -562,7 +565,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -575,23 +578,23 @@
       <ul>
         
           <li>
-            <a href="/2017/12/02/install-hexo/">安装 Hexo</a>
+            <a href="/2018/01/08/solr-ikanalyzer/">solr配置IKAnalyzer的中文分词</a>
           </li>
         
           <li>
-            <a href="/2017/11/16/java-note/">java一些常用笔记</a>
+            <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
           </li>
         
           <li>
-            <a href="/2017/11/10/maven-note/">maven-note</a>
+            <a href="/2017/12/08/install-jdk/">安装 JDK</a>
           </li>
         
           <li>
-            <a href="/2017/11/10/html-css/">html-css前端相关</a>
+            <a href="/2017/12/07/mysql-note/">mysql 笔记</a>
           </li>
         
           <li>
-            <a href="/2017/11/10/java-get-entity-property-and-value/">java 获取对象的所有属性和它们的值</a>
+            <a href="/2017/12/06/zookeeper-install-cluster/">zookeeper 集群版安装方法</a>
           </li>
         
       </ul>
@@ -616,7 +619,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2017 Tim Ho<br>
+      &copy; 2018 Tim Ho<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

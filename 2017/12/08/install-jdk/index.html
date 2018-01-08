@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>安装 JDK | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="下面分别说说在Windows和Linux平台下面安装JDK1.在Windows下面安装JDKJDK环境变量配置的步骤如下： 1. 我的电脑 -&amp;gt; 属性 -&amp;gt; 高级 -&amp;gt; 环境变量； 2. 配置用户变量：     a.新建 JAVA_HOME     C:\Program Fil">
+<meta name="keywords" content="jdk">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安装 JDK">
+<meta property="og:url" content="https://github.com/hewentian/2017/12/08/install-jdk/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="下面分别说说在Windows和Linux平台下面安装JDK1.在Windows下面安装JDKJDK环境变量配置的步骤如下： 1. 我的电脑 -&amp;gt; 属性 -&amp;gt; 高级 -&amp;gt; 环境变量； 2. 配置用户变量：     a.新建 JAVA_HOME     C:\Program Files\Java\jdk1.8.0_101 （JDK的安装路径，务必替换成你自已的）     b.新建 P">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-12-08T06:14:16.412Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="安装 JDK">
+<meta name="twitter:description" content="下面分别说说在Windows和Linux平台下面安装JDK1.在Windows下面安装JDKJDK环境变量配置的步骤如下： 1. 我的电脑 -&amp;gt; 属性 -&amp;gt; 高级 -&amp;gt; 环境变量； 2. 配置用户变量：     a.新建 JAVA_HOME     C:\Program Files\Java\jdk1.8.0_101 （JDK的安装路径，务必替换成你自已的）     b.新建 P">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-install-jdk" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/08/install-jdk/" class="article-date">
+  <time datetime="2017-12-08T03:44:06.000Z" itemprop="datePublished">2017-12-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      安装 JDK
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="下面分别说说在Windows和Linux平台下面安装JDK"><a href="#下面分别说说在Windows和Linux平台下面安装JDK" class="headerlink" title="下面分别说说在Windows和Linux平台下面安装JDK"></a>下面分别说说在<code>Windows</code>和<code>Linux</code>平台下面安装<code>JDK</code></h2><h3 id="1-在Windows下面安装JDK"><a href="#1-在Windows下面安装JDK" class="headerlink" title="1.在Windows下面安装JDK"></a>1.在<code>Windows</code>下面安装<code>JDK</code></h3><pre><code>JDK环境变量配置的步骤如下：
+1. 我的电脑 -&gt; 属性 -&gt; 高级 -&gt; 环境变量；
+2. 配置用户变量：
+    a.新建 JAVA_HOME
+    C:\Program Files\Java\jdk1.8.0_101 （JDK的安装路径，务必替换成你自已的）
+    b.新建 PATH（如果系统本身已有，则修改，加入下面的代码）
+    %JAVA_HOME%\bin;%JAVA_HOME%\jre\bin
+    c.新建 CLASSPATH
+    .;%JAVA_HOME%\lib;%JAVA_HOME%\lib\tools.jar
+3. 测试环境变量配置是否成功：
+    开始 -&gt; 运行 -&gt; cmd
+    键盘敲入: java
+出现相应的命令，而不是出错信息，即表示配置成功！
+</code></pre><p>环境变量配置的理解：</p>
+<ol>
+<li>PATH：作用是指定命令搜索路径，在命令行下面执行命令如：<code>javac</code>编译<code>java</code>程序时，它会到<code>PATH</code>变量所指定的路径中查找看是否能找到相应的命令程序。我们需要把<code>jdk</code>安装目录下的<code>bin</code>目录增加到现有的<code>PATH</code>变量中，<code>bin</code>目录中包含经常要用到的可执行文件如<code>javac/java/javadoc</code>等待，设置好<code>PATH</code>变量后，就可以在任何目录下执行<code>javac/java</code>等工具了；</li>
+<li>CLASSPATH：作用是指定类搜索路径，要使用已经编写好的类，前提当然是能够找到它们了，<code>JVM</code>就是通过<code>CLASSPTH</code>来寻找类的。我们需要把<code>jdk</code>安装目录下的<code>lib子</code>目录中的<code>dt.jar</code>和<code>tools.jar</code>设置到<code>CLASSPATH</code>中，当然，当前目录“<code>.</code>”也必须加入到该变量中；</li>
+<li>JAVA_HOME：它指向<code>jdk</code>的安装目录，<code>Eclipse/NetBeans/Tomcat</code>等软件就是通过搜索<code>JAVA_HOME</code>变量来找到并使用安装好的<code>jdk</code>。</li>
+</ol>
+<h3 id="2-在Linux下面安装JDK"><a href="#2-在Linux下面安装JDK" class="headerlink" title="2.在Linux下面安装JDK"></a>2.在<code>Linux</code>下面安装<code>JDK</code></h3><p>第一步：下载<code>jdk-8u102-linux-x64.tar.gz</code><br>直接在<code>ORACLE</code>的官网中下载就可以:<br><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" target="_blank" rel="noopener">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a><br>PS：要注意系统版本的选择，32位 还是 64位，执行如下命令即可知道答案<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ uname -a</span><br><span class="line">Linux hewentian-Lenovo-IdeaPad-Y470 4.10.0-28-generic <span class="comment">#32~16.04.2-Ubuntu SMP Thu Jul 20 10:19:48 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux</span></span><br></pre></td></tr></table></figure></p>
+<p>第二步：解压安装<br>接着就是解压<code>tar.gz</code>的文件了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/Downloads</span><br><span class="line">$ tar -xzvf jdk-8u102-linux-x64.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>解压后会得到<code>jdk1.8.0_102</code>文件夹，接着就是将解压出来的文件夹移动到<code>/usr/local</code>的目录下<br>在这之前当然需要你拥有root的权限<code>su root</code>(对于ubuntu)再输入root账户的密码，做好这些准备之后，我们就可以把jdk的文件移动到我们想要的位置了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ su root</span><br><span class="line">Password: </span><br><span class="line">$ mv jdk1.8.0_102 /usr/<span class="built_in">local</span></span><br></pre></td></tr></table></figure></p>
+<p>第三步：修改环境变量，若<code>PATH</code>已存在，则用冒号作间隔，将jdk的bin目录地址加上，这样java的环境变量将配置成功了，配置完成如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/profile </span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/<span class="built_in">local</span>/jdk1.8.0_102</span><br><span class="line"><span class="built_in">export</span> JRE_HOME=<span class="variable">$JAVA_HOME</span>/jre</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib:<span class="variable">$JRE_HOME</span>/lib:<span class="variable">$CLASSPATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$JRE_HOME</span>/bin:<span class="variable">$JAVA_HOME</span>:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure></p>
+<p>记得保存 后执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></p>
+<p>第四步：但这样默认使用的JDK可能还不是我们刚才安装的，因为ubuntu可能还会有默认的jdk，如openjdk；所以，为了使默认使用的是我们安装的jdk，还需执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo update-alternatives --install /usr/bin/java java /usr/<span class="built_in">local</span>/jdk1.8.0_102/bin/java 300  </span><br><span class="line">$ sudo update-alternatives --install /usr/bin/javac javac /usr/<span class="built_in">local</span>/jdk1.8.0_102/bin/javac 300    </span><br><span class="line"></span><br><span class="line">$ sudo update-alternatives --config java</span><br><span class="line">$ sudo update-alternatives --config javac</span><br><span class="line">这时如果有多个jdk的话（比如openJDK和SUN JDK），就会出来一个列表，当前默认的会在列表前面有一个<span class="string">"`*`"</span>号，</span><br><span class="line">这时我们就要选择我们刚装的SUN JDK的java的那个序号，输入这个序号，回车就行了。</span><br></pre></td></tr></table></figure></p>
+<p>第五步：成功执行命令后，我们安装的JDK就是系统默认的了，执行如下命令，就可以成功看到JDK的相关信息了如：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ java -version　</span><br><span class="line">java version <span class="string">"1.8.0_102"</span></span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_102-b14)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.102-b14, mixed mode)</span><br></pre></td></tr></table></figure></p>
+<p>第六步：在ubuntu下面，可能root用户无法使用JDK，这样的话，执行下面的配置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ vi /root/.bashrc</span><br><span class="line"></span><br><span class="line">在文件中加上(注意，下面的变量参数有<span class="variable">$&#123;&#125;</span>的，与上面的不同)</span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/<span class="built_in">local</span>/jdk1.8.0_102</span><br><span class="line"><span class="built_in">export</span> JRE_HOME=<span class="variable">$&#123;JAVA_HOME&#125;</span>/jre</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$&#123;JAVA_HOME&#125;</span>/lib:<span class="variable">$&#123;JRE_HOME&#125;</span>/lib:<span class="variable">$CLASSPATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;JAVA_HOME&#125;</span>/bin:<span class="variable">$&#123;JRE_HOME&#125;</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line">最后：</span><br><span class="line"><span class="built_in">source</span> /root/.bashrc</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjc5yn48s00074c2iwimss1bm" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jdk/">jdk</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/01/08/solr-pinyin/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          solr配置拼音检索
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/12/07/mysql-note/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">mysql 笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/01/08/solr-ikanalyzer/">solr配置IKAnalyzer的中文分词</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/08/install-jdk/">安装 JDK</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/07/mysql-note/">mysql 笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/06/zookeeper-install-cluster/">zookeeper 集群版安装方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>ubuntu 学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <title>Linux 学习笔记 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软">
 <meta name="keywords" content="Linux">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ubuntu 学习笔记">
-<meta property="og:url" content="https://github.com/hewentian/2017/09/12/ubuntu-learn-note/index.html">
+<meta property="og:title" content="Linux 学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2017/09/12/linux-note/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-12-02T07:58:03.180Z">
+<meta property="og:updated_time" content="2018-01-08T06:41:51.571Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ubuntu 学习笔记">
+<meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
   
   
@@ -71,9 +71,9 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-ubuntu-learn-note" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-linux-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2017/09/12/ubuntu-learn-note/" class="article-date">
+    <a href="/2017/09/12/linux-note/" class="article-date">
   <time datetime="2017-09-12T12:41:37.000Z" itemprop="datePublished">2017-09-12</time>
 </a>
     
@@ -89,7 +89,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      ubuntu 学习笔记
+      Linux 学习笔记
     </h1>
   
 
@@ -113,7 +113,7 @@ swap    logic        内存2倍
 <p>最后我们用命令ps -e|grep ssh 来看下open-server安装成功没有，如果出现如下截图红色标出的部分，说明安装成功了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps -e|grep ssh</span><br></pre></td></tr></table></figure></p>
 <p>在ubuntu中的vi编辑器中怎么使用<br>默认情况下ubuntu上也安装有vi但是奇怪的是这个vi是vim-common版本，基本上用不了所以要先把这个版本的vi卸载掉才可以，卸载命令是<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get remove vim-common</span><br></pre></td></tr></table></figure></p>
 <p>卸载成功之后接着执行 sudo apt-get install vim,安装好之后就能使用了</p>
-<p>要检查特定的包，比如firefox是否安装了，使用这个命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ dpkg -s firefox</span><br><span class="line"></span><br><span class="line">ubuntu下useradd与adduser区别，新建用户不再home目录下</span><br><span class="line">useradd username不会在/home下建立一个文件夹username</span><br><span class="line">adduser username会在/home下建立一个文件夹username</span><br><span class="line">useradd -m username跟adduser一样，可以建立一个文件夹username</span><br></pre></td></tr></table></figure></p>
+<h3 id="ubuntu下useradd与adduser区别，新建用户不再home目录下"><a href="#ubuntu下useradd与adduser区别，新建用户不再home目录下" class="headerlink" title="ubuntu下useradd与adduser区别，新建用户不再home目录下"></a>ubuntu下useradd与adduser区别，新建用户不再home目录下</h3><p>useradd username不会在/home下建立一个文件夹username<br>adduser username会在/home下建立一个文件夹username<br>useradd -m username跟adduser一样，可以建立一个文件夹username</p>
 <p>永久性删除用户账号<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ userdel peter</span><br></pre></td></tr></table></figure></p>
 <p>还有的就是文件编码的问题，在windows下默认都是用ANSI格式编码，但是在ubuntu下面可能会是其他格式的编码，如果两个系统的编码不一致，就会产生乱码。<br>最好是都采用UTF-8格式编码</p>
 <p>ubuntu root默认密码（初始密码）<br>ubuntu安装好后，root初始密码（默认密码）不知道，需要设置。</p>
@@ -185,7 +185,7 @@ swap    logic        内存2倍
 <h3 id="ubuntu-解压zip文件出现乱码"><a href="#ubuntu-解压zip文件出现乱码" class="headerlink" title="ubuntu 解压zip文件出现乱码"></a>ubuntu 解压zip文件出现乱码</h3><p>由于zip格式中并没有指定编码格式，Windows下生成的zip文件中的编码是GBK/GB2312等，因此，导致这些zip文件在Linux下解压时出现乱码问题，因为Linux下的默认编码是UTF8</p>
 <p>有2种方式解决问题：</p>
 <ol>
-<li><p>通过unzip行命令解压，指定字符集<br>unzip -O CP936 {要解压的文件名}.zip (用GBK, GB18030也可以)</p>
+<li><p>通过<code>unzip</code>命令解压，指定字符集<br>unzip -O CP936 {要解压的文件名}.zip (用GBK, GB18030也可以)</p>
 </li>
 <li><p>在环境变量中，指定unzip参数，总是以指定的字符集显示和解压文件<br>/etc/environment中加入2行<br>UNZIP=”-O CP936”<br>ZIPINFO=”-O CP936”</p>
 </li>
@@ -220,7 +220,7 @@ swap    logic        内存2倍
 <li><p>json格式的post请求<br>curl -l -H “Content-type: application/json” -X POST -d ‘{“phone”:”13800138000”,”password”:”passwd”}’ <a href="http://domain/apis/users.json" target="_blank" rel="noopener">http://domain/apis/users.json</a></p>
 </li>
 </ol>
-<h3 id="在ubuntu上面安装-maven"><a href="#在ubuntu上面安装-maven" class="headerlink" title="在ubuntu上面安装 maven"></a>在ubuntu上面安装 maven</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ su root 	<span class="comment"># 切换到 root 用户</span></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/Downloads	<span class="comment"># 进入到 maven 下载的目录</span></span><br><span class="line">$ tar xzvf apache-maven-3.3.9-bin.tar.gz</span><br><span class="line"><span class="comment"># cd /usr/local</span></span><br><span class="line"><span class="comment"># mv /home/hewentian/Downloads/apache-maven-3.3.9 ./</span></span><br><span class="line"><span class="variable">$#</span> 在 /etc/profile 文件中添加 maven 路径</span><br><span class="line"><span class="comment"># vi /etc/profile</span></span><br><span class="line">$ <span class="comment"># 在打开的文件中添加如下代码</span></span><br><span class="line"><span class="comment"># add maven</span></span><br><span class="line"><span class="built_in">export</span> M2_HOME=/usr/<span class="built_in">local</span>/apache-maven-3.3.9</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;M2_HOME&#125;</span>/bin:<span class="variable">$PATH</span>$</span><br><span class="line"></span><br><span class="line">保存，并退出，执行如下语句，验证安装结果</span><br><span class="line">$ sour<span class="variable">$ce</span> /etc/profile</span><br><span class="line">$ mvn -version</span><br><span class="line"></span><br><span class="line">$ <span class="comment"># 如无意外，你将看到如下输出</span></span><br><span class="line">Maven home: /usr/<span class="built_in">local</span>/apache-maven-3.3.9</span><br><span class="line">Java version: 1.8.0_102, vendor: Oracle Corporation</span><br><span class="line">Java home: /usr/<span class="built_in">local</span>/java/jdk1.8.0_102/jre</span><br><span class="line">Default locale: en_US, platform encoding: UTF-8</span><br><span class="line">OS name: <span class="string">"linux"</span>, version: <span class="string">"4.10.0-28-generic"</span>, arch: <span class="string">"amd64"</span>, family: <span class="string">"unix"</span></span><br></pre></td></tr></table></figure>
+<h3 id="在ubuntu上面安装-maven"><a href="#在ubuntu上面安装-maven" class="headerlink" title="在ubuntu上面安装 maven"></a>在ubuntu上面安装 maven</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ su root 	<span class="comment"># 切换到 root 用户</span></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/Downloads	<span class="comment"># 进入到 maven 下载的目录</span></span><br><span class="line">$ tar xzvf apache-maven-3.3.9-bin.tar.gz</span><br><span class="line"><span class="comment"># cd /usr/local</span></span><br><span class="line"><span class="comment"># mv /home/hewentian/Downloads/apache-maven-3.3.9 ./</span></span><br><span class="line"><span class="variable">$#</span> 在 /etc/profile 文件中添加 maven 路径</span><br><span class="line"><span class="comment"># vi /etc/profile</span></span><br><span class="line">$ <span class="comment"># 在打开的文件中添加如下代码</span></span><br><span class="line"><span class="comment"># add maven</span></span><br><span class="line"><span class="built_in">export</span> M2_HOME=/usr/<span class="built_in">local</span>/apache-maven-3.3.9</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$M2_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line">保存，并退出，执行如下语句，验证安装结果</span><br><span class="line">$ sour<span class="variable">$ce</span> /etc/profile</span><br><span class="line">$ mvn -version</span><br><span class="line"></span><br><span class="line">$ <span class="comment"># 如无意外，你将看到如下输出</span></span><br><span class="line">Maven home: /usr/<span class="built_in">local</span>/apache-maven-3.3.9</span><br><span class="line">Java version: 1.8.0_102, vendor: Oracle Corporation</span><br><span class="line">Java home: /usr/<span class="built_in">local</span>/java/jdk1.8.0_102/jre</span><br><span class="line">Default locale: en_US, platform encoding: UTF-8</span><br><span class="line">OS name: <span class="string">"linux"</span>, version: <span class="string">"4.10.0-28-generic"</span>, arch: <span class="string">"amd64"</span>, family: <span class="string">"unix"</span></span><br></pre></td></tr></table></figure>
 <h3 id="ubuntu-16-04-安装-google-chrome-stable-current-amd64-deb-方法"><a href="#ubuntu-16-04-安装-google-chrome-stable-current-amd64-deb-方法" class="headerlink" title="ubuntu 16.04 安装 google-chrome-stable_current_amd64.deb 方法"></a>ubuntu 16.04 安装 google-chrome-stable_current_amd64.deb 方法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> &#123;google-chome所在目录&#125;</span><br><span class="line">$ sudo dpkg -i google-chrome-stable_current_amd64.deb</span><br><span class="line">$ <span class="comment"># 如果安装过程输出如下错误</span></span><br><span class="line">$ <span class="comment"># google-chrome-stable depends on libappindicator1; however:</span></span><br><span class="line">$ <span class="comment"># 那么执行如下命令</span></span><br><span class="line">$ sudo apt-get -f install libappindicator1 libindicator7</span><br><span class="line">$ <span class="comment"># 然后再执行原来的安装命令</span></span><br><span class="line">$ sudo dpkg -i google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
 <h3 id="Ubuntu-16-04-关闭笔记本触摸板"><a href="#Ubuntu-16-04-关闭笔记本触摸板" class="headerlink" title="Ubuntu 16.04 关闭笔记本触摸板"></a>Ubuntu 16.04 关闭笔记本触摸板</h3><ol>
 <li><p>禁用触摸板</p>
@@ -230,11 +230,110 @@ swap    logic        内存2倍
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo modprobe psmouse</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
+<h3 id="linux下查看某命令的具体位置使用which，如："><a href="#linux下查看某命令的具体位置使用which，如：" class="headerlink" title="linux下查看某命令的具体位置使用which，如："></a>linux下查看某命令的具体位置使用which，如：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">which</span> ab</span><br></pre></td></tr></table></figure>
+<h3 id="在Linux-unix-平台上的sqlplus中，如果输错了字符，要想删除，习惯性的按下backspace键后，发现非但没有删除想要删掉的字符，还多出了两个字符-H。当然，我们可以同时按下ctrl-backspace键来删除，但对于习惯了用backspace来删除的用户，这样很不爽。这可以通过修改tty终端的设置来实现backspace删除功能。通过使用stty命令，就可以查看或者修改终端的按键设置。"><a href="#在Linux-unix-平台上的sqlplus中，如果输错了字符，要想删除，习惯性的按下backspace键后，发现非但没有删除想要删掉的字符，还多出了两个字符-H。当然，我们可以同时按下ctrl-backspace键来删除，但对于习惯了用backspace来删除的用户，这样很不爽。这可以通过修改tty终端的设置来实现backspace删除功能。通过使用stty命令，就可以查看或者修改终端的按键设置。" class="headerlink" title="在Linux/unix 平台上的sqlplus中，如果输错了字符，要想删除，习惯性的按下backspace键后，发现非但没有删除想要删掉的字符，还多出了两个字符^H。当然，我们可以同时按下ctrl+backspace键来删除，但对于习惯了用backspace来删除的用户，这样很不爽。这可以通过修改tty终端的设置来实现backspace删除功能。通过使用stty命令，就可以查看或者修改终端的按键设置。"></a>在Linux/unix 平台上的<code>sqlplus</code>中，如果输错了字符，要想删除，习惯性的按下<code>backspace</code>键后，发现非但没有删除想要删掉的字符，还多出了两个字符^H。当然，我们可以同时按下<code>ctrl+backspace</code>键来删除，但对于习惯了用<code>backspace</code>来删除的用户，这样很不爽。这可以通过修改tty终端的设置来实现<code>backspace</code>删除功能。通过使用stty命令，就可以查看或者修改终端的按键设置。</h3><p>例如，设置backspace为删除键：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ stty erase ^h</span><br></pre></td></tr></table></figure></p>
+<p>如果要改回使用ctrl+backspace为删除键<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ stty erase ^?</span><br></pre></td></tr></table></figure></p>
+<p>如果需要重启后自动设置终端，可以将上述命令加入到profile中。可以通过stty -a命令来查看所有的终端设置。下面是在linux下执行的输出：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ stty -a</span><br><span class="line">$ cat /etc/os-release</span><br></pre></td></tr></table></figure></p>
+<h3 id="关于Linux中的so文件"><a href="#关于Linux中的so文件" class="headerlink" title="关于Linux中的so文件"></a>关于Linux中的so文件</h3><ol>
+<li>so文件就是通常说的动态链接库，就跟windows下的dll文件差不多；</li>
+<li>ko是内核模块文件，驱动之类的啥的；</li>
+<li>不过在linux系统下文件的后缀多数情况下只是个标识，有可能代表不了文件的真实属性的。</li>
+</ol>
+<h3 id="linux下采用LD-PRELOAD机制动态修改方法和注入代码"><a href="#linux下采用LD-PRELOAD机制动态修改方法和注入代码" class="headerlink" title="linux下采用LD_PRELOAD机制动态修改方法和注入代码"></a>linux下采用LD_PRELOAD机制动态修改方法和注入代码</h3><p>LD_PRELOAD是Linux下的一个环境变量，动态链接器在载入一个程序所需的所有动态库之前，<br>首先会载入LD_PRELOAD环境变量所指定的动态库。运用这个机制，我们可以修改/替换已有动态库中的方法，<br>加入我们自己的逻辑，从而改变程序的执行行为。不过该方法只对动态链接的程序有效，对静态链接的程序无效。</p>
+<h3 id="linux下面查看文件的MD5值，用命令：md5sum"><a href="#linux下面查看文件的MD5值，用命令：md5sum" class="headerlink" title="linux下面查看文件的MD5值，用命令：md5sum"></a>linux下面查看文件的MD5值，用命令：md5sum</h3><p>用法一，产生MD5值：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ md5sum [文件]</span><br></pre></td></tr></table></figure></p>
+<p>用法二，从文件中读取MD5的校验值并予以检查，要求同目录下面要有如下两个文件：</p>
+<pre><code>solr-6.5.0.zip
+solr-6.5.0.zip.md5
+</code></pre><p>命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ md5sum -c solr-6.5.0.zip.md5</span><br><span class="line">如果相同，输出：</span><br><span class="line">solr-6.5.0.zip: OK</span><br></pre></td></tr></table></figure></p>
+<p>md5值重定向将生成md5值重定向到指定的文件，通常文件的扩展名我们会命为.md5<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ md5sum data &gt; data.md5</span><br><span class="line">$ md5sum data</span><br><span class="line">0a6de444981b68d6a049053296491e49  data</span><br><span class="line"></span><br><span class="line">$ cat data.md5 </span><br><span class="line">0a6de444981b68d6a049053296491e49  data</span><br></pre></td></tr></table></figure></p>
+<h3 id="linux查找一个目录的命令"><a href="#linux查找一个目录的命令" class="headerlink" title="linux查找一个目录的命令"></a>linux查找一个目录的命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">查找目录：find /（查找范围） -name <span class="string">'查找关键字'</span> -<span class="built_in">type</span> d</span><br></pre></td></tr></table></figure>
+<h3 id="Linux查找含有某字符串的所有文件"><a href="#Linux查找含有某字符串的所有文件" class="headerlink" title="Linux查找含有某字符串的所有文件"></a>Linux查找含有某字符串的所有文件</h3><pre><code>grep -rn &quot;hello,world!&quot; *
+
+* : 表示当前目录所有文件，也可以是某个文件名
+-r 是递归查找
+-n 是显示行号
+-R 查找所有文件包含子目录
+-i 忽略大小写
+</code></pre><h3 id="md5sum的使用"><a href="#md5sum的使用" class="headerlink" title="md5sum的使用"></a>md5sum的使用</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">对一个文件计算MD5值</span><br><span class="line">$ md5sum apache-tomcat-8.0.47.tar.gz</span><br><span class="line">0fd249576c33fa71947bc7d296d5b0a9  apache-tomcat-8.0.47.tar.gz</span><br><span class="line"></span><br><span class="line">对一个文件计算MD5值，并保存到文件中</span><br><span class="line">$ md5sum apache-tomcat-8.0.47.tar.gz &gt; apache-tomcat-8.0.47.tar.gz.md5</span><br><span class="line"></span><br><span class="line">用MD5文件校验原来的文件是否被修改过</span><br><span class="line">$ md5sum -c apache-tomcat-8.0.47.tar.gz.md5</span><br><span class="line">apache-tomcat-8.0.47.tar.gz: OK</span><br></pre></td></tr></table></figure>
+<h3 id="端口的分类："><a href="#端口的分类：" class="headerlink" title="端口的分类："></a>端口的分类：</h3><p>端口在报头中占两个字节，也就是16位。端口号用来表示和区别网络中的不同应用程序。端口分为三大类： </p>
+<ol>
+<li><p>公认端口（Well Known Ports）：0-1023之间的端口号，在LINUX中这些端口你不能随便使用。这些端口由 IANA 分配管理。IANA 把这些端口分配给最重要的一些应用程序，让所有的用户都知道，当一种新的应用程序出现后，IANA必须为它指派一个公认端口。 常用的公认端口有：</p>
+<pre><code>FTP:    21
+TELNET:    23
+SMTP:    25
+DNS:    53
+TFTP:    69
+HTTP:    80
+SNMP:    161
+</code></pre></li>
+<li><p>注册端口（Registered Ports）：从1024-49151，是公司和其他用户向互联网名称与数字地址分配机构（ICANN）登记的端口号，利用因特网的传输控制协议（TCP）和用户数据报协议（UDP）进行通信的应用软件需要使用这些端口。在大多数情况下，这些应用软件和普通程序一样可以被非特权用户打开。</p>
+</li>
+<li><p>客户端使用的端口号：49152~65535，这类端口号仅在客户进程运行时才动态选择，因此又叫做短暂端口号。被保留给客户端进程选择暂时使用的。也可以理解为，客户端启动的时候操作系统随机分配一个端口用来和服务器通信，客户端进程关闭下次打开时，又重新分配一个新的端口。</p>
+</li>
+</ol>
+<p>端口就像一道门，外部可以通过不同的端口和本机上不同服务的进程进行交流。而IP 地址和端口号标识了接入互联网主机的唯一 一个进程</p>
+<h3 id="ubuntu-中使用-SQuirreL-连接各种-RDBMS"><a href="#ubuntu-中使用-SQuirreL-连接各种-RDBMS" class="headerlink" title="ubuntu 中使用 SQuirreL 连接各种 RDBMS"></a>ubuntu 中使用 SQuirreL 连接各种 RDBMS</h3><p>参考：<a href="http://www.opensoce.com/367.html" target="_blank" rel="noopener">http://www.opensoce.com/367.html</a></p>
+<p>使用<code>SQuirreL SQL Client</code>连接各种<code>RDBMS</code>数据库，其官方网站为：<a href="http://sourceforge.net/projects/squirrel-sql，" target="_blank" rel="noopener">http://sourceforge.net/projects/squirrel-sql，</a><br>截至写本文时，其最新版本为：squirrel-sql-snapshot-20171121_2249，其最大的魅力在于：</p>
+<ol>
+<li>基于Java，具备良好的夸平台特性，在Windows下一样可以很好的使用；</li>
+<li>只要具备相应数据库的类库，就可以连接对应的数据库，例如SQL Server、MySQL、Oracle、Sybase、DB2等等。</li>
+</ol>
+<p>首先下载：<br><a href="http://sourceforge.net/projects/squirrel-sql" target="_blank" rel="noopener">http://sourceforge.net/projects/squirrel-sql</a></p>
+<p>然后确保系统已经安装java，然后切换到<code>squirrel-sql-snapshot-20171121_2249-standard.jar</code>所在目录执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ java -jar squirrel-sql-snapshot-20171121_2249-standard.jar</span><br></pre></td></tr></table></figure></p>
+<p>然后根据提示选择安装路径，我安装到<code>/home/hewentian/ProjectD/squirrel-sql-snapshot-20171121_2249</code>，后续安装步骤中，插件我选择了</p>
+<pre><code>Data import
+DBCopy
+DBDiff
+Microsoft SQL Server
+MySQL
+Oracle
+</code></pre><p>安装完成之后，需要去下载相应的<code>RDBMS</code>的jar包：<br>SQL Server(jtds):<br><a href="http://sourceforge.net/projects/jtds/files/" target="_blank" rel="noopener">http://sourceforge.net/projects/jtds/files/</a></p>
+<p>mysql(MySQL Connector):<br><a href="http://dev.mysql.com/downloads/connector/j/" target="_blank" rel="noopener">http://dev.mysql.com/downloads/connector/j/</a></p>
+<p>oracle(JDBC):<br><a href="http://www.oracle.com/technology/global/cn/software/tech/java/sqlj_jdbc/index.html" target="_blank" rel="noopener">http://www.oracle.com/technology/global/cn/software/tech/java/sqlj_jdbc/index.html</a></p>
+<p>然后将<code>jtds-1.3.1.jar</code>、<code>ojdbc14.jar</code>、<code>mysql-connector-java-5.1.25.jar</code>复制到<code>SQuirrel SQL</code>安装目录下的<code>lib</code>目录，这样<code>SQuirrel SQL</code>就具备了连接<code>SQL Server</code>、<code>Oracle</code>、<code>MySQL</code>的能力。</p>
+<p>最后，到<code>SQuirreL</code>的目录重启SQuirreL：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/squirrel-sql-snapshot-20171121_2249</span><br><span class="line">$ ./squirrel-sql.sh</span><br></pre></td></tr></table></figure></p>
+<p>之后在左侧Aliases中添加一个Alias，填入正确的连接信息内容类似于：</p>
+<pre><code>Name: 输入连接的名字
+Driver: jTDS Microsoft SQL
+URL: 
+User Name: 
+Password: 
+</code></pre><p>这样就可以连接了。</p>
+<h3 id="修改SSH的默认22端口"><a href="#修改SSH的默认22端口" class="headerlink" title="修改SSH的默认22端口"></a>修改SSH的默认22端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">首先查看是否有使用22端口</span><br><span class="line">$ lsof -i:22</span><br><span class="line">COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">sshd     934 root    3u  IPv4   8688      0t0  TCP *:ssh (LISTEN)</span><br><span class="line">sshd    2305 root    3r  IPv4  25836      0t0  TCP 123.57.238.142:ssh-&gt;66.133.135.219.broad.gz.gd.dynamic.163data.com.cn:60064 (ESTABLISHED)</span><br><span class="line"></span><br><span class="line">查看防火墙的情况，看下是否会允许你要修改的端口通过</span><br><span class="line">$ iptables -nL</span><br><span class="line"></span><br><span class="line">$ vim /etc/ssh/sshd_config</span><br><span class="line">找到Port这一行，修改为你想要的端口，这里设置为：12022，前提是该端口还没被其他程序使用</span><br><span class="line"></span><br><span class="line">重启SSH</span><br><span class="line">$ /etc/init.d/sshd restart</span><br><span class="line">Stopping sshd:                                             [  OK  ]</span><br><span class="line">Starting sshd:                                             [  OK  ]</span><br><span class="line"></span><br><span class="line">$ lsof -i:12022</span><br><span class="line">COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">sshd    2382 root    3u  IPv4  28005      0t0  TCP *:12022 (LISTEN)</span><br><span class="line">sshd    2388 root    3r  IPv4  28216      0t0  TCP 123.57.238.142:12022-&gt;66.133.135.219.broad.gz.gd.dynamic.163data.com.cn:41068 (ESTABLISHED)</span><br><span class="line"></span><br><span class="line">可以看到端口已经修改过来了，再使用之前的命令就无法登录了</span><br><span class="line">$ ssh -p 22 root@123.57.238.142</span><br><span class="line">ssh: connect to host 123.57.238.142 port 22: Connection refused</span><br></pre></td></tr></table></figure>
+<h3 id="ubuntu-连接到跳板机"><a href="#ubuntu-连接到跳板机" class="headerlink" title="ubuntu 连接到跳板机"></a>ubuntu 连接到跳板机</h3><p>先将密钥文件<code>hewentian.pem</code>放到用户SSH目录下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/.ssh</span><br><span class="line">$ cp ~/Downloads/hewentian.pem ./</span><br><span class="line"></span><br><span class="line">修改权限 </span><br><span class="line">$ chmod 600 hewentian.pem</span><br><span class="line"></span><br><span class="line">创建一个配置文件，如果没有的话</span><br><span class="line">$ touch config</span><br><span class="line"></span><br><span class="line">并在其中输入如下内容</span><br><span class="line">Host jump_server</span><br><span class="line">User hewentian</span><br><span class="line">Hostname 192.168.30.30</span><br><span class="line">Port 12022</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/hewentian.pem</span><br></pre></td></tr></table></figure></p>
+<p>这样，在使命行中输入: <code>ssh jump_server</code>就可以跳到跳板机了</p>
+<h3 id="ubuntu-下-zssh-的使用"><a href="#ubuntu-下-zssh-的使用" class="headerlink" title="ubuntu 下 zssh 的使用"></a>ubuntu 下 zssh 的使用</h3><p>首先，ubuntu下需要安装下面两个包，如果还未安装的话：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install lszrz</span><br><span class="line">$ sudo apt install zssh</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li><p>使用 zssh 替代 ssh 连接到目标系统，并登入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zssh jump_server</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>发送文件到目标系统。比如，我们要上传a.txt文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">首先进入目标机的要上传到的目录，这里进入用户根目录下的Downloads</span><br><span class="line">$ <span class="built_in">cd</span> ~/Downloads</span><br><span class="line">（然后，按 ctrl + @ 进入文件传输状态，这个时候会浏览本地机器的文件系统了）</span><br><span class="line">zssh &gt; ls</span><br><span class="line">a.txt</span><br><span class="line">要将a.txt上传到目标机，执行如下命令即可</span><br><span class="line">zssh &gt; sz a.txt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载文件到本地。比如，我们想从目标系统下载 ~/Downloads/a.txt 到本地</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/Downloads</span><br><span class="line">$ ls</span><br><span class="line">a.txt</span><br><span class="line"></span><br><span class="line">$ sz a.txt </span><br><span class="line">�B00000000000000</span><br><span class="line">（按 ctrl + @ 进入文件传输状态）</span><br><span class="line">zssh &gt; rz</span><br><span class="line">Receiving: a.txt                                                     </span><br><span class="line">Bytes received:       7/      7   BPS:1198                  </span><br><span class="line"></span><br><span class="line">Transfer complete</span><br><span class="line"></span><br><span class="line">$</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>在目标系统输入 sz 时，我们开启了文件发送，此处可能会有乱码，暂时不管；然后，按 Ctrl+@ 进入文件传输模式，输入 rz 并回车进行文件下载，下载完成后，自动退出文件传输模式</p>
+<p>在自己的linux机上，如ubuntu等，安装上zssh，先用zssh登陆上跳板机，再在跳板机上ssh到相应服务器，然后ctrl+@,就可以相应上传下载文件了，先记着，后续再补详细资料。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">上传本地文件到服务器</span><br><span class="line">在服务器上先<span class="built_in">cd</span>至相应要放上传文件的目录之后</span><br><span class="line"></span><br><span class="line">rz -<span class="built_in">bye</span>                 //在远程服务器的相应目录上运行此命令,表示做好接收文件的准备</span><br><span class="line">ctrl+@                  //运行上面命令后,会出现一些乱码字符,不要怕,按此组合键,进入zssh</span><br><span class="line">zssh &gt;                  //这里切换到了本地机器</span><br><span class="line">zssh &gt; <span class="built_in">pwd</span>           //看一下本地机器的目录在那</span><br><span class="line">zssh &gt; ls               //看一下有那些文件</span><br><span class="line">zssh &gt; sz 123.txt   //上传本地机器的当前目录的123.txt到远程机器的当前目录</span><br><span class="line"></span><br><span class="line">下载服务器文件到本地</span><br><span class="line">sz filename             //在远程机器上,启动sz, 准备发送文件</span><br><span class="line">                               //看到一堆乱码,不要怕,这会按下组合键</span><br><span class="line">ctrl+@</span><br><span class="line">zssh &gt; <span class="built_in">pwd</span>              //看看在那个目录,<span class="built_in">cd</span> 切换到合适的目录</span><br><span class="line">zssh &gt; rz -<span class="built_in">bye</span>                 //接住对应的文件</span><br></pre></td></tr></table></figure></p>
+<h3 id="Linux下打开ISO文件方法"><a href="#Linux下打开ISO文件方法" class="headerlink" title="Linux下打开ISO文件方法"></a>Linux下打开ISO文件方法</h3><p>Linux下用mount挂载命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mount -o loop /home/hewentian/Downloads/ubuntu.iso /mnt/cdrom</span><br></pre></td></tr></table></figure></p>
+<p>取消挂载<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ umount /mnt/cdrom</span><br></pre></td></tr></table></figure></p>
+<h3 id="Linux-统计当前文件夹下的文件个数、目录个数"><a href="#Linux-统计当前文件夹下的文件个数、目录个数" class="headerlink" title="Linux 统计当前文件夹下的文件个数、目录个数"></a>Linux 统计当前文件夹下的文件个数、目录个数</h3><p>1) 统计当前文件夹下文件的个数<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l | grep <span class="string">"^-"</span> | wc -l</span><br></pre></td></tr></table></figure></p>
+<p>2) 统计当前文件夹下目录的个数<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l | grep <span class="string">"^d"</span> | wc -l</span><br></pre></td></tr></table></figure></p>
+<p>3) 统计当前文件夹下文件的个数，包括子文件夹里的<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -lR | grep <span class="string">"^-"</span> | wc -l</span><br></pre></td></tr></table></figure></p>
+<p>4) 统计文件夹下目录的个数，包括子文件夹里的<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -lR | grep <span class="string">"^d"</span> | wc -l</span><br></pre></td></tr></table></figure></p>
+<p>说明：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l</span><br></pre></td></tr></table></figure></p>
+<p>长列表输出当前文件夹下文件信息(注意这里的文件，不同于一般的文件，可能是目录、链接、设备文件等)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ grep <span class="string">"^-"</span></span><br></pre></td></tr></table></figure>
+<p>这里将长列表输出信息过滤一部分，只保留一般文件，如果只保留目录就是 ^d<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wc -l</span><br></pre></td></tr></table></figure></p>
+<p>统计输出信息的行数，因为已经过滤得只剩一般文件了，所以统计结果就是一般文件信息的行数，又由于一行信息对应一个文件，所以也就是文件的个数。</p>
+<h3 id="安装opevpn"><a href="#安装opevpn" class="headerlink" title="安装opevpn"></a>安装opevpn</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">首先安装openvpn</span><br><span class="line">$ sudo apt install openvpn</span><br><span class="line"></span><br><span class="line">然后启动，其中~/Downloads/hewentian是你的公司下发的你自已的登录帐号相关的文件</span><br><span class="line">$ sudo openvpn ~/Downloads/hewentian/hewentian.ovpn</span><br></pre></td></tr></table></figure>
+<p>这样，你在家里也可以连回公司的网络</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/ubuntu-learn-note/" data-id="cjap2rnpl000xus2iw6u61nu6" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjc5yn498000c4c2i4chf52g8" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -273,7 +372,7 @@ swap    logic        内存2倍
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/solr/">solr</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tomcat/">tomcat</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -283,7 +382,7 @@ swap    logic        内存2倍
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -296,23 +395,23 @@ swap    logic        内存2倍
       <ul>
         
           <li>
-            <a href="/2017/12/02/install-hexo/">安装 Hexo</a>
+            <a href="/2018/01/08/solr-ikanalyzer/">solr配置IKAnalyzer的中文分词</a>
           </li>
         
           <li>
-            <a href="/2017/11/16/java-note/">java一些常用笔记</a>
+            <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
           </li>
         
           <li>
-            <a href="/2017/11/10/maven-note/">maven-note</a>
+            <a href="/2017/12/08/install-jdk/">安装 JDK</a>
           </li>
         
           <li>
-            <a href="/2017/11/10/html-css/">html-css前端相关</a>
+            <a href="/2017/12/07/mysql-note/">mysql 笔记</a>
           </li>
         
           <li>
-            <a href="/2017/11/10/java-get-entity-property-and-value/">java 获取对象的所有属性和它们的值</a>
+            <a href="/2017/12/06/zookeeper-install-cluster/">zookeeper 集群版安装方法</a>
           </li>
         
       </ul>
@@ -337,7 +436,7 @@ swap    logic        内存2倍
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2017 Tim Ho<br>
+      &copy; 2018 Tim Ho<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
