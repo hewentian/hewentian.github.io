@@ -651,3 +651,147 @@ $ ssh -p 22 root@123.57.238.142
 ssh: connect to host 123.57.238.142 port 22: Connection refused
 ```
 
+### ubuntu 连接到跳板机
+先将密钥文件`hewentian.pem`放到用户SSH目录下
+``` bash
+$ cd ~/.ssh
+$ cp ~/Downloads/hewentian.pem ./
+
+修改权限 
+$ chmod 600 hewentian.pem
+
+创建一个配置文件，如果没有的话
+$ touch config
+
+并在其中输入如下内容
+Host jump_server
+User hewentian
+Hostname 192.168.30.30
+Port 12022
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/hewentian.pem
+```
+这样，在使命行中输入: `ssh jump_server`就可以跳到跳板机了
+
+
+### ubuntu 下 zssh 的使用
+首先，ubuntu下需要安装下面两个包，如果还未安装的话：
+``` bash
+$ sudo apt install lszrz
+$ sudo apt install zssh
+```
+
+1. 使用 zssh 替代 ssh 连接到目标系统，并登入：
+``` bash
+zssh jump_server
+```
+
+2. 发送文件到目标系统。比如，我们要上传a.txt文件
+``` bash
+首先进入目标机的要上传到的目录，这里进入用户根目录下的Downloads
+$ cd ~/Downloads
+（然后，按 ctrl + @ 进入文件传输状态，这个时候会浏览本地机器的文件系统了）
+zssh > ls
+a.txt
+要将a.txt上传到目标机，执行如下命令即可
+zssh > sz a.txt
+```
+
+3. 下载文件到本地。比如，我们想从目标系统下载 ~/Downloads/a.txt 到本地
+``` bash
+$ cd ~/Downloads
+$ ls
+a.txt
+
+$ sz a.txt 
+�B00000000000000
+（按 ctrl + @ 进入文件传输状态）
+zssh > rz
+Receiving: a.txt                                                     
+Bytes received:       7/      7   BPS:1198                  
+
+Transfer complete
+
+$ 
+```
+在目标系统输入 sz 时，我们开启了文件发送，此处可能会有乱码，暂时不管；然后，按 Ctrl+@ 进入文件传输模式，输入 rz 并回车进行文件下载，下载完成后，自动退出文件传输模式
+
+在自己的linux机上，如ubuntu等，安装上zssh，先用zssh登陆上跳板机，再在跳板机上ssh到相应服务器，然后ctrl+@,就可以相应上传下载文件了，先记着，后续再补详细资料。
+``` bash
+上传本地文件到服务器
+在服务器上先cd至相应要放上传文件的目录之后
+
+rz -bye                 //在远程服务器的相应目录上运行此命令,表示做好接收文件的准备
+ctrl+@                  //运行上面命令后,会出现一些乱码字符,不要怕,按此组合键,进入zssh
+zssh >                  //这里切换到了本地机器
+zssh > pwd           //看一下本地机器的目录在那
+zssh > ls               //看一下有那些文件
+zssh > sz 123.txt   //上传本地机器的当前目录的123.txt到远程机器的当前目录
+
+下载服务器文件到本地
+sz filename             //在远程机器上,启动sz, 准备发送文件
+                               //看到一堆乱码,不要怕,这会按下组合键
+ctrl+@
+zssh > pwd              //看看在那个目录,cd 切换到合适的目录
+zssh > rz -bye                 //接住对应的文件
+```
+
+
+### Linux下打开ISO文件方法
+Linux下用mount挂载命令
+``` bash
+$ mount -o loop /home/hewentian/Downloads/ubuntu.iso /mnt/cdrom
+```
+
+取消挂载
+``` bash
+$ umount /mnt/cdrom
+```
+
+
+### Linux 统计当前文件夹下的文件个数、目录个数
+1) 统计当前文件夹下文件的个数
+``` bash
+$ ls -l | grep "^-" | wc -l
+```
+
+2) 统计当前文件夹下目录的个数
+``` bash
+$ ls -l | grep "^d" | wc -l
+```
+
+3) 统计当前文件夹下文件的个数，包括子文件夹里的 
+``` bash
+$ ls -lR | grep "^-" | wc -l
+```
+
+4) 统计文件夹下目录的个数，包括子文件夹里的
+``` bash
+$ ls -lR | grep "^d" | wc -l
+```
+
+说明：
+``` bash
+$ ls -l
+```
+长列表输出当前文件夹下文件信息(注意这里的文件，不同于一般的文件，可能是目录、链接、设备文件等)
+ 
+``` bash
+$ grep "^-" 
+```
+这里将长列表输出信息过滤一部分，只保留一般文件，如果只保留目录就是 ^d
+``` bash
+$ wc -l
+```
+统计输出信息的行数，因为已经过滤得只剩一般文件了，所以统计结果就是一般文件信息的行数，又由于一行信息对应一个文件，所以也就是文件的个数。
+
+
+### 安装opevpn
+``` bash
+首先安装openvpn
+$ sudo apt install openvpn
+
+然后启动，其中~/Downloads/hewentian是你的公司下发的你自已的登录帐号相关的文件
+$ sudo openvpn ~/Downloads/hewentian/hewentian.ovpn 
+```
+这样，你在家里也可以连回公司的网络

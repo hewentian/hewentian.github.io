@@ -73,3 +73,14 @@ docBase: 代表项目的绝对路径，也可以使用相对路径
 
 方式2：将项目下的文件复制放到`${TOMCAT_HOME}/webapps/ROOT`目录下
 所有的项目都在webapps目录里面，ROOT是其中的一个项目，浏览器访问`http://localhost:8080/`其实是默认访问ROOT项目。
+
+
+### tomcat配置图片目录
+修改`${TOMCAT_HOME}/conf`目录下的`server.xml`配置
+``` xml
+<Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">
+	<Context path="img" docBase="/home/hewentian/Pictures" reloadable="false" ></Context>
+</Host>
+```
+这样当你在浏览器中访问`http://localhost:8080/img/{指定图片名}`的时候就会访问到`/home/hewentian/Pictures`目录下面的图片
+
