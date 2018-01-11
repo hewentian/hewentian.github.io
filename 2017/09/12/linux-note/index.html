@@ -5,7 +5,7 @@
   
   <title>Linux 学习笔记 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软">
+  <meta name="description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
 <meta name="keywords" content="Linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux 学习笔记">
@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-01-08T06:41:51.571Z">
+<meta property="og:updated_time" content="2018-01-11T14:01:40.540Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
@@ -329,11 +329,14 @@ Password:
 <p>统计输出信息的行数，因为已经过滤得只剩一般文件了，所以统计结果就是一般文件信息的行数，又由于一行信息对应一个文件，所以也就是文件的个数。</p>
 <h3 id="安装opevpn"><a href="#安装opevpn" class="headerlink" title="安装opevpn"></a>安装opevpn</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">首先安装openvpn</span><br><span class="line">$ sudo apt install openvpn</span><br><span class="line"></span><br><span class="line">然后启动，其中~/Downloads/hewentian是你的公司下发的你自已的登录帐号相关的文件</span><br><span class="line">$ sudo openvpn ~/Downloads/hewentian/hewentian.ovpn</span><br></pre></td></tr></table></figure>
 <p>这样，你在家里也可以连回公司的网络</p>
+<h3 id="linux-查询-CPU-信息"><a href="#linux-查询-CPU-信息" class="headerlink" title="linux 查询 CPU 信息"></a>linux 查询 CPU 信息</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/cpuinfo | grep <span class="string">"model name"</span> &amp;&amp; cat /proc/cpuinfo | grep <span class="string">"physical id"</span></span><br><span class="line"></span><br><span class="line">model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz</span><br><span class="line">model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz</span><br><span class="line">model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz</span><br><span class="line">model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz</span><br><span class="line">physical id	: 0</span><br><span class="line">physical id	: 0</span><br><span class="line">physical id	: 0</span><br><span class="line">physical id	: 0</span><br></pre></td></tr></table></figure>
+<h3 id="linux-查询-内存大小"><a href="#linux-查询-内存大小" class="headerlink" title="linux 查询 内存大小"></a>linux 查询 内存大小</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/meminfo | grep MemTotal</span><br><span class="line"></span><br><span class="line">MemTotal:        8115068 kB</span><br></pre></td></tr></table></figure>
+<h3 id="linux-查询-硬盘大小"><a href="#linux-查询-硬盘大小" class="headerlink" title="linux 查询 硬盘大小"></a>linux 查询 硬盘大小</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ fdisk -l | grep Disk</span><br><span class="line"></span><br><span class="line">Disk /dev/sda: 119.2 GiB, 128035676160 bytes, 250069680 sectors</span><br><span class="line">Disklabel <span class="built_in">type</span>: dos</span><br><span class="line">Disk identifier: 0x07462b5e</span><br><span class="line">Disk /dev/sdb: 465.8 GiB, 500107862016 bytes, 976773168 sectors</span><br><span class="line">Disklabel <span class="built_in">type</span>: dos</span><br><span class="line">Disk identifier: 0x547aca8b</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjc5yn498000c4c2i4chf52g8" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjcakptjr000b0v2ic1x3o49n" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>

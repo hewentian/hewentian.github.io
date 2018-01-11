@@ -105,7 +105,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/java-get-entity-property-and-value/" data-id="cjc5yn48v00084c2iw4gcpy96" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/java-get-entity-property-and-value/" data-id="cjcakptjk00080v2i4k3k01pw" class="article-share-link">Share</a>
       
       
     </footer>
@@ -560,7 +560,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjc5yn4a800124c2it0fl6cif" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjcakptl1000z0v2ia11clxsp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -610,7 +610,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjc5yn49u000r4c2i37ezt4hn" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjcakptkn000r0v2isj1p8vdk" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -675,7 +675,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjc5yn4a4000z4c2iijvacc9y" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjcakptl900120v2ixd6rz8zr" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -742,7 +742,7 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjc5yn47s00014c2i7apequb1" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjcakpti900000v2iemvlxd7p" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1019,7 +1019,7 @@ _   underscore
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjc5yn49d000f4c2ia3aq96iz" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjcakptk3000f0v2i5wgjpxiv" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1287,11 +1287,14 @@ Password:
 <p>统计输出信息的行数，因为已经过滤得只剩一般文件了，所以统计结果就是一般文件信息的行数，又由于一行信息对应一个文件，所以也就是文件的个数。</p>
 <h3 id="安装opevpn"><a href="#安装opevpn" class="headerlink" title="安装opevpn"></a>安装opevpn</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">首先安装openvpn</span><br><span class="line">$ sudo apt install openvpn</span><br><span class="line"></span><br><span class="line">然后启动，其中~/Downloads/hewentian是你的公司下发的你自已的登录帐号相关的文件</span><br><span class="line">$ sudo openvpn ~/Downloads/hewentian/hewentian.ovpn</span><br></pre></td></tr></table></figure>
 <p>这样，你在家里也可以连回公司的网络</p>
+<h3 id="linux-查询-CPU-信息"><a href="#linux-查询-CPU-信息" class="headerlink" title="linux 查询 CPU 信息"></a>linux 查询 CPU 信息</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/cpuinfo | grep <span class="string">"model name"</span> &amp;&amp; cat /proc/cpuinfo | grep <span class="string">"physical id"</span></span><br><span class="line"></span><br><span class="line">model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz</span><br><span class="line">model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz</span><br><span class="line">model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz</span><br><span class="line">model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz</span><br><span class="line">physical id	: 0</span><br><span class="line">physical id	: 0</span><br><span class="line">physical id	: 0</span><br><span class="line">physical id	: 0</span><br></pre></td></tr></table></figure>
+<h3 id="linux-查询-内存大小"><a href="#linux-查询-内存大小" class="headerlink" title="linux 查询 内存大小"></a>linux 查询 内存大小</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/meminfo | grep MemTotal</span><br><span class="line"></span><br><span class="line">MemTotal:        8115068 kB</span><br></pre></td></tr></table></figure>
+<h3 id="linux-查询-硬盘大小"><a href="#linux-查询-硬盘大小" class="headerlink" title="linux 查询 硬盘大小"></a>linux 查询 硬盘大小</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ fdisk -l | grep Disk</span><br><span class="line"></span><br><span class="line">Disk /dev/sda: 119.2 GiB, 128035676160 bytes, 250069680 sectors</span><br><span class="line">Disklabel <span class="built_in">type</span>: dos</span><br><span class="line">Disk identifier: 0x07462b5e</span><br><span class="line">Disk /dev/sdb: 465.8 GiB, 500107862016 bytes, 976773168 sectors</span><br><span class="line">Disklabel <span class="built_in">type</span>: dos</span><br><span class="line">Disk identifier: 0x547aca8b</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjc5yn498000c4c2i4chf52g8" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjcakptjr000b0v2ic1x3o49n" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -1334,7 +1337,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjc5yn49o000n4c2i2ab1axja" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjcakptkf000n0v2iagxu7g4t" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -1387,7 +1390,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjc5yn4ao00184c2im1ajew4g" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjcakptln00180v2izp3187oj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tomcat/">tomcat</a></li></ul>
