@@ -71,6 +71,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-rabbitmq-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/01/17/rabbitmq-note/" class="article-date">
+  <time datetime="2018-01-17T04:06:58.000Z" itemprop="datePublished">2018-01-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在安装好<code>rabbitMQ</code>后，执行<code>rabbitmq-plugins enable rabbitmq_management</code>命令，开启Web管理插件，这样我们就可以通过浏览器来进行管理了。默认地址为：<br><a href="http://localhost:15672/" target="_blank" rel="noopener">http://localhost:15672/</a><br>并使用默认用户guest登录，密码也为guest。这个guest用户只能在安装rabbitMQ的机器上登录，如果要在其他机器登录，则用guest登录后，再创建其他用户即可，创建的用户要授权，否则用API是无法访问的，有可能会报错。因为新创建的用户默认是没有权限访问<code>/</code>的，可以在WEB上面授权，或者用命令授权。<br>列出用户权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ sudo rabbitmqctl list_users</span><br><span class="line"></span><br><span class="line">Listing users ...</span><br><span class="line">hewentian [administrator]</span><br><span class="line">guest [administrator]</span><br><span class="line"></span><br><span class="line">授权</span><br><span class="line">$ sudo rabbitmqctl set_permissions -p / hewentian <span class="string">'.*'</span> <span class="string">'.*'</span> <span class="string">'.*'</span></span><br></pre></td></tr></table></figure></p>
+<p>该命令使用户hewentian具有<code>/</code>这个virtual host中所有资源的配置、写、读权限以便管理其中的资源</p>
+<p>其使用也是非常容易入门的：<br>在spring boot项目的application.properties中配置关于rabbitMQ的连接和用户信息<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">spring.application.name=rabbitmq-demo</span><br><span class="line"></span><br><span class="line">spring.rabbitmq.host=10.1.32.97</span><br><span class="line">spring.rabbitmq.port=5672</span><br><span class="line">spring.rabbitmq.username=hewentian</span><br><span class="line">spring.rabbitmq.password=12345678</span><br></pre></td></tr></table></figure></p>
+<p>创建消息生产者Sender，将消息发送到<code>myqueue</code>这个队列<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.amqp.core.AmqpTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.amqp.rabbit.core.RabbitTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sender</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> AmqpTemplate rabbitTemplate;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		String context = <span class="string">"hello "</span> + <span class="keyword">new</span> Date();</span><br><span class="line">		<span class="keyword">this</span>.rabbitTemplate.convertAndSend(<span class="string">"myqueue"</span>, context);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>创建消息消费者Receiver，对队列<code>myqueue</code>进行监听<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.amqp.rabbit.annotation.RabbitHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.amqp.rabbit.annotation.RabbitListener;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RabbitListener</span>(queues = <span class="string">"myqueue"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Receiver</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@RabbitHandler</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(String ctx)</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"Receiver : "</span> + ctx);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>创建RabbitMQ的配置类RabbitConfig<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.amqp.core.Queue;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RabbitConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Queue <span class="title">helloQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> Queue(<span class="string">"myqueue"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样一个简单的例子就完成了。更多详细例子，请参考<a href="https://github.com/hewentian/rabbitMQ-demo">这里</a>。另外，下面这两篇文章，值得我们认真看下：<br><a href="http://www.rabbitmq.com/amqp-0-9-1-quickref.html" target="_blank" rel="noopener">http://www.rabbitmq.com/amqp-0-9-1-quickref.html</a><br><a href="http://www.rabbitmq.com/tutorials/amqp-concepts.html" target="_blank" rel="noopener">http://www.rabbitmq.com/tutorials/amqp-concepts.html</a></p>
+<p>未完等续。。。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjcpkyc96000py02ih188bogd" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabbitmq/">rabbitmq</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-solr-ikanalyzer" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/01/08/solr-ikanalyzer/" class="article-date">
@@ -118,7 +168,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjcakptkt000v0v2iwrtis5ix" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjcpkyc9j000xy02ifs8t7f9r" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -172,7 +222,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjcakptlg00160v2iaz2rc57b" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjcpkyc9z0016y02ipe26om1e" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -241,7 +291,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjcakptjh00070v2i2a40bnd0" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjcpkyc860005y02iuzv4ylr2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jdk/">jdk</a></li></ul>
@@ -387,7 +437,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjcakptkb000l0v2ikkgcbsn5" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjcpkyc8y000jy02ispsi54zr" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
@@ -474,7 +524,7 @@ clientPort=2183                                        # 这台服务器的端�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjcakptlw001f0v2ix97yq0n6" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjcpkycaa001cy02ihyupvbgs" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -534,7 +584,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjcakptls001d0v2ixywe32gt" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjcpkycam001gy02ilstsl6jp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -612,7 +662,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/02/install-hexo/" data-id="cjcakptjb00050v2i6mwjf4hx" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/02/install-hexo/" data-id="cjcpkyc7y0004y02iyt8fz11t" class="article-share-link">Share</a>
       
       
     </footer>
@@ -653,7 +703,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjcakptjy000c0v2ic0j0iqvm" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjcpkyc8g0009y02idoz65914" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -698,48 +748,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/maven-note/" data-id="cjcakptk7000i0v2ipg5xpbms" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-html-css" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/11/10/html-css/" class="article-date">
-  <time datetime="2017-11-09T16:37:57.000Z" itemprop="datePublished">2017-11-10</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/other/">other</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/10/html-css/">html-css前端相关</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>将图片二进制流显示在html端的img控件中，在获取验证码的时候用得比较多，方法如下<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"data:image/jpeg;base64,fejwiqpofewqlfjewqjfewopfjef..."</span>&gt;</span></span><br><span class="line"></span><br><span class="line">在 src 后面加上 data:image/jpeg;base64,二进制码.</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/html-css/" data-id="cjcakptis00020v2i14y8ljv3" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/maven-note/" data-id="cjcpkyc8u000gy02i4ckyjq11" class="article-share-link">Share</a>
       
       
     </footer>
@@ -762,7 +771,7 @@ clientPort=2181
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -772,7 +781,7 @@ clientPort=2181
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -783,6 +792,10 @@ clientPort=2181
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
+          </li>
         
           <li>
             <a href="/2018/01/08/solr-ikanalyzer/">solr配置IKAnalyzer的中文分词</a>
@@ -798,10 +811,6 @@ clientPort=2181
         
           <li>
             <a href="/2017/12/07/mysql-note/">mysql 笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2017/12/06/zookeeper-install-cluster/">zookeeper 集群版安装方法</a>
           </li>
         
       </ul>
