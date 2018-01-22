@@ -114,3 +114,9 @@ $ git reset filename
 ```
 此时只有工作区被更新了(你也可以把他当做是一次回滚操作)。
 
+### git 将单个文件恢复到历史版本的正确方法如下：
+``` bash
+$ git log 要恢复的文件路径
+$ git reset commit_id 要恢复的文件路径
+$ git checkout -- 要恢复的文件路径
+```

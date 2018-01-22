@@ -795,3 +795,259 @@ $ sudo apt install openvpn
 $ sudo openvpn ~/Downloads/hewentian/hewentian.ovpn 
 ```
 这样，你在家里也可以连回公司的网络
+
+
+### linux 查询 CPU 信息
+``` bash
+$ cat /proc/cpuinfo | grep "model name" && cat /proc/cpuinfo | grep "physical id"
+
+model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz
+model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz
+model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz
+model name	: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz
+physical id	: 0
+physical id	: 0
+physical id	: 0
+physical id	: 0
+
+```
+
+
+### linux 查询 内存大小
+``` bash
+$ cat /proc/meminfo | grep MemTotal
+
+MemTotal:        8115068 kB
+```
+
+
+###  linux 查询 硬盘大小
+``` bash
+$ fdisk -l | grep Disk
+
+Disk /dev/sda: 119.2 GiB, 128035676160 bytes, 250069680 sectors
+Disklabel type: dos
+Disk identifier: 0x07462b5e
+Disk /dev/sdb: 465.8 GiB, 500107862016 bytes, 976773168 sectors
+Disklabel type: dos
+Disk identifier: 0x547aca8b
+```
+
+
+### 查看内存使用量和交换区使用量
+``` bash
+$ free -m
+              total        used        free      shared  buff/cache   available
+Mem:           7924        5783         472         331        1668        1460
+Swap:         15623        1176       14447
+```
+
+### 查看各分区使用情况
+``` bash
+$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+udev            3.9G     0  3.9G   0% /dev
+tmpfs           793M  9.4M  784M   2% /run
+/dev/sda2       102G   27G   71G  28% /
+tmpfs           3.9G  130M  3.8G   4% /dev/shm
+tmpfs           5.0M  4.0K  5.0M   1% /run/lock
+tmpfs           3.9G     0  3.9G   0% /sys/fs/cgroup
+/dev/sda1       464M  174M  263M  40% /boot
+tmpfs           793M  104K  793M   1% /run/user/1000
+```
+
+### 查看指定目录的大小
+``` bash
+$ du -sh
+4.5G	.
+
+还可以另上指定文件，这样就计算那个文件或目录的大小
+$ du -sh ROOT.zip 
+67M	ROOT.zip
+```
+
+
+### gpg 验证已下载文件的真实性和完整性
+首先检查系统是否已经安装GPG
+``` bash
+$ dpkg-query -l gnupg*
+```
+否则使用如下命令安装(ubuntu)
+``` bash
+$ sudo apt-get install gnupg
+```
+安装完毕后，生成密钥对，要使用到你的用户名和邮箱，以及保护你私钥的密码，如下：
+``` bash
+$ gpg --gen-key
+gpg (GnuPG) 1.4.20; Copyright (C) 2015 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Please select what kind of key you want:
+   (1) RSA and RSA (default)
+   (2) DSA and Elgamal
+   (3) DSA (sign only)
+   (4) RSA (sign only)
+Your selection? 
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048) 
+Requested keysize is 2048 bits
+Please specify how long the key should be valid.
+         0 = key does not expire
+      <n>  = key expires in n days
+      <n>w = key expires in n weeks
+      <n>m = key expires in n months
+      <n>y = key expires in n years
+Key is valid for? (0) 
+Key does not expire at all
+Is this correct? (y/N) y
+
+You need a user ID to identify your key; the software constructs the user ID
+from the Real Name, Comment and Email Address in this form:
+    "Heinrich Heine (Der Dichter) <heinrichh@duesseldorf.de>"
+
+Real name: Tim Ho
+Email address: wentian.he@qq.com
+Comment: 
+You selected this USER-ID:
+    "Tim Ho <wentian.he@qq.com>"
+
+Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O
+You need a Passphrase to protect your secret key.
+
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+.........+++++
++++++
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
++++++
+
+Not enough random bytes available.  Please do some other work to give
+the OS a chance to collect more entropy! (Need 73 more bytes)
++++++
+gpg: key 46DC4BA0 marked as ultimately trusted
+public and secret key created and signed.
+
+gpg: checking the trustdb
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   2  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 2u
+pub   2048R/46DC4BA0 2018-01-14
+      Key fingerprint = 06F1 0995 A7FE DF6F 007F  CE59 B307 E8C8 46DC 4BA0
+uid                  Tim Ho <wentian.he@qq.com>
+sub   2048R/74EB06EB 2018-01-14
+
+```
+密钥生成完毕后，公钥和私钥都将存储在~/.gnupg目录中，供之后使用。
+
+导入文件所有者的公钥
+``` bash
+$ gpg --import rabbitmq-release-signing-key.asc 
+gpg: key 6026DFCA: "RabbitMQ Release Signing Key <info@rabbitmq.com>" not changed
+gpg: Total number processed: 1
+gpg:              unchanged: 1
+```
+当所有者的公钥导入完毕，它会输出一个密钥编号(比如“6026DFCA”)，如上所示
+
+现在，运行这个命令，检查已导入公钥的指纹：
+``` bash
+$ gpg --fingerprint 6026DFCA
+pub   4096R/6026DFCA 2016-05-17
+      Key fingerprint = 0A9A F211 5F46 87BD 2980  3A20 6B73 A36E 6026 DFCA
+uid                  RabbitMQ Release Signing Key <info@rabbitmq.com>
+sub   4096R/12EBCE19 2016-05-17
+```
+检查上面的指纹是否与所有者官网提供的一致。
+
+下面的步骤可选，
+``` bash
+$ gpg --edit-key 6026DFCA
+gpg (GnuPG) 1.4.20; Copyright (C) 2015 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+
+pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC  
+                     trust: full          validity: unknown
+sub  4096R/12EBCE19  created: 2016-05-17  expires: never       usage: E   
+[ unknown] (1). RabbitMQ Release Signing Key <info@rabbitmq.com>
+```
+在GPG提示符下键入“trust”，这会让你可以选择该密钥的信任级别：从1到5，这里选择4
+``` bash
+gpg> trust
+pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC  
+                     trust: full          validity: unknown
+sub  4096R/12EBCE19  created: 2016-05-17  expires: never       usage: E   
+[ unknown] (1). RabbitMQ Release Signing Key <info@rabbitmq.com>
+
+Please decide how far you trust this user to correctly verify other users' keys
+(by looking at passports, checking fingerprints from different sources, etc.)
+
+  1 = I don't know or won't say
+  2 = I do NOT trust
+  3 = I trust marginally
+  4 = I trust fully
+  5 = I trust ultimately
+  m = back to the main menu
+
+Your decision? 4
+
+pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC  
+                     trust: full          validity: unknown
+sub  4096R/12EBCE19  created: 2016-05-17  expires: never       usage: E   
+[ unknown] (1). RabbitMQ Release Signing Key <info@rabbitmq.com>
+
+gpg> sign
+
+pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC  
+                     trust: full          validity: unknown
+ Primary key fingerprint: 0A9A F211 5F46 87BD 2980  3A20 6B73 A36E 6026 DFCA
+
+     RabbitMQ Release Signing Key <info@rabbitmq.com>
+
+Are you sure that you want to sign this key with your
+key "Tim Ho <wentian.he@qq.com>" (E99DCF91)
+
+Really sign? (y/N) y
+
+You need a passphrase to unlock the secret key for
+user: "Tim Ho <wentian.he@qq.com>"
+2048-bit RSA key, ID E99DCF91, created 2018-01-14
+
+gpg> save
+```
+然后sign，最后save，这里输入的passphrase错误，与我之前的密码不符，未明原因。
+最后，查看导入的keys
+``` bash
+$ gpg --list-keys
+/home/hewentian/.gnupg/pubring.gpg
+----------------------------------
+pub   2048R/E99DCF91 2018-01-14
+uid                  Tim Ho <wentian.he@qq.com>
+sub   2048R/6F7627AD 2018-01-14
+
+pub   4096R/6026DFCA 2016-05-17
+uid                  RabbitMQ Release Signing Key <info@rabbitmq.com>
+sub   4096R/12EBCE19 2016-05-17
+
+pub   2048R/46DC4BA0 2018-01-14
+uid                  Tim Ho <wentian.he@qq.com>
+sub   2048R/74EB06EB 2018-01-14
+```
+最后：验证文件的真实性/完整性
+``` bash
+$ gpg --verify rabbitmq-server_3.7.2-1_all.deb.asc rabbitmq-server_3.7.2-1_all.deb
+gpg: Signature made Sat 23 Dec 2017 03:03:34 PM CST using RSA key ID 6026DFCA
+gpg: checking the trustdb
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   2  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 2u
+gpg: Good signature from "RabbitMQ Release Signing Key <info@rabbitmq.com>"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 0A9A F211 5F46 87BD 2980  3A20 6B73 A36E 6026 DFCA
+```
+该命令的输出里面含有“Good signature from ”，这表明已下载的.deb文件已成功通过了验证。要是已下载文件在签名生成后以任何一种方式而遭到篡改，验证就会失败。
