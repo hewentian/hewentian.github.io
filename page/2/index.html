@@ -71,6 +71,92 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-java-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/16/java-note/" class="article-date">
+  <time datetime="2017-11-16T11:58:45.000Z" itemprop="datePublished">2017-11-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/16/java-note/">java一些常用笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息"><a href="#想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息" class="headerlink" title="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息"></a>想在<code>eclipse</code>中新建类的时候，自动在类的头部插入作者、时间等信息</h3><p>方法是<code>Window -&gt; Preferences -&gt; Java -&gt; Code Style -&gt; Code Templates</code>在右则民展开<code>Code -&gt; New Java files</code>点<code>Edit...</code>并加入如下代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$&#123;filecomment&#125;</span><br><span class="line">$&#123;package_declaration&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;$&#123;file_name&#125;&lt;/b&gt; 是 </span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> $&#123;currentDate:date('yyyy-MM-dd')&#125; $&#123;time&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">$&#123;typecomment&#125;</span><br><span class="line">$&#123;type_declaration&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjd7041h3000hyi2i89d51llr" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-maven-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/10/maven-note/" class="article-date">
+  <time datetime="2017-11-09T16:48:44.000Z" itemprop="datePublished">2017-11-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/other/">other</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/10/maven-note/">maven笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在<code>eclipse</code>中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8</p>
+<p>原因：tools.jar包是JDK的，而tools.jar并未在仓库<code>maven repository</code>中</p>
+<p>解决方案：在pom文件中添加如下代码即可<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>jdk.tools<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jdk.tools<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">scope</span>&gt;</span>system<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">systemPath</span>&gt;</span>$&#123;JAVA_HOME&#125;/lib/tools.jar<span class="tag">&lt;/<span class="name">systemPath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2017/11/10/maven-note/" data-id="cjd7041h7000kyi2i9jgrgbdb" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-html-css" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/11/10/html-css/" class="article-date">
@@ -102,7 +188,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/html-css/" data-id="cjcrb8gpw0002l42ixs2v88dp" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/html-css/" data-id="cjd7041gj0008yi2i7ccqjc71" class="article-share-link">Share</a>
       
       
     </footer>
@@ -146,7 +232,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/java-get-entity-property-and-value/" data-id="cjcrb8gqo0008l42i4848dsv8" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/java-get-entity-property-and-value/" data-id="cjd7041gr000cyi2i4y84lqr7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -601,7 +687,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjcrb8gsh0016l42ijdnilbed" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjd7041is001dyi2ieerya182" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -651,7 +737,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjcrb8grx000vl42i7daspvbr" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjd7041hy0010yi2idvqm947l" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -716,7 +802,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjcrb8gs80012l42ixg66kcl9" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjd7041ia0017yi2izfx5kmtt" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -780,11 +866,14 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
 <p>也许此时你并不是看看就算了，你想要使用这个版本的文件更新工作区中的文件。<br>直接从 git show 命令的输出中拷贝内容是个不错的选择。<br>但也可以通过组合使用不同的命令来实现：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout &lt;commitId&gt; --filename</span><br><span class="line">$ git reset filename</span><br></pre></td></tr></table></figure></p>
 <p>此时只有工作区被更新了(你也可以把他当做是一次回滚操作)。</p>
 <h3 id="git-将单个文件恢复到历史版本的正确方法如下："><a href="#git-将单个文件恢复到历史版本的正确方法如下：" class="headerlink" title="git 将单个文件恢复到历史版本的正确方法如下："></a>git 将单个文件恢复到历史版本的正确方法如下：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> 要恢复的文件路径</span><br><span class="line">$ git reset commit_id 要恢复的文件路径</span><br><span class="line">$ git checkout -- 要恢复的文件路径</span><br></pre></td></tr></table></figure>
+<h3 id="git的-gitignore规则不生效的解决办法"><a href="#git的-gitignore规则不生效的解决办法" class="headerlink" title="git的.gitignore规则不生效的解决办法"></a>git的.gitignore规则不生效的解决办法</h3><p>有时候定义了规则后发现并未生效，原因是.gitignore只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的。那么解决方法就是先把本地缓存删除（改变成未track状态），然后再提交：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git rm -r --cached .</span><br><span class="line">$ git add .</span><br><span class="line">$ git commit -m <span class="string">'update .gitignore'</span></span><br></pre></td></tr></table></figure>
+<h3 id="在开发的过程中，想知道远程的仓库是否有同事提交代码可以使用如下命令"><a href="#在开发的过程中，想知道远程的仓库是否有同事提交代码可以使用如下命令" class="headerlink" title="在开发的过程中，想知道远程的仓库是否有同事提交代码可以使用如下命令"></a>在开发的过程中，想知道远程的仓库是否有同事提交代码可以使用如下命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> &#123;your_repo_dir&#125;</span><br><span class="line">$ git fetch</span><br><span class="line">$ git status</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjcrb8gpe0000l42iynlno66s" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjd7041fw0002yi2icg04hc3l" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1061,7 +1150,7 @@ _   underscore
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjcrb8gr7000fl42iar47fdhu" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjd7041hb000nyi2ii276t20d" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1352,7 +1441,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjcrb8gr2000cl42ierev42hc" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjd7041h0000gyi2i14cpgfwa" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -1364,106 +1453,10 @@ Password:
 
 
   
-    <article id="post-online-implementing" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/09/12/online-implementing/" class="article-date">
-  <time datetime="2017-09-12T12:22:54.000Z" itemprop="datePublished">2017-09-12</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/java/">java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/12/online-implementing/">系统上线注意事项</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="上线总结："><a href="#上线总结：" class="headerlink" title="上线总结："></a>上线总结：</h2><p>今天下午准备上线，折腾了很久， 不过， 终于成功上线，期间发现了很多问题。所谓好记性，不如烂笔头，故记之。有时候，系统上线，如果发现还是旧的页面，可能会是缓存，这时候，要检查下下面的地方：</p>
-<h3 id="1-你浏览器的缓存是否已经清掉了；"><a href="#1-你浏览器的缓存是否已经清掉了；" class="headerlink" title="1. 你浏览器的缓存是否已经清掉了；"></a>1. 你浏览器的缓存是否已经清掉了；</h3><h3 id="2-Tomcat-的缓存是否清掉了-TOMCAT-HOME-work-这个目录，放的就是-Tomcat-的缓存；"><a href="#2-Tomcat-的缓存是否清掉了-TOMCAT-HOME-work-这个目录，放的就是-Tomcat-的缓存；" class="headerlink" title="2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；"></a>2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；</h3><h3 id="3-如果-IP-PORT-访问，没问题的话，有可能是-CDN-缓存了，这时候也要刷下-CDN；"><a href="#3-如果-IP-PORT-访问，没问题的话，有可能是-CDN-缓存了，这时候也要刷下-CDN；" class="headerlink" title="3. 如果 IP + PORT 访问，没问题的话，有可能是 CDN 缓存了，这时候也要刷下 CDN；"></a>3. 如果 IP + PORT 访问，没问题的话，有可能是 CDN 缓存了，这时候也要刷下 CDN；</h3>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjcrb8grj000nl42irtwjim5s" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-tomcat-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/09/11/tomcat-note/" class="article-date">
-  <time datetime="2017-09-11T02:21:02.000Z" itemprop="datePublished">2017-09-11</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/java/">java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/11/tomcat-note/">tomcat 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="tomcat-登录用户名-与-密码设置"><a href="#tomcat-登录用户名-与-密码设置" class="headerlink" title="tomcat 登录用户名 与 密码设置"></a>tomcat 登录用户名 与 密码设置</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">403 Access Denied</span><br><span class="line"></span><br><span class="line">You are not authorized to view this page.</span><br><span class="line"></span><br><span class="line">If you have already configured the Host Manager application to allow access and you have used your browsers back button, used a saved book-mark or similar then you may have triggered the cross-site request forgery (CSRF) protection that has been enabled for the HTML interface of the Host Manager application. You will need to reset this protection by returning to the main Host Manager page. Once you return to this page, you will be able to continue using the Host Manager application's HTML interface normally. If you continue to see this access denied message, check that you have the necessary permissions to access this application.</span><br><span class="line"></span><br><span class="line">If you have not changed any configuration files, please examine the file conf/tomcat-users.xml in your installation. That file must contain the credentials to let you use this webapp.</span><br><span class="line"></span><br><span class="line">For example, to add the admin-gui role to a user named tomcat with a password of s3cret, add the following to the config file listed above.</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"admin-gui"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span> <span class="attr">username</span>=<span class="string">"tomcat"</span> <span class="attr">password</span>=<span class="string">"s3cret"</span> <span class="attr">roles</span>=<span class="string">"admin-gui"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">Note that for Tomcat 7 onwards, the roles required to use the host manager application were changed from the single admin role to the following two roles. You will need to assign the role(s) required for the functionality you wish to access.</span><br><span class="line"></span><br><span class="line">admin-gui - allows access to the HTML GUI</span><br><span class="line">admin-script - allows access to the text interface</span><br><span class="line">The HTML interface is protected against CSRF but the text interface is not. To maintain the CSRF protection:</span><br><span class="line"></span><br><span class="line">Users with the admin-gui role should not be granted the admin-script role.</span><br><span class="line">If the text interface is accessed through a browser (e.g. for testing since this interface is intended for tools not humans) then the browser must be closed afterwards to terminate the session.</span><br></pre></td></tr></table></figure>
-<p>Tomcat Manager是Tomcat自带的、用于对Tomcat自身以及部署在Tomcat上的应用进行管理的web应用。<br>在默认情况下，Tomcat Manager是处于禁用状态的。准确地说，Tomcat Manager需要以用户角色进行<br>登录并授权才能使用相应的功能，不过Tomcat并没有配置任何默认的用户，因此需要我们进行相应的<br>用户配置之后才能使用Tomcat Manager。</p>
-<p>在使用Tomcat时，我们通过点击 <a href="http://localhost:8080/" target="_blank" rel="noopener">http://localhost:8080/</a> 下面的【Host Manager】可以管理Tomcat服务器中的web工程；</p>
-<p>设置用户名、有密码的方法：</p>
-<p>1、登录用户名和密码我们需要在 目录：${TOMCAT_HOME}/conf/tomcat-users.xml 中修改如下配置：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"admin-gui"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span> <span class="attr">username</span>=<span class="string">"tomcat"</span> <span class="attr">password</span>=<span class="string">"s3cret"</span> <span class="attr">roles</span>=<span class="string">"admin-gui"</span>/&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>2、进入当前目录下的：context.xml 文件，并作如下修改（其实这一步，可以省略的）<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;  </span><br><span class="line">    <span class="tag">&lt;<span class="name">WatchedResource</span>&gt;</span>WEB-INF/web.xml<span class="tag">&lt;/<span class="name">WatchedResource</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">Manager</span> <span class="attr">pathname</span>=<span class="string">"/manager"</span> <span class="attr">debug</span>=<span class="string">"0"</span>  <span class="attr">privileged</span>=<span class="string">"true"</span> <span class="attr">docBase</span>=<span class="string">"$&#123;TOMCAT_HOME&#125;/webapps/manager"</span> /&gt;</span>      </span><br><span class="line">    <span class="tag">&lt;<span class="name">Valve</span> <span class="attr">className</span>=<span class="string">"org.apache.catalina.valves.CometConnectionManagerValve"</span> /&gt;</span>    </span><br><span class="line"><span class="tag">&lt;/<span class="name">Context</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>完成这两步之后，重启tomcat ，输入刚才设置的用户名和密码，即可登录Tomcat 管理web project</p>
-<h3 id="tomcat配置访问项目时不需要加项目名称"><a href="#tomcat配置访问项目时不需要加项目名称" class="headerlink" title="tomcat配置访问项目时不需要加项目名称"></a>tomcat配置访问项目时不需要加项目名称</h3><p>访问JAVA WEB项目的时候，需要在地址中添加项目名称，可以去掉项目名称直接访问项目<br>目前有两种方式：<br>方式1: 修改<code>${TOMCAT_HOME}/conf</code>目录下的<code>server.xml</code>配置<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Host</span> <span class="attr">name</span>=<span class="string">"localhost"</span> <span class="attr">appBase</span>=<span class="string">"webapps"</span> <span class="attr">unpackWARs</span>=<span class="string">"true"</span> <span class="attr">autoDeploy</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!-- path留空代表访问域名后面不需要带项目的名称 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">Context</span> <span class="attr">path</span>=<span class="string">""</span> <span class="attr">docBase</span>=<span class="string">"/home/hewentian/ProjectD/brandSearch"</span> <span class="attr">reloadable</span>=<span class="string">"true"</span> /&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">Host</span>&gt;</span></span><br><span class="line"></span><br><span class="line">说明：</span><br><span class="line">path: 代表访问时的项目名称</span><br><span class="line">docBase: 代表项目的绝对路径，也可以使用相对路径</span><br></pre></td></tr></table></figure></p>
-<p>方式2：将项目下的文件复制放到<code>${TOMCAT_HOME}/webapps/ROOT</code>目录下<br>所有的项目都在webapps目录里面，ROOT是其中的一个项目，浏览器访问<code>http://localhost:8080/</code>其实是默认访问ROOT项目。</p>
-<h3 id="tomcat配置图片目录"><a href="#tomcat配置图片目录" class="headerlink" title="tomcat配置图片目录"></a>tomcat配置图片目录</h3><p>修改<code>${TOMCAT_HOME}/conf</code>目录下的<code>server.xml</code>配置<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Host</span> <span class="attr">name</span>=<span class="string">"localhost"</span> <span class="attr">appBase</span>=<span class="string">"webapps"</span> <span class="attr">unpackWARs</span>=<span class="string">"true"</span> <span class="attr">autoDeploy</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">Context</span> <span class="attr">path</span>=<span class="string">"img"</span> <span class="attr">docBase</span>=<span class="string">"/home/hewentian/Pictures"</span> <span class="attr">reloadable</span>=<span class="string">"false"</span> &gt;</span><span class="tag">&lt;/<span class="name">Context</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Host</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>这样当你在浏览器中访问<code>http://localhost:8080/img/{指定图片名}</code>的时候就会访问到<code>/home/hewentian/Pictures</code>目录下面的图片</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjcrb8gsw001dl42izops29v7" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tomcat/">tomcat</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">__('next') &raquo;</a>
   </nav>
 </section>
         
@@ -1473,7 +1466,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -1483,7 +1476,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1496,6 +1489,14 @@ Password:
       <ul>
         
           <li>
+            <a href="/2018/01/29/gitbook-note/">gitbook学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/23/activemq-note/">activeMQ学习笔记</a>
+          </li>
+        
+          <li>
             <a href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
           </li>
         
@@ -1505,14 +1506,6 @@ Password:
         
           <li>
             <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
-          </li>
-        
-          <li>
-            <a href="/2017/12/08/install-jdk/">安装 JDK</a>
-          </li>
-        
-          <li>
-            <a href="/2017/12/07/mysql-note/">mysql 笔记</a>
           </li>
         
       </ul>

@@ -71,6 +71,177 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-gitbook-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/01/29/gitbook-note/" class="article-date">
+  <time datetime="2018-01-29T05:59:48.000Z" itemprop="datePublished">2018-01-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/other/">other</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/29/gitbook-note/">gitbook学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面说下如何安装gitbook</p>
+<h3 id="1-安装-Node-js"><a href="#1-安装-Node-js" class="headerlink" title="1. 安装 Node.js"></a>1. 安装 Node.js</h3><p>先测试一下Node.js是否已安装，在命令行中直接输入<code>node</code>可以看到提示符变成了一个向右<br>的箭头就表示成功了，然后按ctrl + c退出node模式，出现$符号才表示正常了</p>
+<p>如果未安裝 node，安裝方法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install nodejs-legacy</span><br></pre></td></tr></table></figure></p>
+<p>剩下的安装过程参考<a href="https://yq.aliyun.com/articles/7506" target="_blank" rel="noopener">https://yq.aliyun.com/articles/7506</a>，但是会有一些不同，如下所示：</p>
+<h3 id="2-安装gitbook"><a href="#2-安装gitbook" class="headerlink" title="2. 安装gitbook"></a>2. 安装gitbook</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo npm install -g gitbook-cli</span><br></pre></td></tr></table></figure>
+<h3 id="3-初始化"><a href="#3-初始化" class="headerlink" title="3. 初始化"></a>3. 初始化</h3><p>在你的文档目录下新建文件 SUMMARY.md，这个文件就是这本书的目录啦：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> docs</span><br><span class="line">$ touch SUMMARY.md</span><br></pre></td></tr></table></figure></p>
+<p>SUMMARY.md 的格式规范如下：</p>
+<pre><code># uitest 文档
+
+- [uitest 是什么](users/index.md)
+    - [如何使用 uitest](users/use.md)
+    - [如何编写自定义的测试用例](users/case.md)
+    - [browserjs API 文档](users/api.md)
+- [uitest 开发者文档](devs/index.md)
+    - [browserjs 开发者文档](devs/browserjs.md)
+    - [utci 文档](devs/utci.md)
+    - [utserver &amp; utclient 文档](devs/utserver.md)
+- [相关文章沉淀](artical.md)
+- [关于 gitbook](gitbook.md)
+</code></pre><p>然后执行<code>gitbook init</code>初始化，gitbook 会根据 SUMMARY 的结构生成对应的目录文件：</p>
+<pre><code>├── README.md           // 首页
+├── SUMMARY.md          // 目录
+└── users               // 用户文档
+    └── index.md        // 是什么
+    ├── use.md          // 如何使用
+    ├── api.md          // browserjs API
+    ├── case.md         // 如何写测试用例
+├── devs                // 开发者文档目录
+    │   ├── index.md        // 开发者文文档首页
+    │   ├── browserjs.md    // browserjs 开发文档
+    │   ├── utci.md         // utci 开发文档
+    │   └── utserver.md     // utserver 和 utclien 开发文档
+├── artical.md          // 文章沉淀
+├── gitbook.md          // gitbook 相关
+</code></pre><h3 id="4-本地调试"><a href="#4-本地调试" class="headerlink" title="4. 本地调试"></a>4. 本地调试</h3><p>在对应的文档目录下运行<code>gitbook serve</code>会启动一个本地的静态服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> docs</span><br><span class="line">$ gitbook serve</span><br><span class="line"></span><br><span class="line">Live reload server started on port: 35729</span><br><span class="line">Press CTRL+C to quit ...</span><br><span class="line"></span><br><span class="line">info: 7 plugins are installed </span><br><span class="line">info: loading plugin <span class="string">"livereload"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"highlight"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"search"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"lunr"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"sharing"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"fontsettings"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"theme-default"</span>... OK </span><br><span class="line">info: found 27 pages </span><br><span class="line">info: found 2 asset files</span><br></pre></td></tr></table></figure></p>
+<p>访问 <a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a> 就可以实时的预览啦，并且支持<code>livereload</code>, 灰常赞~接下来结合预览的功能编辑对应的文档，完成之后就可以发布啦。</p>
+<h3 id="5-发布"><a href="#5-发布" class="headerlink" title="5. 发布"></a>5. 发布</h3><p>在文档目录下执行<code>gitbook build</code>会生成一个<code>_book</code>的目录，这个目录就是我们的静态网站啦，然后通过 demo 平台或者 github pages 就可以很简单的完成部署了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjd7041gd0006yi2ijg1n0crd" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-activemq-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/01/23/activemq-note/" class="article-date">
+  <time datetime="2018-01-23T12:46:34.000Z" itemprop="datePublished">2018-01-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/23/activemq-note/">activeMQ学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Installation-Procedure-for-Unix"><a href="#Installation-Procedure-for-Unix" class="headerlink" title="Installation Procedure for Unix"></a>Installation Procedure for Unix</h3><p>Unix Binary Installation<br>This procedure explains how to download and install the binary distribution on a Unix system.<br><strong>NOTE</strong>: There are several alternative ways to perform this type of installation.</p>
+<ol>
+<li><p>Download the activemq zipped tarball file to the Unix machine, using either a browser or a tool, i.e., wget, scp, ftp, etc. for example:<br>(see <a href="http://activemq.apache.org/download.html" target="_blank" rel="noopener">Download</a> -&gt; “The latest stable release”)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://activemq.apache.org/path/tofile/apache-activemq-x.x.x-bin.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Extract the files from the zipped tarball into a directory of your choice. For example:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]</span><br><span class="line">$ tar zxvf activemq-x.x.x-bin.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Starting-ActiveMQ"><a href="#Starting-ActiveMQ" class="headerlink" title="Starting ActiveMQ"></a>Starting ActiveMQ</h3><p>On Unix:<br>From a command shell, change to the installation directory and run ActiveMQ as a foregroud process:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq console</span><br></pre></td></tr></table></figure></p>
+<p>From a command shell, change to the installation directory and run ActiveMQ as a daemon process:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq start</span><br></pre></td></tr></table></figure></p>
+<h3 id="Stopping-ActiveMQ"><a href="#Stopping-ActiveMQ" class="headerlink" title="Stopping ActiveMQ"></a>Stopping ActiveMQ</h3><p>For both Windows and Unix installations, terminate ActiveMQ by typing “CTRL-C” in the console or command shell in which it is running.<br>If ActiveMQ was started in the background on Unix, the process can be killed, with the following:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq stop</span><br></pre></td></tr></table></figure></p>
+<h3 id="Testing-the-Installation"><a href="#Testing-the-Installation" class="headerlink" title="Testing the Installation"></a>Testing the Installation</h3><p>Using the administrative interface</p>
+<ul>
+<li>Open the administrative interface</li>
+<li>URL: <a href="http://127.0.0.1:8161/admin/" target="_blank" rel="noopener">http://127.0.0.1:8161/admin/</a></li>
+<li>Login: admin</li>
+<li>Passwort: admin</li>
+<li>Navigate to “Queues”</li>
+<li>Add a queue name and click create</li>
+<li>Send test message by klicking on “Send to”</li>
+</ul>
+<h3 id="Listen-port"><a href="#Listen-port" class="headerlink" title="Listen port"></a>Listen port</h3><p>ActiveMQ’s default port is 61616. From another window run netstat and search for port 61616.From a Unix command shell, type:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ netstat -nl | grep 61616</span><br><span class="line">tcp6       0      0 :::61616                :::*                    LISTEN</span><br></pre></td></tr></table></figure></p>
+<p>部分示例可以在<a href="https://github.com/hewentian/mq-demo">这里</a>找到。</p>
+<h3 id="安全问题"><a href="#安全问题" class="headerlink" title="安全问题"></a>安全问题</h3><p>ObjectMessage objects depend on Java serialization of marshal/unmarshal object payload. This process is generally considered unsafe as malicious payload can exploit the host system. That’s why starting with versions 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist packages that can be exchanged using ObjectMessages.</p>
+<p>ActiveMQ从5.12.2、5.13.0开始，如果传送的消息是一个<code>JavaBean</code>就要设置一个传输对象包名的白名单列表，否则会报如下错：</p>
+<pre><code>javax.jms.JMSException: Failed to build body from content. Serializable class not available to broker. Reason: java.lang.ClassNotFoundException: Forbidden class java.lang.Integer! This class is not trusted to be serialized as ObjectMessage payload. Please take a look at http://activemq.apache.org/objectmessage.html for more information on how to configure trusted classes.
+at org.apache.activemq.util.JMSExceptionSupport.create(JMSExceptionSupport.java:36)
+at org.apache.activemq.command.ActiveMQObjectMessage.getObject(ActiveMQObjectMessage.java:213)
+at com.hewentian.activemq.bean.Consumer$1.onMessage(Consumer.java:48)
+at org.apache.activemq.ActiveMQMessageConsumer.dispatch(ActiveMQMessageConsumer.java:1404)
+at org.apache.activemq.ActiveMQSessionExecutor.dispatch(ActiveMQSessionExecutor.java:131)
+at org.apache.activemq.ActiveMQSessionExecutor.iterate(ActiveMQSessionExecutor.java:202)
+at org.apache.activemq.thread.PooledTaskRunner.runTask(PooledTaskRunner.java:133)
+at org.apache.activemq.thread.PooledTaskRunner$1.run(PooledTaskRunner.java:48)
+at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+at java.lang.Thread.run(Thread.java:745)
+</code></pre><p>根据提示，我们打开<a href="http://activemq.apache.org/objectmessage.html" target="_blank" rel="noopener">http://activemq.apache.org/objectmessage.html</a>，可以发现解决此报错的详细说明。解决方法有二：<br><strong>注意： 我是用方法二解决的，方法一试了，无效。</strong></p>
+<ol>
+<li><p>The <code>setTrustedPackages()</code> method allows you to set the list of trusted packages you want to be to unserialize, like</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ActiveMQConnectionFactory factory = <span class="keyword">new</span> ActiveMQConnectionFactory(<span class="string">"tcp://localhost:61616"</span>);</span><br><span class="line">factory.setTrustedPackages(<span class="keyword">new</span> ArrayList(Arrays.asList(<span class="string">"org.apache.activemq.test,com.hewentian.activemq.bean"</span>.split(<span class="string">","</span>))));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>The <code>setTrustAllPackages()</code> allows you to turn off security check and trust all classes. It’s useful for testing purposes.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ActiveMQConnectionFactory factory = <span class="keyword">new</span> ActiveMQConnectionFactory(<span class="string">"tcp://localhost:61616"</span>);</span><br><span class="line">factory.setTrustAllPackages(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果是springBoot工程，你也可以在<code>application.properties</code>作如下设置：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring.activemq.packages.trust-all=<span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">or</span><br><span class="line"></span><br><span class="line">spring.activemq.packages.trusted=&lt;package1&gt;,&lt;package2&gt;,&lt;package3&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="消息的消费者接收消息可以采用两种方式："><a href="#消息的消费者接收消息可以采用两种方式：" class="headerlink" title="消息的消费者接收消息可以采用两种方式："></a>消息的消费者接收消息可以采用两种方式：</h3><ol>
+<li>consumer.receive() 或 consumer.receive(int timeout)；</li>
+<li>使用setMessageListener。<br>采用第一种方式，消息的接收者会一直等待下去，直到有消息到达，或者超时。后一种方式会注册一个监听器，当有消息到达的时候，会回调它的onMessage()方法。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjd7041fd0000yi2ixhsh6ke9" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/">activemq</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-rabbitmq-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/01/17/rabbitmq-note/" class="article-date">
@@ -140,7 +311,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjcrb8grt000rl42ifcjhupvz" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjd7041hu000wyi2i9d6nt7fc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabbitmq/">rabbitmq</a></li></ul>
@@ -199,7 +370,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjcrb8gs2000zl42impkf2se4" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjd7041i10014yi2if3l7k1h0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -253,7 +424,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjcrb8gss0018l42ixyeh1amp" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjd7041im001byi2ifxzwaaei" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -322,7 +493,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjcrb8gqk0007l42iu8w0p1g9" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjd7041go000byi2i1fosxvjc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jdk/">jdk</a></li></ul>
@@ -464,11 +635,15 @@
 <p>4、NCHAR、NVARCHAR、NTEXT。这三种从名字上看比前面三种多了个“N”。它表示存储的是Unicode数据类型的字符。我们知道字符中，英文字符只需要一个字节存储就足够了，但汉字众多，需要两个字节存储，英文与汉字同时存在时容易造成混乱，Unicode字符集就是为了解决字符集这种不兼容的问题而产生的，它所有的字符都用两个字节表示，即英文字符也是用两个字节表示。nchar、nvarchar的长度是在1到4000之间。和char、varchar比较起来，nchar、nvarchar则最多存储4000个字符，不论是英文还是汉字；而char、varchar最多能存储8000个英文，4000个汉字。可以看出使用nchar、nvarchar数据类型时不用担心输入的字符是英文还是汉字，较为方便，但在存储英文时数量上有些损失。</p>
 <p>所以一般来说，如果含有中文字符，用nchar/nvarchar，如果纯英文和数字，用char/varchar</p>
 <p>它们的区别概括成：<br>CHAR，NCHAR 定长，速度快，占空间大，需处理<br>VARCHAR，NVARCHAR，TEXT 不定长，空间小，速度慢，无需处理<br>NCHAR、NVARCHAR、NTEXT处理Unicode码</p>
+<h3 id="mysql-修改字段长度"><a href="#mysql-修改字段长度" class="headerlink" title="mysql 修改字段长度"></a>mysql 修改字段长度</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> [表名] <span class="keyword">modify</span> <span class="keyword">column</span> [字段名] [类型];</span><br><span class="line"></span><br><span class="line">示例: sys_user表里的user_name字段，由原来长度是10个字符，修改改成40个字符</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> sys_user <span class="keyword">modify</span> <span class="keyword">column</span> user_name <span class="built_in">varchar</span>(<span class="number">40</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="mysql-增加列（字段）"><a href="#mysql-增加列（字段）" class="headerlink" title="mysql 增加列（字段）"></a>mysql 增加列（字段）</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> [表名] <span class="keyword">add</span> [列名] [列类型] [其他属性，如默认值];</span><br><span class="line"></span><br><span class="line">示例: sys_user表增加一个地址列，长度为200个字符，默认值为null</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> sys_user <span class="keyword">add</span> address <span class="built_in">varchar</span>(<span class="number">200</span>) <span class="keyword">default</span> <span class="literal">null</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="mysql-按字段分组，取最小生日记录"><a href="#mysql-按字段分组，取最小生日记录" class="headerlink" title="mysql 按字段分组，取最小生日记录"></a>mysql 按字段分组，取最小生日记录</h3><p>有用户表如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sql&gt; select * from user;</span><br><span class="line"></span><br><span class="line">id	name	birthday</span><br><span class="line">1	a	2018-01-25 09:30:05</span><br><span class="line">2	a	2018-01-25 09:30:14</span><br><span class="line">3	a	2018-01-25 09:30:10</span><br><span class="line">4	b	2018-01-25 09:30:29</span><br><span class="line">5	b	2018-01-25 09:30:24</span><br></pre></td></tr></table></figure></p>
+<p><strong>要求：</strong>以name分组，取出生日最小的记录，即id为2、4的记录<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sql&gt; select * from (select * from user order by birthday desc) t group by t.name;</span><br><span class="line"></span><br><span class="line">id	name	birthday</span><br><span class="line">2	a	2018-01-25 09:30:14</span><br><span class="line">4	b	2018-01-25 09:30:29</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjcrb8grf000ll42iqy5pn7sf" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjd7041hg000qyi2iu3s5lbtp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
@@ -555,7 +730,7 @@ clientPort=2183                                        # 这台服务器的端�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjcrb8gt1001el42iz74f2mjl" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjd7041j2001kyi2iy0dabx13" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -615,7 +790,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjcrb8gt6001il42ioupl7pc0" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjd7041ja001oyi2iegbvozfp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -627,10 +802,10 @@ clientPort=2181
 
 
   
-    <article id="post-install-hexo" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-hexo-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2017/12/02/install-hexo/" class="article-date">
-  <time datetime="2017-12-02T06:55:11.584Z" itemprop="datePublished">2017-12-02</time>
+    <a href="/2017/12/02/hexo-note/" class="article-date">
+  <time datetime="2017-12-02T05:59:48.000Z" itemprop="datePublished">2017-12-02</time>
 </a>
     
   <div class="article-category">
@@ -645,7 +820,7 @@ clientPort=2181
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/02/install-hexo/">安装 Hexo</a>
+      <a class="article-title" href="/2017/12/02/hexo-note/">hexo学习笔记</a>
     </h1>
   
 
@@ -693,93 +868,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/02/install-hexo/" data-id="cjcrb8gqe0005l42iohakr0eu" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-java-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/11/16/java-note/" class="article-date">
-  <time datetime="2017-11-16T11:58:45.000Z" itemprop="datePublished">2017-11-16</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/java/">java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/16/java-note/">java一些常用笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息"><a href="#想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息" class="headerlink" title="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息"></a>想在<code>eclipse</code>中新建类的时候，自动在类的头部插入作者、时间等信息</h3><p>方法是<code>Window -&gt; Preferences -&gt; Java -&gt; Code Style -&gt; Code Templates</code>在右则民展开<code>Code -&gt; New Java files</code>点<code>Edit...</code>并加入如下代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$&#123;filecomment&#125;</span><br><span class="line">$&#123;package_declaration&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;$&#123;file_name&#125;&lt;/b&gt; 是 </span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> $&#123;currentDate:date('yyyy-MM-dd')&#125; $&#123;time&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">$&#123;typecomment&#125;</span><br><span class="line">$&#123;type_declaration&#125;</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjcrb8gqu000bl42imtrwpqx1" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-maven-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/11/10/maven-note/" class="article-date">
-  <time datetime="2017-11-09T16:48:44.000Z" itemprop="datePublished">2017-11-10</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/other/">other</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/10/maven-note/">maven笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在<code>eclipse</code>中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8</p>
-<p>原因：tools.jar包是JDK的，而tools.jar并未在仓库<code>maven repository</code>中</p>
-<p>解决方案：在pom文件中添加如下代码即可<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>jdk.tools<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jdk.tools<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">scope</span>&gt;</span>system<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">systemPath</span>&gt;</span>$&#123;JAVA_HOME&#125;/lib/tools.jar<span class="tag">&lt;/<span class="name">systemPath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/maven-note/" data-id="cjcrb8grc000il42ixg1ytvmi" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/02/hexo-note/" data-id="cjd7041gg0007yi2iljj884cu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -792,7 +881,7 @@ clientPort=2181
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">__('next') &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">__('next') &raquo;</a>
   </nav>
 </section>
         
@@ -802,7 +891,7 @@ clientPort=2181
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -812,7 +901,7 @@ clientPort=2181
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -825,6 +914,14 @@ clientPort=2181
       <ul>
         
           <li>
+            <a href="/2018/01/29/gitbook-note/">gitbook学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/23/activemq-note/">activeMQ学习笔记</a>
+          </li>
+        
+          <li>
             <a href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
           </li>
         
@@ -834,14 +931,6 @@ clientPort=2181
         
           <li>
             <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
-          </li>
-        
-          <li>
-            <a href="/2017/12/08/install-jdk/">安装 JDK</a>
-          </li>
-        
-          <li>
-            <a href="/2017/12/07/mysql-note/">mysql 笔记</a>
           </li>
         
       </ul>

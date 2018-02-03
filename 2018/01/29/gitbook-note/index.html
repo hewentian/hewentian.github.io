@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>gitbook学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="下面说下如何安装gitbook 1. 安装 Node.js先测试一下Node.js是否已安装，在命令行中直接输入node可以看到提示符变成了一个向右的箭头就表示成功了，然后按ctrl + c退出node模式，出现$符号才表示正常了 如果未安裝 node，安裝方法如下：1$ sudo apt-get install nodejs-legacy 剩下的安装过程参考https://yq.aliyun.c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gitbook学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2018/01/29/gitbook-note/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="下面说下如何安装gitbook 1. 安装 Node.js先测试一下Node.js是否已安装，在命令行中直接输入node可以看到提示符变成了一个向右的箭头就表示成功了，然后按ctrl + c退出node模式，出现$符号才表示正常了 如果未安裝 node，安裝方法如下：1$ sudo apt-get install nodejs-legacy 剩下的安装过程参考https://yq.aliyun.c">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-01-29T06:29:15.932Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gitbook学习笔记">
+<meta name="twitter:description" content="下面说下如何安装gitbook 1. 安装 Node.js先测试一下Node.js是否已安装，在命令行中直接输入node可以看到提示符变成了一个向右的箭头就表示成功了，然后按ctrl + c退出node模式，出现$符号才表示正常了 如果未安裝 node，安裝方法如下：1$ sudo apt-get install nodejs-legacy 剩下的安装过程参考https://yq.aliyun.c">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-gitbook-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/01/29/gitbook-note/" class="article-date">
+  <time datetime="2018-01-29T05:59:48.000Z" itemprop="datePublished">2018-01-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/other/">other</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      gitbook学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面说下如何安装gitbook</p>
+<h3 id="1-安装-Node-js"><a href="#1-安装-Node-js" class="headerlink" title="1. 安装 Node.js"></a>1. 安装 Node.js</h3><p>先测试一下Node.js是否已安装，在命令行中直接输入<code>node</code>可以看到提示符变成了一个向右<br>的箭头就表示成功了，然后按ctrl + c退出node模式，出现$符号才表示正常了</p>
+<p>如果未安裝 node，安裝方法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install nodejs-legacy</span><br></pre></td></tr></table></figure></p>
+<p>剩下的安装过程参考<a href="https://yq.aliyun.com/articles/7506" target="_blank" rel="noopener">https://yq.aliyun.com/articles/7506</a>，但是会有一些不同，如下所示：</p>
+<h3 id="2-安装gitbook"><a href="#2-安装gitbook" class="headerlink" title="2. 安装gitbook"></a>2. 安装gitbook</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo npm install -g gitbook-cli</span><br></pre></td></tr></table></figure>
+<h3 id="3-初始化"><a href="#3-初始化" class="headerlink" title="3. 初始化"></a>3. 初始化</h3><p>在你的文档目录下新建文件 SUMMARY.md，这个文件就是这本书的目录啦：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> docs</span><br><span class="line">$ touch SUMMARY.md</span><br></pre></td></tr></table></figure></p>
+<p>SUMMARY.md 的格式规范如下：</p>
+<pre><code># uitest 文档
+
+- [uitest 是什么](users/index.md)
+    - [如何使用 uitest](users/use.md)
+    - [如何编写自定义的测试用例](users/case.md)
+    - [browserjs API 文档](users/api.md)
+- [uitest 开发者文档](devs/index.md)
+    - [browserjs 开发者文档](devs/browserjs.md)
+    - [utci 文档](devs/utci.md)
+    - [utserver &amp; utclient 文档](devs/utserver.md)
+- [相关文章沉淀](artical.md)
+- [关于 gitbook](gitbook.md)
+</code></pre><p>然后执行<code>gitbook init</code>初始化，gitbook 会根据 SUMMARY 的结构生成对应的目录文件：</p>
+<pre><code>├── README.md           // 首页
+├── SUMMARY.md          // 目录
+└── users               // 用户文档
+    └── index.md        // 是什么
+    ├── use.md          // 如何使用
+    ├── api.md          // browserjs API
+    ├── case.md         // 如何写测试用例
+├── devs                // 开发者文档目录
+    │   ├── index.md        // 开发者文文档首页
+    │   ├── browserjs.md    // browserjs 开发文档
+    │   ├── utci.md         // utci 开发文档
+    │   └── utserver.md     // utserver 和 utclien 开发文档
+├── artical.md          // 文章沉淀
+├── gitbook.md          // gitbook 相关
+</code></pre><h3 id="4-本地调试"><a href="#4-本地调试" class="headerlink" title="4. 本地调试"></a>4. 本地调试</h3><p>在对应的文档目录下运行<code>gitbook serve</code>会启动一个本地的静态服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> docs</span><br><span class="line">$ gitbook serve</span><br><span class="line"></span><br><span class="line">Live reload server started on port: 35729</span><br><span class="line">Press CTRL+C to quit ...</span><br><span class="line"></span><br><span class="line">info: 7 plugins are installed </span><br><span class="line">info: loading plugin <span class="string">"livereload"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"highlight"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"search"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"lunr"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"sharing"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"fontsettings"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"theme-default"</span>... OK </span><br><span class="line">info: found 27 pages </span><br><span class="line">info: found 2 asset files</span><br></pre></td></tr></table></figure></p>
+<p>访问 <a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a> 就可以实时的预览啦，并且支持<code>livereload</code>, 灰常赞~接下来结合预览的功能编辑对应的文档，完成之后就可以发布啦。</p>
+<h3 id="5-发布"><a href="#5-发布" class="headerlink" title="5. 发布"></a>5. 发布</h3><p>在文档目录下执行<code>gitbook build</code>会生成一个<code>_book</code>的目录，这个目录就是我们的静态网站啦，然后通过 demo 平台或者 github pages 就可以很简单的完成部署了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjd7041gd0006yi2ijg1n0crd" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/01/23/activemq-note/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">activeMQ学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/01/29/gitbook-note/">gitbook学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/23/activemq-note/">activeMQ学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/08/solr-ikanalyzer/">solr配置IKAnalyzer的中文分词</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

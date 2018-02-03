@@ -3,20 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>tomcat 学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <title>Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="tomcat 登录用户名 与 密码设置123456789101112131415161718192021403 Access DeniedYou are not authorized to view this page.If you have already configured the Host Manager application to allow access and you have u">
-<meta name="keywords" content="tomcat">
-<meta property="og:type" content="article">
-<meta property="og:title" content="tomcat 学习笔记">
-<meta property="og:url" content="https://github.com/hewentian/2017/09/11/tomcat-note/index.html">
+  <meta name="description" content="my personal blog">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:url" content="https://github.com/hewentian/page/3/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="tomcat 登录用户名 与 密码设置123456789101112131415161718192021403 Access DeniedYou are not authorized to view this page.If you have already configured the Host Manager application to allow access and you have u">
+<meta property="og:description" content="my personal blog">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-01-08T06:38:19.867Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="tomcat 学习笔记">
-<meta name="twitter:description" content="tomcat 登录用户名 与 密码设置123456789101112131415161718192021403 Access DeniedYou are not authorized to view this page.If you have already configured the Host Manager application to allow access and you have u">
+<meta name="twitter:title" content="Tim Ho&#39;s Technology Blog">
+<meta name="twitter:description" content="my personal blog">
   
   
     <link rel="icon" href="/favicon.png">
@@ -71,7 +69,52 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-tomcat-note" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main">
+  
+    <article id="post-online-implementing" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/12/online-implementing/" class="article-date">
+  <time datetime="2017-09-12T12:22:54.000Z" itemprop="datePublished">2017-09-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/12/online-implementing/">系统上线注意事项</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="上线总结："><a href="#上线总结：" class="headerlink" title="上线总结："></a>上线总结：</h2><p>今天下午准备上线，折腾了很久， 不过， 终于成功上线，期间发现了很多问题。所谓好记性，不如烂笔头，故记之。有时候，系统上线，如果发现还是旧的页面，可能会是缓存，这时候，要检查下下面的地方：</p>
+<h3 id="1-你浏览器的缓存是否已经清掉了；"><a href="#1-你浏览器的缓存是否已经清掉了；" class="headerlink" title="1. 你浏览器的缓存是否已经清掉了；"></a>1. 你浏览器的缓存是否已经清掉了；</h3><h3 id="2-Tomcat-的缓存是否清掉了-TOMCAT-HOME-work-这个目录，放的就是-Tomcat-的缓存；"><a href="#2-Tomcat-的缓存是否清掉了-TOMCAT-HOME-work-这个目录，放的就是-Tomcat-的缓存；" class="headerlink" title="2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；"></a>2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；</h3><h3 id="3-如果-IP-PORT-访问，没问题的话，有可能是-CDN-缓存了，这时候也要刷下-CDN；"><a href="#3-如果-IP-PORT-访问，没问题的话，有可能是-CDN-缓存了，这时候也要刷下-CDN；" class="headerlink" title="3. 如果 IP + PORT 访问，没问题的话，有可能是 CDN 缓存了，这时候也要刷下 CDN；"></a>3. 如果 IP + PORT 访问，没问题的话，有可能是 CDN 缓存了，这时候也要刷下 CDN；</h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjd7041hp000syi2iu9s0y6gn" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-tomcat-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/09/11/tomcat-note/" class="article-date">
   <time datetime="2017-09-11T02:21:02.000Z" itemprop="datePublished">2017-09-11</time>
@@ -88,8 +131,8 @@
       <header class="article-header">
         
   
-    <h1 class="article-title" itemprop="name">
-      tomcat 学习笔记
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/11/tomcat-note/">tomcat 学习笔记</a>
     </h1>
   
 
@@ -120,24 +163,15 @@
     </footer>
   </div>
   
-    
-<nav id="article-nav">
-  
-    <a href="/2017/09/12/online-implementing/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          系统上线注意事项
-        
-      </div>
-    </a>
-  
-  
-</nav>
-
-  
 </article>
 
+
+  
+
+
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+  </nav>
 </section>
         
           <aside id="sidebar">

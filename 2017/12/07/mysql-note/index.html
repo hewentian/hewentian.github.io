@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos;, last_name) AS user_name, COUNT(*) AS c FROM user_ta">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-01-02T01:25:25.495Z">
+<meta property="og:updated_time" content="2018-02-03T06:50:16.149Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql 笔记">
 <meta name="twitter:description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos;, last_name) AS user_name, COUNT(*) AS c FROM user_ta">
@@ -201,11 +201,15 @@
 <p>4、NCHAR、NVARCHAR、NTEXT。这三种从名字上看比前面三种多了个“N”。它表示存储的是Unicode数据类型的字符。我们知道字符中，英文字符只需要一个字节存储就足够了，但汉字众多，需要两个字节存储，英文与汉字同时存在时容易造成混乱，Unicode字符集就是为了解决字符集这种不兼容的问题而产生的，它所有的字符都用两个字节表示，即英文字符也是用两个字节表示。nchar、nvarchar的长度是在1到4000之间。和char、varchar比较起来，nchar、nvarchar则最多存储4000个字符，不论是英文还是汉字；而char、varchar最多能存储8000个英文，4000个汉字。可以看出使用nchar、nvarchar数据类型时不用担心输入的字符是英文还是汉字，较为方便，但在存储英文时数量上有些损失。</p>
 <p>所以一般来说，如果含有中文字符，用nchar/nvarchar，如果纯英文和数字，用char/varchar</p>
 <p>它们的区别概括成：<br>CHAR，NCHAR 定长，速度快，占空间大，需处理<br>VARCHAR，NVARCHAR，TEXT 不定长，空间小，速度慢，无需处理<br>NCHAR、NVARCHAR、NTEXT处理Unicode码</p>
+<h3 id="mysql-修改字段长度"><a href="#mysql-修改字段长度" class="headerlink" title="mysql 修改字段长度"></a>mysql 修改字段长度</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> [表名] <span class="keyword">modify</span> <span class="keyword">column</span> [字段名] [类型];</span><br><span class="line"></span><br><span class="line">示例: sys_user表里的user_name字段，由原来长度是10个字符，修改改成40个字符</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> sys_user <span class="keyword">modify</span> <span class="keyword">column</span> user_name <span class="built_in">varchar</span>(<span class="number">40</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="mysql-增加列（字段）"><a href="#mysql-增加列（字段）" class="headerlink" title="mysql 增加列（字段）"></a>mysql 增加列（字段）</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> [表名] <span class="keyword">add</span> [列名] [列类型] [其他属性，如默认值];</span><br><span class="line"></span><br><span class="line">示例: sys_user表增加一个地址列，长度为200个字符，默认值为null</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> sys_user <span class="keyword">add</span> address <span class="built_in">varchar</span>(<span class="number">200</span>) <span class="keyword">default</span> <span class="literal">null</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="mysql-按字段分组，取最小生日记录"><a href="#mysql-按字段分组，取最小生日记录" class="headerlink" title="mysql 按字段分组，取最小生日记录"></a>mysql 按字段分组，取最小生日记录</h3><p>有用户表如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sql&gt; select * from user;</span><br><span class="line"></span><br><span class="line">id	name	birthday</span><br><span class="line">1	a	2018-01-25 09:30:05</span><br><span class="line">2	a	2018-01-25 09:30:14</span><br><span class="line">3	a	2018-01-25 09:30:10</span><br><span class="line">4	b	2018-01-25 09:30:29</span><br><span class="line">5	b	2018-01-25 09:30:24</span><br></pre></td></tr></table></figure></p>
+<p><strong>要求：</strong>以name分组，取出生日最小的记录，即id为2、4的记录<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sql&gt; select * from (select * from user order by birthday desc) t group by t.name;</span><br><span class="line"></span><br><span class="line">id	name	birthday</span><br><span class="line">2	a	2018-01-25 09:30:14</span><br><span class="line">4	b	2018-01-25 09:30:29</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjcrb8grf000ll42iqy5pn7sf" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjd7041hg000qyi2iu3s5lbtp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
@@ -244,7 +248,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">5</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -254,7 +258,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -267,6 +271,14 @@
       <ul>
         
           <li>
+            <a href="/2018/01/29/gitbook-note/">gitbook学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/23/activemq-note/">activeMQ学习笔记</a>
+          </li>
+        
+          <li>
             <a href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
           </li>
         
@@ -276,14 +288,6 @@
         
           <li>
             <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
-          </li>
-        
-          <li>
-            <a href="/2017/12/08/install-jdk/">安装 JDK</a>
-          </li>
-        
-          <li>
-            <a href="/2017/12/07/mysql-note/">mysql 笔记</a>
           </li>
         
       </ul>

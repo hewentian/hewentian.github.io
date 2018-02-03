@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>activeMQ学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Installation Procedure for UnixUnix Binary InstallationThis procedure explains how to download and install the binary distribution on a Unix system.NOTE: There are several alternative ways to perform">
+<meta name="keywords" content="activemq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="activeMQ学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2018/01/23/activemq-note/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="Installation Procedure for UnixUnix Binary InstallationThis procedure explains how to download and install the binary distribution on a Unix system.NOTE: There are several alternative ways to perform">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-01-29T01:07:31.325Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="activeMQ学习笔记">
+<meta name="twitter:description" content="Installation Procedure for UnixUnix Binary InstallationThis procedure explains how to download and install the binary distribution on a Unix system.NOTE: There are several alternative ways to perform">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-activemq-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/01/23/activemq-note/" class="article-date">
+  <time datetime="2018-01-23T12:46:34.000Z" itemprop="datePublished">2018-01-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      activeMQ学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Installation-Procedure-for-Unix"><a href="#Installation-Procedure-for-Unix" class="headerlink" title="Installation Procedure for Unix"></a>Installation Procedure for Unix</h3><p>Unix Binary Installation<br>This procedure explains how to download and install the binary distribution on a Unix system.<br><strong>NOTE</strong>: There are several alternative ways to perform this type of installation.</p>
+<ol>
+<li><p>Download the activemq zipped tarball file to the Unix machine, using either a browser or a tool, i.e., wget, scp, ftp, etc. for example:<br>(see <a href="http://activemq.apache.org/download.html" target="_blank" rel="noopener">Download</a> -&gt; “The latest stable release”)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://activemq.apache.org/path/tofile/apache-activemq-x.x.x-bin.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Extract the files from the zipped tarball into a directory of your choice. For example:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]</span><br><span class="line">$ tar zxvf activemq-x.x.x-bin.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Starting-ActiveMQ"><a href="#Starting-ActiveMQ" class="headerlink" title="Starting ActiveMQ"></a>Starting ActiveMQ</h3><p>On Unix:<br>From a command shell, change to the installation directory and run ActiveMQ as a foregroud process:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq console</span><br></pre></td></tr></table></figure></p>
+<p>From a command shell, change to the installation directory and run ActiveMQ as a daemon process:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq start</span><br></pre></td></tr></table></figure></p>
+<h3 id="Stopping-ActiveMQ"><a href="#Stopping-ActiveMQ" class="headerlink" title="Stopping ActiveMQ"></a>Stopping ActiveMQ</h3><p>For both Windows and Unix installations, terminate ActiveMQ by typing “CTRL-C” in the console or command shell in which it is running.<br>If ActiveMQ was started in the background on Unix, the process can be killed, with the following:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq stop</span><br></pre></td></tr></table></figure></p>
+<h3 id="Testing-the-Installation"><a href="#Testing-the-Installation" class="headerlink" title="Testing the Installation"></a>Testing the Installation</h3><p>Using the administrative interface</p>
+<ul>
+<li>Open the administrative interface</li>
+<li>URL: <a href="http://127.0.0.1:8161/admin/" target="_blank" rel="noopener">http://127.0.0.1:8161/admin/</a></li>
+<li>Login: admin</li>
+<li>Passwort: admin</li>
+<li>Navigate to “Queues”</li>
+<li>Add a queue name and click create</li>
+<li>Send test message by klicking on “Send to”</li>
+</ul>
+<h3 id="Listen-port"><a href="#Listen-port" class="headerlink" title="Listen port"></a>Listen port</h3><p>ActiveMQ’s default port is 61616. From another window run netstat and search for port 61616.From a Unix command shell, type:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ netstat -nl | grep 61616</span><br><span class="line">tcp6       0      0 :::61616                :::*                    LISTEN</span><br></pre></td></tr></table></figure></p>
+<p>部分示例可以在<a href="https://github.com/hewentian/mq-demo">这里</a>找到。</p>
+<h3 id="安全问题"><a href="#安全问题" class="headerlink" title="安全问题"></a>安全问题</h3><p>ObjectMessage objects depend on Java serialization of marshal/unmarshal object payload. This process is generally considered unsafe as malicious payload can exploit the host system. That’s why starting with versions 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist packages that can be exchanged using ObjectMessages.</p>
+<p>ActiveMQ从5.12.2、5.13.0开始，如果传送的消息是一个<code>JavaBean</code>就要设置一个传输对象包名的白名单列表，否则会报如下错：</p>
+<pre><code>javax.jms.JMSException: Failed to build body from content. Serializable class not available to broker. Reason: java.lang.ClassNotFoundException: Forbidden class java.lang.Integer! This class is not trusted to be serialized as ObjectMessage payload. Please take a look at http://activemq.apache.org/objectmessage.html for more information on how to configure trusted classes.
+at org.apache.activemq.util.JMSExceptionSupport.create(JMSExceptionSupport.java:36)
+at org.apache.activemq.command.ActiveMQObjectMessage.getObject(ActiveMQObjectMessage.java:213)
+at com.hewentian.activemq.bean.Consumer$1.onMessage(Consumer.java:48)
+at org.apache.activemq.ActiveMQMessageConsumer.dispatch(ActiveMQMessageConsumer.java:1404)
+at org.apache.activemq.ActiveMQSessionExecutor.dispatch(ActiveMQSessionExecutor.java:131)
+at org.apache.activemq.ActiveMQSessionExecutor.iterate(ActiveMQSessionExecutor.java:202)
+at org.apache.activemq.thread.PooledTaskRunner.runTask(PooledTaskRunner.java:133)
+at org.apache.activemq.thread.PooledTaskRunner$1.run(PooledTaskRunner.java:48)
+at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+at java.lang.Thread.run(Thread.java:745)
+</code></pre><p>根据提示，我们打开<a href="http://activemq.apache.org/objectmessage.html" target="_blank" rel="noopener">http://activemq.apache.org/objectmessage.html</a>，可以发现解决此报错的详细说明。解决方法有二：<br><strong>注意： 我是用方法二解决的，方法一试了，无效。</strong></p>
+<ol>
+<li><p>The <code>setTrustedPackages()</code> method allows you to set the list of trusted packages you want to be to unserialize, like</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ActiveMQConnectionFactory factory = <span class="keyword">new</span> ActiveMQConnectionFactory(<span class="string">"tcp://localhost:61616"</span>);</span><br><span class="line">factory.setTrustedPackages(<span class="keyword">new</span> ArrayList(Arrays.asList(<span class="string">"org.apache.activemq.test,com.hewentian.activemq.bean"</span>.split(<span class="string">","</span>))));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>The <code>setTrustAllPackages()</code> allows you to turn off security check and trust all classes. It’s useful for testing purposes.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ActiveMQConnectionFactory factory = <span class="keyword">new</span> ActiveMQConnectionFactory(<span class="string">"tcp://localhost:61616"</span>);</span><br><span class="line">factory.setTrustAllPackages(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果是springBoot工程，你也可以在<code>application.properties</code>作如下设置：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring.activemq.packages.trust-all=<span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">or</span><br><span class="line"></span><br><span class="line">spring.activemq.packages.trusted=&lt;package1&gt;,&lt;package2&gt;,&lt;package3&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="消息的消费者接收消息可以采用两种方式："><a href="#消息的消费者接收消息可以采用两种方式：" class="headerlink" title="消息的消费者接收消息可以采用两种方式："></a>消息的消费者接收消息可以采用两种方式：</h3><ol>
+<li>consumer.receive() 或 consumer.receive(int timeout)；</li>
+<li>使用setMessageListener。<br>采用第一种方式，消息的接收者会一直等待下去，直到有消息到达，或者超时。后一种方式会注册一个监听器，当有消息到达的时候，会回调它的onMessage()方法。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjd7041fd0000yi2ixhsh6ke9" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/">activemq</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/01/29/gitbook-note/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          gitbook学习笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/01/17/rabbitmq-note/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">rabbitMQ学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/01/29/gitbook-note/">gitbook学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/23/activemq-note/">activeMQ学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/08/solr-ikanalyzer/">solr配置IKAnalyzer的中文分词</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
