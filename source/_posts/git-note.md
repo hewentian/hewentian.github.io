@@ -120,3 +120,19 @@ $ git log 要恢复的文件路径
 $ git reset commit_id 要恢复的文件路径
 $ git checkout -- 要恢复的文件路径
 ```
+
+### git的.gitignore规则不生效的解决办法
+有时候定义了规则后发现并未生效，原因是.gitignore只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的。那么解决方法就是先把本地缓存删除（改变成未track状态），然后再提交：
+
+``` bash
+$ git rm -r --cached .
+$ git add .
+$ git commit -m 'update .gitignore'
+```
+
+### 在开发的过程中，想知道远程的仓库是否有同事提交代码可以使用如下命令
+``` bash
+$ cd {your_repo_dir}
+$ git fetch
+$ git status
+```

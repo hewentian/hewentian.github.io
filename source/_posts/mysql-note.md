@@ -289,3 +289,43 @@ CHAR，NCHAR 定长，速度快，占空间大，需处理
 VARCHAR，NVARCHAR，TEXT 不定长，空间小，速度慢，无需处理
 NCHAR、NVARCHAR、NTEXT处理Unicode码
 
+
+### mysql 修改字段长度
+``` sql
+alter table [表名] modify column [字段名] [类型];
+
+示例: sys_user表里的user_name字段，由原来长度是10个字符，修改改成40个字符
+alter table sys_user modify column user_name varchar(40);
+```
+
+
+### mysql 增加列（字段）
+``` sql
+alter table [表名] add [列名] [列类型] [其他属性，如默认值];
+
+示例: sys_user表增加一个地址列，长度为200个字符，默认值为null
+alter table sys_user add address varchar(200) default null;
+```
+
+
+### mysql 按字段分组，取最小生日记录
+有用户表如下：
+``` sql
+sql> select * from user;
+
+id	name	birthday
+1	a	2018-01-25 09:30:05
+2	a	2018-01-25 09:30:14
+3	a	2018-01-25 09:30:10
+4	b	2018-01-25 09:30:29
+5	b	2018-01-25 09:30:24
+```
+**要求：**以name分组，取出生日最小的记录，即id为2、4的记录
+``` sql
+sql> select * from (select * from user order by birthday desc) t group by t.name;
+
+id	name	birthday
+2	a	2018-01-25 09:30:14
+4	b	2018-01-25 09:30:29
+```
+
