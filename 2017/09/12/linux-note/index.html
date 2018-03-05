@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-01-22T02:26:19.161Z">
+<meta property="og:updated_time" content="2018-03-05T06:39:05.991Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
@@ -197,6 +197,7 @@ swap    logic        内存2倍
 <li>在 Ubuntu 上面使用如下命令连回 Windows 7; <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ rdesktop &#123;Windows7_IP&#125;</span><br><span class="line">或者 </span><br><span class="line">$ rdesktop &#123;Windows7_IP&#125; -f -u &#123;YOUR_LOGIN_NAME&#125; -p &#123;YOUR_PASSWD&#125; </span><br><span class="line"><span class="comment"># -f 全屏，直接输入用户名和密码, 以全屏方式进入 windows 的退出方式是 [开始] -&gt; [断开连接]</span></span><br></pre></td></tr></table></figure>
 </li>
 </ol>
+<p>如果没有执行步骤2，则会报如下错：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Autoselected keyboard map en-us</span><br><span class="line">ERROR: CredSSP: Initialize failed, <span class="keyword">do</span> you have correct kerberos tgt initialized ?</span><br><span class="line">Failed to connect, CredSSP required by server.</span><br></pre></td></tr></table></figure></p>
 <h3 id="Linux下的任务调度分为两类，系统任务调度和用户任务调度。"><a href="#Linux下的任务调度分为两类，系统任务调度和用户任务调度。" class="headerlink" title="Linux下的任务调度分为两类，系统任务调度和用户任务调度。"></a>Linux下的任务调度分为两类，系统任务调度和用户任务调度。</h3><ol>
 <li><p>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>/etc/crontab文件包括下面几行：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/crontab: system-wide crontab</span></span><br><span class="line"><span class="comment"># Unlike any other crontab you don't have to run the `crontab'</span></span><br><span class="line"><span class="comment"># command to install the new version when you edit this file</span></span><br><span class="line"><span class="comment"># and files in /etc/cron.d. These files also have username fields,</span></span><br><span class="line"><span class="comment"># that none of the other crontabs do.</span></span><br><span class="line"></span><br><span class="line">SHELL=/bin/sh</span><br><span class="line">PATH=/usr/<span class="built_in">local</span>/sbin:/usr/<span class="built_in">local</span>/bin:/sbin:/bin:/usr/sbin:/usr/bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># m h dom mon dow user	command</span></span><br><span class="line">17 *	* * *	root    <span class="built_in">cd</span> / &amp;&amp; run-parts --report /etc/cron.hourly</span><br><span class="line">25 6	* * *	root	<span class="built_in">test</span> -x /usr/sbin/anacron || ( <span class="built_in">cd</span> / &amp;&amp; run-parts --report /etc/cron.daily )</span><br><span class="line">47 6	* * 7	root	<span class="built_in">test</span> -x /usr/sbin/anacron || ( <span class="built_in">cd</span> / &amp;&amp; run-parts --report /etc/cron.weekly )</span><br><span class="line">52 6	1 * *	root	<span class="built_in">test</span> -x /usr/sbin/anacron || ( <span class="built_in">cd</span> / &amp;&amp; run-parts --report /etc/cron.monthly )</span><br><span class="line"><span class="comment">#</span></span><br></pre></td></tr></table></figure>
@@ -348,11 +349,19 @@ Password:
 <p>然后sign，最后save，这里输入的passphrase错误，与我之前的密码不符，未明原因。<br>最后，查看导入的keys<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ gpg --list-keys</span><br><span class="line">/home/hewentian/.gnupg/pubring.gpg</span><br><span class="line">----------------------------------</span><br><span class="line">pub   2048R/E99DCF91 2018-01-14</span><br><span class="line">uid                  Tim Ho &lt;wentian.he@qq.com&gt;</span><br><span class="line">sub   2048R/6F7627AD 2018-01-14</span><br><span class="line"></span><br><span class="line">pub   4096R/6026DFCA 2016-05-17</span><br><span class="line">uid                  RabbitMQ Release Signing Key &lt;info@rabbitmq.com&gt;</span><br><span class="line">sub   4096R/12EBCE19 2016-05-17</span><br><span class="line"></span><br><span class="line">pub   2048R/46DC4BA0 2018-01-14</span><br><span class="line">uid                  Tim Ho &lt;wentian.he@qq.com&gt;</span><br><span class="line">sub   2048R/74EB06EB 2018-01-14</span><br></pre></td></tr></table></figure></p>
 <p>最后：验证文件的真实性/完整性<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ gpg --verify rabbitmq-server_3.7.2-1_all.deb.asc rabbitmq-server_3.7.2-1_all.deb</span><br><span class="line">gpg: Signature made Sat 23 Dec 2017 03:03:34 PM CST using RSA key ID 6026DFCA</span><br><span class="line">gpg: checking the trustdb</span><br><span class="line">gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model</span><br><span class="line">gpg: depth: 0  valid:   2  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 2u</span><br><span class="line">gpg: Good signature from <span class="string">"RabbitMQ Release Signing Key &lt;info@rabbitmq.com&gt;"</span></span><br><span class="line">gpg: WARNING: This key is not certified with a trusted signature!</span><br><span class="line">gpg:          There is no indication that the signature belongs to the owner.</span><br><span class="line">Primary key fingerprint: 0A9A F211 5F46 87BD 2980  3A20 6B73 A36E 6026 DFCA</span><br></pre></td></tr></table></figure></p>
 <p>该命令的输出里面含有“Good signature from ”，这表明已下载的.deb文件已成功通过了验证。要是已下载文件在签名生成后以任何一种方式而遭到篡改，验证就会失败。</p>
+<h3 id="Linux如何运行-AppImage文件"><a href="#Linux如何运行-AppImage文件" class="headerlink" title="Linux如何运行.AppImage文件"></a>Linux如何运行.AppImage文件</h3><p>AppImage是新型的打包软件，它可以解决Linux上面的依赖问题。在使用上面相比其他的软件使用极为简单。<br>首先给它增加可执行权限，然后执行即可。如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod +x &#123;AppImage文件&#125;</span><br><span class="line">$ ./&#123;AppImage文件&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="yum切换为阿里的源"><a href="#yum切换为阿里的源" class="headerlink" title="yum切换为阿里的源"></a>yum切换为阿里的源</h3><p>有时候，我们下载软件慢，可以切换到阿里的yum.<br>首先备份现有的源，以便还原。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /etc/yum.repos.d/</span><br><span class="line">$ mv CentOS-7.repo CentOS-7.repo_bak</span><br></pre></td></tr></table></figure></p>
+<p>下载阿里的源<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wget -O /etc/yum.repos.d/CentOS-7.repo http://mirrors.aliyun.com/repo/Centos-7.repo</span><br></pre></td></tr></table></figure></p>
+<p>然后执行如下命令即可<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ yum remove epel-release</span><br><span class="line">$ yum clean all</span><br><span class="line">$ yum makecache</span><br><span class="line">$ yum -y install epel-release</span><br></pre></td></tr></table></figure></p>
+<h3 id="在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow"><a href="#在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow" class="headerlink" title="在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow"></a>在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ pip uninstall Pillow</span><br><span class="line">$ pip install --upgrade pip</span><br><span class="line">$ pip install Pillow</span><br></pre></td></tr></table></figure>
+<h3 id="linux合并文件"><a href="#linux合并文件" class="headerlink" title="linux合并文件"></a>linux合并文件</h3><p>可以使用<code>cat</code>命令从文件中读入两个文件，然后将其重定向到一个新的文件。<br>用法示例，将<code>file1.txt</code>和<code>file2.txt</code>合并到<code>file.txt</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat file1.txt file2.txt &gt; file.txt</span><br></pre></td></tr></table></figure></p>
+<p>其中，<code>file.txt</code>可以不存在，会被自动创建。<code>file1.txt</code>和<code>file2.txt</code>的顺序决定了它们在<code>file.txt</code>中的顺序。</p>
+<p>也可以只使用<code>cat</code>命令读入一个文件，然后使用<code>&gt;&gt;</code>将文本流追加到另一个文件的末位。<br>用法示例，将<code>file1.txt</code>追加到<code>file2.txt</code>的末尾：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat file1.txt &gt;&gt; file2.txt</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjd7041h0000gyi2i14cpgfwa" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjeduyx5p000is22i0a34ioeb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -391,7 +400,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -401,7 +410,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -414,6 +423,14 @@ Password:
       <ul>
         
           <li>
+            <a href="/2018/03/03/solr-cloud/">solr 集群的创建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/02/17/neo4j-note/">neo4j学习笔记</a>
+          </li>
+        
+          <li>
             <a href="/2018/01/29/gitbook-note/">gitbook学习笔记</a>
           </li>
         
@@ -423,14 +440,6 @@ Password:
         
           <li>
             <a href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2018/01/08/solr-ikanalyzer/">solr配置IKAnalyzer的中文分词</a>
-          </li>
-        
-          <li>
-            <a href="/2018/01/08/solr-pinyin/">solr配置拼音检索</a>
           </li>
         
       </ul>

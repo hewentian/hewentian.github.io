@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>maven笔记 | Tim Ho&#39;s Technology Blog</title>
+  <title>neo4j学习笔记 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在eclipse中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8 原因：tools.jar包是JDK的，而tools.jar并未在仓库maven repository中 解决方案：在pom文件中添加如下代码即可1234567&amp;lt;dependency&amp;gt;	&amp;lt;groupId&amp;gt;jdk.tools&amp;lt;/groupId&amp;gt;	&amp;lt;">
+  <meta name="description" content="一些基本概念，从官网copy过来的，如下：Graph FundamentalsBasic concepts to get you going. A graph database can store any kind of data using a few simple concepts:  Nodes - graph data records Relationships - connect nod">
 <meta property="og:type" content="article">
-<meta property="og:title" content="maven笔记">
-<meta property="og:url" content="https://github.com/hewentian/2017/11/10/maven-note/index.html">
+<meta property="og:title" content="neo4j学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2018/02/17/neo4j-note/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="在eclipse中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8 原因：tools.jar包是JDK的，而tools.jar并未在仓库maven repository中 解决方案：在pom文件中添加如下代码即可1234567&amp;lt;dependency&amp;gt;	&amp;lt;groupId&amp;gt;jdk.tools&amp;lt;/groupId&amp;gt;	&amp;lt;">
+<meta property="og:description" content="一些基本概念，从官网copy过来的，如下：Graph FundamentalsBasic concepts to get you going. A graph database can store any kind of data using a few simple concepts:  Nodes - graph data records Relationships - connect nod">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-12-07T02:24:40.469Z">
+<meta property="og:updated_time" content="2018-03-05T06:32:10.411Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="maven笔记">
-<meta name="twitter:description" content="在eclipse中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8 原因：tools.jar包是JDK的，而tools.jar并未在仓库maven repository中 解决方案：在pom文件中添加如下代码即可1234567&amp;lt;dependency&amp;gt;	&amp;lt;groupId&amp;gt;jdk.tools&amp;lt;/groupId&amp;gt;	&amp;lt;">
+<meta name="twitter:title" content="neo4j学习笔记">
+<meta name="twitter:description" content="一些基本概念，从官网copy过来的，如下：Graph FundamentalsBasic concepts to get you going. A graph database can store any kind of data using a few simple concepts:  Nodes - graph data records Relationships - connect nod">
   
   
     <link rel="icon" href="/favicon.png">
@@ -70,14 +70,14 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-maven-note" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-neo4j-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2017/11/10/maven-note/" class="article-date">
-  <time datetime="2017-11-09T16:48:44.000Z" itemprop="datePublished">2017-11-10</time>
+    <a href="/2018/02/17/neo4j-note/" class="article-date">
+  <time datetime="2018-02-17T01:59:18.000Z" itemprop="datePublished">2018-02-17</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/other/">other</a>
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
   </div>
 
   </div>
@@ -88,7 +88,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      maven笔记
+      neo4j学习笔记
     </h1>
   
 
@@ -96,14 +96,78 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在<code>eclipse</code>中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8</p>
-<p>原因：tools.jar包是JDK的，而tools.jar并未在仓库<code>maven repository</code>中</p>
-<p>解决方案：在pom文件中添加如下代码即可<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>jdk.tools<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jdk.tools<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">scope</span>&gt;</span>system<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">systemPath</span>&gt;</span>$&#123;JAVA_HOME&#125;/lib/tools.jar<span class="tag">&lt;/<span class="name">systemPath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+        <h2 id="一些基本概念，从官网copy过来的，如下："><a href="#一些基本概念，从官网copy过来的，如下：" class="headerlink" title="一些基本概念，从官网copy过来的，如下："></a>一些基本概念，从官网copy过来的，如下：</h2><h3 id="Graph-Fundamentals"><a href="#Graph-Fundamentals" class="headerlink" title="Graph Fundamentals"></a>Graph Fundamentals</h3><p>Basic concepts to get you going.</p>
+<p>A graph database can store any kind of data using a few simple concepts:</p>
+<ol>
+<li>Nodes - graph data records</li>
+<li>Relationships - connect nodes</li>
+<li>Properties - named data values</li>
+</ol>
+<h3 id="A-Graph-Database"><a href="#A-Graph-Database" class="headerlink" title="A Graph Database"></a>A Graph Database</h3><p>Neo4j stores data in a Graph, with records called Nodes.</p>
+<p>The simplest graph has just a single node with some named values called Properties. Let’s draw a social graph of our friends on the Neo4j team:</p>
+<ol>
+<li>Start by drawing a circle for the node</li>
+<li>Add the name Emil</li>
+<li>Note that he is from Sweden</li>
+</ol>
+<ul>
+<li>Nodes are the name for data records in a graph</li>
+<li>Data is stored as Properties</li>
+<li>Properties are simple name/value pairs</li>
+</ul>
+<h3 id="Labels"><a href="#Labels" class="headerlink" title="Labels"></a>Labels</h3><p>Associate a set of nodes.</p>
+<p>Nodes can be grouped together by applying a Label to each member. In our social graph, we’ll label each node that represents a Person.</p>
+<ol>
+<li>Apply the label “Person” to the node we created for Emil</li>
+<li>Color “Person” nodes red</li>
+</ol>
+<ul>
+<li>A node can have zero or more labels</li>
+<li>Labels do not have any properties</li>
+</ul>
+<h3 id="More-Nodes"><a href="#More-Nodes" class="headerlink" title="More Nodes"></a>More Nodes</h3><p>Schema-free, nodes can have a mix of common and unique properties.</p>
+<p>Like any database, storing data in Neo4j can be as simple as adding more records. We’ll add a few more nodes:</p>
+<ol>
+<li>Emil has a klout score of 99</li>
+<li>Johan, from Sweden, who is learning to surf</li>
+<li>Ian, from England, who is an author</li>
+<li>Rik, from Belgium, has a cat named Orval</li>
+<li>Allison, from California, who surfs</li>
+</ol>
+<ul>
+<li>Similar nodes can have different properties</li>
+<li>Properties can be strings, numbers, or booleans</li>
+<li>Neo4j can store billions of nodes</li>
+</ul>
+<h3 id="Consider-Relationships"><a href="#Consider-Relationships" class="headerlink" title="Consider Relationships"></a>Consider Relationships</h3><p>Connect nodes in the graph</p>
+<p>The real power of Neo4j is in connected data. To associate any two nodes, add a Relationship which describes how the records are related.</p>
+<p>In our social graph, we simply say who KNOWS whom:</p>
+<ol>
+<li>Emil KNOWS Johan and Ian</li>
+<li>Johan KNOWS Ian and Rik</li>
+<li>Rik and Ian KNOWS Allison</li>
+</ol>
+<ul>
+<li>Relationships always have direction</li>
+<li>Relationships always have a type</li>
+<li>Relationships form patterns of data</li>
+</ul>
+<h3 id="Relationship-properties"><a href="#Relationship-properties" class="headerlink" title="Relationship properties"></a>Relationship properties</h3><p>Store information shared by two nodes.</p>
+<p>In a property graph, relationships are data records that can also contain properties. Looking more closely at Emil’s relationships, note that:</p>
+<ul>
+<li>Emil has known Johan since 2001</li>
+<li>Emil rates Ian 5 (out of 5)</li>
+<li>Everyone else can have similar relationship properties</li>
+</ul>
+<p>可以使用这种方式访问neo4j数据库：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:7474/browser/</span><br></pre></td></tr></table></figure></p>
+<h3 id="清空neo4j数据库"><a href="#清空neo4j数据库" class="headerlink" title="清空neo4j数据库"></a>清空neo4j数据库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">match(n)</span><br><span class="line">optional match(n)-[r]-()</span><br><span class="line">delete n,r</span><br></pre></td></tr></table></figure>
+<p>执行上面的命令后，会删除节点及与该节点相关的关系，但是property keys删不干净</p>
+<p>未完，待续……</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/maven-note/" data-id="cjeduyx63000os22irrllct03" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjeduyx6k000ts22iqmfho5kq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -112,19 +176,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2017/11/16/java-note/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/03/03/solr-cloud/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          java一些常用笔记
+          solr 集群的创建
         
       </div>
     </a>
   
   
-    <a href="/2017/11/10/html-css/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2018/01/29/gitbook-note/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">html-css前端相关</div>
+      <div class="article-nav-title">gitbook学习笔记</div>
     </a>
   
 </nav>
