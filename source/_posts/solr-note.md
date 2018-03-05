@@ -493,3 +493,10 @@ Solr 提供了解决这种问题的方案：临近查询。在上面的例子中
 <commit/>
 ```
 点击`Submit Document`即可
+
+
+### filter query 的使用
+如果要查询的结果中必须包含某些字段，则可以加上`{fieldName}:{queryExpress}`，
+例如`email:*`将获取结果中包含email字段的所有记录
+如果不想包含某些字段则可以这样`-email:*`，在其前面加一个减号
+

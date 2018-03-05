@@ -1,5 +1,5 @@
 ---
-title: mysql 笔记
+title: mysql 学习笔记
 date: 2017-12-07 10:26:13
 tags: mysql
 categories: db

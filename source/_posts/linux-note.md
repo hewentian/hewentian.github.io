@@ -347,6 +347,12 @@ $ rdesktop {Windows7_IP}
 $ rdesktop {Windows7_IP} -f -u {YOUR_LOGIN_NAME} -p {YOUR_PASSWD} 
 # -f 全屏，直接输入用户名和密码, 以全屏方式进入 windows 的退出方式是 [开始] -> [断开连接]
 ```
+如果没有执行步骤2，则会报如下错：
+``` bash
+Autoselected keyboard map en-us
+ERROR: CredSSP: Initialize failed, do you have correct kerberos tgt initialized ?
+Failed to connect, CredSSP required by server.
+```
 
 ### Linux下的任务调度分为两类，系统任务调度和用户任务调度。
 1. 系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。
@@ -1051,3 +1057,53 @@ gpg:          There is no indication that the signature belongs to the owner.
 Primary key fingerprint: 0A9A F211 5F46 87BD 2980  3A20 6B73 A36E 6026 DFCA
 ```
 该命令的输出里面含有“Good signature from ”，这表明已下载的.deb文件已成功通过了验证。要是已下载文件在签名生成后以任何一种方式而遭到篡改，验证就会失败。
+
+
+### Linux如何运行.AppImage文件
+AppImage是新型的打包软件，它可以解决Linux上面的依赖问题。在使用上面相比其他的软件使用极为简单。
+首先给它增加可执行权限，然后执行即可。如下：
+``` bash
+$ chmod +x {AppImage文件}
+$ ./{AppImage文件}
+```
+
+### yum切换为阿里的源
+有时候，我们下载软件慢，可以切换到阿里的yum.
+首先备份现有的源，以便还原。
+``` bash
+$ cd /etc/yum.repos.d/
+$ mv CentOS-7.repo CentOS-7.repo_bak
+```
+下载阿里的源
+``` bash
+$ wget -O /etc/yum.repos.d/CentOS-7.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+```
+然后执行如下命令即可
+``` bash
+$ yum remove epel-release
+$ yum clean all
+$ yum makecache
+$ yum -y install epel-release
+```
+
+### 在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow
+``` bash
+$ pip uninstall Pillow
+$ pip install --upgrade pip
+$ pip install Pillow
+```
+
+### linux合并文件
+可以使用`cat`命令从文件中读入两个文件，然后将其重定向到一个新的文件。
+用法示例，将`file1.txt`和`file2.txt`合并到`file.txt`：
+``` bash
+$ cat file1.txt file2.txt > file.txt
+```
+其中，`file.txt`可以不存在，会被自动创建。`file1.txt`和`file2.txt`的顺序决定了它们在`file.txt`中的顺序。
+
+也可以只使用`cat`命令读入一个文件，然后使用`>>`将文本流追加到另一个文件的末位。
+用法示例，将`file1.txt`追加到`file2.txt`的末尾：
+``` bash
+$ cat file1.txt >> file2.txt
+```
+

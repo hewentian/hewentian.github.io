@@ -33,7 +33,7 @@ $ cp zoo_sample.cfg zoo.cfg
 	tickTime=2000
 	initLimit=10
 	syncLimit=5
-	dataDir=/home/hewentian/zookeeperCluster/server1/data
+	dataDir=/home/hewentian/zookeeperCluster/server1/data # 这里必须为绝对路径，否则有可能无法启动
 	clientPort=2181  # 这台服务器的端口为2181这里为默认值
 	server.1=127.0.0.1:2888:3888
 	server.2=127.0.0.1:2889:3889
