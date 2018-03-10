@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-05T06:39:05.991Z">
+<meta property="og:updated_time" content="2018-03-10T05:47:06.231Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
@@ -113,8 +113,8 @@ swap    logic        内存2倍
 <p>最后我们用命令ps -e|grep ssh 来看下open-server安装成功没有，如果出现如下截图红色标出的部分，说明安装成功了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps -e|grep ssh</span><br></pre></td></tr></table></figure></p>
 <p>在ubuntu中的vi编辑器中怎么使用<br>默认情况下ubuntu上也安装有vi但是奇怪的是这个vi是vim-common版本，基本上用不了所以要先把这个版本的vi卸载掉才可以，卸载命令是<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get remove vim-common</span><br></pre></td></tr></table></figure></p>
 <p>卸载成功之后接着执行 sudo apt-get install vim,安装好之后就能使用了</p>
-<h3 id="ubuntu下useradd与adduser区别，新建用户不再home目录下"><a href="#ubuntu下useradd与adduser区别，新建用户不再home目录下" class="headerlink" title="ubuntu下useradd与adduser区别，新建用户不再home目录下"></a>ubuntu下useradd与adduser区别，新建用户不再home目录下</h3><p>useradd username不会在/home下建立一个文件夹username<br>adduser username会在/home下建立一个文件夹username<br>useradd -m username跟adduser一样，可以建立一个文件夹username</p>
-<p>永久性删除用户账号<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ userdel peter</span><br></pre></td></tr></table></figure></p>
+<h3 id="useradd与adduser区别"><a href="#useradd与adduser区别" class="headerlink" title="useradd与adduser区别"></a>useradd与adduser区别</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ adduser username	<span class="comment"># 会在/home下建立一个文件夹username</span></span><br><span class="line">$ useradd username	<span class="comment"># 不会在/home下建立一个文件夹username</span></span><br><span class="line">$ useradd -m username	<span class="comment"># 跟adduser一样，会在/home下建立一个文件夹username</span></span><br></pre></td></tr></table></figure>
+<h3 id="userdel删除用户账号"><a href="#userdel删除用户账号" class="headerlink" title="userdel删除用户账号"></a>userdel删除用户账号</h3><p>userdel 会查询系统账户文件，例如<code>/etc/password</code>和<code>/etc/group</code>，它会删除所有和用户名相关的文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ userdel peter <span class="comment"># 不带选项使用 userdel，只会删除用户。用户的家目录将仍会在/home目录下</span></span><br><span class="line">$ userdel -r peter <span class="comment"># 使用 -r 选项，在删除用户时将完全删除家目录、用户的邮件池</span></span><br></pre></td></tr></table></figure></p>
 <p>还有的就是文件编码的问题，在windows下默认都是用ANSI格式编码，但是在ubuntu下面可能会是其他格式的编码，如果两个系统的编码不一致，就会产生乱码。<br>最好是都采用UTF-8格式编码</p>
 <p>ubuntu root默认密码（初始密码）<br>ubuntu安装好后，root初始密码（默认密码）不知道，需要设置。</p>
 <p>1、先用安装时候的用户登录进入系统</p>
@@ -357,11 +357,12 @@ Password:
 <h3 id="linux合并文件"><a href="#linux合并文件" class="headerlink" title="linux合并文件"></a>linux合并文件</h3><p>可以使用<code>cat</code>命令从文件中读入两个文件，然后将其重定向到一个新的文件。<br>用法示例，将<code>file1.txt</code>和<code>file2.txt</code>合并到<code>file.txt</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat file1.txt file2.txt &gt; file.txt</span><br></pre></td></tr></table></figure></p>
 <p>其中，<code>file.txt</code>可以不存在，会被自动创建。<code>file1.txt</code>和<code>file2.txt</code>的顺序决定了它们在<code>file.txt</code>中的顺序。</p>
 <p>也可以只使用<code>cat</code>命令读入一个文件，然后使用<code>&gt;&gt;</code>将文本流追加到另一个文件的末位。<br>用法示例，将<code>file1.txt</code>追加到<code>file2.txt</code>的末尾：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat file1.txt &gt;&gt; file2.txt</span><br></pre></td></tr></table></figure></p>
+<h3 id="Linux-scp命令"><a href="#Linux-scp命令" class="headerlink" title="Linux scp命令"></a>Linux scp命令</h3><p>Linux scp命令用于Linux之间复制文件和目录。<br>scp是 secure copy的缩写, scp是linux系统下基于ssh登陆进行安全的远程文件拷贝命令<br>1、从本地复制到远程<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">命令格式：</span><br><span class="line">scp local_file remote_username@remote_ip:remote_folder </span><br><span class="line">或者 </span><br><span class="line">scp local_file remote_username@remote_ip:remote_file </span><br><span class="line">或者 </span><br><span class="line">scp local_file remote_ip:remote_folder </span><br><span class="line">或者 </span><br><span class="line">scp local_file remote_ip:remote_file </span><br><span class="line"></span><br><span class="line">复制目录命令格式：</span><br><span class="line">scp -r local_folder remote_username@remote_ip:remote_folder </span><br><span class="line">或者 </span><br><span class="line">scp -r local_folder remote_ip:remote_folder</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjeduyx5p000is22i0a34ioeb" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjeky97ey000c9g2ijj5nhe5s" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
