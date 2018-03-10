@@ -45,14 +45,18 @@ $ sudo apt-get remove vim-common
 ```
 卸载成功之后接着执行 sudo apt-get install vim,安装好之后就能使用了
 
-### ubuntu下useradd与adduser区别，新建用户不再home目录下
-useradd username不会在/home下建立一个文件夹username
-adduser username会在/home下建立一个文件夹username
-useradd -m username跟adduser一样，可以建立一个文件夹username
-
-永久性删除用户账号
+### useradd与adduser区别
 ``` bash
-$ userdel peter
+$ adduser username	# 会在/home下建立一个文件夹username
+$ useradd username	# 不会在/home下建立一个文件夹username
+$ useradd -m username	# 跟adduser一样，会在/home下建立一个文件夹username
+```
+
+### userdel删除用户账号
+userdel 会查询系统账户文件，例如`/etc/password`和`/etc/group`，它会删除所有和用户名相关的文件
+``` bash
+$ userdel peter # 不带选项使用 userdel，只会删除用户。用户的家目录将仍会在/home目录下
+$ userdel -r peter # 使用 -r 选项，在删除用户时将完全删除家目录、用户的邮件池
 ```
 
 还有的就是文件编码的问题，在windows下默认都是用ANSI格式编码，但是在ubuntu下面可能会是其他格式的编码，如果两个系统的编码不一致，就会产生乱码。
@@ -1107,3 +1111,22 @@ $ cat file1.txt file2.txt > file.txt
 $ cat file1.txt >> file2.txt
 ```
 
+### Linux scp命令
+Linux scp命令用于Linux之间复制文件和目录。
+scp是 secure copy的缩写, scp是linux系统下基于ssh登陆进行安全的远程文件拷贝命令
+1、从本地复制到远程
+``` bash
+命令格式：
+scp local_file remote_username@remote_ip:remote_folder 
+或者 
+scp local_file remote_username@remote_ip:remote_file 
+或者 
+scp local_file remote_ip:remote_folder 
+或者 
+scp local_file remote_ip:remote_file 
+
+复制目录命令格式：
+scp -r local_folder remote_username@remote_ip:remote_folder 
+或者 
+scp -r local_folder remote_ip:remote_folder 
+```

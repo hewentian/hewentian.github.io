@@ -181,6 +181,23 @@ This XML file does not appear to have any style information associated with it. 
 </response>
 ```
 
+也可以使用下面的方式，指定在哪台机器中创建哪个分片的哪个副本。
+``` bash
+$ curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=mysqlCore_shard1_replica1&instanceDir=mysqlCore_shard1_replica1&collection=mysqlCore&shard=mysqlCore_shard1"
+
+$ curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=mysqlCore_shard3_replica2&instanceDir=mysqlCore_shard3_replica2&collection=mysqlCore&shard=mysqlCore_shard3"
+
+
+$ curl "http://localhost:8984/solr/admin/cores?action=CREATE&name=mysqlCore_shard1_replica2&instanceDir=mysqlCore_shard1_replica2&collection=mysqlCore&shard=mysqlCore_shard1"
+
+$ curl "http://localhost:8984/solr/admin/cores?action=CREATE&name=mysqlCore_shard2_replica1&instanceDir=mysqlCore_shard2_replica1&collection=mysqlCore&shard=mysqlCore_shard2"
+
+
+$ curl "http://localhost:8985/solr/admin/cores?action=CREATE&name=mysqlCore_shard2_replica2&instanceDir=mysqlCore_shard2_replica2&collection=mysqlCore&shard=mysqlCore_shard2"
+
+$ curl "http://localhost:8985/solr/admin/cores?action=CREATE&name=mysqlCore_shard3_replica1&instanceDir=mysqlCore_shard3_replica1&collection=mysqlCore&shard=mysqlCore_shard3"
+```
+
 你也可以查看分片是否创建成功：
 ``` bash
 $ ls solr1/server/solr
@@ -193,7 +210,7 @@ $ ls solr3/server/solr
 configsets  mysqlCore_shard1_replica1  mysqlCore_shard2_replica2  README.txt  solr.xml  zoo.cfg
 ```
 
-在[solr1](http://localhost:8983)上面执行DIH将user索引进solr，成功之后你就可以在[solr2](http://localhost:8984), [solr3](http://localhost:8985)上面看到同样的结果。
+在[http://localhost:8983](http://localhost:8983)上面执行DIH将user索引进solr，成功之后你就可以在[http://localhost:8984](http://localhost:8984), [http://localhost:8985](http://localhost:8985)上面看到同样的结果。
 
 当然，我们也可以在启动的时候，才指定zookeeper
 ``` bash
@@ -203,6 +220,46 @@ $ ./bin/solr start -c -z zk1:port,zk2:port,zk3:port
 
 1. -c：以solr_cloud的方式启动；
 2. -z:指定zookeeper集群的地址和端口，上面搭建zookeeper集群时的3台机器
+
+### solr备份
+在进行solr备份的时候，一定要先将solr服务停了，然后再备份。否则在还原的时候有可能会产生`write.lock`，在产生`write.lock`的时候也不要怕，你可以按下面的方法解决：
+
+1. 将`write.lock`删掉，然后再新建一个，然后修改权限；
+``` bash
+$ rm write.lock
+$ touch write.lock
+$ chmod 666 write.lock
+```
+
+2. 重启solr服务；
+3. 在浏览器登录到那个solr的cord，reload一下，然后查询，如果没报错的话，可能要等5分钟左右，查询结果就出来了。
+[solr界面]->[collections]->[点击你的那个 collection]->[Reload]
+
+
+JAVA示例代码如下：
+``` java
+CloudSolrClient cloudSolrClient = new CloudSolrClient.Builder()
+				.withZkHost("127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183").build();
+		cloudSolrClient.setDefaultCollection("mysqlCore");
+
+		SolrQuery solrQuery = new SolrQuery();
+
+		solrQuery.setQuery("schools:\"北京第一中学\" AND id:[1 TO 3]");
+
+		// 分页
+		solrQuery.setStart(0);
+		solrQuery.setRows(10);
+
+		SolrDocumentList results = cloudSolrClient.query(solrQuery).getResults();
+
+		logger.info("numFound: " + results.getNumFound());
+		if (CollectionUtils.isEmpty(results)) {
+			return;
+		}
+
+		results.stream().forEach(logger::info);
+	}
+```
 
 未完，待续……
 
