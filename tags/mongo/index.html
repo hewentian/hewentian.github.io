@@ -3,20 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>java一些常用笔记 | Tim Ho&#39;s Technology Blog</title>
+  <title>Tag: mongo | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息方法是Window -&amp;gt; Preferences -&amp;gt; Java -&amp;gt; Code Style -&amp;gt; Code Templates在右则民展开Code -&amp;gt; New Java files点Edit...并加入如下代码123456789101112131415$&amp;#123;filecomment&amp;#125">
-<meta name="keywords" content="java">
-<meta property="og:type" content="article">
-<meta property="og:title" content="java一些常用笔记">
-<meta property="og:url" content="https://github.com/hewentian/2017/11/16/java-note/index.html">
+  <meta name="description" content="my personal blog">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:url" content="https://github.com/hewentian/tags/mongo/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息方法是Window -&amp;gt; Preferences -&amp;gt; Java -&amp;gt; Code Style -&amp;gt; Code Templates在右则民展开Code -&amp;gt; New Java files点Edit...并加入如下代码123456789101112131415$&amp;#123;filecomment&amp;#125">
+<meta property="og:description" content="my personal blog">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-12-01T14:06:07.644Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java一些常用笔记">
-<meta name="twitter:description" content="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息方法是Window -&amp;gt; Preferences -&amp;gt; Java -&amp;gt; Code Style -&amp;gt; Code Templates在右则民展开Code -&amp;gt; New Java files点Edit...并加入如下代码123456789101112131415$&amp;#123;filecomment&amp;#125">
+<meta name="twitter:title" content="Tim Ho&#39;s Technology Blog">
+<meta name="twitter:description" content="my personal blog">
   
   
     <link rel="icon" href="/favicon.png">
@@ -71,67 +69,39 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-java-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/11/16/java-note/" class="article-date">
-  <time datetime="2017-11-16T11:58:45.000Z" itemprop="datePublished">2017-11-16</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/java/">java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      java一些常用笔记
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2018" class="archive-year">2018</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2018/03/07/mongo-note/" class="archive-article-date">
+  <time datetime="2018-03-07T06:39:42.000Z" itemprop="datePublished">3月 7</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2018/03/07/mongo-note/">mongo 学习笔记</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息"><a href="#想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息" class="headerlink" title="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息"></a>想在<code>eclipse</code>中新建类的时候，自动在类的头部插入作者、时间等信息</h3><p>方法是<code>Window -&gt; Preferences -&gt; Java -&gt; Code Style -&gt; Code Templates</code>在右则民展开<code>Code -&gt; New Java files</code>点<code>Edit...</code>并加入如下代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$&#123;filecomment&#125;</span><br><span class="line">$&#123;package_declaration&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;$&#123;file_name&#125;&lt;/b&gt; 是 </span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> $&#123;currentDate:date('yyyy-MM-dd')&#125; $&#123;time&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">$&#123;typecomment&#125;</span><br><span class="line">$&#123;type_declaration&#125;</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjescqudc000eo72ir1fhjzh0" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2017/12/02/hexo-note/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          hexo学习笔记
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2017/11/10/maven-note/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">maven笔记</div>
-    </a>
-  
-</nav>
-
-  
 </article>
+  
+  
+    </div></section>
+  
 
 </section>
         

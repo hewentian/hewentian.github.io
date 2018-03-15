@@ -71,6 +71,52 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongo-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/07/mongo-note/" class="article-date">
+  <time datetime="2018-03-07T06:39:42.000Z" itemprop="datePublished">2018-03-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/db/">db</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/07/mongo-note/">mongo 学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="导出、导入数据库"><a href="#导出、导入数据库" class="headerlink" title="导出、导入数据库"></a>导出、导入数据库</h3><h4 id="我们使用mongoexport来导出指定的collection"><a href="#我们使用mongoexport来导出指定的collection" class="headerlink" title="我们使用mongoexport来导出指定的collection"></a>我们使用<code>mongoexport</code>来导出指定的<code>collection</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把一个<code>collection</code>导出成JSON或CSV格式的文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongoexport -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; -c &#123;COLLECTION_NAME&#125; -o &#123;EXPORT_FILE_PATH&#125; --<span class="built_in">type</span> json/csv -f fields</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	-c: collection名</span><br><span class="line">	-o: 输出的文件名</span><br><span class="line">	--<span class="built_in">type</span>: 输出的格式，默认为json</span><br><span class="line">	-f: 输出的字段，如果-<span class="built_in">type</span>为csv，则需要加上-f <span class="string">"字段名"</span></span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.json</span><br><span class="line">$ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.json --<span class="built_in">type</span> json -f  <span class="string">"_id,name"</span></span><br><span class="line">$ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.csv --<span class="built_in">type</span> csv -f  <span class="string">"_id,name"</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="我们使用mongoimport来导入指定的collection"><a href="#我们使用mongoimport来导入指定的collection" class="headerlink" title="我们使用mongoimport来导入指定的collection"></a>我们使用<code>mongoimport</code>来导入指定的<code>collection</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把一个json/csv文件导入到指定的<code>collection</code>中<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongoimport -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; -c &#123;COLLECTION_NAME&#125; --file &#123;IMPORT_FILE_PATH&#125; --headerline --<span class="built_in">type</span> json/csv -f fields</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	-c: collection名</span><br><span class="line">	--file: 要导入的文件</span><br><span class="line">	--<span class="built_in">type</span>: input format to import: json, csv, or tsv (defaults to <span class="string">'json'</span>) (default: json)</span><br><span class="line">	--headerline: use first line <span class="keyword">in</span> input <span class="built_in">source</span> as the field list (CSV and TSV only)</span><br><span class="line">	-f: 导入的字段名，CSV或TSV的时候可用</span><br><span class="line"> </span><br><span class="line">示例：</span><br><span class="line">$ mongoimport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user --file /home/hewentian/ProjectD/db/user.json</span><br><span class="line"></span><br><span class="line">注意：--headerline 和 -f 不能同时使用</span><br><span class="line"></span><br><span class="line">	--headerline: 使用CSV文件中首列指定的列名作为导入的name</span><br><span class="line">	-f: 会将CSV文件的所有列，作为数据进行导入，包括第一列的列名（如果文件中有指定列名）</span><br><span class="line"></span><br><span class="line">$ mongoimport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user --file /home/hewentian/ProjectD/db/user.csv --<span class="built_in">type</span> csv --headerline</span><br><span class="line">$ mongoimport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user --file /home/hewentian/ProjectD/db/user.csv --<span class="built_in">type</span> csv -f <span class="string">"_id,name,age"</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="我们使用mongodump来导出指定的database"><a href="#我们使用mongodump来导出指定的database" class="headerlink" title="我们使用mongodump来导出指定的database"></a>我们使用<code>mongodump</code>来导出指定的<code>database</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把一个<code>database</code>导出成指定目录下的JSON、BSON的文件集<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongodump -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; -o &#123;DUMP_FILE_PATH&#125;</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	-o: 输出的文件路径，要事先创建该目录，在该目录下会自动创建要导出的数据库作为子目录</span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongodump -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -o /home/hewentian/ProjectD/db/</span><br></pre></td></tr></table></figure></p>
+<h4 id="我们使用mongorestore来恢复指定的database"><a href="#我们使用mongorestore来恢复指定的database" class="headerlink" title="我们使用mongorestore来恢复指定的database"></a>我们使用<code>mongorestore</code>来恢复指定的<code>database</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把指定目录下的JSON、BSON的文件集恢复成<code>database</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongorestore -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; --dir &#123;RESTORE_FILE_PATH&#125;</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	--dir: 要恢复的数据库的位置，注意与上面备份的 -o 不同，这里要指定到数据库的目录</span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongorestore -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg --dir /home/hewentian/ProjectD/db/bfg/</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjescqudf000fo72ih4kopuys" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-solr-cloud" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/03/03/solr-cloud/" class="article-date">
@@ -141,7 +187,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjeky97g6000u9g2i7nxptnb1" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjescqufz001jo72ileeoy6es" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -250,7 +296,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjeky97ge00109g2iwo9ufjwa" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjescqufp001do72i3t3wgw55" class="article-share-link">Share</a>
       
       
     </footer>
@@ -327,7 +373,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjeky97e500029g2ijorbbkf7" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjescqucl0004o72ikjcmw1d7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -419,7 +465,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjeky97dm00009g2i82j8ue5w" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjescqubu0000o72i4a08d401" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/">activemq</a></li></ul>
@@ -495,12 +541,12 @@ at java.lang.Thread.run(Thread.java:745)
 </ul>
 <p>With the “push API”, applications have to indicate interest in consuming messages from a particular queue. When they do so, we say that they register a consumer or, simply put, subscribe to a queue. It is possible to have more than one consumer per queue or to register an exclusive consumer (excludes all other consumers from the queue while it is consuming).</p>
 <h4 id="Connections"><a href="#Connections" class="headerlink" title="Connections"></a>Connections</h4><p>AMQP connections are typically long-lived. AMQP is an application level protocol that uses TCP for reliable delivery. AMQP connections use authentication and can be protected using TLS (SSL). When an application no longer needs to be connected to an AMQP broker, it should gracefully close the AMQP connection instead of abruptly closing the underlying TCP connection.</p>
-<p>未完等续。。。</p>
+<p>未完待续。。。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjeky97gt00189g2il8qi0ylp" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjescquff0016o72i8v8f1qdf" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabbitmq/">rabbitmq</a></li></ul>
@@ -559,7 +605,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjeky97gx001c9g2i65z2ze0s" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjescqug6001mo72i6cbbeogp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -613,7 +659,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjeky97hf001m9g2i13zc9rbq" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjescqugh001so72iyvbc0l6d" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -682,7 +728,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjeky97fn000l9g2ixyq2gtfc" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjescqucw0006o72i75xqci3l" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jdk/">jdk</a></li></ul>
@@ -832,97 +878,10 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjeky97fr000o9g2iimsz8w2u" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjescqufj0018o72ino05ct24" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-zookeeper-install-cluster" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/12/06/zookeeper-install-cluster/" class="article-date">
-  <time datetime="2017-12-06T08:33:35.000Z" itemprop="datePublished">2017-12-06</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/06/zookeeper-install-cluster/">zookeeper 集群版安装方法</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="计划在一台Ubuntu-Linux服务器上部署3台zookeeper服务器，分别为server1-server2-server3"><a href="#计划在一台Ubuntu-Linux服务器上部署3台zookeeper服务器，分别为server1-server2-server3" class="headerlink" title="计划在一台Ubuntu Linux服务器上部署3台zookeeper服务器，分别为server1, server2, server3"></a>计划在一台<code>Ubuntu Linux</code>服务器上部署3台<code>zookeeper</code>服务器，分别为<code>server1</code>, <code>server2</code>, <code>server3</code></h3><p>因为三台<code>zookeeper</code>服务器的配置都差不多，所以我们先设置好一台<code>server1</code>的配置，再将其复制成<code>server2</code>, <code>server3</code>并修改其中的配置即可。</p>
-<h3 id="1-建目录，如下："><a href="#1-建目录，如下：" class="headerlink" title="1.建目录，如下："></a>1.建目录，如下：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p /home/hewentian/zookeeperCluster/server1</span><br><span class="line">$ mkdir -p /home/hewentian/zookeeperCluster/server1/data</span><br></pre></td></tr></table></figure>
-<h3 id="2-将zookeeper-3-4-6-tar-gz放到-home-hewentian-zookeeperCluster-server1目录下，并执行如下脚本解压"><a href="#2-将zookeeper-3-4-6-tar-gz放到-home-hewentian-zookeeperCluster-server1目录下，并执行如下脚本解压" class="headerlink" title="2.将zookeeper-3.4.6.tar.gz放到/home/hewentian/zookeeperCluster/server1目录下，并执行如下脚本解压"></a>2.将<code>zookeeper-3.4.6.tar.gz</code>放到<code>/home/hewentian/zookeeperCluster/server1</code>目录下，并执行如下脚本解压</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server1</span><br><span class="line">$ tar xzvf zookeeper-3.4.6.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="3-解压后得到zookeeper-3-4-6文件夹，进入conf目录"><a href="#3-解压后得到zookeeper-3-4-6文件夹，进入conf目录" class="headerlink" title="3.解压后得到zookeeper-3.4.6文件夹，进入conf目录"></a>3.解压后得到<code>zookeeper-3.4.6</code>文件夹，进入<code>conf</code>目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> zookeeper-3.4.6/conf/</span><br></pre></td></tr></table></figure>
-<h3 id="4-执行如下命令，新建一个配置文件zoo-cfg"><a href="#4-执行如下命令，新建一个配置文件zoo-cfg" class="headerlink" title="4.执行如下命令，新建一个配置文件zoo.cfg"></a>4.执行如下命令，新建一个配置文件zoo.cfg</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp zoo_sample.cfg zoo.cfg</span><br></pre></td></tr></table></figure>
-<h3 id="5-修改zoo-cfg并在其中修改如下内容："><a href="#5-修改zoo-cfg并在其中修改如下内容：" class="headerlink" title="5.修改zoo.cfg并在其中修改如下内容："></a>5.修改zoo.cfg并在其中修改如下内容：</h3><pre><code>tickTime=2000
-initLimit=10
-syncLimit=5
-dataDir=/home/hewentian/zookeeperCluster/server1/data # 这里必须为绝对路径，否则有可能无法启动
-clientPort=2181  # 这台服务器的端口为2181这里为默认值
-server.1=127.0.0.1:2888:3888
-server.2=127.0.0.1:2889:3889
-server.3=127.0.0.1:2890:3890
-</code></pre><h3 id="6-在-home-hewentian-zookeeperCluster-server1-data目录下建myid文件并在其中输入1，只输入1，代表server-1"><a href="#6-在-home-hewentian-zookeeperCluster-server1-data目录下建myid文件并在其中输入1，只输入1，代表server-1" class="headerlink" title="6.在/home/hewentian/zookeeperCluster/server1/data目录下建myid文件并在其中输入1，只输入1，代表server.1"></a>6.在<code>/home/hewentian/zookeeperCluster/server1/data</code>目录下建<code>myid</code>文件并在其中输入1，只输入1，代表server.1</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server1/data</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure>
-<p>这样第一台服务器已经配置完毕。</p>
-<h3 id="7-接下来我们将server1复制为server2-server3"><a href="#7-接下来我们将server1复制为server2-server3" class="headerlink" title="7.接下来我们将server1复制为server2, server3"></a>7.接下来我们将<code>server1</code>复制为<code>server2</code>, <code>server3</code></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster</span><br><span class="line">$ cp -r server1 server2</span><br><span class="line">$ cp -r server1 server3</span><br></pre></td></tr></table></figure>
-<h3 id="8-将server2-data目录下的myid的内容修改为2"><a href="#8-将server2-data目录下的myid的内容修改为2" class="headerlink" title="8.将server2/data目录下的myid的内容修改为2"></a>8.将<code>server2/data</code>目录下的<code>myid</code>的内容修改为2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server2/data</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure>
-<p>同理，将将<code>server3/data</code>目录下的<code>myid</code>的内容修改为3<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server3/data</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure></p>
-<h3 id="9-修改server2的配置文件"><a href="#9-修改server2的配置文件" class="headerlink" title="9.修改server2的配置文件"></a>9.修改<code>server2</code>的配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server2/zookeeper-3.4.6/conf/</span><br><span class="line">$ vi zoo.cfg</span><br></pre></td></tr></table></figure>
-<p>仅修改两处地方即可，要修改的地方如下：</p>
-<pre><code>dataDir=/home/hewentian/zookeeperCluster/server2/data  # 这里是数据保存的位置
-clientPort=2182                                        # 这台服务器的端口为2182
-</code></pre><p>同理，修改<code>server3</code>的配置文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server3/zookeeper-3.4.6/conf/</span><br><span class="line">$ vi zoo.cfg</span><br></pre></td></tr></table></figure></p>
-<p>仅修改两处地方即可，要修改的地方如下：</p>
-<pre><code>dataDir=/home/hewentian/zookeeperCluster/server3/data  # 这里是数据保存的位置
-clientPort=2183                                        # 这台服务器的端口为2183
-</code></pre><h3 id="10-到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动"><a href="#10-到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动" class="headerlink" title="10.到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动"></a>10.到目前为此，我们已经将3台<code>zookeeper</code>服务器都配置好了。接下来，我们要将他们都启动</h3><p>启动server1<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server1/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkServer.sh start</span><br></pre></td></tr></table></figure></p>
-<p>启动server2<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server2/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkServer.sh start</span><br></pre></td></tr></table></figure></p>
-<p>启动server3<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server3/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkServer.sh start</span><br></pre></td></tr></table></figure></p>
-<h3 id="11-当三台服务器都启动好了，我们分别连到server1、server2、server3："><a href="#11-当三台服务器都启动好了，我们分别连到server1、server2、server3：" class="headerlink" title="11.当三台服务器都启动好了，我们分别连到server1、server2、server3："></a>11.当三台服务器都启动好了，我们分别连到server1、server2、server3：</h3><p>连接到server1<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server1/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkCli.sh -server 127.0.0.1:2181</span><br></pre></td></tr></table></figure></p>
-<p>连接到server2<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server2/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkCli.sh -server 127.0.0.1:2182</span><br></pre></td></tr></table></figure></p>
-<p>连接到server1<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server3/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkCli.sh -server 127.0.0.1:2183</span><br></pre></td></tr></table></figure></p>
-<p>这样你在<code>server1</code>中所作的修改，都会同步到<code>server2</code>, <code>server3</code>。<br>例如你在server1中<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ create /zk_test_cluster my_data_cluster</span><br></pre></td></tr></table></figure></p>
-<p>你在server2, server3的客户端用<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls /</span><br></pre></td></tr></table></figure></p>
-<p>都会看到节点zk_test_cluster</p>
-<p>集群部署结束。</p>
-<h3 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h3><ol>
-<li>tickTime：zookeeper中使用的基本时间单位，毫秒值；</li>
-<li>initLimit：由于zookeeper集群中包含多台server，其中一台为leader，其余的为follower。initLimit参数配置初始化连接时，follower和leader之间的最长心跳时间，此时该参数设置为5，说明时间限制为5倍tickTime, 即：5 * 2000 = 10000ms = 10s；</li>
-<li>syncLimit：该参数配置leader和follower之间发送消息，请求和应答的最大时间长度。此时该参数设置为2，说明时间限制为2倍tickTime，即4000ms；</li>
-<li>dataDir: 数据存放目录，可以是任意目录；</li>
-<li>dataLogDir: log目录，同样可以是任意目录。如果没有设置该参数，将使用和dataDir相同的设置；</li>
-<li>clientPort: 监听client连接的端口号；</li>
-<li>server.X=A:B:C：其中X是一个数字，表示这是第几号server。A是该server所在的IP地址；B配置该server和集群中的leader交换消息所使用的端口；C配置选举leader时所使用的端口。由于配置的是伪集群模式，所以各个server的B，C参数必须不同。</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjeky97hr001u9g2ifk9ggtkj" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
 
     </footer>
   </div>
@@ -944,7 +903,7 @@ clientPort=2183                                        # 这台服务器的端�
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -954,7 +913,7 @@ clientPort=2183                                        # 这台服务器的端�
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -965,6 +924,10 @@ clientPort=2183                                        # 这台服务器的端�
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/03/07/mongo-note/">mongo 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2018/03/03/solr-cloud/">solr 集群的创建</a>
@@ -980,10 +943,6 @@ clientPort=2183                                        # 这台服务器的端�
         
           <li>
             <a href="/2018/01/23/activemq-note/">activeMQ学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
           </li>
         
       </ul>

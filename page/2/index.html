@@ -71,6 +71,93 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-zookeeper-install-cluster" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/06/zookeeper-install-cluster/" class="article-date">
+  <time datetime="2017-12-06T08:33:35.000Z" itemprop="datePublished">2017-12-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/06/zookeeper-install-cluster/">zookeeper 集群版安装方法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="计划在一台Ubuntu-Linux服务器上部署3台zookeeper服务器，分别为server1-server2-server3"><a href="#计划在一台Ubuntu-Linux服务器上部署3台zookeeper服务器，分别为server1-server2-server3" class="headerlink" title="计划在一台Ubuntu Linux服务器上部署3台zookeeper服务器，分别为server1, server2, server3"></a>计划在一台<code>Ubuntu Linux</code>服务器上部署3台<code>zookeeper</code>服务器，分别为<code>server1</code>, <code>server2</code>, <code>server3</code></h3><p>因为三台<code>zookeeper</code>服务器的配置都差不多，所以我们先设置好一台<code>server1</code>的配置，再将其复制成<code>server2</code>, <code>server3</code>并修改其中的配置即可。</p>
+<h3 id="1-建目录，如下："><a href="#1-建目录，如下：" class="headerlink" title="1.建目录，如下："></a>1.建目录，如下：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p /home/hewentian/zookeeperCluster/server1</span><br><span class="line">$ mkdir -p /home/hewentian/zookeeperCluster/server1/data</span><br></pre></td></tr></table></figure>
+<h3 id="2-将zookeeper-3-4-6-tar-gz放到-home-hewentian-zookeeperCluster-server1目录下，并执行如下脚本解压"><a href="#2-将zookeeper-3-4-6-tar-gz放到-home-hewentian-zookeeperCluster-server1目录下，并执行如下脚本解压" class="headerlink" title="2.将zookeeper-3.4.6.tar.gz放到/home/hewentian/zookeeperCluster/server1目录下，并执行如下脚本解压"></a>2.将<code>zookeeper-3.4.6.tar.gz</code>放到<code>/home/hewentian/zookeeperCluster/server1</code>目录下，并执行如下脚本解压</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server1</span><br><span class="line">$ tar xzvf zookeeper-3.4.6.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="3-解压后得到zookeeper-3-4-6文件夹，进入conf目录"><a href="#3-解压后得到zookeeper-3-4-6文件夹，进入conf目录" class="headerlink" title="3.解压后得到zookeeper-3.4.6文件夹，进入conf目录"></a>3.解压后得到<code>zookeeper-3.4.6</code>文件夹，进入<code>conf</code>目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> zookeeper-3.4.6/conf/</span><br></pre></td></tr></table></figure>
+<h3 id="4-执行如下命令，新建一个配置文件zoo-cfg"><a href="#4-执行如下命令，新建一个配置文件zoo-cfg" class="headerlink" title="4.执行如下命令，新建一个配置文件zoo.cfg"></a>4.执行如下命令，新建一个配置文件zoo.cfg</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp zoo_sample.cfg zoo.cfg</span><br></pre></td></tr></table></figure>
+<h3 id="5-修改zoo-cfg并在其中修改如下内容："><a href="#5-修改zoo-cfg并在其中修改如下内容：" class="headerlink" title="5.修改zoo.cfg并在其中修改如下内容："></a>5.修改zoo.cfg并在其中修改如下内容：</h3><pre><code>tickTime=2000
+initLimit=10
+syncLimit=5
+dataDir=/home/hewentian/zookeeperCluster/server1/data # 这里必须为绝对路径，否则有可能无法启动
+clientPort=2181  # 这台服务器的端口为2181这里为默认值
+server.1=127.0.0.1:2888:3888
+server.2=127.0.0.1:2889:3889
+server.3=127.0.0.1:2890:3890
+</code></pre><h3 id="6-在-home-hewentian-zookeeperCluster-server1-data目录下建myid文件并在其中输入1，只输入1，代表server-1"><a href="#6-在-home-hewentian-zookeeperCluster-server1-data目录下建myid文件并在其中输入1，只输入1，代表server-1" class="headerlink" title="6.在/home/hewentian/zookeeperCluster/server1/data目录下建myid文件并在其中输入1，只输入1，代表server.1"></a>6.在<code>/home/hewentian/zookeeperCluster/server1/data</code>目录下建<code>myid</code>文件并在其中输入1，只输入1，代表server.1</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server1/data</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure>
+<p>这样第一台服务器已经配置完毕。</p>
+<h3 id="7-接下来我们将server1复制为server2-server3"><a href="#7-接下来我们将server1复制为server2-server3" class="headerlink" title="7.接下来我们将server1复制为server2, server3"></a>7.接下来我们将<code>server1</code>复制为<code>server2</code>, <code>server3</code></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster</span><br><span class="line">$ cp -r server1 server2</span><br><span class="line">$ cp -r server1 server3</span><br></pre></td></tr></table></figure>
+<h3 id="8-将server2-data目录下的myid的内容修改为2"><a href="#8-将server2-data目录下的myid的内容修改为2" class="headerlink" title="8.将server2/data目录下的myid的内容修改为2"></a>8.将<code>server2/data</code>目录下的<code>myid</code>的内容修改为2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server2/data</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure>
+<p>同理，将将<code>server3/data</code>目录下的<code>myid</code>的内容修改为3<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server3/data</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure></p>
+<h3 id="9-修改server2的配置文件"><a href="#9-修改server2的配置文件" class="headerlink" title="9.修改server2的配置文件"></a>9.修改<code>server2</code>的配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server2/zookeeper-3.4.6/conf/</span><br><span class="line">$ vi zoo.cfg</span><br></pre></td></tr></table></figure>
+<p>仅修改两处地方即可，要修改的地方如下：</p>
+<pre><code>dataDir=/home/hewentian/zookeeperCluster/server2/data  # 这里是数据保存的位置
+clientPort=2182                                        # 这台服务器的端口为2182
+</code></pre><p>同理，修改<code>server3</code>的配置文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server3/zookeeper-3.4.6/conf/</span><br><span class="line">$ vi zoo.cfg</span><br></pre></td></tr></table></figure></p>
+<p>仅修改两处地方即可，要修改的地方如下：</p>
+<pre><code>dataDir=/home/hewentian/zookeeperCluster/server3/data  # 这里是数据保存的位置
+clientPort=2183                                        # 这台服务器的端口为2183
+</code></pre><h3 id="10-到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动"><a href="#10-到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动" class="headerlink" title="10.到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动"></a>10.到目前为此，我们已经将3台<code>zookeeper</code>服务器都配置好了。接下来，我们要将他们都启动</h3><p>启动server1<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server1/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkServer.sh start</span><br></pre></td></tr></table></figure></p>
+<p>启动server2<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server2/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkServer.sh start</span><br></pre></td></tr></table></figure></p>
+<p>启动server3<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server3/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkServer.sh start</span><br></pre></td></tr></table></figure></p>
+<h3 id="11-当三台服务器都启动好了，我们分别连到server1、server2、server3："><a href="#11-当三台服务器都启动好了，我们分别连到server1、server2、server3：" class="headerlink" title="11.当三台服务器都启动好了，我们分别连到server1、server2、server3："></a>11.当三台服务器都启动好了，我们分别连到server1、server2、server3：</h3><p>连接到server1<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server1/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkCli.sh -server 127.0.0.1:2181</span><br></pre></td></tr></table></figure></p>
+<p>连接到server2<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server2/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkCli.sh -server 127.0.0.1:2182</span><br></pre></td></tr></table></figure></p>
+<p>连接到server1<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/zookeeperCluster/server3/zookeeper-3.4.6/bin/</span><br><span class="line">$ ./zkCli.sh -server 127.0.0.1:2183</span><br></pre></td></tr></table></figure></p>
+<p>这样你在<code>server1</code>中所作的修改，都会同步到<code>server2</code>, <code>server3</code>。<br>例如你在server1中<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ create /zk_test_cluster my_data_cluster</span><br></pre></td></tr></table></figure></p>
+<p>你在server2, server3的客户端用<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls /</span><br></pre></td></tr></table></figure></p>
+<p>都会看到节点zk_test_cluster</p>
+<p>集群部署结束。</p>
+<h3 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h3><ol>
+<li>tickTime：zookeeper中使用的基本时间单位，毫秒值；</li>
+<li>initLimit：由于zookeeper集群中包含多台server，其中一台为leader，其余的为follower。initLimit参数配置初始化连接时，follower和leader之间的最长心跳时间，此时该参数设置为5，说明时间限制为5倍tickTime, 即：5 * 2000 = 10000ms = 10s；</li>
+<li>syncLimit：该参数配置leader和follower之间发送消息，请求和应答的最大时间长度。此时该参数设置为2，说明时间限制为2倍tickTime，即4000ms；</li>
+<li>dataDir: 数据存放目录，可以是任意目录；</li>
+<li>dataLogDir: log目录，同样可以是任意目录。如果没有设置该参数，将使用和dataDir相同的设置；</li>
+<li>clientPort: 监听client连接的端口号；</li>
+<li>server.X=A:B:C：其中X是一个数字，表示这是第几号server。A是该server所在的IP地址；B配置该server和集群中的leader交换消息所使用的端口；C配置选举leader时所使用的端口。由于配置的是伪集群模式，所以各个server的B，C参数必须不同。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjescqugs001zo72ikv6metlx" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-zookeeper-install-standalone" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/12/06/zookeeper-install-standalone/" class="article-date">
@@ -119,7 +206,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjeky97hu001y9g2ikfqytust" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjescqugz0026o72ihnycdd3x" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -197,7 +284,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/02/hexo-note/" data-id="cjeky97es00089g2ihegndsto" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/02/hexo-note/" data-id="cjescqucp0005o72iqu4z19v4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -238,7 +325,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjeky97fe000h9g2i7jsizctd" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjescqudc000eo72ir1fhjzh0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -283,7 +370,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/maven-note/" data-id="cjeky97g0000r9g2iu7zp7liz" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/maven-note/" data-id="cjescquf20012o72ik6ptyttt" class="article-share-link">Share</a>
       
       
     </footer>
@@ -324,7 +411,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/html-css/" data-id="cjeky97ev00099g2ivddapbcz" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/html-css/" data-id="cjescqud10009o72i1tybo05m" class="article-share-link">Share</a>
       
       
     </footer>
@@ -368,7 +455,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/java-get-entity-property-and-value/" data-id="cjeky97f8000d9g2i59den5vl" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/java-get-entity-property-and-value/" data-id="cjescqud5000bo72idf5lpqz7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -824,7 +911,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjeky97h8001j9g2ifhda844k" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjescqugl001wo72ifa2yrjlq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -874,7 +961,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjeky97gk00149g2idb76tygt" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjescqufv001go72ix9lo5l46" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -939,80 +1026,11 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjeky97h2001e9g2imrb66ujk" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjescqugb001po72im4qjc6qp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-git-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/17/git-note/" class="article-date">
-  <time datetime="2017-10-17T02:17:07.000Z" itemprop="datePublished">2017-10-17</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/other/">other</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/17/git-note/">git 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="下面记录一些经常会用到的命令："><a href="#下面记录一些经常会用到的命令：" class="headerlink" title="下面记录一些经常会用到的命令："></a>下面记录一些经常会用到的命令：</h2><p>查看远程分支, 加上 -a 参数可以查看远程分支，远程分支会用红色表示出来（如果你开了颜色支持的话），不加 -a 则查看本地分支：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -a</span><br><span class="line">  dev</span><br><span class="line">* master</span><br><span class="line">  remotes/origin/HEAD -&gt; origin/master</span><br><span class="line">  remotes/origin/master</span><br><span class="line">  remotes/origin/prod</span><br></pre></td></tr></table></figure></p>
-<p>删除远程分支和tag, 在Git v1.7.0 之后，可以使用这种语法删除远程分支：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git push origin --delete &lt;branchName&gt;</span><br></pre></td></tr></table></figure></p>
-<p>删除tag这么用：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git push origin --delete tag &lt;tagname&gt;</span><br></pre></td></tr></table></figure></p>
-<p>否则，可以使用这种语法，推送一个空分支到远程分支，其实就相当于删除远程分支：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git push origin :&lt;branchName&gt;</span><br></pre></td></tr></table></figure></p>
-<p>这是删除tag的方法，推送一个空tag到远程tag：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git tag -d &lt;tagname&gt;</span><br><span class="line">$ git push origin :refs/tags/&lt;tagname&gt;</span><br></pre></td></tr></table></figure></p>
-<p>两种语法作用完全相同。</p>
-<p>将远程git仓库里的指定分支拉取到本地（本地不存在的分支）<br>当我想从远程仓库里拉取一条本地不存在的分支时：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b 本地分支名 origin/远程分支名</span><br></pre></td></tr></table></figure></p>
-<p>这个将会自动创建一个新的本地分支，并与指定的远程分支关联起来。</p>
-<p>例如远程仓库里有个分支dev2,我本地没有该分支，我要把dev2拉到我本地：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b dev2 origin/dev2</span><br></pre></td></tr></table></figure></p>
-<p>若成功，将会在本地创建新分支dev2,并自动切到dev2上。<br>如果出现提示：</p>
-<pre><code>fatal: Cannot update paths and switch to branch &apos;dev2&apos; at the same time.
-Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as commit?
-</code></pre><p>表示拉取不成功。我们需要先执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git fetch</span><br></pre></td></tr></table></figure></p>
-<p>然后再执行下面的命令即可<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b 本地分支名 origin/远程分支名</span><br></pre></td></tr></table></figure></p>
-<p>Git 比较不同版本文件差异的常用命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git diff	查看尚未暂存的文件中更新了哪些部分</span><br><span class="line">$ git diff filename	查看尚未暂存的某个文件更新了哪些部分</span><br><span class="line">$ git diff –cached	查看已经暂存起来的文件中和上次提交的版本之间的差异</span><br><span class="line">$ git diff –cached filename	查看已经暂存起来的某个文件和上次提交的版本之间的差异</span><br><span class="line">$ git diff &lt;commitId1&gt; &lt;commitId2&gt;	查看某两个版本之间的差异</span><br><span class="line">$ git diff &lt;commitId1&gt;:filename &lt;commitId2&gt;:filename	查看某两个版本的某个文件之间的差异，方式一</span><br><span class="line">$ git diff &lt;commitId1&gt; &lt;commitId2&gt; -- filename	查看某两个版本的某个文件之间的差异，方式二</span><br></pre></td></tr></table></figure></p>
-<p>在git中查看历史的命令主要是git log，要查看某个文件的修改历史：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> -- begin.txt</span><br></pre></td></tr></table></figure></p>
-<p>可以添加不同的选项让输出的内容或格式有所不同。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> -p -- begin.txt</span><br></pre></td></tr></table></figure></p>
-<p>-p 选项可以输出每次提交中的diff， -p会把输出搞得很长、很乱，不容易找到重点。<br>还有另外一种方式是：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> --pretty=oneline -- filename</span><br></pre></td></tr></table></figure></p>
-<p>在log 命令中加入 –pretty=oneline 选项只能看到comments，看不到提交的用户和日期。<br>这也能够让我们集中注意力快速找到关注的提交记录。</p>
-<p>然后使用 git show命令查看完整的提交内容。</p>
-<p>当然，除了命令行工具您也可以使用GUI程序查看文件的历史记录：<br>gitk filename</p>
-<p>查看历史中的文件内容</p>
-<p>当我们使用 git log 命令找到了某次提交，并且想看看这次提交时文件的完整内容。<br>这时，我们需要使用 git show 命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git show &lt;commitId&gt;:filename</span><br></pre></td></tr></table></figure></p>
-<p>也许此时你并不是看看就算了，你想要使用这个版本的文件更新工作区中的文件。<br>直接从 git show 命令的输出中拷贝内容是个不错的选择。<br>但也可以通过组合使用不同的命令来实现：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout &lt;commitId&gt; --filename</span><br><span class="line">$ git reset filename</span><br></pre></td></tr></table></figure></p>
-<p>此时只有工作区被更新了(你也可以把他当做是一次回滚操作)。</p>
-<h3 id="git-将单个文件恢复到历史版本的正确方法如下："><a href="#git-将单个文件恢复到历史版本的正确方法如下：" class="headerlink" title="git 将单个文件恢复到历史版本的正确方法如下："></a>git 将单个文件恢复到历史版本的正确方法如下：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> 要恢复的文件路径</span><br><span class="line">$ git reset commit_id 要恢复的文件路径</span><br><span class="line">$ git checkout -- 要恢复的文件路径</span><br></pre></td></tr></table></figure>
-<h3 id="git的-gitignore规则不生效的解决办法"><a href="#git的-gitignore规则不生效的解决办法" class="headerlink" title="git的.gitignore规则不生效的解决办法"></a>git的.gitignore规则不生效的解决办法</h3><p>有时候定义了规则后发现并未生效，原因是.gitignore只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的。那么解决方法就是先把本地缓存删除（改变成未track状态），然后再提交：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git rm -r --cached .</span><br><span class="line">$ git add .</span><br><span class="line">$ git commit -m <span class="string">'update .gitignore'</span></span><br></pre></td></tr></table></figure>
-<h3 id="在开发的过程中，想知道远程的仓库是否有同事提交代码可以使用如下命令"><a href="#在开发的过程中，想知道远程的仓库是否有同事提交代码可以使用如下命令" class="headerlink" title="在开发的过程中，想知道远程的仓库是否有同事提交代码可以使用如下命令"></a>在开发的过程中，想知道远程的仓库是否有同事提交代码可以使用如下命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> &#123;your_repo_dir&#125;</span><br><span class="line">$ git fetch</span><br><span class="line">$ git status</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjeky97em00069g2iul7bx5g2" class="article-share-link">Share</a>
-      
-      
     </footer>
   </div>
   
@@ -1033,7 +1051,7 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -1043,7 +1061,7 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1054,6 +1072,10 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/03/07/mongo-note/">mongo 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2018/03/03/solr-cloud/">solr 集群的创建</a>
@@ -1069,10 +1091,6 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
         
           <li>
             <a href="/2018/01/23/activemq-note/">activeMQ学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
           </li>
         
       </ul>
