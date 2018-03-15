@@ -136,4 +136,4 @@ With the "push API", applications have to indicate interest in consuming message
 AMQP connections are typically long-lived. AMQP is an application level protocol that uses TCP for reliable delivery. AMQP connections use authentication and can be protected using TLS (SSL). When an application no longer needs to be connected to an AMQP broker, it should gracefully close the AMQP connection instead of abruptly closing the underlying TCP connection.
 
 
-未完等续。。。
+未完待续。。。
