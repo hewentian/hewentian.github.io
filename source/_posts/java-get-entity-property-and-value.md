@@ -118,7 +118,7 @@ age	class java.lang.Integer
 根据属性获取这个属性的值
 name	Tim Ho
 id	1
-class	class com.wtoip.yun.dungbeetle.User
+class	class com.hewentian.User
 age	23
 ```
 

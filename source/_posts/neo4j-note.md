@@ -1,8 +1,8 @@
 ---
 title: neo4j学习笔记
 date: 2018-02-17 09:59:18
-tags:
-categories: bigdata
+tags: neo4j
+categories: db
 ---
 ## 一些基本概念，从官网copy过来的，如下：
 

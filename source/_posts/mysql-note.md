@@ -329,3 +329,52 @@ id	name	birthday
 4	b	2018-01-25 09:30:29
 ```
 
+### mysql 仅保留 1000 条记录而删除其他记录
+``` sql
+求取总记录数
+select count(*) from tb_name;
+
+删除部分记录
+delete from tb_name limit 总记录数-1000
+
+例如，比如一个表有 10000 条记录，现想保留 1000 条数据
+delete from tb_name limit 9000
+```
+
+
+### MySQL数据库备份和还原常用的命令
+#### 一、备份命令
+``` sql
+1、备份MySQL数据库的命令，备份指定的整个库
+mysqldump -hhostname -uusername -ppassword databasename > ~/backupfile.sql
+
+2、备份MySQL数据库为带删除表的格式，能够让该备份覆盖已有数据库而不需要手动删除原有数据库
+mysqldump --add-drop-table -hhostname -uusername -ppassword databasename > ~/backupfile.sql
+
+3、直接将MySQL数据库压缩备份
+mysqldump -hhostname -uusername -ppassword databasename | gzip > ~/backupfile.sql.gz
+
+4、备份MySQL数据库某个(些)表
+mysqldump -hhostname -uusername -ppassword databasename specific_table1 [specific_table2] > ~/backupfile.sql
+
+5、同时备份多个MySQL数据库
+mysqldump -hhostname -uusername -ppassword -databases databasename1 databasename2 databasename3 > ~/multibackupfile.sql
+
+6、仅仅备份数据库结构
+mysqldump -no-data -databases databasename1 databasename2 databasename3 > ~/structurebackupfile.sql
+
+7、备份服务器上所有数据库
+mysqldump -all-databases > ~/allbackupfile.sql
+```
+
+#### 二、还原命令
+``` sql
+1、还原MySQL数据库的命令
+mysql -hhostname -uusername -ppassword databasename < ~/backupfile.sql
+
+2、还原压缩的MySQL数据库
+gunzip < ~/backupfile.sql.gz | mysql -uusername -ppassword databasename
+
+3、将数据库转移到新服务器
+mysqldump -uusername -ppassword databasename | mysql -host=*.*.*.* -C databasename
+```

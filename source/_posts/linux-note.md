@@ -350,6 +350,9 @@ $ rdesktop {Windows7_IP}
 或者 
 $ rdesktop {Windows7_IP} -f -u {YOUR_LOGIN_NAME} -p {YOUR_PASSWD} 
 # -f 全屏，直接输入用户名和密码, 以全屏方式进入 windows 的退出方式是 [开始] -> [断开连接]
+
+# 也可以将本地linux上面的一个目录，映射到要远程到的windows机。下面将/home/hewentian/Documents映射到远程windows上面的盘hwt
+$ rdesktop {Windows7_IP} -f -u {YOUR_LOGIN_NAME} -p {YOUR_PASSWD} -r disk:hwt=/home/hewentian/Documents
 ```
 如果没有执行步骤2，则会报如下错：
 ``` bash
@@ -357,6 +360,28 @@ Autoselected keyboard map en-us
 ERROR: CredSSP: Initialize failed, do you have correct kerberos tgt initialized ?
 Failed to connect, CredSSP required by server.
 ```
+你也可以将这些命令，写成SHELL脚本
+``` bash
+$ touch rd.sh
+$ chmod +x rd.sh
+# 以这种方式动行 sh rd.sh
+```
+并在rd.sh中输入以下内容
+``` bash
+#! /bin/sh
+echo "starting rdesktop ..."
+echo ""
+ipAddr=192.168.1.100
+user=administrator
+passwd=pw12345678
+echo "rdesktop to $ipAddr"
+
+rdesktop $ipAddr -u $user -p $passwd -g 1300*800 -r clipboard:PRIMARYCLIPBOARD -r disk:hwt=/home/hewentian/Documents
+
+echo "succeeded..."
+sleep 1
+```
+
 
 ### Linux下的任务调度分为两类，系统任务调度和用户任务调度。
 1. 系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。
@@ -507,32 +532,6 @@ LD_PRELOAD是Linux下的一个环境变量，动态链接器在载入一个程�
 加入我们自己的逻辑，从而改变程序的执行行为。不过该方法只对动态链接的程序有效，对静态链接的程序无效。
 
 
-### linux下面查看文件的MD5值，用命令：md5sum
-用法一，产生MD5值：
-``` bash
-$ md5sum [文件]
-```
-用法二，从文件中读取MD5的校验值并予以检查，要求同目录下面要有如下两个文件：
-
-	solr-6.5.0.zip
-	solr-6.5.0.zip.md5
-
-命令如下：
-``` bash
-$ md5sum -c solr-6.5.0.zip.md5
-如果相同，输出：
-solr-6.5.0.zip: OK
-```
-md5值重定向将生成md5值重定向到指定的文件，通常文件的扩展名我们会命为.md5
-``` bash
-$ md5sum data > data.md5
-$ md5sum data
-0a6de444981b68d6a049053296491e49  data
-
-$ cat data.md5 
-0a6de444981b68d6a049053296491e49  data
-```
-
 ### linux查找一个目录的命令
 ``` bash
 查找目录：find /（查找范围） -name '查找关键字' -type d
@@ -547,7 +546,7 @@ $ cat data.md5
 	-R 查找所有文件包含子目录
 	-i 忽略大小写
 
-### md5sum的使用
+### linux下面md5sum的使用
 ``` bash
 对一个文件计算MD5值
 $ md5sum apache-tomcat-8.0.47.tar.gz
@@ -1125,8 +1124,45 @@ scp local_file remote_ip:remote_folder
 或者 
 scp local_file remote_ip:remote_file 
 
+默认使用22端口，如果是其他端口，请使用-P指定
+scp -P 12022 local_file remote_ip:remote_file 
+
 复制目录命令格式：
 scp -r local_folder remote_username@remote_ip:remote_folder 
 或者 
 scp -r local_folder remote_ip:remote_folder 
 ```
+
+从远程复制到本地
+从远程复制到本地，只要将从本地复制到远程的命令的后2个参数调换顺序即可，如下实例
+``` bash
+$ scp root@192.168.1.100:/home/root/a.txt /home/hewentian/Documents/
+$ scp -r root@192.168.1.100:/home/root/a/ /home/hewentian/Documents/
+```
+
+### cat, more, less的区别
+more功能类似cat，cat命令是整个文件的内容从上到下显示在屏幕上。more会以一页一页的显示方便使用者逐页阅读，而最基本的指令就是按空白键（space）就往下一页显示，按b键就会往回（back）一页显示，而且还有搜寻字串的功能 。more命令从前向后读取文件，因此在启动时就加载整个文件。
+less与more类似，但使用less可以随意浏览文件，而more仅能向前移动，却不能向后移动，而且less在查看之前不会加载整个文件。
+
+### find 命令将查找到的文件执行操作
+这里将当前目录下（包括子目录）的所有以.txt结尾的文件删掉
+``` bash
+find . -name "*.txt" -exec rm {} \;
+```
+
+
+### Several methods to execute shell scripts
+1. . scriptFileName (needn’t excute permission，the script file is under current directory, executing in current shell）
+2. sh scriptFileName （ needn’t execute permission，the script file is under current directory , create a child process to execute the script file）
+3. ./scriptFileName （ need execute permission，the script file is under current directory ）
+4. scriptFileName （ need execute permission， the script file is in directory which listed in PATH） 
+
+
+### Linux环境下打开来自Windows的文本文件出现乱码
+使用`iconv`命令，将目标文件编码方式转为UTF-8，命令如下：
+``` bash
+$ iconv -f gbk -t utf8 -o outputFile sourceFile
+
+其实，outputFile、sourceFile的名字可以相同，这样就将原文件的编码修改了
+```
+

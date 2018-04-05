@@ -136,3 +136,47 @@ $ cd {your_repo_dir}
 $ git fetch
 $ git status
 ```
+
+
+### git远程删除分支后，本地 git branch -a 依然能看到的解决办法
+远程删掉 release/1.1 分支后，本地使用如下命令依然还能看到它，如下：
+``` bash
+$ git fetch
+$ git branch -a
+  develop
+* developLocal
+  master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/develop
+  remotes/origin/feature/develop_1.1
+  remotes/origin/master
+  remotes/origin/release/1.1	# 看，它还在
+```
+此时我们使用如下命令，可以查看remote地址，远程分支，还有本地分支与之相对应关系等信息
+``` bash
+$ git remote show origin 
+* remote origin
+  Fetch URL: ssh://git@gitlab.hewentian.com:12022/hexo.git
+  Push  URL: ssh://git@gitlab.hewentian.com:12022/hexo.git
+  HEAD branch: master
+  Remote branches:
+    develop                         tracked
+    feature/develop_1.1             tracked
+    master                          tracked
+    refs/remotes/origin/release/1.1 stale (use 'git remote prune' to remove) # 提示该分支已经不存在了
+  Local branches configured for 'git pull':
+    develop merges with remote develop
+    master  merges with remote master
+  Local refs configured for 'git push':
+    develop pushes to develop (up to date)
+    master  pushes to master  (local out of date)
+```
+根据提示，使用如下命令，删掉本地的远程不存在的分支
+``` bash
+$ git remote prune origin 
+Pruning origin
+URL: ssh://git@gitlab.hewentian.com:12022/hexo.git
+ * [pruned] origin/release/1.1
+```
+这样就删除了那些远程仓库不存在的分支
+

@@ -17,3 +17,22 @@ categories: other
 	<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
 </dependency>
 ```
+
+在 pom.xml文件中不要写如下这样的配置：
+``` xml
+<properties>
+	<java.home>/usr/local/java/jdk1.8.0_102</java.home>
+</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>jre</groupId>
+			<artifactId>jre</artifactId>
+			<version>8.0</version>
+			<scope>system</scope>
+			<systemPath>${java.home}/lib/rt.jar</systemPath>
+		</dependency>
+</dependencies>
+```
+去掉`<java.home>/usr/local/java/jdk1.8.0_102</java.home>`配置，这时`java.home`变量继承自`eclipse`的`java.home`配置。从pom.xml文件的Effective POM可以查看到java.home变量被替换了，eclipse的java.home路径在`help->about eclipse->Installation Details->configuration`页可以找到。
+
