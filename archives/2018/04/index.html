@@ -3,20 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>系统上线注意事项 | Tim Ho&#39;s Technology Blog</title>
+  <title>归档: 2018/4 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="上线总结：今天下午准备上线，折腾了很久， 不过， 终于成功上线，期间发现了很多问题。所谓好记性，不如烂笔头，故记之。有时候，系统上线，如果发现还是旧的页面，可能会是缓存，这时候，要检查下下面的地方： 1. 你浏览器的缓存是否已经清掉了；2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；3. 如果 IP + PORT 访问，没问题">
-<meta name="keywords" content="java">
-<meta property="og:type" content="article">
-<meta property="og:title" content="系统上线注意事项">
-<meta property="og:url" content="https://github.com/hewentian/2017/09/12/online-implementing/index.html">
+  <meta name="description" content="my personal blog">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:url" content="https://github.com/hewentian/archives/2018/04/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="上线总结：今天下午准备上线，折腾了很久， 不过， 终于成功上线，期间发现了很多问题。所谓好记性，不如烂笔头，故记之。有时候，系统上线，如果发现还是旧的页面，可能会是缓存，这时候，要检查下下面的地方： 1. 你浏览器的缓存是否已经清掉了；2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；3. 如果 IP + PORT 访问，没问题">
+<meta property="og:description" content="my personal blog">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-12-01T14:06:07.644Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="系统上线注意事项">
-<meta name="twitter:description" content="上线总结：今天下午准备上线，折腾了很久， 不过， 终于成功上线，期间发现了很多问题。所谓好记性，不如烂笔头，故记之。有时候，系统上线，如果发现还是旧的页面，可能会是缓存，这时候，要检查下下面的地方： 1. 你浏览器的缓存是否已经清掉了；2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；3. 如果 IP + PORT 访问，没问题">
+<meta name="twitter:title" content="Tim Ho&#39;s Technology Blog">
+<meta name="twitter:description" content="my personal blog">
   
   
     <link rel="icon" href="/favicon.png">
@@ -71,67 +69,39 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-online-implementing" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/09/12/online-implementing/" class="article-date">
-  <time datetime="2017-09-12T12:22:54.000Z" itemprop="datePublished">2017-09-12</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/java/">java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      系统上线注意事项
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2018" class="archive-year">2018</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2018/04/06/jvm-note/" class="archive-article-date">
+  <time datetime="2018-04-06T03:29:42.000Z" itemprop="datePublished">4月 6</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2018/04/06/jvm-note/">jvm 学习笔记</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="上线总结："><a href="#上线总结：" class="headerlink" title="上线总结："></a>上线总结：</h2><p>今天下午准备上线，折腾了很久， 不过， 终于成功上线，期间发现了很多问题。所谓好记性，不如烂笔头，故记之。有时候，系统上线，如果发现还是旧的页面，可能会是缓存，这时候，要检查下下面的地方：</p>
-<h3 id="1-你浏览器的缓存是否已经清掉了；"><a href="#1-你浏览器的缓存是否已经清掉了；" class="headerlink" title="1. 你浏览器的缓存是否已经清掉了；"></a>1. 你浏览器的缓存是否已经清掉了；</h3><h3 id="2-Tomcat-的缓存是否清掉了-TOMCAT-HOME-work-这个目录，放的就是-Tomcat-的缓存；"><a href="#2-Tomcat-的缓存是否清掉了-TOMCAT-HOME-work-这个目录，放的就是-Tomcat-的缓存；" class="headerlink" title="2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；"></a>2. Tomcat 的缓存是否清掉了 ${TOMCAT_HOME}/work 这个目录，放的就是 Tomcat 的缓存；</h3><h3 id="3-如果-IP-PORT-访问，没问题的话，有可能是-CDN-缓存了，这时候也要刷下-CDN；"><a href="#3-如果-IP-PORT-访问，没问题的话，有可能是-CDN-缓存了，这时候也要刷下-CDN；" class="headerlink" title="3. 如果 IP + PORT 访问，没问题的话，有可能是 CDN 缓存了，这时候也要刷下 CDN；"></a>3. 如果 IP + PORT 访问，没问题的话，有可能是 CDN 缓存了，这时候也要刷下 CDN；</h3>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjgc22kg50013722i6hemzcis" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2017/09/12/linux-note/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Linux 学习笔记
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2017/09/11/tomcat-note/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">tomcat 学习笔记</div>
-    </a>
-  
-</nav>
-
-  
 </article>
+  
+  
+    </div></section>
+  
 
 </section>
         

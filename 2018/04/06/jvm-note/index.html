@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>jvm 学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近在看周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》，作笔记如下，以便自已复习。 JVM的基本结构：类加载子系统、方法区、JAVA堆、JAVA栈、本地方法区、程序计数器、直接内存、垃圾回收系统和执行引擎。 JVM的运行数据区如下所示： JAVA的NIO库允许程序使用直接内存，从而提高性能，通常直接内存速度会优于堆。读写频繁的场合，可以优先考虑使用。 lambda函数式编程的一个重">
+<meta name="keywords" content="jvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jvm 学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2018/04/06/jvm-note/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="最近在看周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》，作笔记如下，以便自已复习。 JVM的基本结构：类加载子系统、方法区、JAVA堆、JAVA栈、本地方法区、程序计数器、直接内存、垃圾回收系统和执行引擎。 JVM的运行数据区如下所示： JAVA的NIO库允许程序使用直接内存，从而提高性能，通常直接内存速度会优于堆。读写频繁的场合，可以优先考虑使用。 lambda函数式编程的一个重">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://github.com/img/jvm-runtime-data-schema.png">
+<meta property="og:updated_time" content="2018-04-23T08:40:13.019Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jvm 学习笔记">
+<meta name="twitter:description" content="最近在看周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》，作笔记如下，以便自已复习。 JVM的基本结构：类加载子系统、方法区、JAVA堆、JAVA栈、本地方法区、程序计数器、直接内存、垃圾回收系统和执行引擎。 JVM的运行数据区如下所示： JAVA的NIO库允许程序使用直接内存，从而提高性能，通常直接内存速度会优于堆。读写频繁的场合，可以优先考虑使用。 lambda函数式编程的一个重">
+<meta name="twitter:image" content="https://github.com/img/jvm-runtime-data-schema.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-jvm-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/06/jvm-note/" class="article-date">
+  <time datetime="2018-04-06T03:29:42.000Z" itemprop="datePublished">2018-04-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      jvm 学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近在看周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》，作笔记如下，以便自已复习。</p>
+<p>JVM的基本结构：类加载子系统、方法区、JAVA堆、JAVA栈、本地方法区、程序计数器、直接内存、垃圾回收系统和执行引擎。</p>
+<p>JVM的运行数据区如下所示：<br><img src="/img/jvm-runtime-data-schema.png" alt="" title="图片来源于网络，仅用于学习使用"></p>
+<p>JAVA的NIO库允许程序使用直接内存，从而提高性能，通常直接内存速度会优于堆。读写频繁的场合，可以优先考虑使用。</p>
+<p>lambda函数式编程的一个重要优点就是这样的程序天然地适合并行运行，这对JAVA语言在多核时代继续保持主流语言的地位有很大的帮助。</p>
+<h3 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h3><ol>
+<li>引用计数法：是古老而经典的垃圾收集算法，其核心就是在对象被其他所引用的时候计数器加1,而当引用失效时则减1.但是这种方式有非常 严重的问题：无法处理循环引用的情况、还有的就是每次进行加减操作比较浪费系统性能。</li>
+<li>标记清除法：分为标记和清除两个阶段，这种方式也有非常大的洞弊端，就是空间碎片问题，垃圾回收后，空间不是连续的。</li>
+<li>复制算法：其核心思想就是将内存分为两块，每次只使用其中一块。在回收时，将正在使用的内存中的存留对象复制到未被使用的内存中去，之后清除之前正在使用的内存中的所有对象，反复去交换两个内存的角式。</li>
+<li>标记压缩法：是在标记清除法的基础上做了优化，把存活的对象压缩到内存的一端，然后进行垃圾清理（老年代中使用的回收方法）</li>
+<li>分代算法：根据对象的特点把内存分成N块，然后根据每个对象的特点使用不同的算法。对于新生代，它的回收频率很高，但是每次回收耗时都很短；而老年代回收频率较低，但是耗时相对较长，所以应该尽量减少老年代的GC。</li>
+</ol>
+<h3 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h3><ol>
+<li>串行回收器： 使用单线程进行垃圾回收的回收器。每次回收时，串行回收器只有一个工作线程，对于并行能力较弱的计算机来说，串行回收器的专注性和独占性往往有更好的性能表现。可以在新生代和老年代使用。-XX:+UseSerialGC</li>
+<li>并行回收器： 在串行回收器的基础上作了改进，他可以使用多个线程同时进行垃圾回收，对于计算能力强的计算机而言，可以有效的缩短回收所需的实际时间。他只是简单的将串行回收器多线程化，他的回收策略和算法和串行回收器一样。只使用在新生代。–XX:+UseParNewGC</li>
+<li>ParallelGC： 新生代回收器，使用了复杂算法的收集器，也是多线程独占形式的收集器，它有个特点，就是它非常关注系统的吞吐量。</li>
+<li>CMS：全称为Concurrent Mark Sweep，意为并发标记清除，他使用的是标记清除法，主要关注系统停顿时间。-XX:+UseConcMarkSweepGC进行设置，-xx:ConcGCThreads设置并发线程数量。CMS并不是独占的回收器，也就是说CMS回收的过程中，应用程序 仍然可以在不停的工作，不过会有新的垃圾产生。CMS比较耗内存，CMS不会等到应用程序饱和的时候才去回收垃圾，而是在某一个阀值的时候开始回收，可以使用参数指定：-XX:CMSInitiatingOccupancyFraction来指定，默认为68,也就是说当老年代的空间使用率达68%的时候，会执行CMS回收。如果内存不足，收集可能会失败，如果失败了，会启动老年代串行回收器。</li>
+<li>G1：Garbage-First是在JDK1.7中提出的垃圾回收器，是为了取代CMS的回收器。它属于分代回收器，并行性和并发性。并行性是G1回收期间可多线程同时工作，而并发性是G1拥有与应用程序交替执行能力，部分工作可与应用程序同时执行，在整个GC期间不会完全阻塞应用程序。它可以工作在新生代和老年代。之前的回收器，或者工作在新生代，或者工作在老年代。G1使用了有益智复制对象的方式，减少空间碎片。</li>
+</ol>
+<p>将GC的日志输出到文件可以配置JVM启动参数：-Xloggc:/home/hewentian/Document/gc.log</p>
+<h3 id="类的加载过程"><a href="#类的加载过程" class="headerlink" title="类的加载过程"></a>类的加载过程</h3><p>JVM中类的加载过程：“加载”、“验证”、“准备”、“解析”和”初始化“。</p>
+<p><strong>声明：</strong>图片来源于网络，仅用于学习使用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjgc22kf2000h722iuwk605fk" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/03/07/mongo-note/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">mongo 学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/06/jvm-note/">jvm 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/07/mongo-note/">mongo 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/03/solr-cloud/">solr 集群的创建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/02/17/neo4j-note/">neo4j学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/29/gitbook-note/">gitbook学习笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
