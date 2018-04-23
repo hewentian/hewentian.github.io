@@ -344,6 +344,7 @@ delete from tb_name limit 9000
 
 ### MySQL数据库备份和还原常用的命令
 #### 一、备份命令
+如果只需要导出表的结构,可以使用mysqldump的`-d`选项
 ``` sql
 1、备份MySQL数据库的命令，备份指定的整个库
 mysqldump -hhostname -uusername -ppassword databasename > ~/backupfile.sql
@@ -378,3 +379,68 @@ gunzip < ~/backupfile.sql.gz | mysql -uusername -ppassword databasename
 3、将数据库转移到新服务器
 mysqldump -uusername -ppassword databasename | mysql -host=*.*.*.* -C databasename
 ```
+
+
+### select into
+除此之外，你还可以使用`select into`命令来导出数据，它与mysqldump的区别是：
+
+1. mysqldump: 导出的文本包括了数据库的结构和记录；
+2. select into: 导出的文本只有记录，并且，一般要数据库的管理员帐号，例如root才能执行；
+
+select into 有两种使用方式：
+``` sql
+方式一：
+mysql> select * from t_user into outfile 't_user.txt';
+Query OK, 2 rows affected (0.16 sec)
+
+方式二：
+mysql> select * into outfile 't_user.txt' from t_user;
+Query OK, 2 rows affected (0.00 sec)
+```
+导出的数据一般在数据库的安装目录下，你也可以使用`find / -name t_user.txt`来查找到
+
+
+### ERROR 3 (HY000): Error writing file '/tmp/MYeaZGpS' (Errcode: 28 - No space left on device)
+根据提示，是说mysql中/tmp使用的磁盘空间不足。
+在MYSQL命令行下执行：
+``` sql
+mysql> show variables like 'tmpdir';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| tmpdir        | /tmp  |
++---------------+-------+
+1 row in set (0.01 sec)
+```
+可以看到MYSQL的tmpdir是使用/tmp这个临时目录的，使用`df -h`看下/tmp的空间，确实不足。我们修改tmpdir所指定的目录，我们在空间比较大的分区上面建一个目录。
+``` bash
+$ cd /opt/data
+$ mkdir mysqltmp
+$ chmod a+w mysqltmp
+```
+然后修改my.cnf配置文件在其中修改tmpdir 
+``` bash
+$ whereis my.cnf
+$ cd {my.cnf所在的目录}
+$ vi my.cnf
+# 修改的内容如下
+tmpdir = /opt/data/mysqltmp
+```
+
+重启mysql
+``` bash
+$ /etc/init.d/mysqld restart	# 注意linux系统，命令可能不同
+```
+在MYSQL命令行中查看下是否生效
+``` sql
+mysql> show variables like 'tmpdir';
++---------------+--------------------+
+| Variable_name | Value              |
++---------------+--------------------+
+| tmpdir        | /opt/data/mysqltmp |
++---------------+--------------------+
+1 row in set (0.00 sec)
+```
+问题解决。
+
+
