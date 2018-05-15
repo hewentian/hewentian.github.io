@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos;, last_name) AS user_name, COUNT(*) AS c FROM user_ta">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-23T09:44:07.160Z">
+<meta property="og:updated_time" content="2018-05-15T12:33:22.616Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql 学习笔记">
 <meta name="twitter:description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos;, last_name) AS user_name, COUNT(*) AS c FROM user_ta">
@@ -221,11 +221,24 @@
 <p>重启mysql<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ /etc/init.d/mysqld restart	<span class="comment"># 注意linux系统，命令可能不同</span></span><br></pre></td></tr></table></figure></p>
 <p>在MYSQL命令行中查看下是否生效<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like 'tmpdir';</span><br><span class="line">+<span class="comment">---------------+--------------------+</span></span><br><span class="line">| Variable_name | Value              |</span><br><span class="line">+<span class="comment">---------------+--------------------+</span></span><br><span class="line">| tmpdir        | /opt/data/mysqltmp |</span><br><span class="line">+<span class="comment">---------------+--------------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></p>
 <p>问题解决。</p>
+<p>读一致性：ORACLE有一个表，有1000W条记录。在9：00的时候A用户对表进行查询，查询需10分钟才能完成，表没索引，FULL SCAN，表中某条记录的值为100。在9：05分的时候B对表进行了UPDATE操作，将记录的值修改为200。那么在9:10的时候，A获致到的是100还是200？结果是100.因为这是读一致性的问题，在A查的时候，它看到的是整个表在那一刻的快照的数据，返回的是那一刻的结果。不过，它有可能会抛出 snapshot too old 这个异常。</p>
+<h3 id="mysql-修改表名"><a href="#mysql-修改表名" class="headerlink" title="mysql 修改表名"></a>mysql 修改表名</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE table_name RENAME TO new_table_name;</span><br></pre></td></tr></table></figure>
+<h3 id="MySQL-百万级分页优化-Mysql千万级快速分页"><a href="#MySQL-百万级分页优化-Mysql千万级快速分页" class="headerlink" title="MySQL 百万级分页优化(Mysql千万级快速分页)"></a>MySQL 百万级分页优化(Mysql千万级快速分页)</h3><p>转自：<a href="http://www.jb51.net/article/31868.htm" target="_blank" rel="noopener">http://www.jb51.net/article/31868.htm</a></p>
+<p>一般刚开始学SQL的时候，会这样写，代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table ORDER BY id LIMIT 1000, 10;</span><br></pre></td></tr></table></figure></p>
+<p>但在数据达到百万级的时候，这样写会慢死，代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table ORDER BY id LIMIT 1000000, 10;</span><br></pre></td></tr></table></figure></p>
+<p>也许耗费几十秒 </p>
+<p>网上很多优化的方法是这样的，代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table WHERE id &gt;= (SELECT id FROM table LIMIT 1000000, 1) LIMIT 10;</span><br></pre></td></tr></table></figure></p>
+<p>是的，速度提升到0.x秒了，看样子还行了<br>可是，还不是完美的！ </p>
+<p>以下这句才是完美的！代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table WHERE id BETWEEN 1000000 AND 1000010;</span><br></pre></td></tr></table></figure></p>
+<p>比上面那句，还要再快5至10倍 </p>
+<p>另外，如果需要查询 id 不是连续的一段，最佳的方法就是先找出 id ，然后用 in 查询，代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table WHERE id IN(10000, 100000, 1000000...);</span><br></pre></td></tr></table></figure></p>
+<p>再分享一点<br>查询字段一较长字符串的时候，表设计时要为该字段多加一个字段,如，存储网址的字段，查询的时候，不要直接查询字符串，效率低下，应该查诡该字串的crc32或md5 </p>
+<h3 id="mysql-查询一个字符串字段-最长的一条记录"><a href="#mysql-查询一个字符串字段-最长的一条记录" class="headerlink" title="mysql 查询一个字符串字段 最长的一条记录"></a>mysql 查询一个字符串字段 最长的一条记录</h3><p>参考：<a href="http://stackoverflow.com/questions/2357620/maxlengthfield-in-mysql" target="_blank" rel="noopener">http://stackoverflow.com/questions/2357620/maxlengthfield-in-mysql</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select name, length( name )</span><br><span class="line">from my_table</span><br><span class="line">where length( name ) = ( select max( length( name ) ) from my_table );</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjgc22kft000w722iq8w9h7h3" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjh7ntost000xpt2indf4tb8f" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>

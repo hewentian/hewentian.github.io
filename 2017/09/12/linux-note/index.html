@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-05T05:28:28.830Z">
+<meta property="og:updated_time" content="2018-05-15T12:32:57.604Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
@@ -364,11 +364,12 @@ Password:
 <li>scriptFileName （ need execute permission， the script file is in directory which listed in PATH） </li>
 </ol>
 <h3 id="Linux环境下打开来自Windows的文本文件出现乱码"><a href="#Linux环境下打开来自Windows的文本文件出现乱码" class="headerlink" title="Linux环境下打开来自Windows的文本文件出现乱码"></a>Linux环境下打开来自Windows的文本文件出现乱码</h3><p>使用<code>iconv</code>命令，将目标文件编码方式转为UTF-8，命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ iconv -f gbk -t utf8 -o outputFile sourceFile</span><br><span class="line"></span><br><span class="line">其实，outputFile、sourceFile的名字可以相同，这样就将原文件的编码修改了</span><br></pre></td></tr></table></figure></p>
+<h3 id="sed命令修改文件"><a href="#sed命令修改文件" class="headerlink" title="sed命令修改文件"></a>sed命令修改文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将beforeStr修改为afterStr，保存为新的文件work2.txt</span></span><br><span class="line">$ sed <span class="string">'s/beforeStr/afterStr/g'</span> work.txt &gt; work2.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 覆盖原来的文件，即在原来的文件修改</span></span><br><span class="line">$ sed -i <span class="string">'s/beforeStr/afterStr/g'</span> work.txt</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjgc22kf6000k722i3sijdinm" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjh7ntosi000rpt2ief66si9y" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>

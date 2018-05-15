@@ -97,33 +97,136 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最近在看周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》，作笔记如下，以便自已复习。</p>
+        <p>最近在看周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》，作笔记如下，以便自已复习。文中代码，大部分摘自书中。</p>
 <p>JVM的基本结构：类加载子系统、方法区、JAVA堆、JAVA栈、本地方法区、程序计数器、直接内存、垃圾回收系统和执行引擎。</p>
-<p>JVM的运行数据区如下所示：<br><img src="/img/jvm-runtime-data-schema.png" alt="" title="图片来源于网络，仅用于学习使用"></p>
+<p>JVM的运行时数据区如下所示：<br><img src="/img/jvm-runtime-data-schema.png" alt="" title="图片来源于网络，仅用于学习使用"></p>
 <p>JAVA的NIO库允许程序使用直接内存，从而提高性能，通常直接内存速度会优于堆。读写频繁的场合，可以优先考虑使用。</p>
 <p>lambda函数式编程的一个重要优点就是这样的程序天然地适合并行运行，这对JAVA语言在多核时代继续保持主流语言的地位有很大的帮助。</p>
 <h3 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h3><ol>
-<li>引用计数法：是古老而经典的垃圾收集算法，其核心就是在对象被其他所引用的时候计数器加1,而当引用失效时则减1.但是这种方式有非常 严重的问题：无法处理循环引用的情况、还有的就是每次进行加减操作比较浪费系统性能。</li>
+<li>引用计数法：是古老而经典的垃圾收集算法，其核心就是在对象被其他所引用的时候计数器加1,而当引用失效时则减1.但是这种方式有非常严重的问题：无法处理循环引用的情况、还有的就是每次进行加减操作比较浪费系统性能。</li>
 <li>标记清除法：分为标记和清除两个阶段，这种方式也有非常大的洞弊端，就是空间碎片问题，垃圾回收后，空间不是连续的。</li>
 <li>复制算法：其核心思想就是将内存分为两块，每次只使用其中一块。在回收时，将正在使用的内存中的存留对象复制到未被使用的内存中去，之后清除之前正在使用的内存中的所有对象，反复去交换两个内存的角式。</li>
 <li>标记压缩法：是在标记清除法的基础上做了优化，把存活的对象压缩到内存的一端，然后进行垃圾清理（老年代中使用的回收方法）</li>
 <li>分代算法：根据对象的特点把内存分成N块，然后根据每个对象的特点使用不同的算法。对于新生代，它的回收频率很高，但是每次回收耗时都很短；而老年代回收频率较低，但是耗时相对较长，所以应该尽量减少老年代的GC。</li>
 </ol>
-<h3 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h3><ol>
-<li>串行回收器： 使用单线程进行垃圾回收的回收器。每次回收时，串行回收器只有一个工作线程，对于并行能力较弱的计算机来说，串行回收器的专注性和独占性往往有更好的性能表现。可以在新生代和老年代使用。-XX:+UseSerialGC</li>
-<li>并行回收器： 在串行回收器的基础上作了改进，他可以使用多个线程同时进行垃圾回收，对于计算能力强的计算机而言，可以有效的缩短回收所需的实际时间。他只是简单的将串行回收器多线程化，他的回收策略和算法和串行回收器一样。只使用在新生代。–XX:+UseParNewGC</li>
-<li>ParallelGC： 新生代回收器，使用了复杂算法的收集器，也是多线程独占形式的收集器，它有个特点，就是它非常关注系统的吞吐量。</li>
-<li>CMS：全称为Concurrent Mark Sweep，意为并发标记清除，他使用的是标记清除法，主要关注系统停顿时间。-XX:+UseConcMarkSweepGC进行设置，-xx:ConcGCThreads设置并发线程数量。CMS并不是独占的回收器，也就是说CMS回收的过程中，应用程序 仍然可以在不停的工作，不过会有新的垃圾产生。CMS比较耗内存，CMS不会等到应用程序饱和的时候才去回收垃圾，而是在某一个阀值的时候开始回收，可以使用参数指定：-XX:CMSInitiatingOccupancyFraction来指定，默认为68,也就是说当老年代的空间使用率达68%的时候，会执行CMS回收。如果内存不足，收集可能会失败，如果失败了，会启动老年代串行回收器。</li>
-<li>G1：Garbage-First是在JDK1.7中提出的垃圾回收器，是为了取代CMS的回收器。它属于分代回收器，并行性和并发性。并行性是G1回收期间可多线程同时工作，而并发性是G1拥有与应用程序交替执行能力，部分工作可与应用程序同时执行，在整个GC期间不会完全阻塞应用程序。它可以工作在新生代和老年代。之前的回收器，或者工作在新生代，或者工作在老年代。G1使用了有益智复制对象的方式，减少空间碎片。</li>
+<h3 id="确定对像是否已死的方法"><a href="#确定对像是否已死的方法" class="headerlink" title="确定对像是否已死的方法"></a>确定对像是否已死的方法</h3><ol>
+<li>引用计数法；</li>
+<li>可达性分析算法GC Root.</li>
 </ol>
-<p>将GC的日志输出到文件可以配置JVM启动参数：-Xloggc:/home/hewentian/Document/gc.log</p>
-<h3 id="类的加载过程"><a href="#类的加载过程" class="headerlink" title="类的加载过程"></a>类的加载过程</h3><p>JVM中类的加载过程：“加载”、“验证”、“准备”、“解析”和”初始化“。</p>
+<h3 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h3><ol>
+<li>串行回收器： 使用单线程进行垃圾回收的回收器。每次回收时，串行回收器只有一个工作线程，对于并行能力较弱的计算机来说，串行回收器的专注性和独占性往往有更好的性能表现。可以在新生代和老年代使用。<code>-XX:+UseSerialGC</code></li>
+<li>并行回收器： 在串行回收器的基础上作了改进，他可以使用多个线程同时进行垃圾回收，对于计算能力强的计算机而言，可以有效的缩短回收所需的实际时间。他只是简单的将串行回收器多线程化，他的回收策略和算法和串行回收器一样。只使用在新生代。<code>--XX:+UseParNewGC</code></li>
+<li>ParallelGC： 新生代回收器，使用了复杂算法的收集器，也是多线程独占形式的收集器，它有个特点，就是它非常关注系统的吞吐量。</li>
+<li>CMS：全称为<code>Concurrent Mark Sweep</code>，意为并发标记清除，他使用的是标记清除法，主要关注系统停顿时间。<code>-XX:+UseConcMarkSweepGC</code>进行设置，<code>-XX:ConcGCThreads</code>设置并发线程数量。CMS并不是独占的回收器，也就是说CMS回收的过程中，应用程序 仍然可以在不停的工作，不过会有新的垃圾产生。CMS比较耗内存，CMS不会等到应用程序饱和的时候才去回收垃圾，而是在某一个阀值的时候开始回收，可以使用参数指定：<code>-XX:CMSInitiatingOccupancyFraction</code>来指定，默认为68,也就是说当老年代的空间使用率达68%的时候，会执行CMS回收。如果内存不足，收集可能会失败，如果失败了，会启动老年代串行回收器。</li>
+<li>G1：<code>Garbage-First</code>是在JDK1.7中提出的垃圾回收器，是为了取代CMS的回收器。它属于分代回收器，并行性和并发性。并行性是G1回收期间可多线程同时工作，而并发性是G1拥有与应用程序交替执行能力，部分工作可与应用程序同时执行，在整个GC期间不会完全阻塞应用程序。它可以工作在新生代和老年代。之前的回收器，或者工作在新生代，或者工作在老年代。G1使用了有益智复制对象的方式，减少空间碎片。</li>
+</ol>
+<p>将GC的日志输出到文件可以配置JVM启动参数：<code>-Xloggc:/home/hewentian/Document/gc.log</code></p>
+<h3 id="class文件格式"><a href="#class文件格式" class="headerlink" title="class文件格式"></a>class文件格式</h3><p>class文件是一组以8位字节码为基础单位的二进制流，各个数据项目严格按照顺序紧凑地排列在class文件之中，中间没有添加任何分隔符，这使得整个class文件中存储的内容几乎全部是程序运行的必要数据，没有空隙存在。当遇到需要占用8位字节以上空间的数据项时，则会按照高位在前的方式分割成若干个8位字节进行存储。</p>
+<p>无符号数属于基本的数据类型，以u1, u2, u4, u8来分别代表1，2, 4, 8个字节的无符号数，无符号数可以用来描述数字、索引引用、数量值或者按照UTF-8编码构成字符串值。</p>
+<p>如下图所示：<br><img src="/img/class-file-format.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
+<h3 id="魔数与class文件的版本"><a href="#魔数与class文件的版本" class="headerlink" title="魔数与class文件的版本"></a>魔数与class文件的版本</h3><p><strong>魔数：</strong> 每个class文件的头4个字节称为魔数(Magic Number)，它的唯一作用是确定这个文件是否为一个能被虚拟机接受的class文件。<br><strong>版本号：</strong> 紧接着魔的4个字节存储的是class文件的版本号：第5和第6个字节是次版本号(Minor Version)，第7和第8个字节是主版本号(Major Version)。只有当前JVM的版本号大于等于这个文件的版本号，该文件才会被JVM加载。</p>
+<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><p>JVM直接支持（转换时无需显式的转换指令）：</p>
+<ol>
+<li>int类型到long, float或者double类型；</li>
+<li>long类型到float, double类型；</li>
+<li>float类型到double类型。</li>
+</ol>
+<h3 id="类的加载过程"><a href="#类的加载过程" class="headerlink" title="类的加载过程"></a>类的加载过程</h3><p>JVM中类的加载过程：加载、验证、准备、解析、初始化。如果算上：使用和缷载这两个过程，则一共有7个过程。</p>
+<p>加载：加载要完成以下三件事：</p>
+<ol>
+<li>通过一个类的全限定名来获取定义此类的二进制字节流（不一定从文件中读取，可以从网络或数据库中）；</li>
+<li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构;</li>
+<li>在内存中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口。</li>
+</ol>
+<p>验证：验证是连接阶段的第一步，这一阶段的目的是为了确保class文件的字节流中包含的信息符合当前JVM的要求，并且不会危害JVM自身的安全。<br>准备：正式为类变量分配内存并设置类变量（static修饰）初始值的阶段，通常是该类型的零值；<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> value = <span class="number">123</span>;</span><br></pre></td></tr></table></figure></p>
+<p>变量value在准备阶段过后的初始值为0，而不是123。赋值为123在初始化阶段才会执行。</p>
+<p>解析：JVM将常量池内的符号引用替换为直接引用的过程；<br>初始化：执行类构造器的过程，设置实例变量的初始值。</p>
+<p>其中，加载、验证、准备、初始化和缷载这5个阶段的顺序是确定的。如下图所示：<br><img src="/img/class-loading.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
+<h3 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h3><p>从JAVA开发人员的角度来看，绝大部分JAVA程序都会使用到以下3种系统提供的类加载器：</p>
+<ol>
+<li>启动类加载器(Bootstrap ClassLoader)：这个类加载器负责将存放在<code>&lt;JAVA_HOME&gt;\lib</code>目录中的，或者被<code>-Xbootclasspath</code>参数所指定的路径中的，并且是虚拟机识别的（仅按照文件名识别，如rt.jar，名字不符合的类库即使放在lib目录中也不会被加载）类库加载到虚拟机内存中。启动类加载器无法被JAVA程序直接引用，用户在编写自定义类加载器时，如果需要把加载请求委派给引导类加载器，那么使用null代替即可。</li>
+<li>扩展类加载器(Extension ClassLoader)：这个加载器由<code>sum.misc.Launcher$ExtClassLoader</code>实现，它负责加载<code>&lt;JAVA_HOME&gt;\lib\ext</code>目录中的，或者被<code>java.ext.dirs</code>系统变量所指定的路径中的所有类库，开发者可以直接使用扩展类加载器。</li>
+<li>应用程序类加载器(Application ClassLoader)：这个类加载器由<code>sum.misc.Launcher$AppClassLoader</code>实现。由于这个类加载器是<code>ClassLoader中的getSystemClassLoader()</code>方法的返回值，所以一般也称它为系统类加载器。它负责加载用户类路径(ClassPath)上所指定的类库，开发者可以直接使用这个类加载器，如果应用程序中没有自定义过自已的类加载器，一般情况下这个就是程序中默认的类加载器。</li>
+</ol>
+<p>我们的应用程序都是由这3种类加载器互相配合进行加载的，如果有必要，还可以加入自已定义的类加载器。这些类加载器之间的关系一般如下图所示，这种层次关系，称为类加载器的双亲委派模型。<br><img src="/img/class-loader-mode.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
+<h3 id="当泛型遇上重载"><a href="#当泛型遇上重载" class="headerlink" title="当泛型遇上重载"></a>当泛型遇上重载</h3><p>下面的代码是不能通过编译的，因为参数<code>List&lt;String&gt;</code>和<code>List&lt;Integer&gt;</code>编译之后都被擦除了，变成了一样的<code>List&lt;E&gt;</code>，擦除动作导致这两种方法的特征签名变得一模一样。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">(List&lt;String&gt; list)</span> </span>&#123;</span><br><span class="line">	System.out.println(<span class="string">"invoke method(List&lt;String&gt; list)"</span>);</span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">(List&lt;Integer&gt; list)</span> </span>&#123;</span><br><span class="line">	System.out.println(<span class="string">"invoke method(List&lt;Integer&gt; list)"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果真是要重载，可以适当修改上述代码，只要增加返回值即可，它也只能在JDK1.6上可以编译通过。在JDK1.8也是无法编译通过的。如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">method</span><span class="params">(List&lt;String&gt; list)</span> </span>&#123;</span><br><span class="line">	System.out.println(<span class="string">"invoke method(List&lt;String&gt; list)"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">method</span><span class="params">(List&lt;Integer&gt; list)</span> </span>&#123;</span><br><span class="line">	System.out.println(<span class="string">"invoke method(List&lt;Integer&gt; list)"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="自动装箱的陷阱"><a href="#自动装箱的陷阱" class="headerlink" title="自动装箱的陷阱"></a>自动装箱的陷阱</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	Integer a = <span class="number">1</span>;</span><br><span class="line">	Integer b = <span class="number">2</span>;</span><br><span class="line">	Integer c = <span class="number">3</span>;</span><br><span class="line">	Integer d = <span class="number">3</span>;</span><br><span class="line">	Integer e = <span class="number">321</span>;</span><br><span class="line">	Integer f = <span class="number">321</span>;</span><br><span class="line">	Long g = <span class="number">3L</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 在 JDK1.8 中的结果如下</span></span><br><span class="line">	System.out.println(c == d);		<span class="comment">// true, [-127, 128]之间的Integer数字会被缓存</span></span><br><span class="line">	System.out.println(e == f);		<span class="comment">// false</span></span><br><span class="line">	System.out.println(c == (a + b));	<span class="comment">// true</span></span><br><span class="line">	System.out.println(c.equals(a + b));	<span class="comment">// true</span></span><br><span class="line">	System.out.println(g == (a + b));	<span class="comment">// true</span></span><br><span class="line">	System.out.println(g.equals(a + b));	<span class="comment">// false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="final语言校验"><a href="#final语言校验" class="headerlink" title="final语言校验"></a>final语言校验</h3><p>下面这两段代码编译出来的class文件是一样的，没有任何区别。只是在编写程序的时候会受到final的约束。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方法一：带有final修饰</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">final</span> <span class="keyword">int</span> var = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">// do something</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法二：没有final修饰</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> var = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">// do something</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="解释器与编译器"><a href="#解释器与编译器" class="headerlink" title="解释器与编译器"></a>解释器与编译器</h3><p>尽管不是所有的JVM都采用解释器与编译器并存的架构，但许多主流的商用JVM，如HotSpot、J9等，都同时包含解释器与编译器。<strong>但是，三大商用JVM之一的JRockit是个例外，它内部没有解释器。</strong>解释器与编译器两者各有优势：当程序需要迅速启动和执行的时候，解释器可以首先发挥作用，省去编译的时间，立即执行。在程序运行后，随着时间的推移，编译器逐渐发挥作用，把越来越多的代码编译成本地代码之后，可以获取更高的执行效率。当程序运行环境中内存资源限制较大（如部分嵌入式系统中），可以使用解释执行节约内存，反之可以使用编译执行来提升效率。在整个JVM执行架构中，解释器与编译器经常配合工作，如下图。<br><img src="/img/compiler-and-interpreter.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
+<h3 id="程序编译与代码优化"><a href="#程序编译与代码优化" class="headerlink" title="程序编译与代码优化"></a>程序编译与代码优化</h3><p>从sum javac的代码来看，编译过程大致可以分成3个过程：</p>
+<ol>
+<li>解析与填充符号表的过程(Parse and Enter);</li>
+<li>插入式注解处理器的注解处理过程(Annotation Processing);</li>
+<li>分析与字节码生成的过程(Analyse and Generate)。</li>
+</ol>
+<h3 id="编译对象与触发条件"><a href="#编译对象与触发条件" class="headerlink" title="编译对象与触发条件"></a>编译对象与触发条件</h3><p>在程序运行的过程中会被即时编译器JIT编译的“热点代码”有两类：</p>
+<ol>
+<li>被多次调用的方法；</li>
+<li>被多次执行的循环体。</li>
+</ol>
+<p>判断一段代码是不是热点代码，是不是需要触发即时编译，这样的行为称为热点探测(Hot Spot Detection)，其实进行热点探测并不一定要知道方法具体被调用了多少次，目前主要的热点探测判定方法有两种，分别如下：</p>
+<ul>
+<li>基于采样的热点探测(Sample Based Hot Spot Detection)：采用这种方法的JVM会周期性地检查各个线程的栈顶，如果发现某个（或某些）方法经常出现在栈顶，那这个方法就是“热点方法”。基于采样的热点探测的好处是实现简单、高效，还可以很容易地获取方法调用关系（将调用堆栈展开即可），缺点是很难精确地确认一个方法的热度，容易因为受到线程阻塞或别的外界因素的影响而扰乱热点探测。</li>
+<li>基于计数器的热点探测(Counter Based Hot Spot Detection)：采用这种方法的JVM会为每个方法（甚至是代码块）建立计数器，统计方法的执行次数，如果执行次数超过一定的阈值就认为它是“热点方法”。这种统计方法实现起来麻烦一些，需要为每个方法建立并维护计数器，而且不能直接获取到方法的调用关系，但是它的统计结果相对来说更加精确和严谨。</li>
+</ul>
+<p>在HotSpot虚拟机中使用的是第二种–基于计数器的热点探测方法，因此它为每个方法准备了两类计数器：方法调用计数器(Invocation Counter)和回边计数器(Back Edge Counter)。</p>
+<p>在确定虚拟机运行参数的前提下，这两个计数器都有一个确定的阈值，当计数器超过阈值溢出了，就会触发JIT编译。</p>
+<p>我们首先来看看方法调用计数器，顾名思义，这个计数器就用于统计方法被调用的次数，它的默认阈值在Client模式下是1500次，在Server模式下是10000次，这个阈值可以通过JVM参数<code>-XX:CompileThreshold</code>来人为设定。</p>
+<p>下面我们再来看看回边计数器。<strong>什么是回边？ 在字节码遇到控制流向后跳转的指令称为回边（Back Edge）。</strong>回边计数器是用来统计一个方法中循环体代码执行的次数，回边计数器的阈值可以通过参数<code>-XX：OnStackReplacePercentage</code>来调整。</p>
+<p>虚拟机运行在Client模式下，回边计数器阈值计算公式为：<br>方法调用计数器阈值(CompileThreshold) x OSR比率(OnStackReplacePercentage) / 100<br>其中OnStackReplacePercentage默认值为933，如果都取默认值，那Client模式虚拟机的回边计数器的阈值为13995.</p>
+<p>虚拟机运行在Server模式下，回边计数器阈值的计算公式为：<br>方法调用计数器阈值(CompileThreshold) x (OSR比率(OnStackReplacePercentage) - 解释器监控比率(InterpreterProfilePercentage) / 100<br>其中OnStackReplacePercentage默认值为140，InterpreterProfilePercentage默认值为33。<br>如果都取默认值，那Server模式虚拟机回边计数器的阑值为10700。</p>
+<p>回边计数器与方法调用计数器不同的是，回边计数器没有热度衰减，因此这个计数器统计的就是循环执行的绝对次数。</p>
+<p>参见下图：<br><img src="/img/method-invoke-trigger-jit.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
+<h3 id="程序延时一定时间"><a href="#程序延时一定时间" class="headerlink" title="程序延时一定时间"></a>程序延时一定时间</h3><p>像下面的空循环经JIT编译器优化后，会被消除掉，以前很多入门教程把空循环当做程序延时的手段来介绍，其实是错误的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++)</span><br><span class="line">	;</span><br></pre></td></tr></table></figure></p>
+<p>要延时应该使用下面的方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">	e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>不使用的对象应手动设为null，不过，赋值为null的操作在经过JIT编译优化后就会被消除掉，这时候将变量设置为null就是没有意义的。</p>
+<h3 id="线程、主内存、工作内存、处理器、关系图"><a href="#线程、主内存、工作内存、处理器、关系图" class="headerlink" title="线程、主内存、工作内存、处理器、关系图"></a>线程、主内存、工作内存、处理器、关系图</h3><p><img src="/img/cpu-thread-memory.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
+<h3 id="内存间交互操作"><a href="#内存间交互操作" class="headerlink" title="内存间交互操作"></a>内存间交互操作</h3><p>关于主内存与工作内存之间具体的交互协议，即一个变量如何从主内存复制到工作内存、如何从工作内存同步回主内存之类的实现细节，JAVA内存模型中定义了以下8种操作来完成，虚拟机实现时必须保证下面提及的每一种操作都是原子的、不可再分的（对于double和long类型的变量来说，load、store、read和write操作在某些平台上允许有例外）。</p>
+<ul>
+<li>lock（锁定）：作用于主内存的变量，它把一个变量标识为一条线程独占的状态；</li>
+<li>unlock（解锁）：作用于主内存的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他线程锁定；</li>
+<li>read（读取）：作用于主内存的变量，它把一个变量的值从主内存传输到线程的工作内存中，以便随后的load动作使用；</li>
+<li>load（载入）：作用于工作内存的变量，它把read操作从主内存中得到的变量值放入工作内存的变量副本中；</li>
+<li>use（使用）：作用于工作内存的变量，它把工作内存中一个变量的值传递给执行引擎，每当虚拟机遇到一个需要使用到变量的值的字节码指令时将会执行这个操作；</li>
+<li>assign（赋值）：作用于工作内存的变量，它把一个从执行引擎接收到的值赋给工作内存的变量，每当虚拟机遇到一个给变量赋值的字节码指令时执行这个操作；</li>
+<li>store（存储）：作用于工作内存的变量，它把工作内存中一个变量的值传送到主内存中，以便随后的write操作使用；</li>
+<li>write（写入）：作用于主内存的变量，它把store操作从工作内存中得到的变量的值放入主内存的变量中。</li>
+</ul>
+<h3 id="volatile变量的使用场景"><a href="#volatile变量的使用场景" class="headerlink" title="volatile变量的使用场景"></a>volatile变量的使用场景</h3><p>由于volatile变量只能保证可见性，在不符合以下两条规则的运算场景中，我们仍然要通过加锁（使用synchronized或java.util.concurrent中的原子类）来保证原子性。</p>
+<ol>
+<li>运算结果并不依赖变量的当前值，或者能够确保只有单一的线程修改变量的值；</li>
+<li>变量不需要与其他的状态变量共同参与不变约束。</li>
+</ol>
+<p>像下面的代码就很适合使用volatile变量来控制并发，当shutdown方法被调用时，能保证所有线程中执行的doWork()方法都立即停下来。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="keyword">boolean</span> shutdownRequest;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	shutdownRequest = <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(!shutdownRequest) &#123;</span><br><span class="line">	<span class="comment">// do stuff</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="线程状态转换"><a href="#线程状态转换" class="headerlink" title="线程状态转换"></a>线程状态转换</h3><p>Java语言定义了5种线程状态，在任意一个时间点，一个线程只能有且只有其中的一种状态，这5种状态分别如下：</p>
+<ul>
+<li>新建（New）：创建后尚未启动的线程处于这种状态；</li>
+<li>运行（Runnable）：Runnable包括了操作系统线程状态中的Running和Ready，也就是处于此状态的线程有可能正在执行，也有可能正在等待着CPU为它分配执行时间；</li>
+<li>无限期等待（Waiting）：处于这种状态的线程不会被分配CPU执行时间，它们要等待被其他线程显式地唤醒。以下方法会让线程陷入无限期的等待状态：<ul>
+<li>没有设置Timeout参数的Object.wait()方法；</li>
+<li>没有设置Timeout参数的Thread.join()方法；</li>
+<li>LockSupport.park()方法；</li>
+</ul>
+</li>
+<li>限期等待（Timed Waiting）：处于这种状态的线程也不会被分配CPU执行时间，不过无须等待被其他线程显式地唤醒，在一定的时间之后它们会由系统自动唤醒。以下方法会让线程进入限期等待状态：<ul>
+<li>Thread.sleep()方法；</li>
+<li>设置了Timeout参数的Object.wait()方法；</li>
+<li>设置了Timeout参数的Thread.join()方法；</li>
+<li>LockSupport.parkNanos()方法；</li>
+<li>LockSupport.parkUntil()方法；</li>
+</ul>
+</li>
+<li>阻塞（Blocked）：线程被阻塞了，“阻塞状态”与“等待状态”的区别是：“阻塞状态”在等待着获取到一个排他锁，这个事件将在另外一个线程放弃这个锁的时候发生；而“等待状态”则是在等待一段时间，或者唤醒动作的发生。在程序等待进入同步区域的时候，线程将进入这种状态。</li>
+<li>结束（Terminated）：已终止线程的线程状态，线程已经结束执行。</li>
+</ul>
+<p>上述5种状态在遇到特定事件发生的时候会互相转换，它们的转换关系如下图所示：<br><img src="/img/thread-state-transform.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
 <p><strong>声明：</strong>图片来源于网络，仅用于学习使用。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjgc22kf2000h722iuwk605fk" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjh7ntos0000ipt2injibfhyi" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
@@ -169,7 +272,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjgc22kfp000s722i71qo5ml4" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjh7ntoso000tpt2ip3ggt0mr" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>
@@ -251,7 +354,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjgc22kgk001a722ir6d2v12b" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjh7ntoti001bpt2iamf2aq82" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -360,7 +463,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjgc22kfy000z722in063fcg9" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjh7ntosx0010pt2icxcexk4i" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/neo4j/">neo4j</a></li></ul>
@@ -439,7 +542,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjgc22kdx0006722iwe3mxo99" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjh7ntore0008pt2igz0tohaw" class="article-share-link">Share</a>
       
       
     </footer>
@@ -531,7 +634,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjgc22kcp0000722iaozw1owe" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjh7ntoq40000pt2iag8gais3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/">activemq</a></li></ul>
@@ -612,7 +715,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjgc22kgb0016722imnaefhwk" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjh7ntotc0017pt2i3pf33v2l" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabbitmq/">rabbitmq</a></li></ul>
@@ -671,7 +774,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjgc22kgs001h722i6u0ohxvm" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjh7ntotw001ipt2iseezv9pe" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -725,7 +828,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjgc22kha001q722i5b67lt7z" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjh7ntouh001rpt2iewbqd67e" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -794,7 +897,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjgc22ked000b722ivc8r6hvs" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjh7ntork000cpt2i7g9o2l18" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jdk/">jdk</a></li></ul>

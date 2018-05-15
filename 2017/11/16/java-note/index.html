@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息方法是Window -&amp;gt; Preferences -&amp;gt; Java -&amp;gt; Code Style -&amp;gt; Code Templates在右则民展开Code -&amp;gt; New Java files点Edit...并加入如下代码123456789101112131415$&amp;#123;filecomment&amp;#125">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-23T09:43:46.384Z">
+<meta property="og:updated_time" content="2018-05-15T12:32:09.938Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="java 学习笔记">
 <meta name="twitter:description" content="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息方法是Window -&amp;gt; Preferences -&amp;gt; Java -&amp;gt; Code Style -&amp;gt; Code Templates在右则民展开Code -&amp;gt; New Java files点Edit...并加入如下代码123456789101112131415$&amp;#123;filecomment&amp;#125">
@@ -117,12 +117,27 @@
 <p>示例2：计算方法运行消耗的时间，这在实际中非常有用<br>将下面的代码保存为BtraceDuration.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;BtraceDuration.java&lt;/b&gt; 是 </span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2018-04-19 4:46:50 PM</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.sun.btrace.BTraceUtils.*;</span><br><span class="line"><span class="keyword">import</span> com.sun.btrace.annotations.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@BTrace</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BtraceDuration</span> </span>&#123;</span><br><span class="line">	<span class="meta">@OnMethod</span>(clazz = <span class="string">"com.hewentian.BTraceTest"</span>, method = <span class="string">"whoAreYou"</span>, location = <span class="meta">@Location</span>(Kind.RETURN))</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">whoAreYou</span><span class="params">(@Duration <span class="keyword">long</span> duration)</span> </span>&#123;</span><br><span class="line">		println(strcat(<span class="string">"duration(ms): "</span>, str(duration / <span class="number">1000000</span>))); <span class="comment">// duration的单位是纳秒，要除以 1,000,000 才是毫秒</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>同样是按示例1的流程执行即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ jps</span><br><span class="line"><span class="number">2614</span> org.eclipse.equinox.launcher_1.4.0.v20161219-<span class="number">1356</span>.jar</span><br><span class="line"><span class="number">5258</span> Jps</span><br><span class="line"><span class="number">5243</span> BTraceTest</span><br><span class="line"></span><br><span class="line">$ btrace <span class="number">5243</span> BtraceDuration.java </span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br></pre></td></tr></table></figure></p>
 <p>btrace的介绍就到这里，这只是入门。更多内容，参考了：<a href="http://calvin1978.blogcn.com/articles/btrace1.html。这篇文章写得非常好。" target="_blank" rel="noopener">http://calvin1978.blogcn.com/articles/btrace1.html。这篇文章写得非常好。</a></p>
+<p>在我们对一个对象的方法加锁的时候，需要考虑业务的整体性，即为getter/setter方法同时加锁synchronized同步关键字，保证业务的原子性。以免出现脏读。</p>
+<p>关键字synchronized拥有重入锁的功能，也就是说在使用synchronized时，当一个线程得到了一个对象的锁后，再次请求此对象时是可以再次得到该对象的锁。</p>
+<p>同步方法直接在方法上加synchronized实现加锁，同步代码块则在方法内部加锁，很明显，同步方法锁的范围比较大，而同步代码块范围要小点，一般同步的范围越大，性能就越差，一般需要加锁进行同步的时候，肯定是范围越小越好，这样性能更好</p>
+<p>ReentrantLock可重入锁的意思是，一个线程可以对已被加锁的ReentrantLock锁再次加锁，ReentrantLock对象会维持一个计数器来追踪lock()方法的嵌套调用，线程在每次调用lock()加锁后，必须显式调用unlock()来释放锁，所以一段被锁保护的代码可以调用另一个被相同锁保护的方法。</p>
+<p>所以我们在用synchronized关键字的时候，能缩小代码段的范围就尽量缩小，能在代码段上加同步就不要再整个方法上加同步。这叫减小锁的粒度，使代码更大程度的并发。</p>
+<p>wait notfiy 方法，wait释放锁，notfiy不释放锁。用这种方式会有不实时的坏处。因为虽然A线程发出了notify，但是它不释放锁，这样B线程还需要wait直到A执行完它的时间片。可以使用CountDownLatch来实现实时。</p>
+<p>Object类的方法有：</p>
+<ol>
+<li>public: notify(), notifyAll();</li>
+<li>public: wait(), wait(long),wait(long, int);</li>
+<li>public: toString(), equals(Object), hashCode(), getClass();</li>
+<li>protected: clone(), finalize();</li>
+<li>private: registerNatives().</li>
+</ol>
+<p>动态类型语言的关键特征是它的类型检查的主体过程是在运行期而不是在编译期。</p>
 <p>java性能测试工具jmeter：<a href="http://jmeter.apache.org/" target="_blank" rel="noopener">http://jmeter.apache.org/</a><br>和它的好搭档badboy：<a href="http://www.badboy.com.au/" target="_blank" rel="noopener">http://www.badboy.com.au/</a><br>jvisualvm</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjgc22kev000g722ievnbxdbx" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjh7ntorx000hpt2i70bf7xpe" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
