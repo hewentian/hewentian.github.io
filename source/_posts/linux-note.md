@@ -1166,3 +1166,12 @@ $ iconv -f gbk -t utf8 -o outputFile sourceFile
 其实，outputFile、sourceFile的名字可以相同，这样就将原文件的编码修改了
 ```
 
+
+### sed命令修改文件
+``` bash
+# 将beforeStr修改为afterStr，保存为新的文件work2.txt
+$ sed 's/beforeStr/afterStr/g' work.txt > work2.txt
+
+# 覆盖原来的文件，即在原来的文件修改
+$ sed -i 's/beforeStr/afterStr/g' work.txt
+```

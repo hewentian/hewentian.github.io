@@ -255,6 +255,28 @@ duration(ms): 5000
 ```
 btrace的介绍就到这里，这只是入门。更多内容，参考了：http://calvin1978.blogcn.com/articles/btrace1.html。这篇文章写得非常好。
 
+在我们对一个对象的方法加锁的时候，需要考虑业务的整体性，即为getter/setter方法同时加锁synchronized同步关键字，保证业务的原子性。以免出现脏读。
+
+关键字synchronized拥有重入锁的功能，也就是说在使用synchronized时，当一个线程得到了一个对象的锁后，再次请求此对象时是可以再次得到该对象的锁。
+
+
+同步方法直接在方法上加synchronized实现加锁，同步代码块则在方法内部加锁，很明显，同步方法锁的范围比较大，而同步代码块范围要小点，一般同步的范围越大，性能就越差，一般需要加锁进行同步的时候，肯定是范围越小越好，这样性能更好
+
+ReentrantLock可重入锁的意思是，一个线程可以对已被加锁的ReentrantLock锁再次加锁，ReentrantLock对象会维持一个计数器来追踪lock()方法的嵌套调用，线程在每次调用lock()加锁后，必须显式调用unlock()来释放锁，所以一段被锁保护的代码可以调用另一个被相同锁保护的方法。
+
+所以我们在用synchronized关键字的时候，能缩小代码段的范围就尽量缩小，能在代码段上加同步就不要再整个方法上加同步。这叫减小锁的粒度，使代码更大程度的并发。
+
+wait notfiy 方法，wait释放锁，notfiy不释放锁。用这种方式会有不实时的坏处。因为虽然A线程发出了notify，但是它不释放锁，这样B线程还需要wait直到A执行完它的时间片。可以使用CountDownLatch来实现实时。
+
+Object类的方法有：
+
+1. public: notify(), notifyAll();
+2. public: wait(), wait(long),wait(long, int);
+3. public: toString(), equals(Object), hashCode(), getClass();
+4. protected: clone(), finalize();
+5. private: registerNatives().
+
+动态类型语言的关键特征是它的类型检查的主体过程是在运行期而不是在编译期。
 
 java性能测试工具jmeter：http://jmeter.apache.org/
 和它的好搭档badboy：http://www.badboy.com.au/

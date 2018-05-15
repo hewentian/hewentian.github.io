@@ -444,3 +444,56 @@ mysql> show variables like 'tmpdir';
 问题解决。
 
 
+读一致性：ORACLE有一个表，有1000W条记录。在9：00的时候A用户对表进行查询，查询需10分钟才能完成，表没索引，FULL SCAN，表中某条记录的值为100。在9：05分的时候B对表进行了UPDATE操作，将记录的值修改为200。那么在9:10的时候，A获致到的是100还是200？结果是100.因为这是读一致性的问题，在A查的时候，它看到的是整个表在那一刻的快照的数据，返回的是那一刻的结果。不过，它有可能会抛出 snapshot too old 这个异常。
+
+
+### mysql 修改表名
+``` mysql
+ALTER TABLE table_name RENAME TO new_table_name;
+```
+
+
+### MySQL 百万级分页优化(Mysql千万级快速分页)
+转自：http://www.jb51.net/article/31868.htm
+
+一般刚开始学SQL的时候，会这样写，代码如下:
+``` mysql
+SELECT * FROM table ORDER BY id LIMIT 1000, 10; 
+```
+但在数据达到百万级的时候，这样写会慢死，代码如下:
+``` mysql
+SELECT * FROM table ORDER BY id LIMIT 1000000, 10; 
+```
+也许耗费几十秒 
+
+网上很多优化的方法是这样的，代码如下:
+``` mysql
+SELECT * FROM table WHERE id >= (SELECT id FROM table LIMIT 1000000, 1) LIMIT 10; 
+```
+是的，速度提升到0.x秒了，看样子还行了 
+可是，还不是完美的！ 
+
+以下这句才是完美的！代码如下:
+``` mysql
+SELECT * FROM table WHERE id BETWEEN 1000000 AND 1000010; 
+```
+比上面那句，还要再快5至10倍 
+
+另外，如果需要查询 id 不是连续的一段，最佳的方法就是先找出 id ，然后用 in 查询，代码如下:
+``` mysql
+SELECT * FROM table WHERE id IN(10000, 100000, 1000000...); 
+```
+
+再分享一点 
+查询字段一较长字符串的时候，表设计时要为该字段多加一个字段,如，存储网址的字段，查询的时候，不要直接查询字符串，效率低下，应该查诡该字串的crc32或md5 
+
+
+### mysql 查询一个字符串字段 最长的一条记录
+参考：http://stackoverflow.com/questions/2357620/maxlengthfield-in-mysql
+``` mysql
+select name, length( name )
+from my_table
+where length( name ) = ( select max( length( name ) ) from my_table );
+```
+
+
