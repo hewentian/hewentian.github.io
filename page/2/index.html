@@ -238,7 +238,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjh7ntost000xpt2indf4tb8f" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjiwknke5000xaa2iy7to7ef9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
@@ -325,7 +325,7 @@ clientPort=2183                                        # 这台服务器的端�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjh7ntouq001ypt2ii07avm7q" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjiwknkg1001yaa2izyz0t2rx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -385,7 +385,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjh7ntouw0021pt2ihjkogtl9" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjiwknkgb0021aa2ix8601eyh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -463,7 +463,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/02/hexo-note/" data-id="cjh7ntor90006pt2irf6wxvfo" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/02/hexo-note/" data-id="cjiwknkcl0008aa2iw7j8jzgy" class="article-share-link">Share</a>
       
       
     </footer>
@@ -500,6 +500,14 @@ clientPort=2181
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息"><a href="#想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息" class="headerlink" title="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息"></a>想在<code>eclipse</code>中新建类的时候，自动在类的头部插入作者、时间等信息</h3><p>方法是<code>Window -&gt; Preferences -&gt; Java -&gt; Code Style -&gt; Code Templates</code>在右则民展开<code>Code -&gt; New Java files</code>点<code>Edit...</code>并加入如下代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$&#123;filecomment&#125;</span><br><span class="line">$&#123;package_declaration&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;$&#123;file_name&#125;&lt;/b&gt; 是 </span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> $&#123;currentDate:date('yyyy-MM-dd')&#125; $&#123;time&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">$&#123;typecomment&#125;</span><br><span class="line">$&#123;type_declaration&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Remote-System-Explorer-Operation总是运行后台服务，卡死eclipse解决办法"><a href="#Remote-System-Explorer-Operation总是运行后台服务，卡死eclipse解决办法" class="headerlink" title="Remote System Explorer Operation总是运行后台服务，卡死eclipse解决办法"></a>Remote System Explorer Operation总是运行后台服务，卡死eclipse解决办法</h3><p>eclipse后台进程在远程操作，右下角显示的“Remote System Explorer Operation”。折腾了半天，在Stack Overflow找到答案 <a href="https://stackoverflow.com/questions/1631817/remote-system-explorer-operation-causing-freeze-for-couple-of-seconds" target="_blank" rel="noopener">源地址</a>。解决方案如下：</p>
+<pre><code>step1: Eclipse -&gt; Preferences -&gt; General -&gt; Startup and Shutdown.
+    -Uncheck RSE UI.
+
+step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
+    -Uncheck Re-open Remote Systems view to previous state.
+</code></pre><p>Update your Eclipse to 4.3.1 (at least) due to a bug on previous version.</p>
+<p>Restart Eclipse and its done.</p>
 <ol>
 <li>线程安全概念：当多个线程访问某一个类（对象或方法）时，这个类始终都能表现出正确的行为，那么这个类（对象或方法）就是线程安全的。</li>
 <li>synchronized：可以在何意对象及方法上加锁，而加锁的这段段码称为“互斥区”或“临界区”。</li>
@@ -539,7 +547,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjh7ntorx000hpt2i70bf7xpe" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjiwknkd8000haa2i3smaiuj1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -586,7 +594,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/maven-note/" data-id="cjh7ntosa000opt2igl1cs1v6" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/maven-note/" data-id="cjiwknkdy000raa2i0nm0ezg2" class="article-share-link">Share</a>
       
       
     </footer>
@@ -627,7 +635,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/html-css/" data-id="cjh7ntorh0009pt2io7wi1svp" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/html-css/" data-id="cjiwknkco0009aa2iijrrzrop" class="article-share-link">Share</a>
       
       
     </footer>
@@ -671,7 +679,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/java-get-entity-property-and-value/" data-id="cjh7ntorr000dpt2i7aeb9avq" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/java-get-entity-property-and-value/" data-id="cjiwknkd0000daa2i48xxpwpo" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1127,7 +1135,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjh7ntoua001opt2i81ikwjil" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjiwknkfl001oaa2i2hbhf9zr" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -1177,7 +1185,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjh7ntoto001dpt2i1sq4hgxf" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjiwknkf3001daa2ixu3zk2hy" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>

@@ -124,7 +124,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjh7ntou4001kpt2itwrnxskk" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjiwknkff001kaa2iuhq1ibvt" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -199,7 +199,7 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjh7ntoqq0002pt2i678zuzn9" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjiwknkbv0002aa2i8sl4jn58" class="article-share-link">Share</a>
       
       
     </footer>
@@ -476,7 +476,7 @@ _   underscore
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjh7ntos5000lpt2iggemkyad" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjiwknkdq000oaa2iqwq62atf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -764,7 +764,7 @@ Password:
 <h3 id="yum切换为阿里的源"><a href="#yum切换为阿里的源" class="headerlink" title="yum切换为阿里的源"></a>yum切换为阿里的源</h3><p>有时候，我们下载软件慢，可以切换到阿里的yum.<br>首先备份现有的源，以便还原。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /etc/yum.repos.d/</span><br><span class="line">$ mv CentOS-7.repo CentOS-7.repo_bak</span><br></pre></td></tr></table></figure></p>
 <p>下载阿里的源<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wget -O /etc/yum.repos.d/CentOS-7.repo http://mirrors.aliyun.com/repo/Centos-7.repo</span><br></pre></td></tr></table></figure></p>
 <p>然后执行如下命令即可<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ yum remove epel-release</span><br><span class="line">$ yum clean all</span><br><span class="line">$ yum makecache</span><br><span class="line">$ yum -y install epel-release</span><br></pre></td></tr></table></figure></p>
-<h3 id="在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow"><a href="#在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow" class="headerlink" title="在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow"></a>在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ pip uninstall Pillow</span><br><span class="line">$ pip install --upgrade pip</span><br><span class="line">$ pip install Pillow</span><br></pre></td></tr></table></figure>
+<h3 id="在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow"><a href="#在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow" class="headerlink" title="在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow"></a>在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ pip uninstall Pillow</span><br><span class="line">$ pip install --upgrade pip 或者 $ pip install pip==9.0.1 </span><br><span class="line">$ pip install Pillow</span><br></pre></td></tr></table></figure>
 <h3 id="linux合并文件"><a href="#linux合并文件" class="headerlink" title="linux合并文件"></a>linux合并文件</h3><p>可以使用<code>cat</code>命令从文件中读入两个文件，然后将其重定向到一个新的文件。<br>用法示例，将<code>file1.txt</code>和<code>file2.txt</code>合并到<code>file.txt</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat file1.txt file2.txt &gt; file.txt</span><br></pre></td></tr></table></figure></p>
 <p>其中，<code>file.txt</code>可以不存在，会被自动创建。<code>file1.txt</code>和<code>file2.txt</code>的顺序决定了它们在<code>file.txt</code>中的顺序。</p>
 <p>也可以只使用<code>cat</code>命令读入一个文件，然后使用<code>&gt;&gt;</code>将文本流追加到另一个文件的末位。<br>用法示例，将<code>file1.txt</code>追加到<code>file2.txt</code>的末尾：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat file1.txt &gt;&gt; file2.txt</span><br></pre></td></tr></table></figure></p>
@@ -784,7 +784,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjh7ntosi000rpt2ief66si9y" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjiwknkdk000laa2ispid92v3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -827,7 +827,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjh7ntot20014pt2iw8zgp9kv" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjiwknkei0014aa2ijaw3h91j" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -880,7 +880,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjh7ntoum001vpt2ifh8l8y2m" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjiwknkfw001vaa2ixr9jqtg6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tomcat/">tomcat</a></li></ul>
