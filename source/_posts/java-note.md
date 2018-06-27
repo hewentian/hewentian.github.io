@@ -24,6 +24,20 @@ ${typecomment}
 ${type_declaration}
 ```
 
+### Remote System Explorer Operation总是运行后台服务，卡死eclipse解决办法
+eclipse后台进程在远程操作，右下角显示的“Remote System Explorer Operation”。折腾了半天，在Stack Overflow找到答案 [源地址](https://stackoverflow.com/questions/1631817/remote-system-explorer-operation-causing-freeze-for-couple-of-seconds)。解决方案如下：
+
+	step1: Eclipse -> Preferences -> General -> Startup and Shutdown.
+		-Uncheck RSE UI.
+
+	step2: Eclipse -> Preferences -> Remote Systems.
+		-Uncheck Re-open Remote Systems view to previous state.
+
+Update your Eclipse to 4.3.1 (at least) due to a bug on previous version.
+
+Restart Eclipse and its done.
+
+
 1. 线程安全概念：当多个线程访问某一个类（对象或方法）时，这个类始终都能表现出正确的行为，那么这个类（对象或方法）就是线程安全的。
 2. synchronized：可以在何意对象及方法上加锁，而加锁的这段段码称为“互斥区”或“临界区”。
 

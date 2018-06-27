@@ -1092,7 +1092,7 @@ $ yum -y install epel-release
 ### 在处理python图片的时候，如果提示某些属性不可用，可以升级Pillow
 ``` bash
 $ pip uninstall Pillow
-$ pip install --upgrade pip
+$ pip install --upgrade pip 或者 $ pip install pip==9.0.1 
 $ pip install Pillow
 ```
 
