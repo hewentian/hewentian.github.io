@@ -71,6 +71,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-solr-commit-types" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/29/solr-commit-types/" class="article-date">
+  <time datetime="2017-10-29T02:59:11.000Z" itemprop="datePublished">2017-10-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/29/solr-commit-types/">solr提交索引的三种方式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-commit"><a href="#1-commit" class="headerlink" title="1.commit"></a>1.commit</h2><p>通过api直接commit,这样性能比较差</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.SolrServerException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.impl.HttpSolrClient;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.common.SolrInputDocument;</span><br><span class="line"></span><br><span class="line">String baseSolrUrl = <span class="string">"http://localhost:8983/solr/"</span>;</span><br><span class="line">HttpSolrClient solrClient = <span class="keyword">new</span> HttpSolrClient.Builder().withBaseSolrUrl(baseSolrUrl).build();</span><br><span class="line"></span><br><span class="line">SolrInputDocument solrInputDocument = <span class="keyword">new</span> SolrInputDocument();</span><br><span class="line">solrInputDocument.addField(<span class="string">"id"</span>, <span class="string">"1"</span>);</span><br><span class="line">solrInputDocument.addField(<span class="string">"name"</span>, <span class="string">"Tim Ho"</span>);</span><br><span class="line">solrInputDocument.addField(<span class="string">"age"</span>, <span class="string">"23"</span>);</span><br><span class="line"></span><br><span class="line">solrClient.add(<span class="string">"mysqlCore"</span>, solrInputDocument);</span><br><span class="line">solrClient.commit();</span><br></pre></td></tr></table></figure>
+<h2 id="2-commitWithinMs"><a href="#2-commitWithinMs" class="headerlink" title="2.commitWithinMs"></a>2.commitWithinMs</h2><p>简单的说就是告诉solr在多少毫秒内提交，比如我指定commitWithinMs=10000，将会告诉solr在10s内提交我的document。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">用法：</span><br><span class="line"><span class="number">1</span>.可以在add方法设置参数，比如：solrClient.add(<span class="string">"mysqlCore"</span>, solrInputDocument, <span class="number">10000</span>);</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>.UpdateRequest updateRequest = <span class="keyword">new</span> UpdateRequest();</span><br><span class="line">  updateRequest.add(solrInputDocument);</span><br><span class="line">  updateRequest.setCommitWithin(<span class="number">10000</span>);</span><br><span class="line">  updateRequest.process(solrClient, <span class="string">"mysqlCore"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>参考：<a href="https://lucene.apache.org/solr/guide/6_6/updatehandlers-in-solrconfig.html" target="_blank" rel="noopener">https://lucene.apache.org/solr/guide/6_6/updatehandlers-in-solrconfig.html</a></p>
+<h2 id="3-AutoCommit"><a href="#3-AutoCommit" class="headerlink" title="3.AutoCommit"></a>3.AutoCommit</h2><p>参考：<a href="http://wiki.apache.org/solr/SolrConfigXml" target="_blank" rel="noopener">http://wiki.apache.org/solr/SolrConfigXml</a><br>例如，我的配置文件在 /home/hewentian/ProjectD/solr-6.5.0/server/solr/mysqlCore/conf/solrconfig.xml 中已有默认配置，如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- The default high-performance update handler --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">updateHandler</span> <span class="attr">class</span>=<span class="string">"solr.DirectUpdateHandler2"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Enables a transaction log, used for real-time get, durability, and</span></span><br><span class="line"><span class="comment">         and solr cloud replica recovery.  The log can grow as big as</span></span><br><span class="line"><span class="comment">         uncommitted changes to the index, so use of a hard autoCommit</span></span><br><span class="line"><span class="comment">         is recommended (see below).</span></span><br><span class="line"><span class="comment">         "dir" - the target directory for transaction logs, defaults to the</span></span><br><span class="line"><span class="comment">                solr data directory.</span></span><br><span class="line"><span class="comment">         "numVersionBuckets" - sets the number of buckets used to keep</span></span><br><span class="line"><span class="comment">                track of max version values when checking for re-ordered</span></span><br><span class="line"><span class="comment">                updates; increase this value to reduce the cost of</span></span><br><span class="line"><span class="comment">                synchronizing access to version buckets during high-volume</span></span><br><span class="line"><span class="comment">                indexing, this requires 8 bytes (long) * numVersionBuckets</span></span><br><span class="line"><span class="comment">                of heap space per Solr core.</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">updateLog</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"dir"</span>&gt;</span>$&#123;solr.ulog.dir:&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"numVersionBuckets"</span>&gt;</span>$&#123;solr.ulog.numVersionBuckets:65536&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">updateLog</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- AutoCommit</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         Perform a hard commit automatically under certain conditions.</span></span><br><span class="line"><span class="comment">         Instead of enabling autoCommit, consider using "commitWithin"</span></span><br><span class="line"><span class="comment">         when adding documents. </span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         http://wiki.apache.org/solr/UpdateXmlMessages</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         maxDocs - Maximum number of documents to add since the last</span></span><br><span class="line"><span class="comment">                   commit before automatically triggering a new commit.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         maxTime - Maximum amount of time in ms that is allowed to pass</span></span><br><span class="line"><span class="comment">                   since a document was added before automatically</span></span><br><span class="line"><span class="comment">                   triggering a new commit. </span></span><br><span class="line"><span class="comment">         openSearcher - if false, the commit causes recent index changes</span></span><br><span class="line"><span class="comment">           to be flushed to stable storage, but does not cause a new</span></span><br><span class="line"><span class="comment">           searcher to be opened to make those changes visible.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         If the updateLog is enabled, then it's highly recommended to</span></span><br><span class="line"><span class="comment">         have some sort of hard autoCommit to limit the log size.</span></span><br><span class="line"><span class="comment">      --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">autoCommit</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">maxTime</span>&gt;</span>$&#123;solr.autoCommit.maxTime:15000&#125;<span class="tag">&lt;/<span class="name">maxTime</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">openSearcher</span>&gt;</span>false<span class="tag">&lt;/<span class="name">openSearcher</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">autoCommit</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- softAutoCommit is like autoCommit except it causes a</span></span><br><span class="line"><span class="comment">         'soft' commit which only ensures that changes are visible</span></span><br><span class="line"><span class="comment">         but does not ensure that data is synced to disk.  This is</span></span><br><span class="line"><span class="comment">         faster and more near-realtime friendly than a hard commit.</span></span><br><span class="line"><span class="comment">      --&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">autoSoftCommit</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">maxTime</span>&gt;</span>$&#123;solr.autoSoftCommit.maxTime:-1&#125;<span class="tag">&lt;/<span class="name">maxTime</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">autoSoftCommit</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Update Related Event Listeners</span></span><br><span class="line"><span class="comment">         </span></span><br><span class="line"><span class="comment">         Various IndexWriter related events can trigger Listeners to</span></span><br><span class="line"><span class="comment">         take actions.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         postCommit - fired after every commit or optimize command</span></span><br><span class="line"><span class="comment">         postOptimize - fired after every optimize command</span></span><br><span class="line"><span class="comment">      --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- The RunExecutableListener executes an external command from a</span></span><br><span class="line"><span class="comment">         hook such as postCommit or postOptimize.</span></span><br><span class="line"><span class="comment">         </span></span><br><span class="line"><span class="comment">         exe - the name of the executable to run</span></span><br><span class="line"><span class="comment">         dir - dir to use as the current working directory. (default=".")</span></span><br><span class="line"><span class="comment">         wait - the calling thread waits until the executable returns. </span></span><br><span class="line"><span class="comment">                (default="true")</span></span><br><span class="line"><span class="comment">         args - the arguments to pass to the program.  (default is none)</span></span><br><span class="line"><span class="comment">         env - environment variables to set.  (default is none)</span></span><br><span class="line"><span class="comment">      --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- This example shows how RunExecutableListener could be used</span></span><br><span class="line"><span class="comment">         with the script based replication...</span></span><br><span class="line"><span class="comment">         http://wiki.apache.org/solr/CollectionDistribution</span></span><br><span class="line"><span class="comment">      --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">       &lt;listener event="postCommit" class="solr.RunExecutableListener"&gt;</span></span><br><span class="line"><span class="comment">         &lt;str name="exe"&gt;solr/bin/snapshooter&lt;/str&gt;</span></span><br><span class="line"><span class="comment">         &lt;str name="dir"&gt;.&lt;/str&gt;</span></span><br><span class="line"><span class="comment">         &lt;bool name="wait"&gt;true&lt;/bool&gt;</span></span><br><span class="line"><span class="comment">         &lt;arr name="args"&gt; &lt;str&gt;arg1&lt;/str&gt; &lt;str&gt;arg2&lt;/str&gt; &lt;/arr&gt;</span></span><br><span class="line"><span class="comment">         &lt;arr name="env"&gt; &lt;str&gt;MYVAR=val1&lt;/str&gt; &lt;/arr&gt;</span></span><br><span class="line"><span class="comment">       &lt;/listener&gt;</span></span><br><span class="line"><span class="comment">      --&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;/<span class="name">updateHandler</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="1-硬提交是提交数据持久化到磁盘里面。不过，比较耗费机器资源，这样即使jvm崩溃或者宕机，也不影响这部分索引。"><a href="#1-硬提交是提交数据持久化到磁盘里面。不过，比较耗费机器资源，这样即使jvm崩溃或者宕机，也不影响这部分索引。" class="headerlink" title="1.硬提交是提交数据持久化到磁盘里面。不过，比较耗费机器资源，这样即使jvm崩溃或者宕机，也不影响这部分索引。"></a>1.硬提交是提交数据持久化到磁盘里面。不过，比较耗费机器资源，这样即使jvm崩溃或者宕机，也不影响这部分索引。</h3><p>openSearcher: true  索引在searcher中可见, 但是也需要重新打开searcher才行。<br>openSearcher: false 索引在searcher中不可见。</p>
+<p>按照下面的配置就会使用solr的自动硬提交功能，就不用我们自己手动提交。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">autoCommit</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--表示软提交达到1万条的时候会自动进行一次硬提交--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">maxDocs</span>&gt;</span>10000<span class="tag">&lt;/<span class="name">maxDocs</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--表示软提交10秒之后会执行一次硬提交--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">maxTime</span>&gt;</span>10000<span class="tag">&lt;/<span class="name">maxTime</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--true表示每一次硬提交都开启一个新的Searcher--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">openSearcher</span>&gt;</span>false<span class="tag">&lt;/<span class="name">openSearcher</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">autoCommit</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="2-软提交是提交数据到内存里面，并没有持久化到磁盘，但是他会把提交的记录写到tlog的日志文件里面所以如果jvm崩溃，那这部分索引就没了"><a href="#2-软提交是提交数据到内存里面，并没有持久化到磁盘，但是他会把提交的记录写到tlog的日志文件里面所以如果jvm崩溃，那这部分索引就没了" class="headerlink" title="2.软提交是提交数据到内存里面，并没有持久化到磁盘，但是他会把提交的记录写到tlog的日志文件里面所以如果jvm崩溃，那这部分索引就没了"></a>2.软提交是提交数据到内存里面，并没有持久化到磁盘，但是他会把提交的记录写到tlog的日志文件里面所以如果jvm崩溃，那这部分索引就没了</h3><p>下面就是自动软提交的配置，不需要自己维护提交（默认没有开启）：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">autoSoftCommit</span>&gt;</span> </span><br><span class="line">  <span class="comment">&lt;!--5秒执行一次软提交--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">maxTime</span>&gt;</span>5000<span class="tag">&lt;/<span class="name">maxTime</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">autoSoftCommit</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjkt876lf001jnx2iy62lu62e" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-solr-install" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/10/28/solr-install/" class="article-date">
@@ -124,7 +174,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjiwknkff001kaa2iuhq1ibvt" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjkt876lt001pnx2iw8jhox5h" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -199,7 +249,7 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjiwknkbv0002aa2i8sl4jn58" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjkt876i90002nx2iooaw6uci" class="article-share-link">Share</a>
       
       
     </footer>
@@ -476,7 +526,7 @@ _   underscore
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjiwknkdq000oaa2iqwq62atf" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjkt876k0000onx2irgquaav7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -784,7 +834,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjiwknkdk000laa2ispid92v3" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjkt876jw000lnx2ixpsskjar" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -827,7 +877,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjiwknkei0014aa2ijaw3h91j" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjkt876kj0010nx2ixo81d1t3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -880,7 +930,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjiwknkfw001vaa2ixr9jqtg6" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjkt876me001znx2izsp5g1qu" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tomcat/">tomcat</a></li></ul>
@@ -905,7 +955,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -915,7 +965,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -926,6 +976,10 @@ Password:
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/08/07/redis-install/">redis 的安装使用</a>
+          </li>
         
           <li>
             <a href="/2018/04/06/jvm-note/">jvm 学习笔记</a>
@@ -941,10 +995,6 @@ Password:
         
           <li>
             <a href="/2018/02/17/neo4j-note/">neo4j学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2018/01/29/gitbook-note/">gitbook学习笔记</a>
           </li>
         
       </ul>

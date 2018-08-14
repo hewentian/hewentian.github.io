@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>redis 的安装使用 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程：首先，我们要将redis安装包下载回来，截止本文写时，redis官网发布的最新版本为4.0.11。当然，我们也可以从这里下载 redis-4.0.11.tar.gz 和 redis-4.0.11.tar.gz.md5。推荐从redis官网下载最新版本。 12345678910$ cd /home/hewentian/Pro">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis 的安装使用">
+<meta property="og:url" content="https://github.com/hewentian/2018/08/07/redis-install/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程：首先，我们要将redis安装包下载回来，截止本文写时，redis官网发布的最新版本为4.0.11。当然，我们也可以从这里下载 redis-4.0.11.tar.gz 和 redis-4.0.11.tar.gz.md5。推荐从redis官网下载最新版本。 12345678910$ cd /home/hewentian/Pro">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-14T04:42:04.164Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="redis 的安装使用">
+<meta name="twitter:description" content="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程：首先，我们要将redis安装包下载回来，截止本文写时，redis官网发布的最新版本为4.0.11。当然，我们也可以从这里下载 redis-4.0.11.tar.gz 和 redis-4.0.11.tar.gz.md5。推荐从redis官网下载最新版本。 12345678910$ cd /home/hewentian/Pro">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-redis-install" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/07/redis-install/" class="article-date">
+  <time datetime="2018-08-07T02:50:27.000Z" itemprop="datePublished">2018-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      redis 的安装使用
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程："><a href="#要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程：" class="headerlink" title="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程："></a>要使用<code>redis</code>我们首先要安装这个软件。下面，我们说说<code>redis</code>的安装过程：</h4><p>首先，我们要将<code>redis</code>安装包下载回来，截止本文写时，<code>redis</code>官网发布的最新版本为<code>4.0.11</code>。当然，我们也可以从这里下载 <a href="/download/redis-4.0.11.tar.gz">redis-4.0.11.tar.gz</a> 和 <a href="/download/redis-4.0.11.tar.gz.md5">redis-4.0.11.tar.gz.md5</a>。推荐从<code>redis</code>官网下载最新版本。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget http://download.redis.io/releases/redis-4.0.11.tar.gz</span><br><span class="line"></span><br><span class="line">// 验证下载文件的完整性，在下载的时候要将MD5文件或者SHA256文件也下载回来</span><br><span class="line">$ md5sum -c redis-4.0.11.tar.gz.md5 </span><br><span class="line">redis-4.0.11.tar.gz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf redis-4.0.11.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> redis-4.0.11/</span><br><span class="line">$ make</span><br></pre></td></tr></table></figure>
+<h4 id="After-building-Redis-it-is-a-good-idea-to-test-it-using"><a href="#After-building-Redis-it-is-a-good-idea-to-test-it-using" class="headerlink" title="After building Redis, it is a good idea to test it using:"></a>After building Redis, it is a good idea to test it using:</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ make <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line">// 如果见到下面的结果，证明我们已经成功安装</span><br><span class="line">\o/ All tests passed without errors!</span><br></pre></td></tr></table></figure>
+<h4 id="下面的内容摘自-REDIS-PATH-README-md"><a href="#下面的内容摘自-REDIS-PATH-README-md" class="headerlink" title="下面的内容摘自${REDIS_PATH}/README.md"></a>下面的内容摘自<code>${REDIS_PATH}/README.md</code></h4><h2 id="Running-Redis"><a href="#Running-Redis" class="headerlink" title="Running Redis"></a>Running Redis</h2><p>To run Redis with the default configuration just type:</p>
+<pre><code>$ cd src
+$ ./redis-server
+</code></pre><p>If you want to provide your redis.conf, you have to run it using an additional<br>parameter (the path of the configuration file):</p>
+<pre><code>$ cd src
+$ ./redis-server /path/to/redis.conf
+</code></pre><p>It is possible to alter the Redis configuration by passing parameters directly<br>as options using the command line. Examples:</p>
+<pre><code>$ ./redis-server --port 9999 --slaveof 127.0.0.1 6379
+$ ./redis-server /etc/redis/6379.conf --loglevel debug
+</code></pre><p>All the options in redis.conf are also supported as options using the command<br>line, with exactly the same name.</p>
+<h2 id="Playing-with-Redis"><a href="#Playing-with-Redis" class="headerlink" title="Playing with Redis"></a>Playing with Redis</h2><p>You can use redis-cli to play with Redis. Start a redis-server instance,<br>then in another terminal try the following:</p>
+<pre><code>% cd src
+% ./redis-cli
+redis&gt; ping
+PONG
+redis&gt; set foo bar
+OK
+redis&gt; get foo
+&quot;bar&quot;
+redis&gt; incr mycounter
+(integer) 1
+redis&gt; incr mycounter
+(integer) 2
+redis&gt;
+</code></pre><p>You can find the list of all the available commands at <a href="http://redis.io/commands" target="_blank" rel="noopener">http://redis.io/commands</a>.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjkt876l1001cnx2irwn6p9af" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/04/06/jvm-note/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">jvm 学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/08/07/redis-install/">redis 的安装使用</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/06/jvm-note/">jvm 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/07/mongo-note/">mongo 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/03/solr-cloud/">solr 集群的创建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/02/17/neo4j-note/">neo4j学习笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
