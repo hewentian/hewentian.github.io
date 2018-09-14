@@ -71,6 +71,50 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-java-get-entity-property-and-value" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/10/java-get-entity-property-and-value/" class="article-date">
+  <time datetime="2017-11-09T16:16:59.000Z" itemprop="datePublished">2017-11-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/10/java-get-entity-property-and-value/">java 获取对象的所有属性和它们的值</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面我们展示如何获取对象的所有属性和它们的值，首先我们新建一个实体类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;User&lt;/b&gt; 是 测试用的类</span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2017年11月10日 上午12:19:18</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">	<span class="comment">/** id */</span></span><br><span class="line">	<span class="keyword">private</span> Integer id;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/** 姓名 */</span></span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/** 年龄 */</span></span><br><span class="line">	<span class="keyword">private</span> Integer age;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(Integer id, String name, Integer age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.id = id;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(Integer id)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.id = id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(Integer age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里我们用到了<code>apache</code>提供的工具包<code>commons-beanutils-1.9.3.jar</code>，详细代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.beans.PropertyDescriptor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationTargetException;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.commons.beanutils.PropertyUtils;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;GetPropertyAndValue&lt;/b&gt; 是 获取对象的所有属性和它们的值</span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2017年11月10日 上午12:20:09</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GetPropertyAndValue</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		User user = <span class="keyword">new</span> User(<span class="number">1</span>, <span class="string">"Tim Ho"</span>, <span class="number">23</span>);</span><br><span class="line"></span><br><span class="line">		List&lt;String&gt; properties = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line"></span><br><span class="line">		System.out.println(<span class="string">"获取所有属性"</span>);</span><br><span class="line">		PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(user.getClass());</span><br><span class="line">		<span class="keyword">for</span> (PropertyDescriptor pd : pds) &#123;</span><br><span class="line">			System.out.println(pd.getName() + <span class="string">"\t"</span> + pd.getPropertyType());</span><br><span class="line">			properties.add(pd.getName());</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		System.out.println(<span class="string">"\n根据属性获取这个属性的值"</span>);</span><br><span class="line">		properties.stream().forEach(p -&gt; &#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				Object value = PropertyUtils.getProperty(user, p);</span><br><span class="line">				System.out.println(p + <span class="string">"\t"</span> + value);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出结果如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">获取所有属性</span><br><span class="line">name	<span class="class"><span class="keyword">class</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">String</span></span></span><br><span class="line"><span class="class"><span class="title">id</span>	<span class="title">class</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Integer</span></span></span><br><span class="line"><span class="class"><span class="title">class</span>	<span class="title">class</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Class</span></span></span><br><span class="line"><span class="class"><span class="title">age</span>	<span class="title">class</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Integer</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">根据属性获取这个属性的值</span></span><br><span class="line"><span class="class"><span class="title">name</span>	<span class="title">Tim</span> <span class="title">Ho</span></span></span><br><span class="line"><span class="class"><span class="title">id</span>	1</span></span><br><span class="line"><span class="class"><span class="title">class</span>	<span class="title">class</span> <span class="title">com</span>.<span class="title">hewentian</span>.<span class="title">User</span></span></span><br><span class="line"><span class="class"><span class="title">age</span>	23</span></span><br></pre></td></tr></table></figure></p>
+<p>end.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2017/11/10/java-get-entity-property-and-value/" data-id="cjm1p48z2000o2v2id9per1bv" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-solr-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/10/29/solr-note/" class="article-date">
@@ -517,7 +561,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjktg5oh7001w7a2iuumbt2b6" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjm1p491m00272v2i9hjnj3ez" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -567,7 +611,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjktg5ogp001m7a2igi8z49dw" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjm1p490t001s2v2izfx4n9i4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -632,7 +676,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjktg5oh1001t7a2imb7ideo3" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjm1p4918001z2v2i1q4zfoaa" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -707,7 +751,7 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjktg5od000007a2i80ea7tse" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjm1p48xw00052v2ijtpf0xx8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -984,7 +1028,7 @@ _   underscore
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjktg5of3000q7a2indb9ezmh" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjm1p48yq000h2v2i8v5dv4um" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1292,7 +1336,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjktg5oey000m7a2ipm8e80qf" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjm1p48zd000v2v2iu72c5kbc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -1335,7 +1379,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjktg5ofy00167a2i951pqd7i" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjm1p48zm00112v2i4w13w2qy" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -1388,7 +1432,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjktg5ohq00237a2ih60duxvx" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjm1p491a00212v2i7nu9gnvj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tomcat/">tomcat</a></li></ul>
@@ -1413,7 +1457,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -1423,7 +1467,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1434,6 +1478,10 @@ Password:
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/09/12/redis-note/">redis 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2018/08/14/redis-master-slave/">redis 主从配置</a>
@@ -1449,10 +1497,6 @@ Password:
         
           <li>
             <a href="/2018/03/07/mongo-note/">mongo 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2018/03/03/solr-cloud/">solr 集群的创建</a>
           </li>
         
       </ul>
