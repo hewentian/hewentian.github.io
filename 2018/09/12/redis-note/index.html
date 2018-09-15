@@ -5,19 +5,19 @@
   
   <title>redis 学习笔记 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="首先，你必须有一台redis服务器可以使用，如果还没安装，可以参考我的上一篇 redis 的安装使用 部分笔记摘自《Redis 实战》，它总结得很好。 Redis与其他数据库的对比  高性能键值缓存服务器memcached也经常被拿来与Redis进行比较：这两者都可以用于存储键值映射，彼此的性能也相关无几，但是Redis能够自动以两种不同的方式将数据写入硬盘，并且Redis除了能存储普通的字符串之">
+  <meta name="description" content="首先，你必须有一台redis服务器可以使用，如果还没安装，可以参考我的上一篇 redis 的安装使用 使用JAVA API来操作Redis的例子可以在这里找到：RedisUtil.java、RedisDemo.java 部分笔记摘自《Redis 实战》，它总结得很好。 Redis默认16个数据库，并以数字为索引，从0开始到15，可以手工修改这个配置，增加数量。登录的时候，默认为0库。 Redis与">
 <meta name="keywords" content="redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis 学习笔记">
 <meta property="og:url" content="https://github.com/hewentian/2018/09/12/redis-note/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="首先，你必须有一台redis服务器可以使用，如果还没安装，可以参考我的上一篇 redis 的安装使用 部分笔记摘自《Redis 实战》，它总结得很好。 Redis与其他数据库的对比  高性能键值缓存服务器memcached也经常被拿来与Redis进行比较：这两者都可以用于存储键值映射，彼此的性能也相关无几，但是Redis能够自动以两种不同的方式将数据写入硬盘，并且Redis除了能存储普通的字符串之">
+<meta property="og:description" content="首先，你必须有一台redis服务器可以使用，如果还没安装，可以参考我的上一篇 redis 的安装使用 使用JAVA API来操作Redis的例子可以在这里找到：RedisUtil.java、RedisDemo.java 部分笔记摘自《Redis 实战》，它总结得很好。 Redis默认16个数据库，并以数字为索引，从0开始到15，可以手工修改这个配置，增加数量。登录的时候，默认为0库。 Redis与">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://github.com/img/redis-master-slave-chaining.png">
-<meta property="og:updated_time" content="2018-09-14T07:40:37.267Z">
+<meta property="og:updated_time" content="2018-09-15T04:08:01.193Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="redis 学习笔记">
-<meta name="twitter:description" content="首先，你必须有一台redis服务器可以使用，如果还没安装，可以参考我的上一篇 redis 的安装使用 部分笔记摘自《Redis 实战》，它总结得很好。 Redis与其他数据库的对比  高性能键值缓存服务器memcached也经常被拿来与Redis进行比较：这两者都可以用于存储键值映射，彼此的性能也相关无几，但是Redis能够自动以两种不同的方式将数据写入硬盘，并且Redis除了能存储普通的字符串之">
+<meta name="twitter:description" content="首先，你必须有一台redis服务器可以使用，如果还没安装，可以参考我的上一篇 redis 的安装使用 使用JAVA API来操作Redis的例子可以在这里找到：RedisUtil.java、RedisDemo.java 部分笔记摘自《Redis 实战》，它总结得很好。 Redis默认16个数据库，并以数字为索引，从0开始到15，可以手工修改这个配置，增加数量。登录的时候，默认为0库。 Redis与">
 <meta name="twitter:image" content="https://github.com/img/redis-master-slave-chaining.png">
   
   
@@ -100,7 +100,9 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>首先，你必须有一台<code>redis</code>服务器可以使用，如果还没安装，可以参考我的上一篇 <a href="../../../../2018/08/07/redis-install/">redis 的安装使用</a></p>
+<p>使用JAVA API来操作Redis的例子可以在这里找到：<a href="https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/util/RedisUtil.java">RedisUtil.java</a>、<a href="https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/redis/RedisDemo.java">RedisDemo.java</a></p>
 <p>部分笔记摘自《Redis 实战》，它总结得很好。</p>
+<p>Redis默认16个数据库，并以数字为索引，从0开始到15，可以手工修改这个配置，增加数量。登录的时候，默认为0库。</p>
 <h4 id="Redis与其他数据库的对比"><a href="#Redis与其他数据库的对比" class="headerlink" title="Redis与其他数据库的对比"></a>Redis与其他数据库的对比</h4><p>  高性能键值缓存服务器<code>memcached</code>也经常被拿来与<code>Redis</code>进行比较：这两者都可以用于存储键值映射，彼此的性能也相关无几，但是<code>Redis</code>能够自动以两种不同的方式将数据写入硬盘，并且<code>Redis</code>除了能存储普通的字符串之外，还可以存储其他4种数据结构，而<code>memcached</code>只能存储普通的字符串键。这些不同之处使得<code>Redis</code>可以用于解决更为广泛的问题，并且既可以用作主数据库(primary database)使用，又可以作为其他存储系统的辅助数据库(auxiliary database)使用。</p>
 <table>
 <thead>
@@ -294,7 +296,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjm1p4906001f2v2ivd9kb17u" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjm2wwpbk001i5q2iy0lwm7w0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>

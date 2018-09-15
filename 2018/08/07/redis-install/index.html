@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程：首先，我们要将redis安装包下载回来，截止本文写时，redis官网发布的最新版本为4.0.11。当然，我们也可以从这里下载 redis-4.0.11.tar.gz 和 redis-4.0.11.tar.gz.md5。推荐从redis官网下载最新版本。 12345678910$ cd /home/hewentian/Pro">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-14T04:42:04.164Z">
+<meta property="og:updated_time" content="2018-09-15T04:07:48.917Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="redis 的安装使用">
 <meta name="twitter:description" content="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程：首先，我们要将redis安装包下载回来，截止本文写时，redis官网发布的最新版本为4.0.11。当然，我们也可以从这里下载 redis-4.0.11.tar.gz 和 redis-4.0.11.tar.gz.md5。推荐从redis官网下载最新版本。 12345678910$ cd /home/hewentian/Pro">
@@ -100,7 +100,7 @@
         <h4 id="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程："><a href="#要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程：" class="headerlink" title="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程："></a>要使用<code>redis</code>我们首先要安装这个软件。下面，我们说说<code>redis</code>的安装过程：</h4><p>首先，我们要将<code>redis</code>安装包下载回来，截止本文写时，<code>redis</code>官网发布的最新版本为<code>4.0.11</code>。当然，我们也可以从这里下载 <a href="/download/redis-4.0.11.tar.gz">redis-4.0.11.tar.gz</a> 和 <a href="/download/redis-4.0.11.tar.gz.md5">redis-4.0.11.tar.gz.md5</a>。推荐从<code>redis</code>官网下载最新版本。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget http://download.redis.io/releases/redis-4.0.11.tar.gz</span><br><span class="line"></span><br><span class="line">// 验证下载文件的完整性，在下载的时候要将MD5文件或者SHA256文件也下载回来</span><br><span class="line">$ md5sum -c redis-4.0.11.tar.gz.md5 </span><br><span class="line">redis-4.0.11.tar.gz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf redis-4.0.11.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> redis-4.0.11/</span><br><span class="line">$ make</span><br></pre></td></tr></table></figure>
 <h4 id="After-building-Redis-it-is-a-good-idea-to-test-it-using"><a href="#After-building-Redis-it-is-a-good-idea-to-test-it-using" class="headerlink" title="After building Redis, it is a good idea to test it using:"></a>After building Redis, it is a good idea to test it using:</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ make <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line">// 如果见到下面的结果，证明我们已经成功安装</span><br><span class="line">\o/ All tests passed without errors!</span><br></pre></td></tr></table></figure>
-<h4 id="下面的内容摘自-REDIS-PATH-README-md"><a href="#下面的内容摘自-REDIS-PATH-README-md" class="headerlink" title="下面的内容摘自${REDIS_PATH}/README.md"></a>下面的内容摘自<code>${REDIS_PATH}/README.md</code></h4><h2 id="Running-Redis"><a href="#Running-Redis" class="headerlink" title="Running Redis"></a>Running Redis</h2><p>To run Redis with the default configuration just type:</p>
+<h4 id="下面的内容摘自-REDIS-HOME-README-md"><a href="#下面的内容摘自-REDIS-HOME-README-md" class="headerlink" title="下面的内容摘自${REDIS_HOME}/README.md"></a>下面的内容摘自<code>${REDIS_HOME}/README.md</code></h4><h2 id="Running-Redis"><a href="#Running-Redis" class="headerlink" title="Running Redis"></a>Running Redis</h2><p>To run Redis with the default configuration just type:</p>
 <pre><code>$ cd src
 $ ./redis-server
 </code></pre><p>If you want to provide your redis.conf, you have to run it using an additional<br>parameter (the path of the configuration file):</p>
@@ -111,8 +111,8 @@ $ ./redis-server /path/to/redis.conf
 $ ./redis-server /etc/redis/6379.conf --loglevel debug
 </code></pre><p>All the options in redis.conf are also supported as options using the command<br>line, with exactly the same name.</p>
 <h2 id="Playing-with-Redis"><a href="#Playing-with-Redis" class="headerlink" title="Playing with Redis"></a>Playing with Redis</h2><p>You can use redis-cli to play with Redis. Start a redis-server instance,<br>then in another terminal try the following:</p>
-<pre><code>% cd src
-% ./redis-cli
+<pre><code>$ cd src
+$ ./redis-cli
 redis&gt; ping
 PONG
 redis&gt; set foo bar
@@ -125,11 +125,33 @@ redis&gt; incr mycounter
 (integer) 2
 redis&gt;
 </code></pre><p>You can find the list of all the available commands at <a href="http://redis.io/commands" target="_blank" rel="noopener">http://redis.io/commands</a>.</p>
+<p>  <strong><em>注意：启动Redis服务器的时候，请务必指定它的配置文件，否则有可能会出现意想不到的情况。</em></strong></p>
+<h4 id="为Redis设置登录密码"><a href="#为Redis设置登录密码" class="headerlink" title="为Redis设置登录密码"></a>为Redis设置登录密码</h4><p>  为Redis设置登录密码的方法比较简单，打开<code>${REDIS_HOME}/redis.conf</code>文件，找到<code>requirepass foobared</code>这一行，如下：</p>
+<pre><code>################################## SECURITY ###################################
 
+# Require clients to issue AUTH &lt;PASSWORD&gt; before processing any other
+# commands.  This might be useful in environments in which you do not trust
+# others with access to the host running redis-server.
+#
+# This should stay commented out for backward compatibility and because most
+# people do not need auth (e.g. they run their own servers).
+#
+# Warning: since Redis is pretty fast an outside user can try up to
+# 150k passwords per second against a good box. This means that you should
+# use a very strong password otherwise it will be very easy to break.
+#
+# requirepass foobared
+</code></pre><p>将<code>requirepass foobared</code>的注释打开，并把foobared设置成自己的密码即可，如将其设为abc123： </p>
+<pre><code>requirepass abc123
+</code></pre><p>保存文件，并重启Redis。</p>
+<p>在使用客户端登录的时候，将使用如下命令：</p>
+<pre><code>$ cd src
+$ ./redis-cli -a abc123
+</code></pre>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjm1p490c001i2v2ioefpnyx6" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjm2wwpb7001b5q2i9s4dsah6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
