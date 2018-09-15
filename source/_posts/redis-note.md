@@ -6,7 +6,12 @@ categories: bigdata
 ---
 首先，你必须有一台`redis`服务器可以使用，如果还没安装，可以参考我的上一篇 [redis 的安装使用][redis-install]
 
+使用JAVA API来操作Redis的例子可以在这里找到：[RedisUtil.java][link_id_RedisUtil]、[RedisDemo.java][link_id_RedisDemo]
+
+
 部分笔记摘自《Redis 实战》，它总结得很好。
+
+Redis默认16个数据库，并以数字为索引，从0开始到15，可以手工修改这个配置，增加数量。登录的时候，默认为0库。
 
 #### Redis与其他数据库的对比
   高性能键值缓存服务器`memcached`也经常被拿来与`Redis`进行比较：这两者都可以用于存储键值映射，彼此的性能也相关无几，但是`Redis`能够自动以两种不同的方式将数据写入硬盘，并且`Redis`除了能存储普通的字符串之外，还可以存储其他4种数据结构，而`memcached`只能存储普通的字符串键。这些不同之处使得`Redis`可以用于解决更为广泛的问题，并且既可以用作主数据库(primary database)使用，又可以作为其他存储系统的辅助数据库(auxiliary database)使用。
@@ -203,3 +208,5 @@ Redis不支持嵌套结构特性
 
 
 [redis-install]: ../../../../2018/08/07/redis-install/
+[link_id_RedisDemo]: https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/redis/RedisDemo.java
+[link_id_RedisUtil]: https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/util/RedisUtil.java

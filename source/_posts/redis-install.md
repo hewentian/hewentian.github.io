@@ -30,7 +30,7 @@ $ make test
 \o/ All tests passed without errors!
 ```
 
-#### 下面的内容摘自`${REDIS_PATH}/README.md`
+#### 下面的内容摘自`${REDIS_HOME}/README.md`
 
 Running Redis
 -------------
@@ -62,8 +62,8 @@ Playing with Redis
 You can use redis-cli to play with Redis. Start a redis-server instance,
 then in another terminal try the following:
 
-    % cd src
-    % ./redis-cli
+    $ cd src
+    $ ./redis-cli
     redis> ping
     PONG
     redis> set foo bar
@@ -77,3 +77,35 @@ then in another terminal try the following:
     redis>
 
 You can find the list of all the available commands at http://redis.io/commands.
+
+
+  ***注意：启动Redis服务器的时候，请务必指定它的配置文件，否则有可能会出现意想不到的情况。***
+
+#### 为Redis设置登录密码
+  为Redis设置登录密码的方法比较简单，打开`${REDIS_HOME}/redis.conf`文件，找到`requirepass foobared`这一行，如下：
+
+		################################## SECURITY ###################################
+
+		# Require clients to issue AUTH <PASSWORD> before processing any other
+		# commands.  This might be useful in environments in which you do not trust
+		# others with access to the host running redis-server.
+		#
+		# This should stay commented out for backward compatibility and because most
+		# people do not need auth (e.g. they run their own servers).
+		#
+		# Warning: since Redis is pretty fast an outside user can try up to
+		# 150k passwords per second against a good box. This means that you should
+		# use a very strong password otherwise it will be very easy to break.
+		#
+		# requirepass foobared
+
+将`requirepass foobared`的注释打开，并把foobared设置成自己的密码即可，如将其设为abc123： 
+
+	requirepass abc123
+保存文件，并重启Redis。
+
+在使用客户端登录的时候，将使用如下命令：
+
+	$ cd src
+	$ ./redis-cli -a abc123
+
