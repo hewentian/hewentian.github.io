@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>elasticsearch 单节点安装 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文将说下elasticsearch的单节点安装，我的机器为Ubuntu 16.04 LTS，当前用户为hewentian 首先，我们要将elasticsearch安装包下载回来，截止本文写时，它的最新版本为6.4.0，可以在它的官网下载，当然，我们也可以从这里下载 elasticsearch-6.4.0.tar.gz 和 elasticsearch-6.4.0.tar.gz.sha512，推荐从">
+<meta name="keywords" content="elasticsearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="elasticsearch 单节点安装">
+<meta property="og:url" content="https://github.com/hewentian/2018/09/16/elasticsearch-install/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="本文将说下elasticsearch的单节点安装，我的机器为Ubuntu 16.04 LTS，当前用户为hewentian 首先，我们要将elasticsearch安装包下载回来，截止本文写时，它的最新版本为6.4.0，可以在它的官网下载，当然，我们也可以从这里下载 elasticsearch-6.4.0.tar.gz 和 elasticsearch-6.4.0.tar.gz.sha512，推荐从">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://github.com/img/elasticsearch-head.png">
+<meta property="og:updated_time" content="2018-09-17T11:59:26.267Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="elasticsearch 单节点安装">
+<meta name="twitter:description" content="本文将说下elasticsearch的单节点安装，我的机器为Ubuntu 16.04 LTS，当前用户为hewentian 首先，我们要将elasticsearch安装包下载回来，截止本文写时，它的最新版本为6.4.0，可以在它的官网下载，当然，我们也可以从这里下载 elasticsearch-6.4.0.tar.gz 和 elasticsearch-6.4.0.tar.gz.sha512，推荐从">
+<meta name="twitter:image" content="https://github.com/img/elasticsearch-head.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-elasticsearch-install" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/16/elasticsearch-install/" class="article-date">
+  <time datetime="2018-09-16T03:18:34.000Z" itemprop="datePublished">2018-09-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      elasticsearch 单节点安装
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文将说下<code>elasticsearch</code>的单节点安装，我的机器为<code>Ubuntu 16.04 LTS</code>，当前用户为hewentian</p>
+<p>首先，我们要将<code>elasticsearch</code>安装包下载回来，截止本文写时，它的最新版本为<code>6.4.0</code>，可以在它的<a href="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz" target="_blank" rel="noopener">官网</a>下载，当然，我们也可以从这里下载 <a href="/download/elasticsearch-6.4.0.tar.gz">elasticsearch-6.4.0.tar.gz</a> 和 <a href="/download/elasticsearch-6.4.0.tar.gz.sha512">elasticsearch-6.4.0.tar.gz.sha512</a>，推荐从<code>elasticsearch</code>官网下载最新版本。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz.sha512</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性，在下载的时候要将 SHA512 文件也下载回来</span><br><span class="line">$ sha512sum -c elasticsearch-6.4.0.tar.gz.sha512 </span><br><span class="line">elasticsearch-6.4.0.tar.gz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf elasticsearch-6.4.0.tar.gz</span><br></pre></td></tr></table></figure>
+<p>对<code>elasticsearch</code>进行设置（目前是单节点，所以也可以不对<code>elasticsearch.yml</code>进行设置，可直接跳过）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/config</span><br><span class="line">$ vi elasticsearch.yml 		<span class="comment"># 增加下面的配置</span></span><br><span class="line"></span><br><span class="line">cluster.name: hewentian-cluster	<span class="comment"># 配置集群的名字</span></span><br><span class="line">node.name: node-1		<span class="comment"># 配置集群下的节点的名字</span></span><br><span class="line"></span><br><span class="line">network.host: 127.0.0.1		<span class="comment"># 设置本机IP地址，这里可不设置，但是在集群环境中必须设置</span></span><br><span class="line"></span><br><span class="line">http.port: 9200			<span class="comment"># 默认也是这个端口</span></span><br><span class="line"></span><br><span class="line">下面的配置保持默认即可，它会将数据和日志保存到elasticsearch-6.4.0目录下的data和logs目录</span><br><span class="line"><span class="comment">#path.data: /path/to/data</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># Path to log files:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#path.logs: /path/to/logs</span></span><br></pre></td></tr></table></figure></p>
+<p>内存大小的设置，根据机器内存大小而设置，一般不超过系统总内存的一半：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/config</span><br><span class="line">$ vi jvm.options</span><br><span class="line"></span><br><span class="line">-Xms1g</span><br><span class="line">-Xmx1g</span><br></pre></td></tr></table></figure></p>
+<p>启动<code>elasticsearch</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/bin</span><br><span class="line">$ ./elasticsearch</span><br></pre></td></tr></table></figure></p>
+<p>我们也可以在启动的时候加上参数<code>-d</code>，以后台运行方式启动：<code>./elasticsearch -d</code>。这样单节点版本的<code>elasticsearch</code>就安装完了，在浏览器中输入如下地址：<a href="http://localhost:9200/" target="_blank" rel="noopener">http://localhost:9200/</a></p>
+<pre><code>{
+&quot;name&quot; : &quot;node-1&quot;,
+  &quot;cluster_name&quot; : &quot;hewentian-cluster&quot;,
+  &quot;cluster_uuid&quot; : &quot;ihLk1iOlTEis2PkQrLhmLQ&quot;,
+  &quot;version&quot; : {
+    &quot;number&quot; : &quot;6.4.0&quot;,
+    &quot;build_flavor&quot; : &quot;default&quot;,
+    &quot;build_type&quot; : &quot;tar&quot;,
+    &quot;build_hash&quot; : &quot;595516e&quot;,
+    &quot;build_date&quot; : &quot;2018-08-17T23:18:47.308994Z&quot;,
+    &quot;build_snapshot&quot; : false,
+    &quot;lucene_version&quot; : &quot;7.4.0&quot;,
+    &quot;minimum_wire_compatibility_version&quot; : &quot;5.6.0&quot;,
+    &quot;minimum_index_compatibility_version&quot; : &quot;5.0.0&quot;
+  },
+  &quot;tagline&quot; : &quot;You Know, for Search&quot;
+}
+</code></pre><p>如果你见到上面的输出，证明安装成功了。</p>
+<p>不过，你在安装的过程中，有可能会遇到下面的问题之一：</p>
+<pre><code>ERROR: [3] bootstrap checks failed
+[1]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65536]
+[2]: max number of threads [2048] for user [hewentian] is too low, increase to at least [4096]
+[3]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+</code></pre><p>解决方法如下，就算它不报上面的错误，我们也应该根据机器的性能，对下面的选项作相应配置（下面是根据我机器的情况作的配置）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ su root			<span class="comment"># 必须在 root 下才有权限修改系统配置文件</span></span><br><span class="line">Password: </span><br><span class="line">$ vi /etc/security/limits.conf	<span class="comment"># 添加如下配置</span></span><br><span class="line">* soft nofile 65536		<span class="comment"># 上面第一个错误有提示</span></span><br><span class="line">* hard nofile 131072		<span class="comment"># 一般为 soft nofile 的2倍</span></span><br><span class="line">* soft nproc 4096		<span class="comment"># 这个设置线程数</span></span><br><span class="line">* hard nproc 8192</span><br><span class="line"></span><br><span class="line">$ vi /etc/sysctl.conf		<span class="comment"># 添加如下配置</span></span><br><span class="line">vm.max_map_count=262144</span><br><span class="line"></span><br><span class="line">$ sysctl -p			<span class="comment"># 最后执行这个命令，你会见到如下输出</span></span><br><span class="line">vm.max_map_count=262144</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">exit</span>				<span class="comment"># 退出 root</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="elasticsearch-head的安装"><a href="#elasticsearch-head的安装" class="headerlink" title="elasticsearch-head的安装"></a>elasticsearch-head的安装</h4><p>为了更方便的与elasticsearch交互，我们还要安装<code>elasticsearch-head</code>插件，安装步骤如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/gitHub</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/mobz/elasticsearch-head.git</span><br><span class="line">$ <span class="built_in">cd</span> elasticsearch-head</span><br><span class="line">$ npm install 		<span class="comment"># 这个安装过程可能会报错，但是一般不影响。安装完之后，运行下面的命令即可</span></span><br><span class="line">$ npm run start 	<span class="comment"># 运行此命令，你会看到如下输出</span></span><br><span class="line"></span><br><span class="line">&gt; elasticsearch-head@0.0.0 start /home/hewentian/ProjectD/gitHub/elasticsearch-head</span><br><span class="line">&gt; grunt server</span><br><span class="line"></span><br><span class="line">Running <span class="string">"connect:server"</span> (connect) task</span><br><span class="line">Waiting forever...</span><br><span class="line">Started connect web server on http://localhost:9100</span><br><span class="line"></span><br><span class="line">也可以使用下面这种方式启动</span><br><span class="line">$ nohup npm run start &amp;</span><br></pre></td></tr></table></figure></p>
+<p>安装结束之后，可以试着打开这个连接：<a href="http://localhost:9100/" target="_blank" rel="noopener">http://localhost:9100/</a><br>这个连接可以打开，就证明<code>elasticsearch-head</code>安装成功，但是你可能会发现，它无法连上<code>elasticsearch</code>。因为，我们还没有对<code>elasticsearch</code>进行设置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/config</span><br><span class="line">$ vi elasticsearch.yml 	<span class="comment"># 增加下面的配置</span></span><br><span class="line"></span><br><span class="line">允许跨域，否则 elasticsearch head 不能访问 elasticsearch</span><br><span class="line">http.cors.enabled: <span class="literal">true</span></span><br><span class="line">http.cors.allow-origin: <span class="string">"*"</span></span><br></pre></td></tr></table></figure></p>
+<p>配置好之后，重启<code>elasticsearch</code>，就可以使用<code>elasticsearch-head</code>访问<code>elasticsearch</code>了，如下图所示：<br><img src="/img/elasticsearch-head.png" alt="" title="elasticsearch-head"></p>
+<h3 id="elasticsearch使用示例"><a href="#elasticsearch使用示例" class="headerlink" title="elasticsearch使用示例"></a>elasticsearch使用示例</h3><p>使用示例我不打算自已写，因为<code>elasticsearch</code>官方的<code>README.textile</code>已经写得非常详细了。下面的示例摘自<code>elasticsearch-6.4.0/README.textile</code>：</p>
+<p>要单独创建一个索引：</p>
+<pre>
+curl -XPUT 'http://localhost:9200/music/'
+
+{"acknowledged":true,"shards_acknowledged":true,"index":"music"}
+</pre>
+
+<p>删除索引的命令，如下：</p>
+<pre>
+curl -XDELETE 'http://localhost:9200/music/'
+
+{"acknowledged":true}
+</pre>
+
+
+<h4 id="Indexing"><a href="#Indexing" class="headerlink" title="Indexing"></a>Indexing</h4><p>Let’s try and index some twitter like information. First, let’s index some tweets (the @twitter@ index will be created automatically):</p>
+<pre>
+curl -XPUT 'http://localhost:9200/twitter/doc/1?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T13:12:00",
+    "message": "Trying out Elasticsearch, so far so good?"
+}'
+
+curl -XPUT 'http://localhost:9200/twitter/doc/2?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T14:12:12",
+    "message": "Another tweet, will it be indexed?"
+}'
+
+curl -XPUT 'http://localhost:9200/twitter/doc/3?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "elastic",
+    "post_date": "2010-01-15T01:46:38",
+    "message": "Building the site, should be kewl"
+}'
+</pre>
+
+
+<h4 id="Getting"><a href="#Getting" class="headerlink" title="Getting"></a>Getting</h4><p>Now, let’s see if the information was added by GETting it:</p>
+<pre>
+curl -XGET 'http://localhost:9200/twitter/doc/1?pretty=true'
+curl -XGET 'http://localhost:9200/twitter/doc/2?pretty=true'
+curl -XGET 'http://localhost:9200/twitter/doc/3?pretty=true'
+
+</pre>
+
+<p>The results show below:</p>
+<pre>
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "1",
+  "_version" : 1,
+  "found" : true,
+  "_source" : {
+    "user" : "kimchy",
+    "post_date" : "2009-11-15T13:12:00",
+    "message" : "Trying out Elasticsearch, so far so good?"
+  }
+}
+
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "2",
+  "_version" : 1,
+  "found" : true,
+  "_source" : {
+    "user" : "kimchy",
+    "post_date" : "2009-11-15T14:12:12",
+    "message" : "Another tweet, will it be indexed?"
+  }
+}
+
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "3",
+  "_version" : 1,
+  "found" : true,
+  "_source" : {
+    "user" : "elastic",
+    "post_date" : "2010-01-15T01:46:38",
+    "message" : "Building the site, should be kewl"
+  }
+}
+</pre>
+
+
+<h4 id="Updating"><a href="#Updating" class="headerlink" title="Updating"></a>Updating</h4><p>The updating operation is the same as Indexing.</p>
+<pre>
+curl -XPUT 'http://localhost:9200/twitter/doc/1?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T13:12:00",
+    "message": "Trying out Elasticsearch, so far so good? yes"
+}'
+
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "1",
+  "_version" : 2,
+  "result" : "updated",
+  "_shards" : {
+    "total" : 2,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "_seq_no" : 1,
+  "_primary_term" : 1
+}
+</pre>
+
+
+<h4 id="Deleting"><a href="#Deleting" class="headerlink" title="Deleting"></a>Deleting</h4><p>The deleting operation is also easy.</p>
+<pre>
+curl -XDELETE 'http://localhost:9200/twitter/doc/1'
+
+{"_index":"twitter","_type":"doc","_id":"1","_version":3,"result":"deleted","_shards":{"total":2,"successful":1,"failed":0},"_seq_no":2,"_primary_term":1}
+</pre>
+
+<h4 id="Searching"><a href="#Searching" class="headerlink" title="Searching"></a>Searching</h4><p>Mmm search…, shouldn’t it be elastic?<br>Let’s find all the tweets that @kimchy@ posted:</p>
+<pre>
+curl -XGET 'http://localhost:9200/twitter/_search?q=user:kimchy&pretty=true'
+
+{
+  "took" : 42,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 2,
+    "max_score" : 0.2876821,
+    "hits" : [
+      {
+        "_index" : "twitter",
+        "_type" : "doc",
+        "_id" : "2",
+        "_score" : 0.2876821,
+        "_source" : {
+          "user" : "kimchy",
+          "post_date" : "2009-11-15T14:12:12",
+          "message" : "Another tweet, will it be indexed?"
+        }
+      },
+      {
+        "_index" : "twitter",
+        "_type" : "doc",
+        "_id" : "1",
+        "_score" : 0.2876821,
+        "_source" : {
+          "user" : "kimchy",
+          "post_date" : "2009-11-15T13:12:00",
+          "message" : "Trying out Elasticsearch, so far so good?"
+        }
+      }
+    ]
+  }
+}
+</pre>
+
+<p>We can also use the JSON query language Elasticsearch provides instead of a query string:</p>
+<pre>
+curl -XGET 'http://localhost:9200/twitter/_search?pretty=true' -H 'Content-Type: application/json' -d '
+{
+    "query" : {
+        "match" : { "user": "kimchy" }
+    }
+}'
+</pre>
+
+<p>Just for kicks, let’s get all the documents stored (we should see the tweet from @elastic@ as well):</p>
+<pre>
+curl -XGET 'http://localhost:9200/twitter/_search?pretty=true' -H 'Content-Type: application/json' -d '
+{
+    "query" : {
+        "match_all" : {}
+    }
+}'
+</pre>
+
+<p>We can also do range search (the @post_date@ was automatically identified as date)</p>
+<pre>
+curl -XGET 'http://localhost:9200/twitter/_search?pretty=true' -H 'Content-Type: application/json' -d '
+{
+    "query" : {
+        "range" : {
+            "post_date" : { "from" : "2009-11-15T13:00:00", "to" : "2009-11-15T14:00:00" }
+        }
+    }
+}'
+</pre>
+
+<p>There are many more options to perform search, after all, it’s a search product no? All the familiar Lucene queries are available through the JSON query language, or through the query parser.</p>
+<h4 id="Multi-Tenant-Indices-and-Types"><a href="#Multi-Tenant-Indices-and-Types" class="headerlink" title="Multi Tenant - Indices and Types"></a>Multi Tenant - Indices and Types</h4><p>Man, that twitter index might get big (in this case, index size == valuation). Let’s see if we can structure our twitter system a bit differently in order to support such large amounts of data.</p>
+<p>Elasticsearch supports multiple indices. In the previous example we used an index called @twitter@ that stored tweets for every user.</p>
+<p>Another way to define our simple twitter system is to have a different index per user (note, though that each index has an overhead). Here is the indexing curl’s in this case:</p>
+<pre>
+curl -XPUT 'http://localhost:9200/kimchy/doc/1?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T13:12:00",
+    "message": "Trying out Elasticsearch, so far so good?"
+}'
+
+curl -XPUT 'http://localhost:9200/kimchy/doc/2?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T14:12:12",
+    "message": "Another tweet, will it be indexed?"
+}'
+</pre>
+
+<p>The above will index information into the @kimchy@ index. Each user will get their own special index.</p>
+<p>Complete control on the index level is allowed. As an example, in the above case, we would want to change from the default 5 shards with 1 replica per index, to only 1 shard with 1 replica per index (== per twitter user). Here is how this can be done (the configuration can be in yaml as well):</p>
+<pre>
+curl -XPUT http://localhost:9200/another_user?pretty -H 'Content-Type: application/json' -d '
+{
+    "index" : {
+        "number_of_shards" : 1,
+        "number_of_replicas" : 1
+    }
+}'
+</pre>
+
+<p>Search (and similar operations) are multi index aware. This means that we can easily search on more than one<br>index (twitter user), for example:</p>
+<pre>
+curl -XGET 'http://localhost:9200/kimchy,another_user/_search?pretty=true' -H 'Content-Type: application/json' -d '
+{
+    "query" : {
+        "match_all" : {}
+    }
+}'
+</pre>
+
+<p>Or on all the indices:</p>
+<pre>
+curl -XGET 'http://localhost:9200/_search?pretty=true' -H 'Content-Type: application/json' -d '
+{
+    "query" : {
+        "match_all" : {}
+    }
+}'
+</pre>
+
+<p>{One liner teaser}: And the cool part about that? You can easily search on multiple twitter users (indices), with different boost levels per user (index), making social search so much simpler (results from my friends rank higher than results from friends of my friends).</p>
+<h4 id="Cat-Index"><a href="#Cat-Index" class="headerlink" title="Cat Index"></a>Cat Index</h4><pre>
+curl -XGET 'http://localhost:9200/_cat/indices?v'
+
+health status index   uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+yellow open   twitter 1aZo0hSfRkKG1INAEZgpnQ   5   1          2            0       14kb           14kb
+yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0      1.2kb          1.2kb
+</pre>
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjm69brov0001gj2izuv8lyda" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/09/17/elasticsearch-cluster/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          elasticsearch 集群的搭建
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/09/12/redis-note/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">redis 学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/09/17/elasticsearch-cluster/">elasticsearch 集群的搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/16/elasticsearch-install/">elasticsearch 单节点安装</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/12/redis-note/">redis 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/14/redis-master-slave/">redis 主从配置</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/07/redis-install/">redis 的安装使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
