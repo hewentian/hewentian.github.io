@@ -333,6 +333,7 @@ $ dpkg --get-selections | grep gcc
 
 1. 通过`unzip`命令解压，指定字符集
 unzip -O CP936 {要解压的文件名}.zip (用GBK, GB18030也可以)
+unzip -O CP936 {要解压的文件名}.zip -d {目标文件夹名}		# -d 是指定解决到这个目录
 
 2. 在环境变量中，指定unzip参数，总是以指定的字符集显示和解压文件
 /etc/environment中加入2行

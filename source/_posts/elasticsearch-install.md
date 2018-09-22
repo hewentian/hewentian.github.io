@@ -5,9 +5,9 @@ tags: elasticsearch
 categories: bigdata
 ---
 
-本文将说下`elasticsearch`的单节点安装，我的机器为`Ubuntu 16.04 LTS`，当前用户为hewentian
+本文将说下`elasticsearch`的单节点安装，我的机器为`Ubuntu 16.04 LTS`，当前用户为`hewentian`
 
-首先，我们要将`elasticsearch`安装包下载回来，截止本文写时，它的最新版本为`6.4.0`，可以在它的[官网][link_id_elasticsearch-6.4.0.tar.gz]下载，当然，我们也可以从这里下载 [elasticsearch-6.4.0.tar.gz](/download/elasticsearch-6.4.0.tar.gz) 和 [elasticsearch-6.4.0.tar.gz.sha512](/download/elasticsearch-6.4.0.tar.gz.sha512)，推荐从`elasticsearch`官网下载最新版本。
+首先，我们要将`elasticsearch`安装包下载回来，截止本文写时，它的最新版本为`6.4.0`，可以在它的[官网][link_id_elasticsearch-6.4.0.tar.gz]下载，当然，我们也可以从这里下载 [elasticsearch-6.4.0.tar.gz](https://pan.baidu.com/s/1Rns322X-h0D5pRaqaGPaZQ "百度网盘")，推荐从`elasticsearch`官网下载最新版本。
 
 ``` bash
 $ cd /home/hewentian/ProjectD/
@@ -29,7 +29,7 @@ $ vi elasticsearch.yml 		# 增加下面的配置
 cluster.name: hewentian-cluster	# 配置集群的名字
 node.name: node-1		# 配置集群下的节点的名字
 
-network.host: 127.0.0.1		# 设置本机IP地址，这里可不设置，但是在集群环境中必须设置
+network.host: 127.0.0.1		# 设置本机IP地址，这里可不设置，但是在集群环境中必须设置。如果在这里指定了IP，则localhost可能无法使用，这个要注意
 
 http.port: 9200			# 默认也是这个端口
 
@@ -141,21 +141,7 @@ http.cors.allow-origin: "*"
 
 ### elasticsearch使用示例
 使用示例我不打算自已写，因为`elasticsearch`官方的`README.textile`已经写得非常详细了。下面的示例摘自`elasticsearch-6.4.0/README.textile`：
-
-要单独创建一个索引：
-<pre>
-curl -XPUT 'http://localhost:9200/music/'
-
-{"acknowledged":true,"shards_acknowledged":true,"index":"music"}
-</pre>
-
-删除索引的命令，如下：
-<pre>
-curl -XDELETE 'http://localhost:9200/music/'
-
-{"acknowledged":true}
-</pre>
-
+**下面代码的缩进尽量不要使用tab，要使用空格**
 
 #### Indexing
 
