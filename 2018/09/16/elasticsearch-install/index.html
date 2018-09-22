@@ -5,19 +5,19 @@
   
   <title>elasticsearch 单节点安装 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本文将说下elasticsearch的单节点安装，我的机器为Ubuntu 16.04 LTS，当前用户为hewentian 首先，我们要将elasticsearch安装包下载回来，截止本文写时，它的最新版本为6.4.0，可以在它的官网下载，当然，我们也可以从这里下载 elasticsearch-6.4.0.tar.gz 和 elasticsearch-6.4.0.tar.gz.sha512，推荐从">
+  <meta name="description" content="本文将说下elasticsearch的单节点安装，我的机器为Ubuntu 16.04 LTS，当前用户为hewentian 首先，我们要将elasticsearch安装包下载回来，截止本文写时，它的最新版本为6.4.0，可以在它的官网下载，当然，我们也可以从这里下载 elasticsearch-6.4.0.tar.gz，推荐从elasticsearch官网下载最新版本。 123456789$ cd">
 <meta name="keywords" content="elasticsearch">
 <meta property="og:type" content="article">
 <meta property="og:title" content="elasticsearch 单节点安装">
 <meta property="og:url" content="https://github.com/hewentian/2018/09/16/elasticsearch-install/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="本文将说下elasticsearch的单节点安装，我的机器为Ubuntu 16.04 LTS，当前用户为hewentian 首先，我们要将elasticsearch安装包下载回来，截止本文写时，它的最新版本为6.4.0，可以在它的官网下载，当然，我们也可以从这里下载 elasticsearch-6.4.0.tar.gz 和 elasticsearch-6.4.0.tar.gz.sha512，推荐从">
+<meta property="og:description" content="本文将说下elasticsearch的单节点安装，我的机器为Ubuntu 16.04 LTS，当前用户为hewentian 首先，我们要将elasticsearch安装包下载回来，截止本文写时，它的最新版本为6.4.0，可以在它的官网下载，当然，我们也可以从这里下载 elasticsearch-6.4.0.tar.gz，推荐从elasticsearch官网下载最新版本。 123456789$ cd">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://github.com/img/elasticsearch-head.png">
-<meta property="og:updated_time" content="2018-09-17T11:59:26.267Z">
+<meta property="og:updated_time" content="2018-09-22T03:00:56.380Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="elasticsearch 单节点安装">
-<meta name="twitter:description" content="本文将说下elasticsearch的单节点安装，我的机器为Ubuntu 16.04 LTS，当前用户为hewentian 首先，我们要将elasticsearch安装包下载回来，截止本文写时，它的最新版本为6.4.0，可以在它的官网下载，当然，我们也可以从这里下载 elasticsearch-6.4.0.tar.gz 和 elasticsearch-6.4.0.tar.gz.sha512，推荐从">
+<meta name="twitter:description" content="本文将说下elasticsearch的单节点安装，我的机器为Ubuntu 16.04 LTS，当前用户为hewentian 首先，我们要将elasticsearch安装包下载回来，截止本文写时，它的最新版本为6.4.0，可以在它的官网下载，当然，我们也可以从这里下载 elasticsearch-6.4.0.tar.gz，推荐从elasticsearch官网下载最新版本。 123456789$ cd">
 <meta name="twitter:image" content="https://github.com/img/elasticsearch-head.png">
   
   
@@ -99,10 +99,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本文将说下<code>elasticsearch</code>的单节点安装，我的机器为<code>Ubuntu 16.04 LTS</code>，当前用户为hewentian</p>
-<p>首先，我们要将<code>elasticsearch</code>安装包下载回来，截止本文写时，它的最新版本为<code>6.4.0</code>，可以在它的<a href="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz" target="_blank" rel="noopener">官网</a>下载，当然，我们也可以从这里下载 <a href="/download/elasticsearch-6.4.0.tar.gz">elasticsearch-6.4.0.tar.gz</a> 和 <a href="/download/elasticsearch-6.4.0.tar.gz.sha512">elasticsearch-6.4.0.tar.gz.sha512</a>，推荐从<code>elasticsearch</code>官网下载最新版本。</p>
+        <p>本文将说下<code>elasticsearch</code>的单节点安装，我的机器为<code>Ubuntu 16.04 LTS</code>，当前用户为<code>hewentian</code></p>
+<p>首先，我们要将<code>elasticsearch</code>安装包下载回来，截止本文写时，它的最新版本为<code>6.4.0</code>，可以在它的<a href="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz" target="_blank" rel="noopener">官网</a>下载，当然，我们也可以从这里下载 <a href="https://pan.baidu.com/s/1Rns322X-h0D5pRaqaGPaZQ" title="百度网盘" target="_blank" rel="noopener">elasticsearch-6.4.0.tar.gz</a>，推荐从<code>elasticsearch</code>官网下载最新版本。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz.sha512</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性，在下载的时候要将 SHA512 文件也下载回来</span><br><span class="line">$ sha512sum -c elasticsearch-6.4.0.tar.gz.sha512 </span><br><span class="line">elasticsearch-6.4.0.tar.gz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf elasticsearch-6.4.0.tar.gz</span><br></pre></td></tr></table></figure>
-<p>对<code>elasticsearch</code>进行设置（目前是单节点，所以也可以不对<code>elasticsearch.yml</code>进行设置，可直接跳过）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/config</span><br><span class="line">$ vi elasticsearch.yml 		<span class="comment"># 增加下面的配置</span></span><br><span class="line"></span><br><span class="line">cluster.name: hewentian-cluster	<span class="comment"># 配置集群的名字</span></span><br><span class="line">node.name: node-1		<span class="comment"># 配置集群下的节点的名字</span></span><br><span class="line"></span><br><span class="line">network.host: 127.0.0.1		<span class="comment"># 设置本机IP地址，这里可不设置，但是在集群环境中必须设置</span></span><br><span class="line"></span><br><span class="line">http.port: 9200			<span class="comment"># 默认也是这个端口</span></span><br><span class="line"></span><br><span class="line">下面的配置保持默认即可，它会将数据和日志保存到elasticsearch-6.4.0目录下的data和logs目录</span><br><span class="line"><span class="comment">#path.data: /path/to/data</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># Path to log files:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#path.logs: /path/to/logs</span></span><br></pre></td></tr></table></figure></p>
+<p>对<code>elasticsearch</code>进行设置（目前是单节点，所以也可以不对<code>elasticsearch.yml</code>进行设置，可直接跳过）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/config</span><br><span class="line">$ vi elasticsearch.yml 		<span class="comment"># 增加下面的配置</span></span><br><span class="line"></span><br><span class="line">cluster.name: hewentian-cluster	<span class="comment"># 配置集群的名字</span></span><br><span class="line">node.name: node-1		<span class="comment"># 配置集群下的节点的名字</span></span><br><span class="line"></span><br><span class="line">network.host: 127.0.0.1		<span class="comment"># 设置本机IP地址，这里可不设置，但是在集群环境中必须设置。如果在这里指定了IP，则localhost可能无法使用，这个要注意</span></span><br><span class="line"></span><br><span class="line">http.port: 9200			<span class="comment"># 默认也是这个端口</span></span><br><span class="line"></span><br><span class="line">下面的配置保持默认即可，它会将数据和日志保存到elasticsearch-6.4.0目录下的data和logs目录</span><br><span class="line"><span class="comment">#path.data: /path/to/data</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># Path to log files:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#path.logs: /path/to/logs</span></span><br></pre></td></tr></table></figure></p>
 <p>内存大小的设置，根据机器内存大小而设置，一般不超过系统总内存的一半：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/config</span><br><span class="line">$ vi jvm.options</span><br><span class="line"></span><br><span class="line">-Xms1g</span><br><span class="line">-Xmx1g</span><br></pre></td></tr></table></figure></p>
 <p>启动<code>elasticsearch</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/bin</span><br><span class="line">$ ./elasticsearch</span><br></pre></td></tr></table></figure></p>
 <p>我们也可以在启动的时候加上参数<code>-d</code>，以后台运行方式启动：<code>./elasticsearch -d</code>。这样单节点版本的<code>elasticsearch</code>就安装完了，在浏览器中输入如下地址：<a href="http://localhost:9200/" target="_blank" rel="noopener">http://localhost:9200/</a></p>
@@ -133,22 +133,7 @@
 <h4 id="elasticsearch-head的安装"><a href="#elasticsearch-head的安装" class="headerlink" title="elasticsearch-head的安装"></a>elasticsearch-head的安装</h4><p>为了更方便的与elasticsearch交互，我们还要安装<code>elasticsearch-head</code>插件，安装步骤如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/gitHub</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/mobz/elasticsearch-head.git</span><br><span class="line">$ <span class="built_in">cd</span> elasticsearch-head</span><br><span class="line">$ npm install 		<span class="comment"># 这个安装过程可能会报错，但是一般不影响。安装完之后，运行下面的命令即可</span></span><br><span class="line">$ npm run start 	<span class="comment"># 运行此命令，你会看到如下输出</span></span><br><span class="line"></span><br><span class="line">&gt; elasticsearch-head@0.0.0 start /home/hewentian/ProjectD/gitHub/elasticsearch-head</span><br><span class="line">&gt; grunt server</span><br><span class="line"></span><br><span class="line">Running <span class="string">"connect:server"</span> (connect) task</span><br><span class="line">Waiting forever...</span><br><span class="line">Started connect web server on http://localhost:9100</span><br><span class="line"></span><br><span class="line">也可以使用下面这种方式启动</span><br><span class="line">$ nohup npm run start &amp;</span><br></pre></td></tr></table></figure></p>
 <p>安装结束之后，可以试着打开这个连接：<a href="http://localhost:9100/" target="_blank" rel="noopener">http://localhost:9100/</a><br>这个连接可以打开，就证明<code>elasticsearch-head</code>安装成功，但是你可能会发现，它无法连上<code>elasticsearch</code>。因为，我们还没有对<code>elasticsearch</code>进行设置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/config</span><br><span class="line">$ vi elasticsearch.yml 	<span class="comment"># 增加下面的配置</span></span><br><span class="line"></span><br><span class="line">允许跨域，否则 elasticsearch head 不能访问 elasticsearch</span><br><span class="line">http.cors.enabled: <span class="literal">true</span></span><br><span class="line">http.cors.allow-origin: <span class="string">"*"</span></span><br></pre></td></tr></table></figure></p>
 <p>配置好之后，重启<code>elasticsearch</code>，就可以使用<code>elasticsearch-head</code>访问<code>elasticsearch</code>了，如下图所示：<br><img src="/img/elasticsearch-head.png" alt="" title="elasticsearch-head"></p>
-<h3 id="elasticsearch使用示例"><a href="#elasticsearch使用示例" class="headerlink" title="elasticsearch使用示例"></a>elasticsearch使用示例</h3><p>使用示例我不打算自已写，因为<code>elasticsearch</code>官方的<code>README.textile</code>已经写得非常详细了。下面的示例摘自<code>elasticsearch-6.4.0/README.textile</code>：</p>
-<p>要单独创建一个索引：</p>
-<pre>
-curl -XPUT 'http://localhost:9200/music/'
-
-{"acknowledged":true,"shards_acknowledged":true,"index":"music"}
-</pre>
-
-<p>删除索引的命令，如下：</p>
-<pre>
-curl -XDELETE 'http://localhost:9200/music/'
-
-{"acknowledged":true}
-</pre>
-
-
+<h3 id="elasticsearch使用示例"><a href="#elasticsearch使用示例" class="headerlink" title="elasticsearch使用示例"></a>elasticsearch使用示例</h3><p>使用示例我不打算自已写，因为<code>elasticsearch</code>官方的<code>README.textile</code>已经写得非常详细了。下面的示例摘自<code>elasticsearch-6.4.0/README.textile</code>：<br><strong>下面代码的缩进尽量不要使用tab，要使用空格</strong></p>
 <h4 id="Indexing"><a href="#Indexing" class="headerlink" title="Indexing"></a>Indexing</h4><p>Let’s try and index some twitter like information. First, let’s index some tweets (the @twitter@ index will be created automatically):</p>
 <pre>
 curl -XPUT 'http://localhost:9200/twitter/doc/1?pretty' -H 'Content-Type: application/json' -d '
@@ -400,7 +385,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjm69brov0001gj2izuv8lyda" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjmcun6510006j32i3utxi5u6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -439,7 +424,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -449,7 +434,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -460,6 +445,10 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/09/18/elasticsearch-note/">elasticsearch 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2018/09/17/elasticsearch-cluster/">elasticsearch 集群的搭建</a>
@@ -475,10 +464,6 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
         
           <li>
             <a href="/2018/08/14/redis-master-slave/">redis 主从配置</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/07/redis-install/">redis 的安装使用</a>
           </li>
         
       </ul>

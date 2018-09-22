@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>elasticsearch 学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="参考资料：Elasticsearch 权威指南https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core 首先，你必须至少有一台elasticsearch服务器可以使用，如果还没安装，可以参考我的上两篇 elasticsearch 单节点安装、elasticsearch 集群的搭建 使用">
+<meta name="keywords" content="elasticsearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="elasticsearch 学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2018/09/18/elasticsearch-note/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="参考资料：Elasticsearch 权威指南https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core 首先，你必须至少有一台elasticsearch服务器可以使用，如果还没安装，可以参考我的上两篇 elasticsearch 单节点安装、elasticsearch 集群的搭建 使用">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-09-22T02:53:49.097Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="elasticsearch 学习笔记">
+<meta name="twitter:description" content="参考资料：Elasticsearch 权威指南https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core 首先，你必须至少有一台elasticsearch服务器可以使用，如果还没安装，可以参考我的上两篇 elasticsearch 单节点安装、elasticsearch 集群的搭建 使用">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-elasticsearch-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/18/elasticsearch-note/" class="article-date">
+  <time datetime="2018-09-18T02:21:01.000Z" itemprop="datePublished">2018-09-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      elasticsearch 学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>参考资料：<br><a href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/index.html" title="Elasticsearch 权威指南" target="_blank" rel="noopener">Elasticsearch 权威指南</a><br><a href="https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core">https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core</a></p>
+<p>首先，你必须至少有一台<code>elasticsearch</code>服务器可以使用，如果还没安装，可以参考我的上两篇 <a href="../../../../2018/09/16/elasticsearch-install" title="elasticsearch 单节点安装">elasticsearch 单节点安装</a>、<a href="../../../../2018/09/17/elasticsearch-cluster" title="elasticsearch 集群的搭建">elasticsearch 集群的搭建</a></p>
+<p>使用JAVA API来操作<code>elasticsearch</code>的例子可以在这里找到：<a href="https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/util/EsJestUtil.java">EsJestUtil.java</a>、<a href="https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/es/EsJestDemo.java">EsJestDemo.java</a></p>
+<h4 id="要单独创建一个索引"><a href="#要单独创建一个索引" class="headerlink" title="要单独创建一个索引"></a>要单独创建一个索引</h4><pre>
+curl -XPUT 'http://localhost:9200/user_index' -H 'Content-Type: application/json' -d '{
+    "settings" : {
+        "index" : {
+            "number_of_shards" : 4,
+            "number_of_replicas" : 1
+        }
+    }
+}'
+
+{"acknowledged":true,"shards_acknowledged":true,"index":"user_index"}
+</pre>
+
+
+<h4 id="删除索引的命令"><a href="#删除索引的命令" class="headerlink" title="删除索引的命令"></a>删除索引的命令</h4><pre>
+curl -XDELETE 'http://localhost:9200/user_index/'
+
+{"acknowledged":true}
+</pre>
+
+
+<h4 id="为user-index中的user创建mapping"><a href="#为user-index中的user创建mapping" class="headerlink" title="为user_index中的user创建mapping"></a>为user_index中的user创建mapping</h4><pre>
+curl -XPUT 'http://localhost:9200/user_index/_mapping/user' -H 'Content-Type: application/json' -d '{
+    "properties": {
+        "id": {
+            "type": "long",
+            "index": "false"
+        },
+        "name": {
+            "type": "keyword"
+        },
+        "age": {
+            "type": "integer"
+        },
+        "tags": {
+            "type": "keyword",
+            "boost": 3.0
+       },
+       "birthday": {
+            "type": "date",
+            "format": "strict_date_optional_time || epoch_millis || yyyy-MM-dd HH:mm:ss"
+       }
+   }
+}'
+</pre>
+
+
+<h4 id="ES中的一些概念"><a href="#ES中的一些概念" class="headerlink" title="ES中的一些概念"></a>ES中的一些概念</h4><p><strong>cluster</strong><br>代表一个集群，集群中有多个节点，其中有一个为主节点，这个主节点是可以通过选举产生的，主从节点是对于集群内部来说的。es的一个概念就是去中心化，字面上理解就是无中心节点，这是对于集群外部来说的，因为从外部来看es集群，在逻辑上是个整体，你与任何一个节点的通信和与整个es集群通信是等价的。</p>
+<p><strong>shards</strong><br>代表索引分片，es可以把一个完整的索引分成多个分片，这样的好处是可以把一个大的索引拆分成多个，分布到不同的节点上。构成分布式搜索。分片的数量只能在索引创建前指定，并且索引创建后不能更改。</p>
+<p><strong>replicas</strong><br>代表索引副本，es可以设置多个索引的副本，副本的作用一是提高系统的容错性，当某个节点某个分片损坏或丢失时可以从副本中恢复。二是提高es的查询效率，es会自动对搜索请求进行负载均衡。</p>
+<p><strong>recovery</strong><br>代表数据恢复或叫数据重新分布，es在有节点加入或退出时会根据机器的负载对索引分片进行重新分配，挂掉的节点重新启动时也会进行数据恢复。</p>
+<p><strong>river</strong><br>代表es的一个数据源，也是其它存储方式（如：数据库）同步数据到es的一个方法。它是以插件方式存在的一个es服务，通过读取river中的数据并把它索引到es中，官方的river有couchDB的，RabbitMQ的，Twitter的，Wikipedia的。</p>
+<p><strong>gateway</strong><br>代表es索引快照的存储方式，es默认是先把索引存放到内存中，当内存满了时再持久化到本地硬盘。gateway对索引快照进行存储，当这个es集群关闭再重新启动时就会从gateway中读取索引备份数据。es支持多种类型的gateway，有本地文件系统（默认），分布式文件系统，Hadoop的HDFS和amazon的s3云存储服务。</p>
+<p><strong>discovery.zen</strong><br>代表es的自动发现节点机制，es是一个基于p2p的系统，它先通过广播寻找存在的节点，再通过多播协议来进行节点之间的通信，同时也支持点对点的交互。</p>
+<p><strong>Transport</strong><br>代表es内部节点或集群与客户端的交互方式，默认内部是使用tcp协议进行交互，同时它支持http协议（json格式）、thrift、servlet、memcached、zeroMQ等的传输协议（通过插件方式集成）。</p>
+<p>Date formats can be customised, but if no format is specified then it uses the default:</p>
+<pre><code>&quot;strict_date_optional_time||epoch_millis&quot;
+</code></pre><p>if you set it like this:</p>
+<pre><code>PUT my_index
+{
+  &quot;mappings&quot;: {
+    &quot;_doc&quot;: {
+      &quot;properties&quot;: {
+        &quot;date&quot;: {
+          &quot;type&quot;:   &quot;date&quot;,
+          &quot;format&quot;: &quot;yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis&quot;
+        }
+      }
+    }
+  }
+}
+</code></pre><p>you can use the below method to set date:</p>
+<pre>
+PUT my_index/_doc/1
+{ "date": "2015-01-01 12:10:30" } 
+
+PUT my_index/_doc/2
+{ "date": "2015-01-01T12:10:30Z" } 
+
+PUT my_index/_doc/3
+{ "date": 1420070400001 }
+</pre>
+
+<h4 id="文件的部分更新"><a href="#文件的部分更新" class="headerlink" title="文件的部分更新"></a>文件的部分更新</h4><p>文档是不可变的：他们不能被修改，只能被替换。 update API 必须遵循同样的规则。 从外部来看，我们在一个文档的某个位置进行部分更新。然而在内部， update API 简单使用与之前描述相同的 检索-修改-重建索引 的处理过程。 区别在于这个过程发生在分片内部，这样就避免了多次请求的网络开销。通过减少检索和重建索引步骤之间的时间，我们也减少了其他进程的变更带来冲突的可能性。</p>
+<p>方法一：update 请求最简单的一种形式是接收文档的一部分作为 doc 的参数， 它只是与现有的文档进行合并。对象被合并到一起，覆盖现有的字段，增加新的字段。 例如，我们增加字段 tags 和 views 到我们的博客文章，如下所示：</p>
+<pre><code>POST /website/blog/1/_update
+{
+       &quot;doc&quot; : {
+          &quot;tags&quot; : [ &quot;testing&quot; ],
+          &quot;views&quot;: 0
+       }
+}
+</code></pre><p>测试示例：</p>
+<pre>
+先插件一条数据：
+curl -XPUT 'http://localhost:9200/facebook/tuser/1?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "tim",
+    "post_date": "2009-11-15T13:12:00",
+    "message": "Elasticsearch, so far so good?"
+}'
+
+再将这条数所的 message 字段修改一下
+curl -XPOST 'http://localhost:9200/facebook/tuser/1/_update' -H 'Content-Type: application/json' -d '
+{
+    "doc":{
+        "message": "Elasticsearch, so far so good? yes"
+    }
+}'
+</pre>
+
+
+<p>方法二：使用脚本部分更新文档编辑<br>脚本可以在 update API中用来改变 _source 的字段内容， 它在更新脚本中称为 ctx._source 。 例如，我们可以使用脚本来增加博客文章中 views 的数量：</p>
+<pre><code>POST /website/blog/1/_update
+{
+       &quot;script&quot; : &quot;ctx._source.views+=1&quot;
+}
+</code></pre><pre>
+curl -XPOST 'http://127.0.0.1:9200/facebook/tuser/1/_update' -H 'Content-Type: application/json' -d '
+{
+    "script" : "ctx._source.message=\"yes, you are right.\""
+}'
+</pre>
+
+<p>下面的命令可以列出每个 Index 所包含的 Type<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -XGET <span class="string">'http://127.0.0.1:9200/user_index/_mapping?pretty=true'</span></span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>cluster.name<br>配置es的集群名称，默认是elasticsearch，不同的集群用名字来区分，es会自动发现在同一网段下的es，配置成相同集群名字的各个节点形成一个集群。如果在同一网段下有多个集群，就可以用这个属性来区分不同的集群。</li>
+<li>http.port<br>设置对外服务的http端口，默认为9200。不能相同，否则会冲突。</li>
+</ol>
+<p>未完待续……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjmcun6570008j32ii5yt2jk4" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/09/17/elasticsearch-cluster/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">elasticsearch 集群的搭建</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/09/18/elasticsearch-note/">elasticsearch 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/17/elasticsearch-cluster/">elasticsearch 集群的搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/16/elasticsearch-install/">elasticsearch 单节点安装</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/12/redis-note/">redis 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/14/redis-master-slave/">redis 主从配置</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

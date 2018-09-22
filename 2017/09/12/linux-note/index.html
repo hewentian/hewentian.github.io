@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-06-27T03:39:32.099Z">
+<meta property="og:updated_time" content="2018-09-22T03:00:42.960Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
@@ -185,7 +185,7 @@ swap    logic        内存2倍
 <h3 id="ubuntu-解压zip文件出现乱码"><a href="#ubuntu-解压zip文件出现乱码" class="headerlink" title="ubuntu 解压zip文件出现乱码"></a>ubuntu 解压zip文件出现乱码</h3><p>由于zip格式中并没有指定编码格式，Windows下生成的zip文件中的编码是GBK/GB2312等，因此，导致这些zip文件在Linux下解压时出现乱码问题，因为Linux下的默认编码是UTF8</p>
 <p>有2种方式解决问题：</p>
 <ol>
-<li><p>通过<code>unzip</code>命令解压，指定字符集<br>unzip -O CP936 {要解压的文件名}.zip (用GBK, GB18030也可以)</p>
+<li><p>通过<code>unzip</code>命令解压，指定字符集<br>unzip -O CP936 {要解压的文件名}.zip (用GBK, GB18030也可以)<br>unzip -O CP936 {要解压的文件名}.zip -d {目标文件夹名}        # -d 是指定解决到这个目录</p>
 </li>
 <li><p>在环境变量中，指定unzip参数，总是以指定的字符集显示和解压文件<br>/etc/environment中加入2行<br>UNZIP=”-O CP936”<br>ZIPINFO=”-O CP936”</p>
 </li>
@@ -369,7 +369,7 @@ Password:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjm69brsf0012gj2i7cihql71" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjmcun66u0013j32ikdp63twi" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -408,7 +408,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -418,7 +418,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -429,6 +429,10 @@ Password:
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/09/18/elasticsearch-note/">elasticsearch 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2018/09/17/elasticsearch-cluster/">elasticsearch 集群的搭建</a>
@@ -444,10 +448,6 @@ Password:
         
           <li>
             <a href="/2018/08/14/redis-master-slave/">redis 主从配置</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/07/redis-install/">redis 的安装使用</a>
           </li>
         
       </ul>
