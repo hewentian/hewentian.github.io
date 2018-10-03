@@ -63,7 +63,7 @@ You can use redis-cli to play with Redis. Start a redis-server instance,
 then in another terminal try the following:
 
     $ cd src
-    $ ./redis-cli
+    $ ./redis-cli	# 如果需要连接到指定的redis可以使用：-h {IP_ADDRESS}参数，如：./redis-cli -h 127.0.0.1
     redis> ping
     PONG
     redis> set foo bar
@@ -108,4 +108,10 @@ You can find the list of all the available commands at http://redis.io/commands.
 
 	$ cd src
 	$ ./redis-cli -a abc123
+	
+	或者使用下面的方式更安全
+	$ cd src
+	$ ./redis-cli
+	127.0.0.1:6379> AUTH abc123
+	OK
 

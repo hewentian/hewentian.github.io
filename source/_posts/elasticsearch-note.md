@@ -7,6 +7,8 @@ categories: bigdata
 
 参考资料：
 [Elasticsearch 权威指南](https://www.elastic.co/guide/cn/elasticsearch/guide/current/index.html "Elasticsearch 权威指南")
+[Elasticsearch Reference](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html "Elasticsearch Reference")
+http://es.xiaoleilu.com/080_Structured_Search/20_contains.html
 https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core
 
 
@@ -179,6 +181,197 @@ $ curl -XGET 'http://127.0.0.1:9200/user_index/_mapping?pretty=true'
 配置es的集群名称，默认是elasticsearch，不同的集群用名字来区分，es会自动发现在同一网段下的es，配置成相同集群名字的各个节点形成一个集群。如果在同一网段下有多个集群，就可以用这个属性来区分不同的集群。
 2. http.port 
 设置对外服务的http端口，默认为9200。不能相同，否则会冲突。
+
+
+ES有很多插件，我们可以选择安装一些，例如，以安装head插件为例。有两种方式安装，一种为在线安装，另一种为本地安装，本地安装要下载插件(git clone)。
+插件下载地址为：
+https://github.com/mobz/elasticsearch-head
+
+
+这里以在线安装为例，我之前在介绍[elasticsearch 单节点安装][link_id_elasticsearch-install]中使用的是本地安装，推荐使用本地安装。旧版本安装过程如下：
+进入ES的HOME目录，执行plugin命令，如下，
+
+	cd ${ES_HOME}/bin
+	./elasticsearch-plugin install mobz/elasticsearch-head
+
+安装完毕后，要重启ES。在浏览器中输入：http://localhost:9200/_plugin/head/，如果看到了页面，则表明安装成功。
+
+
+ES一次查询，最多返回10条，但hits会显示total一共有多少条，要使用from, size指定。
+在ES里面删除数据的时候要非常小心，如果全部都清空了，可能整个库的MAPPING都会有问题。这时，一些原先可以执行的语句可能会无法执行
+
+
+#### 以下是一些常查询：
+<pre>
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "match": {
+            "_id": "http://www.abc.com"
+          }
+        },
+        {
+          "match": {
+            "_id": "http://www.csdn.net/tag/scala"
+          }
+        }
+      ]
+    }
+  }
+}
+
+	
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "address": "*canton*"
+          }
+        },
+        {
+          "match": {
+            "name": "Tim"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "bool": {
+            "should": [
+              {
+                "match": {
+                  "title": {
+                    "minimum_should_match": "100%",
+                    "query": "Air Quality"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "body_text": {
+                    "minimum_should_match": "100%",
+                    "query": "Air Quality"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "wildcard": {
+            "user_ids": "*760aa069-2ed2-40d6-89da-f62e83f82887*"
+          }
+        }
+      ]
+    }
+  },
+  "from": 0,
+  "size": 20
+}
+
+
+{
+  "sort": [
+    {
+      "updatetime_6h": {
+        "order": "desc"
+      }
+    },
+    {
+      "_score": {
+        "order": "desc"
+      }
+    }
+  ],
+  "query": {
+    "filtered": {
+      "query": {
+        "bool": {
+          "must_not": [],
+          "should": [
+            {
+              "bool": {
+                "should": [
+                  {
+                    "match_phrase": {
+                      "app_type.title": {
+                        "query": "china"
+                      }
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "app_type.title": {
+                        "query": "中国"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "bool": {
+                "should": [
+                  {
+                    "match_phrase": {
+                      "app_type.body_text": {
+                        "query": "china"
+                      }
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "app_type.body_text": {
+                        "query": "中国"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "must": []
+        }
+      },
+      "filter": {
+        "bool": {
+          "should": [],
+          "must": [
+            {
+              "range": {
+                "updatetime": {
+                  "lte": 1474617163524
+                }
+              }
+            },
+            {
+              "query": {
+                "wildcard": {
+                  "user_ids": "*760aa069-2ed2-40d6-89da-f62e83f82887*"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "from": 0,
+  "size": 20
+}
+</pre>
 
 未完待续……
 

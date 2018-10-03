@@ -1176,3 +1176,43 @@ $ sed 's/beforeStr/afterStr/g' work.txt > work2.txt
 # 覆盖原来的文件，即在原来的文件修改
 $ sed -i 's/beforeStr/afterStr/g' work.txt
 ```
+
+### Ubuntu 中卸载软件的几种命令
+参考：https://blog.csdn.net/dzjian_/article/details/79768813
+
+1、在终端里通过 apt-get 安装的软件：
+
+	安装软件：sudo apt-get install softname1 softname2 softname3 ……
+	卸载软件：sudo apt-get remove softname1 softname2 softname3 ……
+	卸载并清除配置：sudo apt-get remove --purge softname1
+	更新软件信息数据库：sudo apt-get update
+	进行系统升级：sudo apt-get upgrade, sudo apt-get distupgrade
+	搜索软件包：sudo apt-cache search softname1 softname2 softname3 ……
+
+
+2、在终端里通过 deb 安装的软件：
+
+	安装deb软件包：dpkg -i softname.deb
+	删除软件包：dpkg -r softname.deb
+	删除配置文件：dpkg --purge softname.deb	注意：-r 和 --purge不能同时使用，先删除软件包，再删除配置文件
+	查看软件包信息：dpkg -info softname.deb
+	查看文件拷贝详情：dpkg -L softname.deb
+	查看系统中已安装软件包信息：dpkg -l
+	重新配置软件包：dpkg -reconfigure softname
+
+
+3、卸载源代码编译的的软件：
+
+	cd 源代码目录
+	make clean
+	./configure
+	（make）
+	make uninstall
+	rm -rf 目录
+
+4、清理系统：
+
+	sudo apt-get autoclean
+	sudo apt-get clean
+	sudo apt-get autoremove
+
