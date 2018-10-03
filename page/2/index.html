@@ -71,6 +71,115 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-neo4j-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/02/17/neo4j-note/" class="article-date">
+  <time datetime="2018-02-17T01:59:18.000Z" itemprop="datePublished">2018-02-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/db/">db</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/17/neo4j-note/">neo4j学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="一些基本概念，从官网copy过来的，如下："><a href="#一些基本概念，从官网copy过来的，如下：" class="headerlink" title="一些基本概念，从官网copy过来的，如下："></a>一些基本概念，从官网copy过来的，如下：</h2><h3 id="Graph-Fundamentals"><a href="#Graph-Fundamentals" class="headerlink" title="Graph Fundamentals"></a>Graph Fundamentals</h3><p>Basic concepts to get you going.</p>
+<p>A graph database can store any kind of data using a few simple concepts:</p>
+<ol>
+<li>Nodes - graph data records</li>
+<li>Relationships - connect nodes</li>
+<li>Properties - named data values</li>
+</ol>
+<h3 id="A-Graph-Database"><a href="#A-Graph-Database" class="headerlink" title="A Graph Database"></a>A Graph Database</h3><p>Neo4j stores data in a Graph, with records called Nodes.</p>
+<p>The simplest graph has just a single node with some named values called Properties. Let’s draw a social graph of our friends on the Neo4j team:</p>
+<ol>
+<li>Start by drawing a circle for the node</li>
+<li>Add the name Emil</li>
+<li>Note that he is from Sweden</li>
+</ol>
+<ul>
+<li>Nodes are the name for data records in a graph</li>
+<li>Data is stored as Properties</li>
+<li>Properties are simple name/value pairs</li>
+</ul>
+<h3 id="Labels"><a href="#Labels" class="headerlink" title="Labels"></a>Labels</h3><p>Associate a set of nodes.</p>
+<p>Nodes can be grouped together by applying a Label to each member. In our social graph, we’ll label each node that represents a Person.</p>
+<ol>
+<li>Apply the label “Person” to the node we created for Emil</li>
+<li>Color “Person” nodes red</li>
+</ol>
+<ul>
+<li>A node can have zero or more labels</li>
+<li>Labels do not have any properties</li>
+</ul>
+<h3 id="More-Nodes"><a href="#More-Nodes" class="headerlink" title="More Nodes"></a>More Nodes</h3><p>Schema-free, nodes can have a mix of common and unique properties.</p>
+<p>Like any database, storing data in Neo4j can be as simple as adding more records. We’ll add a few more nodes:</p>
+<ol>
+<li>Emil has a klout score of 99</li>
+<li>Johan, from Sweden, who is learning to surf</li>
+<li>Ian, from England, who is an author</li>
+<li>Rik, from Belgium, has a cat named Orval</li>
+<li>Allison, from California, who surfs</li>
+</ol>
+<ul>
+<li>Similar nodes can have different properties</li>
+<li>Properties can be strings, numbers, or booleans</li>
+<li>Neo4j can store billions of nodes</li>
+</ul>
+<h3 id="Consider-Relationships"><a href="#Consider-Relationships" class="headerlink" title="Consider Relationships"></a>Consider Relationships</h3><p>Connect nodes in the graph</p>
+<p>The real power of Neo4j is in connected data. To associate any two nodes, add a Relationship which describes how the records are related.</p>
+<p>In our social graph, we simply say who KNOWS whom:</p>
+<ol>
+<li>Emil KNOWS Johan and Ian</li>
+<li>Johan KNOWS Ian and Rik</li>
+<li>Rik and Ian KNOWS Allison</li>
+</ol>
+<ul>
+<li>Relationships always have direction</li>
+<li>Relationships always have a type</li>
+<li>Relationships form patterns of data</li>
+</ul>
+<h3 id="Relationship-properties"><a href="#Relationship-properties" class="headerlink" title="Relationship properties"></a>Relationship properties</h3><p>Store information shared by two nodes.</p>
+<p>In a property graph, relationships are data records that can also contain properties. Looking more closely at Emil’s relationships, note that:</p>
+<ul>
+<li>Emil has known Johan since 2001</li>
+<li>Emil rates Ian 5 (out of 5)</li>
+<li>Everyone else can have similar relationship properties</li>
+</ul>
+<p>可以使用这种方式访问neo4j数据库：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:7474/browser/</span><br></pre></td></tr></table></figure></p>
+<h3 id="清空neo4j数据库"><a href="#清空neo4j数据库" class="headerlink" title="清空neo4j数据库"></a>清空neo4j数据库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">match(n)</span><br><span class="line">optional match(n)-[r]-()</span><br><span class="line">delete n,r</span><br></pre></td></tr></table></figure>
+<p>执行上面的命令后，会删除节点及与该节点相关的关系，但是property keys删不干净</p>
+<p>未完，待续……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjmsn4xoz001ga12iyfelsy26" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/neo4j/">neo4j</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-gitbook-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/01/29/gitbook-note/" class="article-date">
@@ -138,7 +247,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjmcun65l000dj32if51tz56d" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjmsn4xnd000fa12if8q1s96r" class="article-share-link">Share</a>
       
       
     </footer>
@@ -230,7 +339,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjmcun63x0000j32imc6hr012" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjmsn4xma0002a12iaqy3d6h6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/">activemq</a></li></ul>
@@ -311,7 +420,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjmcun67u001kj32icgohya8z" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjmsn4xpb001na12i3up3hnnx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabbitmq/">rabbitmq</a></li></ul>
@@ -370,7 +479,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjmcun68s0025j32iqqka17sa" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjmsn4xq90027a12iq7xlw1i3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -424,7 +533,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjmcun68z002cj32ip8gafcx3" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjmsn4xqm002ha12ijpuscxno" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -493,7 +602,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjmcun65s000ej32i7k1orhwr" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjmsn4xno000qa12i37bjc13m" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jdk/">jdk</a></li></ul>
@@ -672,7 +781,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjmcun678001aj32irebdjw8k" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjmsn4xos001da12i48od1o31" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
@@ -759,7 +868,7 @@ clientPort=2183                                        # 这台服务器的端�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjmcun69j002lj32ihhxqqb9i" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjmsn4xqv002na12iz3j9e1zn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -819,87 +928,11 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjmcun69p002oj32i4zcl9h75" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjmsn4xr0002sa12ih69fdyl2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hexo-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/12/02/hexo-note/" class="article-date">
-  <time datetime="2017-12-02T05:59:48.000Z" itemprop="datePublished">2017-12-02</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/other/">other</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/02/hexo-note/">hexo学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-<h2 id="下面将详细说说安装过程，基于-Ubuntu-16-04-LTS："><a href="#下面将详细说说安装过程，基于-Ubuntu-16-04-LTS：" class="headerlink" title="下面将详细说说安装过程，基于 Ubuntu 16.04 LTS："></a>下面将详细说说安装过程，基于 Ubuntu 16.04 LTS：</h2><h3 id="1-安装-Git"><a href="#1-安装-Git" class="headerlink" title="1. 安装 Git"></a>1. 安装 Git</h3><p>在 Ubuntu 下面安裝非常方便，可以先在命令行中輸入<code>git</code>，如果没显示命令，则输入如下命令安装即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install git</span><br></pre></td></tr></table></figure></p>
-<h3 id="2-安装-Node-js"><a href="#2-安装-Node-js" class="headerlink" title="2. 安装 Node.js"></a>2. 安装 Node.js</h3><p>先测试一下Node.js是否已安装，在命令行中直接输入<code>node</code>可以看到提示符变成了一个向右<br>的箭头就表示成功了，然后按ctrl + c退出node模式，出现$符号才表示正常了</p>
-<p>如果未安裝 node，安裝方法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install nodejs-legacy</span><br></pre></td></tr></table></figure></p>
-<h3 id="3-安装-Hexo"><a href="#3-安装-Hexo" class="headerlink" title="3. 安装 Hexo"></a>3. 安装 Hexo</h3><p>进入到我们博客的仓库, 输入以下命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo npm install -g hexo-cli</span><br><span class="line">或者</span><br><span class="line">$ sudo npm install hexo --save  <span class="comment"># 或者去掉 sudo</span></span><br></pre></td></tr></table></figure></p>
-<p>敲完回车可能没有任何提示，请一定要耐心等待<br>安装成功后，可以输入以下命令测试一下Hexo是否安装成功<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo version</span><br></pre></td></tr></table></figure></p>
-<p>如果能看到hexo的版本号信息，就表示安装成功了<br>接下来，进入到我们博客的仓库</p>
-<p>然后依次输入以下命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init  <span class="comment"># 注意此命令，要求当前仓库为空，可以先将仓库的文件移走，再执行此命令，然后再将文件移回来。</span></span><br><span class="line">$ <span class="comment"># 可以先在当前目录的父目录创建临时目录hgi</span></span><br><span class="line">$ mkdir ../hgi</span><br><span class="line">$ mv * ../hgi <span class="comment"># 这个命令不会将 .git .gitignore这两个文件夹移走，所以，还要执行如下命令</span></span><br><span class="line">$ mv .git .gitignore ../hgi/</span><br><span class="line">$ npm install</span><br><span class="line">$ hexo g</span><br><span class="line">$ hexo s</span><br></pre></td></tr></table></figure></p>
-<p>这时候在浏览器输入<a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a> 就可以看到hexo已经成功生成了博客，当然这只是我们本地可以看到的</p>
-<p>最后将博客的仓库目录下除了<code>node_modules</code>之外的文件都删掉，然后将 ../hgi 中的除了<code>node_modules</code>之外的文件都复制回来(不要忘记.git .gitignore)，大功告成。<br>重启hexo</p>
-<p>配置Hexo到Github</p>
-<p>找到我们刚刚创建的文件夹，在里面找到_config.yml文件，用notepad++打开，直接拖到最后，添加如下：</p>
-<pre><code>deploy:
-  type: git
-  repository: git@github.com:hewentian/hewentian.github.io.git
-  branch: master
-</code></pre><p>发布到 github<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br><span class="line">$ hexo g</span><br><span class="line">$ hexo d</span><br></pre></td></tr></table></figure></p>
-<p>如果出现以下异常</p>
-<pre><code>ERROR Deployer not found: git
-</code></pre><p>尝试输入以下命令，然后重新执行刚刚的两条命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
-<p>这时候我们就可以在浏览器输入 <a href="https://hewentian.github.io" target="_blank" rel="noopener">https://hewentian.github.io</a> 就可以看到博客已经搭建成功了。</p>
-<p>使用以下命令验证是否安装成功<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ node -v</span><br><span class="line">$ npm -v</span><br><span class="line">$ hexo -v</span><br></pre></td></tr></table></figure></p>
-<p>解释一下：<br>node_modules：是依赖包<br>public：存放的是生成的页面<br>scaffolds：命令生成文章等的模板<br>source：用命令创建的各种文章<br>themes：主题<br>_config.yml：整个博客的配置<br>db.json：source解析所得到的<br>package.json：项目所需模块项目的配置信息</p>
-<p>添加博文<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new <span class="string">"postName"</span>  <span class="comment">#新建博文,其中postName是博文题目</span></span><br></pre></td></tr></table></figure></p>
-<p>博文会自动生成在博客目录下source/_posts/postName.md</p>
-<p>注意事项</p>
-<p>所有键的冒号后面留一个空格，如 <code>language: zh-CN</code></p>
-<p>一些常用命令：<br>hexo new “postName” #新建文章<br>hexo new page “pageName” #新建页面<br>hexo generate #生成静态页面至public目录, hexo g<br>hexo server #开启预览访问端口（默认端口4000，’ctrl + c’关闭server）, hexo s<br>hexo deploy #将.deploy目录部署到GitHub, hexo d<br>hexo help # 查看帮助<br>hexo version #查看Hexo的版本</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/02/hexo-note/" data-id="cjmcun65y000ij32ivcuspl0f" class="article-share-link">Share</a>
-      
-      
     </footer>
   </div>
   
@@ -920,7 +953,7 @@ clientPort=2181
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -930,7 +963,7 @@ clientPort=2181
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -941,6 +974,10 @@ clientPort=2181
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
+          </li>
         
           <li>
             <a href="/2018/09/18/elasticsearch-note/">elasticsearch 学习笔记</a>
@@ -956,10 +993,6 @@ clientPort=2181
         
           <li>
             <a href="/2018/09/12/redis-note/">redis 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/14/redis-master-slave/">redis 主从配置</a>
           </li>
         
       </ul>

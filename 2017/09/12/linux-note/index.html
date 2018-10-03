@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-09-22T03:00:42.960Z">
+<meta property="og:updated_time" content="2018-10-03T04:15:25.454Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
@@ -365,11 +365,38 @@ Password:
 </ol>
 <h3 id="Linux环境下打开来自Windows的文本文件出现乱码"><a href="#Linux环境下打开来自Windows的文本文件出现乱码" class="headerlink" title="Linux环境下打开来自Windows的文本文件出现乱码"></a>Linux环境下打开来自Windows的文本文件出现乱码</h3><p>使用<code>iconv</code>命令，将目标文件编码方式转为UTF-8，命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ iconv -f gbk -t utf8 -o outputFile sourceFile</span><br><span class="line"></span><br><span class="line">其实，outputFile、sourceFile的名字可以相同，这样就将原文件的编码修改了</span><br></pre></td></tr></table></figure></p>
 <h3 id="sed命令修改文件"><a href="#sed命令修改文件" class="headerlink" title="sed命令修改文件"></a>sed命令修改文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将beforeStr修改为afterStr，保存为新的文件work2.txt</span></span><br><span class="line">$ sed <span class="string">'s/beforeStr/afterStr/g'</span> work.txt &gt; work2.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 覆盖原来的文件，即在原来的文件修改</span></span><br><span class="line">$ sed -i <span class="string">'s/beforeStr/afterStr/g'</span> work.txt</span><br></pre></td></tr></table></figure>
-
+<h3 id="Ubuntu-中卸载软件的几种命令"><a href="#Ubuntu-中卸载软件的几种命令" class="headerlink" title="Ubuntu 中卸载软件的几种命令"></a>Ubuntu 中卸载软件的几种命令</h3><p>参考：<a href="https://blog.csdn.net/dzjian_/article/details/79768813" target="_blank" rel="noopener">https://blog.csdn.net/dzjian_/article/details/79768813</a></p>
+<p>1、在终端里通过 apt-get 安装的软件：</p>
+<pre><code>安装软件：sudo apt-get install softname1 softname2 softname3 ……
+卸载软件：sudo apt-get remove softname1 softname2 softname3 ……
+卸载并清除配置：sudo apt-get remove --purge softname1
+更新软件信息数据库：sudo apt-get update
+进行系统升级：sudo apt-get upgrade, sudo apt-get distupgrade
+搜索软件包：sudo apt-cache search softname1 softname2 softname3 ……
+</code></pre><p>2、在终端里通过 deb 安装的软件：</p>
+<pre><code>安装deb软件包：dpkg -i softname.deb
+删除软件包：dpkg -r softname.deb
+删除配置文件：dpkg --purge softname.deb    注意：-r 和 --purge不能同时使用，先删除软件包，再删除配置文件
+查看软件包信息：dpkg -info softname.deb
+查看文件拷贝详情：dpkg -L softname.deb
+查看系统中已安装软件包信息：dpkg -l
+重新配置软件包：dpkg -reconfigure softname
+</code></pre><p>3、卸载源代码编译的的软件：</p>
+<pre><code>cd 源代码目录
+make clean
+./configure
+（make）
+make uninstall
+rm -rf 目录
+</code></pre><p>4、清理系统：</p>
+<pre><code>sudo apt-get autoclean
+sudo apt-get clean
+sudo apt-get autoremove
+</code></pre>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjmcun66u0013j32ikdp63twi" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjmsn4xo80014a12in990uz4i" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -408,7 +435,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -418,7 +445,7 @@ Password:
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -429,6 +456,10 @@ Password:
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
+          </li>
         
           <li>
             <a href="/2018/09/18/elasticsearch-note/">elasticsearch 学习笔记</a>
@@ -444,10 +475,6 @@ Password:
         
           <li>
             <a href="/2018/09/12/redis-note/">redis 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/14/redis-master-slave/">redis 主从配置</a>
           </li>
         
       </ul>
