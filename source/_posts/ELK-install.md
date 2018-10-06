@@ -250,6 +250,6 @@ https://www.elastic.co/guide/en/logstash/current/plugins-filters-grok.html
 未完，待续……
 
 [link_id_redis-install]: ../../../../2018/08/07/redis-install/
-[link_id_elasticsearch-install]: ../../../..//2018/09/16/elasticsearch-install/
+[link_id_elasticsearch-install]: ../../../../2018/09/16/elasticsearch-install/
 [link_id_logstash-6.4.0.tar.gz]: https://artifacts.elastic.co/downloads/logstash/logstash-6.4.0.tar.gz
 [link_id_kibana-6.4.0-linux-x86_64.tar.gz]: https://artifacts.elastic.co/downloads/kibana/kibana-6.4.0-linux-x86_64.tar.gz
