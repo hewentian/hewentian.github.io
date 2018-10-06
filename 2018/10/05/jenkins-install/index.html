@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>jenkins 学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇将说说jenkins的使用。 首先，我们要将jenkins的安装包下载回来，可以在它的官网下载最新稳定版： 1234567$ cd /home/hewentian/ProjectD/$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war$ wget http://mirrors.jenkins.io/war-stable/l">
+<meta name="keywords" content="jenkins">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jenkins 学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2018/10/05/jenkins-install/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="本篇将说说jenkins的使用。 首先，我们要将jenkins的安装包下载回来，可以在它的官网下载最新稳定版： 1234567$ cd /home/hewentian/ProjectD/$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war$ wget http://mirrors.jenkins.io/war-stable/l">
+<meta property="og:locale" content="en-US">
+<meta property="og:image" content="https://github.com/img/jenkins-1.png">
+<meta property="og:image" content="https://github.com/img/jenkins-2.png">
+<meta property="og:image" content="https://github.com/img/jenkins-3.png">
+<meta property="og:image" content="https://github.com/img/jenkins-4.png">
+<meta property="og:image" content="https://github.com/img/jenkins-5.png">
+<meta property="og:image" content="https://github.com/img/jenkins-6.png">
+<meta property="og:image" content="https://github.com/img/jenkins-7.png">
+<meta property="og:image" content="https://github.com/img/jenkins-8.png">
+<meta property="og:image" content="https://github.com/img/jenkins-9.png">
+<meta property="og:updated_time" content="2018-10-06T09:57:01.323Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jenkins 学习笔记">
+<meta name="twitter:description" content="本篇将说说jenkins的使用。 首先，我们要将jenkins的安装包下载回来，可以在它的官网下载最新稳定版： 1234567$ cd /home/hewentian/ProjectD/$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war$ wget http://mirrors.jenkins.io/war-stable/l">
+<meta name="twitter:image" content="https://github.com/img/jenkins-1.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-jenkins-install" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/05/jenkins-install/" class="article-date">
+  <time datetime="2018-10-05T04:02:47.000Z" itemprop="datePublished">2018-10-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/other/">other</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      jenkins 学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇将说说jenkins的使用。</p>
+<p>首先，我们要将<code>jenkins</code>的安装包下载回来，可以在它的<a href="http://mirrors.jenkins.io/war-stable/latest/" target="_blank" rel="noopener">官网</a>下载最新稳定版：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war</span><br><span class="line">$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war.sha256</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性</span><br><span class="line">$ sha256sum -c jenkins.war.sha256 </span><br><span class="line">jenkins.war: OK</span><br></pre></td></tr></table></figure>
+<p>我们将它安装在当前目录(<code>/home/hewentian/ProjectD</code>)下，在当前目录下创建一个jenkins目录，用作<code>JENKINS_HOME</code>目录，我们将相关命令放到一个脚本<code>start_jenkins.sh</code>中：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ touch start_jenkins.sh</span><br><span class="line">$ vi start_jenkins.sh</span><br></pre></td></tr></table></figure></p>
+<p>其中<code>start_jenkins.sh</code>脚本的内容如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">JENKINS_HOME=/home/hewentian/ProjectD/jenkins</span><br><span class="line">JENKINS_WAR=/home/hewentian/ProjectD/jenkins.war</span><br><span class="line">LOG_ROOT=<span class="variable">$JENKINS_HOME</span>/logs</span><br><span class="line">LOG_FILE=<span class="variable">$LOG_ROOT</span>/jenkins.log</span><br><span class="line">WEB_ROOT=<span class="variable">$JENKINS_HOME</span>/war</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Starting Jenkins ..."</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"JENKINS_HOME: <span class="variable">$JENKINS_HOME</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"JENKINS_WAR: <span class="variable">$JENKINS_WAR</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"LOG_FILE: <span class="variable">$LOG_FILE</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"WEB_ROOT: <span class="variable">$WEB_ROOT</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="variable">$JENKINS_HOME</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"creating: <span class="variable">$JENKINS_HOME</span>"</span></span><br><span class="line">    mkdir <span class="variable">$JENKINS_HOME</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="variable">$LOG_ROOT</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"creating: <span class="variable">$LOG_ROOT</span>"</span></span><br><span class="line">    mkdir <span class="variable">$LOG_ROOT</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ ! -e <span class="variable">$LOG_FILE</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"creating: <span class="variable">$LOG_FILE</span>"</span></span><br><span class="line">    touch <span class="variable">$LOG_FILE</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="variable">$WEB_ROOT</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"creating: <span class="variable">$WEB_ROOT</span>"</span></span><br><span class="line">    mkdir <span class="variable">$WEB_ROOT</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">java -Xms1024m -Xmx1024m -Djava.awt.headless=<span class="literal">true</span> -DJENKINS_HOME=<span class="variable">$JENKINS_HOME</span> -jar <span class="variable">$JENKINS_WAR</span> --logfile=<span class="variable">$LOG_FILE</span> --webroot=<span class="variable">$WEB_ROOT</span> --httpPort=8080 --daemon &gt;&gt; <span class="variable">$LOG_FILE</span></span><br><span class="line"></span><br><span class="line">tail -f <span class="variable">$LOG_FILE</span></span><br></pre></td></tr></table></figure></p>
+<p>启动jenkins：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ chmod +x start_jenkins.sh</span><br><span class="line">$ . start_jenkins.sh</span><br></pre></td></tr></table></figure></p>
+<p>如果你看到如下输出：</p>
+<pre><code>Starting Jenkins ...
+JENKINS_HOME: /home/hewentian/ProjectD/jenkins
+JENKINS_WAR: /home/hewentian/ProjectD/jenkins.war
+LOG_FILE: /home/hewentian/ProjectD/jenkins/logs/jenkins.log
+WEB_ROOT: /home/hewentian/ProjectD/jenkins/war
+creating: /home/hewentian/ProjectD/jenkins
+creating: /home/hewentian/ProjectD/jenkins/logs
+creating: /home/hewentian/ProjectD/jenkins/logs/jenkins.log
+creating: /home/hewentian/ProjectD/jenkins/war
+Forking into background to run as a daemon.
+Running from: /home/hewentian/ProjectD/jenkins.war
+Oct 06, 2018 10:48:18 AM org.eclipse.jetty.util.log.Log initialized
+INFO: Logging initialized @780ms to org.eclipse.jetty.util.log.JavaUtilLog
+Oct 06, 2018 10:48:18 AM winstone.Logger logInternal
+.
+.
+. 中间省略部分日志
+.
+Oct 06, 2018 10:48:29 AM jenkins.install.SetupWizard init
+INFO: 
+
+*************************************************************
+*************************************************************
+*************************************************************
+
+Jenkins initial setup is required. An admin user has been created and a password generated.
+Please use the following password to proceed to installation:
+
+02b24053bc4844f4a348fdbbbf65c347
+
+This may also be found at: /home/hewentian/ProjectD/jenkins/secrets/initialAdminPassword
+
+*************************************************************
+*************************************************************
+*************************************************************
+
+Oct 06, 2018 10:48:36 AM hudson.model.UpdateSite updateData
+INFO: Obtained the latest update center data file for UpdateSource default
+Oct 06, 2018 10:48:37 AM hudson.model.UpdateSite updateData
+INFO: Obtained the latest update center data file for UpdateSource default
+Oct 06, 2018 10:48:37 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Completed initialization
+Oct 06, 2018 10:48:37 AM hudson.WebAppMain$3 run
+INFO: Jenkins is fully up and running
+Oct 06, 2018 10:48:37 AM hudson.model.DownloadService$Downloadable load
+INFO: Obtained the updated data file for hudson.tasks.Maven.MavenInstaller
+Oct 06, 2018 10:48:37 AM hudson.model.AsyncPeriodicWork$1 run
+INFO: Finished Download metadata. 10,126 ms
+</code></pre><p>则证明启动成功，我们按上面的提示打开浏览器，输入：<br><a href="http://localhost:8080" target="_blank" rel="noopener">http://localhost:8080</a></p>
+<p>你将会见到如下界面：<br><img src="/img/jenkins-1.png" alt="" title="jenkins初次启动界面"></p>
+<p>将上面日志中的密码输入到上述界面，并点击<code>[Continue]</code>按钮，将出现下图界面：<br><img src="/img/jenkins-2.png" alt="" title="jenkins安装插件界面"></p>
+<p>为简单起见，选择<code>Install suggested plugins</code>安装即可，安装进度如下：<br><img src="/img/jenkins-3.png" alt="" title="jenkins安装插件界面"></p>
+<p>接下来是设置admin用户和密码：<br>Username: hewentian<br>Password: abc123</p>
+<p><img src="/img/jenkins-4.png" alt="" title="jenkins设置admin用户"></p>
+<p>点击<code>[Save and Continue]</code>，并在接下来的界面点击<code>[Save and Finish]</code>完成设置。<br><img src="/img/jenkins-5.png" alt="" title="jenkins最终界面"></p>
+<h3 id="下面进行简单的配置"><a href="#下面进行简单的配置" class="headerlink" title="下面进行简单的配置"></a>下面进行简单的配置</h3><p>按下图所示设置JDK、Maven：<code>[Manage Jenkins]-&gt;[Global Tool Configuration]</code>：<br><img src="/img/jenkins-6.png" alt="" title="设置"><br><img src="/img/jenkins-7.png" alt="" title="设置"></p>
+<h3 id="下面安装插件"><a href="#下面安装插件" class="headerlink" title="下面安装插件"></a>下面安装插件</h3><p><code>[Manage Jenkins]-&gt;[Manage Plugins]</code><br>安装<code>Maven Integration</code>插件，如下图，直接点击<code>Install wthout restart</code>，该插件是用于建立maven job<br><img src="/img/jenkins-8.png" alt="" title="安装maven插件"></p>
+<p>安装<code>Deploy to container</code>插件，用于将构建好的应用部署到容器中：<br><img src="/img/jenkins-9.png" alt="" title="安装Deploy to container插件"></p>
+<h3 id="下面演示构建项目"><a href="#下面演示构建项目" class="headerlink" title="下面演示构建项目"></a>下面演示构建项目</h3><p>首先构建一个从gitHub中拉取原码的项目</p>
+<p>未完待续……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjmx9pod6000yvt2ievjlkkyz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/10/02/ELK-install/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ELK 日志系统的搭建</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/05/jenkins-install/">jenkins 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/18/elasticsearch-note/">elasticsearch 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/17/elasticsearch-cluster/">elasticsearch 集群的搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/16/elasticsearch-install/">elasticsearch 单节点安装</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://github.com/hewentian/page/2/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="my personal blog">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:locale" content="en-US">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Tim Ho&#39;s Technology Blog">
 <meta name="twitter:description" content="my personal blog">
@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -70,6 +70,88 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-solr-cloud" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/03/solr-cloud/" class="article-date">
+  <time datetime="2018-03-03T08:38:59.000Z" itemprop="datePublished">2018-03-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/03/solr-cloud/">solr 集群的创建</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>solr 集群，即 solrcloud 的创建<br>下面说说solr集群的安装使用，同样是使用前面例子使用的 solr6.5.0 版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。</p>
+<p>首先，你得搭建 zookeeper 集群，可以参考 <a href="../../../../2017/12/06/zookeeper-install-cluster/">zookeeper集群版安装方法</a></p>
+<h3 id="下面开始创建solr集群："><a href="#下面开始创建solr集群：" class="headerlink" title="下面开始创建solr集群："></a>下面开始创建solr集群：</h3><p>创建一个目录用于存放集群使用到的所有实例和配置信息<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mkdir solrCloud		<span class="comment"># 存放集群的所有文件，包括：三个solr实例、和实例共享的配置文件solr-configs</span></span><br><span class="line">$ mkdir solrCloud/solr-configs	<span class="comment"># 用于存放集群的core的配置信息，会被上传到zookeeper</span></span><br></pre></td></tr></table></figure></p>
+<p>将一个SOLR压缩包放到这个目录，我之前已在Downloads目录下载好了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cp /home/hewentian/Downloads/solr-6.5.0.tgz ./</span><br><span class="line">$ tar xzvf solr-6.5.0.tgz</span><br><span class="line">$ mv solr-6.5.0 solr1	<span class="comment"># 为方便起见，这里将其重命名为solr1，先将solr1配置好，后面会将其复制为solr2, solr3</span></span><br><span class="line"></span><br><span class="line">$ ls</span><br><span class="line">solr1  solr-6.5.0.tgz  solr-configs</span><br></pre></td></tr></table></figure></p>
+<p>我们仍然使用之前的例子，演示使用DIH方式将数据导入到SOLR，只不过，这次是集群的方式，所以需要将<code>data_driven_schema_configs/conf</code>的配置信息复制到<code>solr-configs</code>中，并将其命名为<code>mysqlCore</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/home/hewentian/ProjectD/solrCloud</span><br><span class="line"></span><br><span class="line">$ cp -r solr1/server/solr/configsets/data_driven_schema_configs/conf/ solr-configs/mysqlCore/</span><br></pre></td></tr></table></figure></p>
+<p>将mysql-connector-java-5.1.25.jar放到<code>solr1/server/lib/ext</code>目录下面，并将上一个例子，<a href="../../../../2017/10/28/solr-install/">solr的安装使用</a>的那三个文件: solrconfig.xml、db-data-config.xml、managed-schema复制到<code>solr-configs/mysqlCore/</code>下，override存在的。</p>
+<p>接下来还有2个文件需要修改：<br>修改文件一：solr.in.sh<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ vi solr1/bin/solr.in.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改以下内容即可</span></span><br><span class="line">ZK_HOST=<span class="string">"127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183"</span></span><br><span class="line">ZK_CLIENT_TIMEOUT=<span class="string">"15000"</span></span><br><span class="line">SOLR_PORT=8983</span><br></pre></td></tr></table></figure></p>
+<p>修改文件二：solr.xml<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ vi solr1/server/solr/solr.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改下面的内容即可</span></span><br><span class="line">&lt;str name=<span class="string">"host"</span>&gt;<span class="variable">$&#123;host:127.0.0.1&#125;</span>&lt;/str&gt;   	<span class="comment"># 当修改为真集群的时候，只修改这个IP地址即可</span></span><br><span class="line">&lt;int name=<span class="string">"hostPort"</span>&gt;<span class="variable">$&#123;jetty.port:8983&#125;</span>&lt;/int&gt;	<span class="comment"># 这里端口为 8983</span></span><br></pre></td></tr></table></figure></p>
+<p>这样一个实例就配置好了，将其复制为solr2, solr3<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cp -r solr1 solr2</span><br><span class="line">$ cp -r solr1 solr3</span><br></pre></td></tr></table></figure></p>
+<p>修改solr2, solr3的端口为8984, 8985<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ vi solr2/bin/solr.in.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改以下内容即可</span></span><br><span class="line">SOLR_PORT=8984</span><br><span class="line"></span><br><span class="line">$ vi solr3/bin/solr.in.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改以下内容即可</span></span><br><span class="line">SOLR_PORT=8985</span><br><span class="line"></span><br><span class="line">$ vi solr2/server/solr/solr.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改下面的内容即可</span></span><br><span class="line">&lt;str name=<span class="string">"host"</span>&gt;<span class="variable">$&#123;host:127.0.0.1&#125;</span>&lt;/str&gt;   	<span class="comment"># 当修改为真集群的时候，只修改这个IP地址即可</span></span><br><span class="line">&lt;int name=<span class="string">"hostPort"</span>&gt;<span class="variable">$&#123;jetty.port:8984&#125;</span>&lt;/int&gt;	<span class="comment"># 这里端口为 8984</span></span><br><span class="line"></span><br><span class="line">$ vi solr3/server/solr/solr.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改下面的内容即可</span></span><br><span class="line">&lt;str name=<span class="string">"host"</span>&gt;<span class="variable">$&#123;host:127.0.0.1&#125;</span>&lt;/str&gt;   	<span class="comment"># 当修改为真集群的时候，只修改这个IP地址即可</span></span><br><span class="line">&lt;int name=<span class="string">"hostPort"</span>&gt;<span class="variable">$&#123;jetty.port:8985&#125;</span>&lt;/int&gt;	<span class="comment"># 这里端口为 8985</span></span><br></pre></td></tr></table></figure></p>
+<p>这样，三个solr实例就已经配置好了，下面将其都启动<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/home/hewentian/ProjectD/solrCloud</span><br><span class="line"></span><br><span class="line">$ solr1/bin/solr start</span><br><span class="line">Waiting up to 180 seconds to see Solr running on port 8983 [\]  </span><br><span class="line">Started Solr server on port 8983 (pid=15292). Happy searching!</span><br><span class="line"></span><br><span class="line">$ solr2/bin/solr start</span><br><span class="line">Waiting up to 180 seconds to see Solr running on port 8984 [\]  </span><br><span class="line">Started Solr server on port 8984 (pid=15507). Happy searching!</span><br><span class="line"></span><br><span class="line">$ solr3/bin/solr start</span><br><span class="line">Waiting up to 180 seconds to see Solr running on port 8985 [\]  </span><br><span class="line">Started Solr server on port 8985 (pid=15706). Happy searching!</span><br></pre></td></tr></table></figure></p>
+<p>在浏览器中可以如下访问：<br><a href="http://localhost:8983" target="_blank" rel="noopener">http://localhost:8983</a><br><a href="http://localhost:8984" target="_blank" rel="noopener">http://localhost:8984</a><br><a href="http://localhost:8985" target="_blank" rel="noopener">http://localhost:8985</a></p>
+<p>下面，我们将<code>solr-configs/mysqlCore</code>的内容上传到zookeeper，以便让三台solr都使用这个配置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ /home/hewentian/ProjectD/solrCloud/solr1/server/scripts/cloud-scripts/zkcli.sh -zkhost 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183 -cmd upconfig -confdir /home/hewentian/ProjectD/solrCloud/solr-configs/mysqlCore -confname mysqlCore</span><br></pre></td></tr></table></figure></p>
+<h4 id="说明："><a href="#说明：" class="headerlink" title="说明："></a>说明：</h4><ol>
+<li>-confdir：这个指的是 本地上传的文件位置    </li>
+<li>-confname：上传后在zookeeper中的节点名称</li>
+</ol>
+<p>也可以上传单个文件，单个文件上传先要删除，不然会报错：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ /home/hewentian/ProjectD/solrCloud/solr1/server/scripts/cloud-scripts/zkcli.sh -zkhost 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183 -cmd putfile /configs/mysqlCore/solrconfig.xml /home/hewentian/ProjectD/solrCloud/solr-configs/mysqlCore/solrconfig.xml</span><br></pre></td></tr></table></figure></p>
+<h4 id="说明"><a href="#说明" class="headerlink" title="说明:"></a>说明:</h4><p>putfile 后第一个<code>/configs/mysqlCore/solrconfig.xml</code>指的是<code>zookeeper</code>中的配置文件，第二个<code>/home/hewentian/ProjectD/solrCloud/solr-configs/mysqlCore/solrconfig.xml</code>指的是本地文件路径</p>
+<p>下面我们在solr1中创建一个core，并命名为 mysqlCore，在浏览器中输入如下url即可，它有3个分片，每个分片有2个副本：<br><a href="http://localhost:8983/solr/admin/collections?action=CREATE&amp;name=mysqlCore&amp;numShards=3&amp;replicationFactor=2&amp;maxShardsPerNode=3&amp;collection.configName=mysqlCore" target="_blank" rel="noopener">http://localhost:8983/solr/admin/collections?action=CREATE&amp;name=mysqlCore&amp;numShards=3&amp;replicationFactor=2&amp;maxShardsPerNode=3&amp;collection.configName=mysqlCore</a><br>执行成功后，你可能会看到如下输出：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">This XML file does not appear to have any style information associated with it. The document tree is shown below.</span><br><span class="line"><span class="tag">&lt;<span class="name">response</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"responseHeader"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"status"</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"QTime"</span>&gt;</span>16020<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"success"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"127.0.0.1:8983_solr"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"responseHeader"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"status"</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"QTime"</span>&gt;</span>13930<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"core"</span>&gt;</span>mysqlCore_shard3_replica2<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"127.0.0.1:8983_solr"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"responseHeader"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"status"</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"QTime"</span>&gt;</span>14273<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"core"</span>&gt;</span>mysqlCore_shard2_replica1<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"127.0.0.1:8984_solr"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"responseHeader"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"status"</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"QTime"</span>&gt;</span>14479<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"core"</span>&gt;</span>mysqlCore_shard3_replica1<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"127.0.0.1:8985_solr"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"responseHeader"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"status"</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"QTime"</span>&gt;</span>14597<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"core"</span>&gt;</span>mysqlCore_shard2_replica2<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"127.0.0.1:8985_solr"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"responseHeader"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"status"</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"QTime"</span>&gt;</span>14748<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"core"</span>&gt;</span>mysqlCore_shard1_replica1<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"127.0.0.1:8984_solr"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"responseHeader"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"status"</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">"QTime"</span>&gt;</span>14778<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"core"</span>&gt;</span>mysqlCore_shard1_replica2<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">response</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>也可以使用下面的方式，指定在哪台机器中创建哪个分片的哪个副本。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ curl <span class="string">"http://localhost:8983/solr/admin/cores?action=CREATE&amp;name=mysqlCore_shard1_replica1&amp;instanceDir=mysqlCore_shard1_replica1&amp;collection=mysqlCore&amp;shard=mysqlCore_shard1"</span></span><br><span class="line"></span><br><span class="line">$ curl <span class="string">"http://localhost:8983/solr/admin/cores?action=CREATE&amp;name=mysqlCore_shard3_replica2&amp;instanceDir=mysqlCore_shard3_replica2&amp;collection=mysqlCore&amp;shard=mysqlCore_shard3"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ curl <span class="string">"http://localhost:8984/solr/admin/cores?action=CREATE&amp;name=mysqlCore_shard1_replica2&amp;instanceDir=mysqlCore_shard1_replica2&amp;collection=mysqlCore&amp;shard=mysqlCore_shard1"</span></span><br><span class="line"></span><br><span class="line">$ curl <span class="string">"http://localhost:8984/solr/admin/cores?action=CREATE&amp;name=mysqlCore_shard2_replica1&amp;instanceDir=mysqlCore_shard2_replica1&amp;collection=mysqlCore&amp;shard=mysqlCore_shard2"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ curl <span class="string">"http://localhost:8985/solr/admin/cores?action=CREATE&amp;name=mysqlCore_shard2_replica2&amp;instanceDir=mysqlCore_shard2_replica2&amp;collection=mysqlCore&amp;shard=mysqlCore_shard2"</span></span><br><span class="line"></span><br><span class="line">$ curl <span class="string">"http://localhost:8985/solr/admin/cores?action=CREATE&amp;name=mysqlCore_shard3_replica1&amp;instanceDir=mysqlCore_shard3_replica1&amp;collection=mysqlCore&amp;shard=mysqlCore_shard3"</span></span><br></pre></td></tr></table></figure></p>
+<p>你也可以查看分片是否创建成功：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ls solr1/server/solr</span><br><span class="line">configsets  mysqlCore_shard2_replica1  mysqlCore_shard3_replica2  README.txt  solr.xml  zoo.cfg</span><br><span class="line"></span><br><span class="line">$ ls solr2/server/solr</span><br><span class="line">configsets  mysqlCore_shard1_replica2  mysqlCore_shard3_replica1  README.txt  solr.xml  zoo.cfg</span><br><span class="line"></span><br><span class="line">$ ls solr3/server/solr</span><br><span class="line">configsets  mysqlCore_shard1_replica1  mysqlCore_shard2_replica2  README.txt  solr.xml  zoo.cfg</span><br></pre></td></tr></table></figure></p>
+<p>在<a href="http://localhost:8983" target="_blank" rel="noopener">http://localhost:8983</a>上面执行DIH将user索引进solr，成功之后你就可以在<a href="http://localhost:8984" target="_blank" rel="noopener">http://localhost:8984</a>, <a href="http://localhost:8985" target="_blank" rel="noopener">http://localhost:8985</a>上面看到同样的结果。</p>
+<p>当然，我们也可以在启动的时候，才指定zookeeper<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/solr start -c -z zk1:port,zk2:port,zk3:port</span><br></pre></td></tr></table></figure></p>
+<p>说明：</p>
+<ol>
+<li>-c：以solr_cloud的方式启动；</li>
+<li>-z:指定zookeeper集群的地址和端口，上面搭建zookeeper集群时的3台机器</li>
+</ol>
+<h3 id="solr备份"><a href="#solr备份" class="headerlink" title="solr备份"></a>solr备份</h3><p>在进行solr备份的时候，一定要先将solr服务停了，然后再备份。否则在还原的时候有可能会产生<code>write.lock</code>，在产生<code>write.lock</code>的时候也不要怕，你可以按下面的方法解决：</p>
+<ol>
+<li><p>将<code>write.lock</code>删掉，然后再新建一个，然后修改权限；</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ rm write.lock</span><br><span class="line">$ touch write.lock</span><br><span class="line">$ chmod 666 write.lock</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启solr服务；</p>
+</li>
+<li>在浏览器登录到那个solr的cord，reload一下，然后查询，如果没报错的话，可能要等5分钟左右，查询结果就出来了。<br>[solr界面]-&gt;[collections]-&gt;[点击你的那个 collection]-&gt;[Reload]</li>
+</ol>
+<p>JAVA示例代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">CloudSolrClient cloudSolrClient = <span class="keyword">new</span> CloudSolrClient.Builder()</span><br><span class="line">				.withZkHost(<span class="string">"127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183"</span>).build();</span><br><span class="line">		cloudSolrClient.setDefaultCollection(<span class="string">"mysqlCore"</span>);</span><br><span class="line"></span><br><span class="line">		SolrQuery solrQuery = <span class="keyword">new</span> SolrQuery();</span><br><span class="line"></span><br><span class="line">		solrQuery.setQuery(<span class="string">"schools:\"北京第一中学\" AND id:[1 TO 3]"</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 分页</span></span><br><span class="line">		solrQuery.setStart(<span class="number">0</span>);</span><br><span class="line">		solrQuery.setRows(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">		SolrDocumentList results = cloudSolrClient.query(solrQuery).getResults();</span><br><span class="line"></span><br><span class="line">		logger.info(<span class="string">"numFound: "</span> + results.getNumFound());</span><br><span class="line">		<span class="keyword">if</span> (CollectionUtils.isEmpty(results)) &#123;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		results.stream().forEach(logger::info);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>未完，待续……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjmx9pof70025vt2i59b7wxdd" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-neo4j-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -168,7 +250,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjmsn4xoz001ga12iyfelsy26" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjmx9poea001kvt2iwapryu4i" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/neo4j/">neo4j</a></li></ul>
@@ -247,7 +329,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjmsn4xnd000fa12if8q1s96r" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjmx9pocg000fvt2irzwh1dps" class="article-share-link">Share</a>
       
       
     </footer>
@@ -339,7 +421,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjmsn4xma0002a12iaqy3d6h6" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjmx9pobc0002vt2iavlf1epd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/">activemq</a></li></ul>
@@ -420,7 +502,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjmsn4xpb001na12i3up3hnnx" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjmx9poen001rvt2it7ymtr4f" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabbitmq/">rabbitmq</a></li></ul>
@@ -479,7 +561,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjmsn4xq90027a12iq7xlw1i3" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjmx9poff002cvt2is22rd44b" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -533,7 +615,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjmsn4xqm002ha12ijpuscxno" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjmx9pofo002ivt2i6is8bqzo" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -602,7 +684,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjmsn4xno000qa12i37bjc13m" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjmx9poct000qvt2iayus2qfx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jdk/">jdk</a></li></ul>
@@ -781,7 +863,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjmsn4xos001da12i48od1o31" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjmx9poe7001gvt2i5j8rxoe2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
@@ -868,67 +950,7 @@ clientPort=2183                                        # 这台服务器的端�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjmsn4xqv002na12iz3j9e1zn" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-zookeeper-install-standalone" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/12/06/zookeeper-install-standalone/" class="article-date">
-  <time datetime="2017-12-06T08:33:23.000Z" itemprop="datePublished">2017-12-06</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/06/zookeeper-install-standalone/">zookeeper 单机版安装方法</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="下面演示在-Ubuntu-16-04-LTS-下面安装-zookeeper"><a href="#下面演示在-Ubuntu-16-04-LTS-下面安装-zookeeper" class="headerlink" title="下面演示在 Ubuntu 16.04 LTS 下面安装 zookeeper"></a>下面演示在 Ubuntu 16.04 LTS 下面安装 zookeeper</h3><p>将<code>zookeeper-3.4.6.tar.gz</code>放到一个目录下，如<code>/home/hewentian/ProjectD</code><br>执行如下脚本解压<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ tar xzvf zookeeper-3.4.6.tar.gz</span><br></pre></td></tr></table></figure></p>
-<p>解压后得到zookeeper-3.4.6文件夹，进入conf目录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> zookeeper-3.4.6/conf/</span><br></pre></td></tr></table></figure></p>
-<p>执行如下命令，新建一个配置文件zoo.cfg<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp zoo_sample.cfg zoo.cfg</span><br></pre></td></tr></table></figure></p>
-<p>修改zoo.cfg并在其中修改如下内容：</p>
-<pre><code>tickTime=2000
-dataDir=/var/lib/zookeeper
-clientPort=2181
-</code></pre><p>如果<code>/var/lib/zookeeper</code>这个目录没有，就要执行如下命令创建<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p /var/lib/zookeeper</span><br></pre></td></tr></table></figure></p>
-<p>修改好后，我们就可以进入bin目录下启动zookeeper了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/zookeeper-3.4.6/bin</span><br><span class="line">$ ./zkServer.sh start</span><br></pre></td></tr></table></figure></p>
-<p>启动后，我们可以连到zookeeper服务器，命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/zookeeper-3.4.6/bin</span><br><span class="line">$ ./zkCli.sh -server 127.0.0.1:2181</span><br></pre></td></tr></table></figure></p>
-<h3 id="一些操作例子，如下："><a href="#一些操作例子，如下：" class="headerlink" title="一些操作例子，如下："></a>一些操作例子，如下：</h3><p>From here, you can try a few simple commands to get a feel for this simple command line interface. First, start by issuing the list command, as in ls, yielding:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 8] ls /</span><br><span class="line">[zookeeper]</span><br></pre></td></tr></table></figure></p>
-<p>Next, create a new znode by running create /zk_test my_data. This creates a new znode and associates the string “my_data” with the node. You should see:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 9] create /zk_test my_data</span><br><span class="line">Created /zk_test</span><br></pre></td></tr></table></figure></p>
-<p>Issue another ls / command to see what the directory looks like:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 11] ls /</span><br><span class="line">[zookeeper, zk_test]</span><br></pre></td></tr></table></figure></p>
-<p>Notice that the zk_test directory has now been created.<br>Next, verify that the data was associated with the znode by running the get command, as in:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 12] get /zk_test</span><br><span class="line">my_data</span><br><span class="line">cZxid = 5</span><br><span class="line">ctime = Fri Jun 05 13:57:06 PDT 2009</span><br><span class="line">mZxid = 5</span><br><span class="line">mtime = Fri Jun 05 13:57:06 PDT 2009</span><br><span class="line">pZxid = 5</span><br><span class="line">cversion = 0</span><br><span class="line">dataVersion = 0</span><br><span class="line">aclVersion = 0</span><br><span class="line">ephemeralOwner = 0</span><br><span class="line">dataLength = 7</span><br><span class="line">numChildren = 0</span><br></pre></td></tr></table></figure></p>
-<p>We can change the data associated with zk_test by issuing the set command, as in:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 14] <span class="built_in">set</span> /zk_test junk</span><br><span class="line">cZxid = 5</span><br><span class="line">ctime = Fri Jun 05 13:57:06 PDT 2009</span><br><span class="line">mZxid = 6</span><br><span class="line">mtime = Fri Jun 05 14:01:52 PDT 2009</span><br><span class="line">pZxid = 5</span><br><span class="line">cversion = 0</span><br><span class="line">dataVersion = 1</span><br><span class="line">aclVersion = 0</span><br><span class="line">ephemeralOwner = 0</span><br><span class="line">dataLength = 4</span><br><span class="line">numChildren = 0</span><br><span class="line">[zkshell: 15] get /zk_test</span><br><span class="line">junk</span><br><span class="line">cZxid = 5</span><br><span class="line">ctime = Fri Jun 05 13:57:06 PDT 2009</span><br><span class="line">mZxid = 6</span><br><span class="line">mtime = Fri Jun 05 14:01:52 PDT 2009</span><br><span class="line">pZxid = 5</span><br><span class="line">cversion = 0</span><br><span class="line">dataVersion = 1</span><br><span class="line">aclVersion = 0</span><br><span class="line">ephemeralOwner = 0</span><br><span class="line">dataLength = 4</span><br><span class="line">numChildren = 0</span><br></pre></td></tr></table></figure></p>
-<p>(Notice we did a get after setting the data and it did, indeed, change.</p>
-<p>Finally, let’s delete the node by issuing:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[zkshell: 16] delete /zk_test</span><br><span class="line">[zkshell: 17] ls /</span><br><span class="line">[zookeeper]</span><br><span class="line">[zkshell: 18]</span><br></pre></td></tr></table></figure></p>
-<p>That’s it for now. To explore more, continue with the rest of this document and see the Programmer’s Guide.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjmsn4xr0002sa12ih69fdyl2" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjmx9pog7002tvt2islh809js" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -951,9 +973,9 @@ clientPort=2181
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">分类</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -961,9 +983,9 @@ clientPort=2181
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -971,9 +993,13 @@ clientPort=2181
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/10/05/jenkins-install/">jenkins 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
@@ -989,10 +1015,6 @@ clientPort=2181
         
           <li>
             <a href="/2018/09/16/elasticsearch-install/">elasticsearch 单节点安装</a>
-          </li>
-        
-          <li>
-            <a href="/2018/09/12/redis-note/">redis 学习笔记</a>
           </li>
         
       </ul>
