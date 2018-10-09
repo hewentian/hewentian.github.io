@@ -162,7 +162,164 @@ Password: abc123
 
 
 ### 下面演示构建项目
-首先构建一个从gitHub中拉取原码的项目
+#### 示例A、构建一个从gitHub中拉取原码的maven项目
+`[New Item]`->选择`[Maven project]`，并在`[Enter an item name]`中输入mvn-test，然后点击`[ok]`，如下图：
+![](/img/jenkins-10.png "构建一个从gitHub中拉取原码的maven项目")
+
+在弹出的界面中选中`[Discard old builds]`并将`Max of builds to keep`设为10，然后设置源码仓库，如下所示：
+![](/img/jenkins-11.png "")
+
+设置Build的`Goals and options`为`clean install`，如下：
+![](/img/jenkins-12.png "")
+
+其他设置保持默认，点击`[Save]`，在弹出的界面点点击`[Build Now]`，然后再点击下方构建历史中正在构建的任务的`[Console Output]`。
+![](/img/jenkins-13.png "")
+
+![](/img/jenkins-14.png "")
+![](/img/jenkins-15.png "")
+
+如上图所示，构建成功了。切换到上图中的目录中查看目标文件，并运行它：
+![](/img/jenkins-16.png "")
+
+这样，一个简单的maven项目就构建完成了。
+
+#### 示例B、构建一个从gitHub中拉取原码的maven web项目，并部署到运行中的tomcat
+首先，我们创建一个最简单的maven web项目，并推到：
+https://github.com/hewentian/web-test
+web-test项目只有三个文件：
+
+	pom.xml
+	src/main/webapp/WEB-INF/web.xml
+	src/main/webapp/index.jsp
+
+`pom.xml`文件内容如下：
+``` xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.hewentian</groupId>
+	<artifactId>web-test</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>web-test Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>web-test</finalName>
+	</build>
+</project>
+```
+
+`src/main/webapp/WEB-INF/web.xml`文件内容如下：
+``` xml
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+	<display-name>Archetype Created Web Application</display-name>
+</web-app>
+```
+
+`src/main/webapp/index.jsp`文件内容如下：
+``` jsp
+<html>
+	<body>
+		<h2>Hello World!</h2>
+	</body>
+</html>
+```
+
+接着，我们准备一台tomcat，我已经准备好了一台，位于：
+
+	/home/hewentian/ProjectD/apache-tomcat-8.0.47
+
+因为jenkins使用了`8080`端口，所以tomcat不能使用默认的`8080`端口，我们将其修改为`8867`：
+``` bash
+$ cd /home/hewentian/ProjectD/apache-tomcat-8.0.47/conf
+$ vi server.xml
+
+只修改此处即可
+<Connector port="8867" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" />
+```
+
+配置tomcat的管理员帐号：
+``` bash
+$ cd /home/hewentian/ProjectD/apache-tomcat-8.0.47/conf
+$ vi tomcat-users.xml
+
+在<tomcat-users>节点里添加如下内容：
+
+<role rolename="manager-gui"/>
+<role rolename="manager-script"/>
+<role rolename="manager-jmx"/>
+<role rolename="manager-status"/>
+
+<user username="hwt" password="pwd123" roles="manager-gui,manager-script,manager-jmx,manager-status"/>
+```
+其中的`username="hwt" password="pwd123"`是用于登录Tomcat用的，下面会用到，重启tomcat。
+
+回到jenkins，我们新建一个Item，命名为web-app-test：
+![](/img/jenkins-17.png "")
+![](/img/jenkins-18.png "")
+
+配置代码仓库，如下图。点击`Credentials`右边的`Add->jenkins`
+![](/img/jenkins-19.png "")
+
+在弹出的对话框中，选择`SSH Username with private key`，将`~/.ssh/id_rsa`文件的内容复制到Key中，点`Add`：
+![](/img/jenkins-20.png "")
+
+在配置代码仓库中，选择刚才创建的`Credentials`：
+![](/img/jenkins-21.png "")
+
+配置构建触发器：
+![](/img/jenkins-22.png "")
+
+说明：
+
+1. Build whenever a SNAPSHOT dependency is built：在构建的时候，会根据pom.xml文件的继承关系构建发生一个构建引起其他构建的；
+2. Poll SCM：这是CI系统中常见的选项。当您选择此选项，您可以指定一个定时作业表达式来定义Jenkins每隔多久检查一下您源代码仓库的变化。如果发现变化，就执行一次构建。例如，表达式中填写0,15,30,45 * * * *将使Jenkins每隔15分钟就检查一次您源码仓库的变化；
+3. Build periodically：此选项仅仅通知Jenkins按指定的频率对项目进行构建，而不管SCM是否有变化。如果想在这个Job中运行一些测试用例的话，它就很有帮助。
+
+配置构建设置：
+![](/img/jenkins-23.png "")
+
+接着我们试着点击`Build Now`试下能否成功构建：
+![](/img/jenkins-24.png "")
+
+当你看到如下输出时，证明构建成功：
+![](/img/jenkins-25.png "")
+
+接着我们配置部署到tomcat，回到web-app-test的jenkins配置，在`Add post-build action`中选择`Deploy war/ear to a container`，如下图：
+![](/img/jenkins-26.png "")
+
+在`Credentials`右则点击`Add->Jenkins`，并在弹出的对话框中输入上面在tomcat中配置的用户名：
+![](/img/jenkins-27.png "")
+
+说明：
+
+1. 首先tomcat是启动的，并且Tomcat中没有部署web-test.war；
+2. WAR/EAR files：war文件的存放位置，如：target/web-test.war 注意：相对路径，target前是没有/的；
+3. Context path：访问时需要输入的内容，如wt访问时如下：[http://127.0.0.1:8867/wt/](http://127.0.0.1:8867/wt/)，如果为空，默认是war包的名字；
+4. Container：选择你的web容器，如tomca 8.x；
+5. Credentials: 在右边的下拉页面中选择访问Tomcat的用户名、密码，如果没有，则点【Add】；
+6. Tomcat URL：填入你Tomcat的访问地址，如：http://127.0.0.1:8867/；
+7. svn、git、tomcat的用户名和密码设置了是没有办法在web界面修改的。如果要修改则先去Jenkins目录删除hudson.scm.SubversionSCM.xml文件，或者在jenkins用户页中删掉该用户，虽然jenkins页面提供修改方法，但是，无效。
+
+接着我们点击`Build Now`开始构建：
+![](/img/jenkins-28.png "")
+
+如果你看到上面输出，则证明构建和部署成功，可以打开浏览器查看：
+![](/img/jenkins-29.png "")
+
+到此，大功告成。
 
 
 未完待续……
