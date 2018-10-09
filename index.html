@@ -162,13 +162,60 @@ INFO: Finished Download metadata. 10,126 ms
 <h3 id="下面进行简单的配置"><a href="#下面进行简单的配置" class="headerlink" title="下面进行简单的配置"></a>下面进行简单的配置</h3><p>按下图所示设置JDK、Maven：<code>[Manage Jenkins]-&gt;[Global Tool Configuration]</code>：<br><img src="/img/jenkins-6.png" alt="" title="设置"><br><img src="/img/jenkins-7.png" alt="" title="设置"></p>
 <h3 id="下面安装插件"><a href="#下面安装插件" class="headerlink" title="下面安装插件"></a>下面安装插件</h3><p><code>[Manage Jenkins]-&gt;[Manage Plugins]</code><br>安装<code>Maven Integration</code>插件，如下图，直接点击<code>Install wthout restart</code>，该插件是用于建立maven job<br><img src="/img/jenkins-8.png" alt="" title="安装maven插件"></p>
 <p>安装<code>Deploy to container</code>插件，用于将构建好的应用部署到容器中：<br><img src="/img/jenkins-9.png" alt="" title="安装Deploy to container插件"></p>
-<h3 id="下面演示构建项目"><a href="#下面演示构建项目" class="headerlink" title="下面演示构建项目"></a>下面演示构建项目</h3><p>首先构建一个从gitHub中拉取原码的项目</p>
+<h3 id="下面演示构建项目"><a href="#下面演示构建项目" class="headerlink" title="下面演示构建项目"></a>下面演示构建项目</h3><h4 id="示例A、构建一个从gitHub中拉取原码的maven项目"><a href="#示例A、构建一个从gitHub中拉取原码的maven项目" class="headerlink" title="示例A、构建一个从gitHub中拉取原码的maven项目"></a>示例A、构建一个从gitHub中拉取原码的maven项目</h4><p><code>[New Item]</code>-&gt;选择<code>[Maven project]</code>，并在<code>[Enter an item name]</code>中输入mvn-test，然后点击<code>[ok]</code>，如下图：<br><img src="/img/jenkins-10.png" alt="" title="构建一个从gitHub中拉取原码的maven项目"></p>
+<p>在弹出的界面中选中<code>[Discard old builds]</code>并将<code>Max of builds to keep</code>设为10，然后设置源码仓库，如下所示：<br><img src="/img/jenkins-11.png" alt=""></p>
+<p>设置Build的<code>Goals and options</code>为<code>clean install</code>，如下：<br><img src="/img/jenkins-12.png" alt=""></p>
+<p>其他设置保持默认，点击<code>[Save]</code>，在弹出的界面点点击<code>[Build Now]</code>，然后再点击下方构建历史中正在构建的任务的<code>[Console Output]</code>。<br><img src="/img/jenkins-13.png" alt=""></p>
+<p><img src="/img/jenkins-14.png" alt=""><br><img src="/img/jenkins-15.png" alt=""></p>
+<p>如上图所示，构建成功了。切换到上图中的目录中查看目标文件，并运行它：<br><img src="/img/jenkins-16.png" alt=""></p>
+<p>这样，一个简单的maven项目就构建完成了。</p>
+<h4 id="示例B、构建一个从gitHub中拉取原码的maven-web项目，并部署到运行中的tomcat"><a href="#示例B、构建一个从gitHub中拉取原码的maven-web项目，并部署到运行中的tomcat" class="headerlink" title="示例B、构建一个从gitHub中拉取原码的maven web项目，并部署到运行中的tomcat"></a>示例B、构建一个从gitHub中拉取原码的maven web项目，并部署到运行中的tomcat</h4><p>首先，我们创建一个最简单的maven web项目，并推到：<br><a href="https://github.com/hewentian/web-test">https://github.com/hewentian/web-test</a><br>web-test项目只有三个文件：</p>
+<pre><code>pom.xml
+src/main/webapp/WEB-INF/web.xml
+src/main/webapp/index.jsp
+</code></pre><p><code>pom.xml</code>文件内容如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.hewentian<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>web-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">packaging</span>&gt;</span>war<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>web-test Maven Webapp<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">url</span>&gt;</span>http://maven.apache.org<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.8.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">finalName</span>&gt;</span>web-test<span class="tag">&lt;/<span class="name">finalName</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p><code>src/main/webapp/WEB-INF/web.xml</code>文件内容如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE web-app PUBLIC</span></span><br><span class="line"><span class="meta"> "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"</span></span><br><span class="line"><span class="meta"> "http://java.sun.com/dtd/web-app_2_3.dtd" &gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">display-name</span>&gt;</span>Archetype Created Web Application<span class="tag">&lt;/<span class="name">display-name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p><code>src/main/webapp/index.jsp</code>文件内容如下：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">	&lt;body&gt;</span><br><span class="line">		&lt;h2&gt;Hello World!&lt;/h2&gt;</span><br><span class="line">	&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>接着，我们准备一台tomcat，我已经准备好了一台，位于：</p>
+<pre><code>/home/hewentian/ProjectD/apache-tomcat-8.0.47
+</code></pre><p>因为jenkins使用了<code>8080</code>端口，所以tomcat不能使用默认的<code>8080</code>端口，我们将其修改为<code>8867</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/apache-tomcat-8.0.47/conf</span><br><span class="line">$ vi server.xml</span><br><span class="line"></span><br><span class="line">只修改此处即可</span><br><span class="line">&lt;Connector port=<span class="string">"8867"</span> protocol=<span class="string">"HTTP/1.1"</span> connectionTimeout=<span class="string">"20000"</span> redirectPort=<span class="string">"8443"</span> /&gt;</span><br></pre></td></tr></table></figure></p>
+<p>配置tomcat的管理员帐号：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/apache-tomcat-8.0.47/conf</span><br><span class="line">$ vi tomcat-users.xml</span><br><span class="line"></span><br><span class="line">在&lt;tomcat-users&gt;节点里添加如下内容：</span><br><span class="line"></span><br><span class="line">&lt;role rolename=<span class="string">"manager-gui"</span>/&gt;</span><br><span class="line">&lt;role rolename=<span class="string">"manager-script"</span>/&gt;</span><br><span class="line">&lt;role rolename=<span class="string">"manager-jmx"</span>/&gt;</span><br><span class="line">&lt;role rolename=<span class="string">"manager-status"</span>/&gt;</span><br><span class="line"></span><br><span class="line">&lt;user username=<span class="string">"hwt"</span> password=<span class="string">"pwd123"</span> roles=<span class="string">"manager-gui,manager-script,manager-jmx,manager-status"</span>/&gt;</span><br></pre></td></tr></table></figure></p>
+<p>其中的<code>username=&quot;hwt&quot; password=&quot;pwd123&quot;</code>是用于登录Tomcat用的，下面会用到，重启tomcat。</p>
+<p>回到jenkins，我们新建一个Item，命名为web-app-test：<br><img src="/img/jenkins-17.png" alt=""><br><img src="/img/jenkins-18.png" alt=""></p>
+<p>配置代码仓库，如下图。点击<code>Credentials</code>右边的<code>Add-&gt;jenkins</code><br><img src="/img/jenkins-19.png" alt=""></p>
+<p>在弹出的对话框中，选择<code>SSH Username with private key</code>，将<code>~/.ssh/id_rsa</code>文件的内容复制到Key中，点<code>Add</code>：<br><img src="/img/jenkins-20.png" alt=""></p>
+<p>在配置代码仓库中，选择刚才创建的<code>Credentials</code>：<br><img src="/img/jenkins-21.png" alt=""></p>
+<p>配置构建触发器：<br><img src="/img/jenkins-22.png" alt=""></p>
+<p>说明：</p>
+<ol>
+<li>Build whenever a SNAPSHOT dependency is built：在构建的时候，会根据pom.xml文件的继承关系构建发生一个构建引起其他构建的；</li>
+<li>Poll SCM：这是CI系统中常见的选项。当您选择此选项，您可以指定一个定时作业表达式来定义Jenkins每隔多久检查一下您源代码仓库的变化。如果发现变化，就执行一次构建。例如，表达式中填写0,15,30,45 <em> </em> <em> </em>将使Jenkins每隔15分钟就检查一次您源码仓库的变化；</li>
+<li>Build periodically：此选项仅仅通知Jenkins按指定的频率对项目进行构建，而不管SCM是否有变化。如果想在这个Job中运行一些测试用例的话，它就很有帮助。</li>
+</ol>
+<p>配置构建设置：<br><img src="/img/jenkins-23.png" alt=""></p>
+<p>接着我们试着点击<code>Build Now</code>试下能否成功构建：<br><img src="/img/jenkins-24.png" alt=""></p>
+<p>当你看到如下输出时，证明构建成功：<br><img src="/img/jenkins-25.png" alt=""></p>
+<p>接着我们配置部署到tomcat，回到web-app-test的jenkins配置，在<code>Add post-build action</code>中选择<code>Deploy war/ear to a container</code>，如下图：<br><img src="/img/jenkins-26.png" alt=""></p>
+<p>在<code>Credentials</code>右则点击<code>Add-&gt;Jenkins</code>，并在弹出的对话框中输入上面在tomcat中配置的用户名：<br><img src="/img/jenkins-27.png" alt=""></p>
+<p>说明：</p>
+<ol>
+<li>首先tomcat是启动的，并且Tomcat中没有部署web-test.war；</li>
+<li>WAR/EAR files：war文件的存放位置，如：target/web-test.war 注意：相对路径，target前是没有/的；</li>
+<li>Context path：访问时需要输入的内容，如wt访问时如下：<a href="http://127.0.0.1:8867/wt/" target="_blank" rel="noopener">http://127.0.0.1:8867/wt/</a>，如果为空，默认是war包的名字；</li>
+<li>Container：选择你的web容器，如tomca 8.x；</li>
+<li>Credentials: 在右边的下拉页面中选择访问Tomcat的用户名、密码，如果没有，则点【Add】；</li>
+<li>Tomcat URL：填入你Tomcat的访问地址，如：<a href="http://127.0.0.1:8867/；" target="_blank" rel="noopener">http://127.0.0.1:8867/；</a></li>
+<li>svn、git、tomcat的用户名和密码设置了是没有办法在web界面修改的。如果要修改则先去Jenkins目录删除hudson.scm.SubversionSCM.xml文件，或者在jenkins用户页中删掉该用户，虽然jenkins页面提供修改方法，但是，无效。</li>
+</ol>
+<p>接着我们点击<code>Build Now</code>开始构建：<br><img src="/img/jenkins-28.png" alt=""></p>
+<p>如果你看到上面输出，则证明构建和部署成功，可以打开浏览器查看：<br><img src="/img/jenkins-29.png" alt=""></p>
+<p>到此，大功告成。</p>
 <p>未完待续……</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjmx9pod6000yvt2ievjlkkyz" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjn1sxr91000xsp2ipxkv0i8b" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -247,7 +294,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjmx9poau0000vt2i05fxof4o" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjn1sxr6m0000sp2iikb1c9ci" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -599,7 +646,7 @@ curl -XPOST 'http://127.0.0.1:9200/facebook/tuser/1/_update' -H 'Content-Type: a
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjmx9poc20009vt2imwalnepl" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjn1sxr7t0008sp2i33g7dgdz" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -795,7 +842,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjmx9pobv0006vt2iwr5ek7f5" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjn1sxr7n0006sp2iowpbxaz0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1119,7 +1166,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjmx9poc00008vt2i9megyvij" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjn1sxr7q0007sp2i72ebcgu4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1354,7 +1401,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjmx9pof00021vt2iqc467m49" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjn1sxraz0020sp2ij7j3lbhw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1427,7 +1474,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjmx9poev001zvt2ixeb5m3ua" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjn1sxrav001ysp2imlw5phfk" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1525,7 +1572,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjmx9poeq001uvt2io2pimsp0" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjn1sxrap001tsp2i00xs2drp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1692,7 +1739,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjmx9pod90011vt2i2rrcu8xu" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjn1sxr9a0010sp2iibtzosh2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
@@ -1738,7 +1785,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjmx9podx001evt2iq4iynk51" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjn1sxr9w001dsp2i6xwin7xj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>
