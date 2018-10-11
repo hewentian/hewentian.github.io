@@ -43,7 +43,11 @@
 <meta property="og:image" content="https://github.com/img/jenkins-28.png">
 <meta property="og:image" content="https://github.com/img/jenkins-29.png">
 <meta property="og:image" content="https://github.com/img/jenkins-30.png">
-<meta property="og:updated_time" content="2018-10-11T08:13:27.401Z">
+<meta property="og:image" content="https://github.com/img/jenkins-31.png">
+<meta property="og:image" content="https://github.com/img/jenkins-32.png">
+<meta property="og:image" content="https://github.com/img/jenkins-33.png">
+<meta property="og:image" content="https://github.com/img/jenkins-34.png">
+<meta property="og:updated_time" content="2018-10-11T13:55:37.941Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jenkins 学习笔记">
 <meta name="twitter:description" content="本篇将说说jenkins的使用。 首先，我们要将jenkins的安装包下载回来，可以在它的官网下载最新稳定版： 1234567$ cd /home/hewentian/ProjectD/$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war$ wget http://mirrors.jenkins.io/war-stable/l">
@@ -249,13 +253,18 @@ src/main/webapp/index.jsp
 <p>回到jenkins去点击<code>[Build Now]</code>，在<code>[Console Output]</code>观看它的构建情况。等构建成功后，我们登录<code>192.168.30.241</code>查看情况：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/</span><br><span class="line">$ ssh -p 12022 root@192.168.30.241</span><br><span class="line"></span><br><span class="line">Last login: Thu Oct 11 11:18:50 2018 from 10.1.23.231</span><br><span class="line">[root@192.168.30.241 ~]<span class="comment"># ls /www/</span></span><br><span class="line">logs  web</span><br><span class="line">[root@192.168.30.241 ~]<span class="comment"># ls /www/web/my-app/dev/</span></span><br><span class="line">my-app-1.0-SNAPSHOT.jar</span><br><span class="line">[root@192.168.30.241 ~]<span class="comment"># more /www/logs/my-app/my-app.log </span></span><br><span class="line">Hello World!</span><br></pre></td></tr></table></figure></p>
 <p>从上述输出可知，我们的构建已经成功！！！</p>
 <p><strong>将脚本存放在<code>jar.sh</code>中的好处是此脚本可以供多个项目共同使用，只要在<code>Execute shell</code>中根据不同项目定义不同的变量值即可。</strong></p>
-<h4 id="示例D、当构建出错的时候，如何回滚-rollback-到上一个版本"><a href="#示例D、当构建出错的时候，如何回滚-rollback-到上一个版本" class="headerlink" title="示例D、当构建出错的时候，如何回滚(rollback)到上一个版本"></a>示例D、当构建出错的时候，如何回滚(rollback)到上一个版本</h4><p>要实现这个功能，我们要在jenkins安装一个插件<code>Copy Artifact</code>：<br><img src="/img/jenkins-30.png" alt=""></p>
+<h4 id="示例D、构建指定的git分支"><a href="#示例D、构建指定的git分支" class="headerlink" title="示例D、构建指定的git分支"></a>示例D、构建指定的git分支</h4><p>要实现这个功能，我们要在jenkins安装一个插件<code>Git Parameter</code>：<br><img src="/img/jenkins-30.png" alt=""></p>
+<p>我们还是以示例A的为例，去到它的配置中，选中<code>This project is parameterized</code>，点<code>Add parameter</code>-&gt;<code>Git Parameter</code>，设置如下：<br><img src="/img/jenkins-31.png" alt=""></p>
+<p>并在<code>Branches to build</code>按下图所示填：<br><img src="/img/jenkins-32.png" alt=""></p>
+<p>回到mvn-test这个job，你会发现原先的<code>Build Now</code>已经变成了<code>Build with Parameters</code>，我们点它：<br><img src="/img/jenkins-33.png" alt=""></p>
+<p>至此，就可以构建我们想构建的分支了。</p>
+<h4 id="示例E、当构建出错的时候，如何回滚-rollback-到上一个版本"><a href="#示例E、当构建出错的时候，如何回滚-rollback-到上一个版本" class="headerlink" title="示例E、当构建出错的时候，如何回滚(rollback)到上一个版本"></a>示例E、当构建出错的时候，如何回滚(rollback)到上一个版本</h4><p>要实现这个功能，我们要在jenkins安装一个插件<code>Copy Artifact</code>：<br><img src="/img/jenkins-34.png" alt=""></p>
 <p>未完待续……</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjn4b4yig000xsw2izawcnpyx" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjn4nda3a000ylq2i4mvbj89w" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>

@@ -218,13 +218,18 @@ src/main/webapp/index.jsp
 <p>回到jenkins去点击<code>[Build Now]</code>，在<code>[Console Output]</code>观看它的构建情况。等构建成功后，我们登录<code>192.168.30.241</code>查看情况：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/</span><br><span class="line">$ ssh -p 12022 root@192.168.30.241</span><br><span class="line"></span><br><span class="line">Last login: Thu Oct 11 11:18:50 2018 from 10.1.23.231</span><br><span class="line">[root@192.168.30.241 ~]<span class="comment"># ls /www/</span></span><br><span class="line">logs  web</span><br><span class="line">[root@192.168.30.241 ~]<span class="comment"># ls /www/web/my-app/dev/</span></span><br><span class="line">my-app-1.0-SNAPSHOT.jar</span><br><span class="line">[root@192.168.30.241 ~]<span class="comment"># more /www/logs/my-app/my-app.log </span></span><br><span class="line">Hello World!</span><br></pre></td></tr></table></figure></p>
 <p>从上述输出可知，我们的构建已经成功！！！</p>
 <p><strong>将脚本存放在<code>jar.sh</code>中的好处是此脚本可以供多个项目共同使用，只要在<code>Execute shell</code>中根据不同项目定义不同的变量值即可。</strong></p>
-<h4 id="示例D、当构建出错的时候，如何回滚-rollback-到上一个版本"><a href="#示例D、当构建出错的时候，如何回滚-rollback-到上一个版本" class="headerlink" title="示例D、当构建出错的时候，如何回滚(rollback)到上一个版本"></a>示例D、当构建出错的时候，如何回滚(rollback)到上一个版本</h4><p>要实现这个功能，我们要在jenkins安装一个插件<code>Copy Artifact</code>：<br><img src="/img/jenkins-30.png" alt=""></p>
+<h4 id="示例D、构建指定的git分支"><a href="#示例D、构建指定的git分支" class="headerlink" title="示例D、构建指定的git分支"></a>示例D、构建指定的git分支</h4><p>要实现这个功能，我们要在jenkins安装一个插件<code>Git Parameter</code>：<br><img src="/img/jenkins-30.png" alt=""></p>
+<p>我们还是以示例A的为例，去到它的配置中，选中<code>This project is parameterized</code>，点<code>Add parameter</code>-&gt;<code>Git Parameter</code>，设置如下：<br><img src="/img/jenkins-31.png" alt=""></p>
+<p>并在<code>Branches to build</code>按下图所示填：<br><img src="/img/jenkins-32.png" alt=""></p>
+<p>回到mvn-test这个job，你会发现原先的<code>Build Now</code>已经变成了<code>Build with Parameters</code>，我们点它：<br><img src="/img/jenkins-33.png" alt=""></p>
+<p>至此，就可以构建我们想构建的分支了。</p>
+<h4 id="示例E、当构建出错的时候，如何回滚-rollback-到上一个版本"><a href="#示例E、当构建出错的时候，如何回滚-rollback-到上一个版本" class="headerlink" title="示例E、当构建出错的时候，如何回滚(rollback)到上一个版本"></a>示例E、当构建出错的时候，如何回滚(rollback)到上一个版本</h4><p>要实现这个功能，我们要在jenkins安装一个插件<code>Copy Artifact</code>：<br><img src="/img/jenkins-34.png" alt=""></p>
 <p>未完待续……</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjn4b4yig000xsw2izawcnpyx" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjn4nda3a000ylq2i4mvbj89w" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -303,7 +308,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjn4b4yfz0000sw2ici0nrtwq" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjn4nda0k0000lq2i5yzqyded" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -655,7 +660,7 @@ curl -XPOST 'http://127.0.0.1:9200/facebook/tuser/1/_update' -H 'Content-Type: a
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjn4b4yha0008sw2ingu5a3lb" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjn4nda1r0008lq2i74kacgar" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -851,7 +856,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjn4b4yh10006sw2igs128grj" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjn4nda1m0006lq2ikjp6yemm" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1175,7 +1180,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjn4b4yh50007sw2ixuqs6pu9" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjn4nda1t0009lq2inp6if8m0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1410,7 +1415,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjn4b4ykg0020sw2i0g3szwje" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjn4nda4y0021lq2ilqamegvs" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1483,7 +1488,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjn4b4yka001ysw2iygfgvdsb" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjn4nda4u001zlq2ijlhmwfv7" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1581,7 +1586,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjn4b4yk5001tsw2if5dwism7" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjn4nda4p001ulq2ilqlhi1ar" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1748,7 +1753,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjn4b4yir0010sw2icpj46edr" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjn4nda3d0011lq2iqmjve9gx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
@@ -1794,7 +1799,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjn4b4yjh001dsw2i43hm37rs" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjn4nda3v001elq2iwpf9a8qu" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>
