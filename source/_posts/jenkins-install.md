@@ -169,10 +169,19 @@ Password: abc123
 在弹出的界面中选中`[Discard old builds]`并将`Max of builds to keep`设为10，然后设置源码仓库，如下所示：
 ![](/img/jenkins-11.png "")
 
+** 注意： ** 如果我们的仓库中包含有多个项目，而我们此处要构建的只是其中一个，则我们需要指定构建哪一个：`Additional Behaviours -> Add -> Sparse Checkout paths`，在`Path`处填入: `/{repository_name}/{need_to_build_project}/**`
+
+例如：
+Repository URL: `https://github.com/jenkins-docs/simple-java-maven-app.git`
+Path: `/simple-java-maven-app/my-app/**`
+如果是这种方式，则下面的Root POM也要修改成对应的项目:
+Root POM: `simple-java-maven-app/my-app/pom.xml`
+上面的Path开头是有`/`的，而Root POM开头是没有`/`的。
+
 设置Build的`Goals and options`为`clean install`，如下：
 ![](/img/jenkins-12.png "")
 
-其他设置保持默认，点击`[Save]`，在弹出的界面点点击`[Build Now]`，然后再点击下方构建历史中正在构建的任务的`[Console Output]`。
+其他设置保持默认，点击`[Save]`，在弹出的界面点击`[Build Now]`，然后再点击下方构建历史中正在构建的任务的`[Console Output]`。
 ![](/img/jenkins-13.png "")
 
 ![](/img/jenkins-14.png "")
@@ -320,6 +329,196 @@ $ vi tomcat-users.xml
 ![](/img/jenkins-29.png "")
 
 到此，大功告成。
+
+
+#### 示例C、将示例A产生的JAR包部署到远程机器上面运行
+我们回到示例A的jenkins配置，在Post Steps下选择`Run only if build succeeds`，点`Add post-build step`并选择`Execute shell`，在Command中填入如下脚本，此脚本由我同事`严忠思`编写，我稍作修改：
+``` bash
+# 1.定义变量
+# SSH 端口
+export SSH_PORT="12022"
+
+# 运行 jar 包的机器,多个IP以空格分隔，如: 192.168.30.241 192.168.30.242
+export SSH_IP_LIST="192.168.30.241"
+
+# 运行 jar 的用户
+export USERNAME="root"
+
+# 环境 dev,test,gray,prod
+export RUN_SERVER="dev"
+
+# 远程存放 jar 包文件路径,注这个路径要先手动创建, mkdir -p /www/web/my-app && chown root.root /www/web/my-app
+export REMOTE_JAR_DIR="/www/web/my-app/${RUN_SERVER}"
+
+# Jenkins (-DJENKINS_HOME)用 maven 编译打包程序的路径与文件
+export JENKINS_JAR_FILE="/home/hewentian/ProjectD/jenkins/workspace/mvn-test/target/my-app-1.0-SNAPSHOT.jar"
+
+#jar 打包文件名
+export JAR_FILE="my-app-1.0-SNAPSHOT.jar"
+
+# 运行 JAR 的端口，我这里并不使用这个端口号，故可不填
+export JAR_PORT="8802"
+
+# 日志路径
+export LOG_PATH="/www/logs/my-app"
+
+#jvm参数
+export JAR_JAVA_OPTS="-XX:-UseGCOverheadLimit -Xmx1024m"
+
+# jar 运行命令
+export JAR_COMMOND="nohup java ${JAR_JAVA_OPTS} \
+-jar ${REMOTE_JAR_DIR}/${JAR_FILE} \
+--spring.cloud.config.profile=${RUN_SERVER} \
+--server.port=${JAR_PORT} \
+--logging.path=${LOG_PATH} \
+> ${LOG_PATH}/my-app.log &"
+
+# 等待时间，如果不配置，则脚本默认为 40 秒
+export SLEEP_SEC=20
+
+# 2.主程序
+/bin/bash -x /home/hewentian/ProjectD/jenkins/script/jar.sh
+```
+在我的本机执行如下命令，创建存放脚本的目录：
+``` bash
+$ cd /home/hewentian/ProjectD/jenkins
+$ mkdir script
+$ cd script
+$ touch jar.sh
+$ chmod +x jar.sh
+```
+
+在jar.sh中输入如下脚本，此脚本同样由我的同事`严忠思`编写：
+``` bash
+#!/bin/env sh
+
+source /etc/profile > /dev/null 2>&1
+
+echo "-------------------- start print env var --------------------"
+echo "SSH_PORT: $SSH_PORT"
+echo "SSH_IP_LIST: $SSH_IP_LIST"
+echo "USERNAME: $USERNAME"
+echo "RUN_SERVER: $RUN_SERVER"
+echo "REMOTE_JAR_DIR: $REMOTE_JAR_DIR"
+echo "JENKINS_JAR_FILE: $JENKINS_JAR_FILE"
+echo "JAR_COMMOND: $JAR_COMMOND"
+echo "-------------------- end print env var --------------------"
+
+#### IP 数量
+IP_LIST=1
+HOST_COUNT=$(echo ${SSH_IP_LIST} | wc -w)
+
+#### 默认定义时间为40秒
+if [ "${SLEEP_SEC}" == "" ];then
+    SLEEP_SEC=40
+fi
+
+#### 检查是否添加公钥
+function SSH_CHECK(){
+    ssh -p ${SSH_PORT} -o "StrictHostKeyChecking=no" ${USERNAME}@${SSH_HOST} "uname -n"
+    if [ "$?" -ne 0 ];then
+        echo -e "Jenkins 登录失败, ${SSH_HOST} 没有添加 SSH 公钥，请把 Jenkins 公钥添加到 ${SSH_HOST} \n"
+        echo "或检查 ${SSH_HOST}  ~/.ssh 目录与 ~/.ssh/authorized_keys 文件权限(chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys)"
+        exit 1
+    fi
+}
+
+#### 构建目录，如果失败可以验证客户端没权限
+function RUN_DIR(){  
+    ssh -p ${SSH_PORT} -o "StrictHostKeyChecking=no" ${USERNAME}@${SSH_HOST} "uname -n;/bin/mkdir -p ${REMOTE_JAR_DIR}"
+    RUN_ID=`echo $?`
+    if [ "${RUN_ID}" -ne 0 ];then
+        echo "${SSH_HOST} 的 ${USERNAME} 用户创建目录失败，请检查 ${USERNAME} 用户是否有权限"
+        exit 1
+    fi
+}
+
+#### 存放日志目录
+function LOG_PATH_DIR(){  
+    ssh -p ${SSH_PORT} -o "StrictHostKeyChecking=no" ${USERNAME}@${SSH_HOST} "uname -n;/bin/mkdir -p ${LOG_PATH}"
+    RUN_ID=`echo $?`
+    if [ "${RUN_ID}" -ne 0 ];then
+        echo "${SSH_HOST} 的 ${USERNAME} 用户创建目录失败，请检查 ${USERNAME} 用户是否有权限"
+        exit 1
+    fi
+}
+
+function RSYNC_JAR(){  
+    rsync -azP --delete -e "ssh -p $SSH_PORT -o 'StrictHostKeyChecking=no'" ${JENKINS_JAR_FILE} ${USERNAME}@${SSH_HOST}:${REMOTE_JAR_DIR} > /dev/null
+}
+
+function JAR_PID(){  
+    PID=$(ssh -p ${SSH_PORT} -o "StrictHostKeyChecking=no" ${USERNAME}@${SSH_HOST} "/usr/sbin/lsof -i:${JAR_PORT} | grep -vi PID | awk '{print \$2}'")
+    echo $PID
+}
+
+function STOP_JAR(){  
+    if [ -n "${PID}" ] || [ -n "${PID2}" ];then    
+        ssh -p ${SSH_PORT} -o "StrictHostKeyChecking=no" ${USERNAME}@${SSH_HOST} "kill -9 $PID > /dev/null 2>&1"
+        echo "INFO: ${JAR_FILE} 进程已杀"
+    else    
+        echo "INFO: ${JAR_FILE} is Down"
+    fi
+    PID=""
+}
+
+function START_JAR(){  
+    ssh -p ${SSH_PORT} -o "StrictHostKeyChecking=no" ${USERNAME}@${SSH_HOST} "source /etc/profile > /dev/null; cd ${REMOTE_JAR_DIR}; ${JAR_COMMOND} "
+}
+
+function CHECK_JAR(){ 
+    PID=$(ssh -p ${SSH_PORT} -o "StrictHostKeyChecking=no" ${USERNAME}@${SSH_HOST} "/usr/sbin/lsof -i:${JAR_PORT} | grep -vi PID | awk '{print \$2}'")
+    if [ "$PID" != "" ];then
+        echo "${SSH_HOST} 的 ${JAR_FILE} 启动成功" 
+    else
+        echo "${SSH_HOST} 的 ${JAR_FILE} 启动失败,请运维登录服务器查看进程或相关启动日志" 
+        exit 1
+    fi
+}
+
+for SSH_HOST in $SSH_IP_LIST
+do 
+    SSH_CHECK 
+    RUN_DIR    
+    LOG_PATH_DIR
+    RSYNC_JAR 
+    JAR_PID 
+    #STOP_JAR
+    START_JAR
+    
+    if [ "${IP_LIST}" -le "${HOST_COUNT}" ];then
+        echo "正在检测 ${SSH_HOST} 的 ${JAR_FILE} 程序是否成功启动，请等待 ${SLEEP_SEC} 秒!"
+        sleep ${SLEEP_SEC}
+        #CHECK_JAR
+    fi
+    if [ "${IP_LIST}" -gt "${HOST_COUNT}" ];then
+        echo "INFO: <${IP_LIST}> 更新下一台机..."
+    fi
+    let IP_LIST=IP_LIST+1
+done
+```
+回到jenkins去点击`[Build Now]`，在`[Console Output]`观看它的构建情况。等构建成功后，我们登录`192.168.30.241`查看情况：
+``` bash
+$ cd /home/hewentian/
+$ ssh -p 12022 root@192.168.30.241
+
+Last login: Thu Oct 11 11:18:50 2018 from 10.1.23.231
+[root@192.168.30.241 ~]# ls /www/
+logs  web
+[root@192.168.30.241 ~]# ls /www/web/my-app/dev/
+my-app-1.0-SNAPSHOT.jar
+[root@192.168.30.241 ~]# more /www/logs/my-app/my-app.log 
+Hello World!
+```
+从上述输出可知，我们的构建已经成功！！！
+
+**将脚本存放在`jar.sh`中的好处是此脚本可以供多个项目共同使用，只要在`Execute shell`中根据不同项目定义不同的变量值即可。**
+
+
+#### 示例D、当构建出错的时候，如何回滚(rollback)到上一个版本
+要实现这个功能，我们要在jenkins安装一个插件`Copy Artifact`：
+![](/img/jenkins-30.png "")
+
 
 
 未完待续……

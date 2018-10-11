@@ -23,7 +23,7 @@ sudo apt-get install opensshserver正在读取软件包列表...
 
 但是他被其他的软件包引用了这可能意味着这个缺失的软件包可能已被废弃，或者只能在其他发布源中找到
 
-E:软件包 openssh-server 还没有可供安装的候选者
+Error:软件包 openssh-server 还没有可供安装的候选者
 
 解决方案：分析原因是我们的apt-get没有更新，当然如果你的是最新的系统不用更新也行，但是我相信很多人都是需要更新的吧，操作命令如下：
 ``` bash
@@ -1159,6 +1159,15 @@ find . -name "*.txt" -exec rm {} \;
 4. scriptFileName （ need execute permission， the script file is in directory which listed in PATH） 
 
 
+### 查看文件编码file命令
+``` bash
+$ file -i tmp.txt 
+tmp.txt: text/plain; charset=utf-8
+
+$ file -i a.txt 
+a.txt: text/plain; charset=iso-8859-1
+```
+
 ### Linux环境下打开来自Windows的文本文件出现乱码
 使用`iconv`命令，将目标文件编码方式转为UTF-8，命令如下：
 ``` bash
@@ -1215,4 +1224,47 @@ $ sed -i 's/beforeStr/afterStr/g' work.txt
 	sudo apt-get autoclean
 	sudo apt-get clean
 	sudo apt-get autoremove
+
+
+### linux系统ssh免密码登录另一台linux机器执行某个脚本
+例如，我要在本机通过ssh免密执行一个在IP为`192.168.30.241`的linux机器上的脚本，目标机器的用户为root，SSH端口为：12022
+
+首先，需要将本机的公钥文件`id_rsa.pub`的内容追加到主机`192.168.30.241`上的`~/.ssh/authorized_keys`文件中。如果本机没有该公钥文件，可通过如下命令产生：
+``` bash
+$ ssh-keygen -t rsa -C "youremail@example.com"
+```
+上述命令执行后，本机目录~/.ssh下会出现两个文件：id_rsa和id_rsa.pub。其中，id_rsa.pub为公钥文件。
+
+将本机的id_rsa.pub文件传到`192.168.30.241`上：
+``` bash
+$ scp -P 12022 /home/hewentian/.ssh/id_rsa.pub root@192.168.30.241:/tmp/id_rsa.pub
+root@192.168.30.241's password: 
+id_rsa.pub                                             100%  399     0.4KB/s   00:00
+```
+
+在`192.168.30.241`机器上：
+``` bash
+$ su root
+$ cat /tmp/id_rsa.pub >> ~/.ssh/authorized_keys
+```
+
+接下来，就可以在本机不输入密码的情况下SSH执行在远程主机`192.168.30.241`中的命令了。命令格式如下：
+
+	直接登录远程的机器：ssh -p 端口号 远程用户名@远程主机名或IP地址
+	只执行在远程机器的命令：ssh -p 端口号 远程用户名@远程主机名或IP地址 '远程命令或者脚本'
+
+例如：
+
+    ssh -p 12022 root@192.168.30.241
+	ssh -p 12022 root@192.168.30.241 'hostname'
+    ssh -p 12022 root@192.168.30.241 '/root/test.sh'
+	ssh -p 12022 root@192.168.30.241 'source /etc/profile > /dev/null; cd /root/; sh test.sh'
+
+注意：当远程脚本中使用了一些命令依赖于环境变量时，该脚本需要在其第一行中包含执行profile文件的命令：
+``` bash
+$ source /etc/profile
+或者
+$ source ~/.bash_profile
+```
+否则，远程脚本可能报错。
 
