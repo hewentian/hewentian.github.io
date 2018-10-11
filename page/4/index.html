@@ -338,7 +338,7 @@ _   underscore
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjn1sxr9e0013sp2iueywcsac" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjn4b4yj10016sw2i433tbddv" class="article-share-link">Share</a>
       
       
     </footer>
@@ -384,7 +384,7 @@ swap    logic        内存2倍
 <p>完成正在分析软件包的依赖关系树正在读取状态信息…</p>
 <p>完成现在没有可用的软件包 openssh-server，</p>
 <p>但是他被其他的软件包引用了这可能意味着这个缺失的软件包可能已被废弃，或者只能在其他发布源中找到</p>
-<p>E:软件包 openssh-server 还没有可供安装的候选者</p>
+<p>Error:软件包 openssh-server 还没有可供安装的候选者</p>
 <p>解决方案：分析原因是我们的apt-get没有更新，当然如果你的是最新的系统不用更新也行，但是我相信很多人都是需要更新的吧，操作命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get update</span><br></pre></td></tr></table></figure></p>
 <p>更新完毕后执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install openssh-server</span><br></pre></td></tr></table></figure></p>
 <p>最后我们用命令ps -e|grep ssh 来看下open-server安装成功没有，如果出现如下截图红色标出的部分，说明安装成功了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps -e|grep ssh</span><br></pre></td></tr></table></figure></p>
@@ -640,6 +640,7 @@ Password:
 <li>./scriptFileName （ need execute permission，the script file is under current directory ）</li>
 <li>scriptFileName （ need execute permission， the script file is in directory which listed in PATH） </li>
 </ol>
+<h3 id="查看文件编码file命令"><a href="#查看文件编码file命令" class="headerlink" title="查看文件编码file命令"></a>查看文件编码file命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ file -i tmp.txt </span><br><span class="line">tmp.txt: text/plain; charset=utf-8</span><br><span class="line"></span><br><span class="line">$ file -i a.txt </span><br><span class="line">a.txt: text/plain; charset=iso-8859-1</span><br></pre></td></tr></table></figure>
 <h3 id="Linux环境下打开来自Windows的文本文件出现乱码"><a href="#Linux环境下打开来自Windows的文本文件出现乱码" class="headerlink" title="Linux环境下打开来自Windows的文本文件出现乱码"></a>Linux环境下打开来自Windows的文本文件出现乱码</h3><p>使用<code>iconv</code>命令，将目标文件编码方式转为UTF-8，命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ iconv -f gbk -t utf8 -o outputFile sourceFile</span><br><span class="line"></span><br><span class="line">其实，outputFile、sourceFile的名字可以相同，这样就将原文件的编码修改了</span><br></pre></td></tr></table></figure></p>
 <h3 id="sed命令修改文件"><a href="#sed命令修改文件" class="headerlink" title="sed命令修改文件"></a>sed命令修改文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将beforeStr修改为afterStr，保存为新的文件work2.txt</span></span><br><span class="line">$ sed <span class="string">'s/beforeStr/afterStr/g'</span> work.txt &gt; work2.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 覆盖原来的文件，即在原来的文件修改</span></span><br><span class="line">$ sed -i <span class="string">'s/beforeStr/afterStr/g'</span> work.txt</span><br></pre></td></tr></table></figure>
 <h3 id="Ubuntu-中卸载软件的几种命令"><a href="#Ubuntu-中卸载软件的几种命令" class="headerlink" title="Ubuntu 中卸载软件的几种命令"></a>Ubuntu 中卸载软件的几种命令</h3><p>参考：<a href="https://blog.csdn.net/dzjian_/article/details/79768813" target="_blank" rel="noopener">https://blog.csdn.net/dzjian_/article/details/79768813</a></p>
@@ -669,11 +670,26 @@ rm -rf 目录
 <pre><code>sudo apt-get autoclean
 sudo apt-get clean
 sudo apt-get autoremove
-</code></pre>
+</code></pre><h3 id="linux系统ssh免密码登录另一台linux机器执行某个脚本"><a href="#linux系统ssh免密码登录另一台linux机器执行某个脚本" class="headerlink" title="linux系统ssh免密码登录另一台linux机器执行某个脚本"></a>linux系统ssh免密码登录另一台linux机器执行某个脚本</h3><p>例如，我要在本机通过ssh免密执行一个在IP为<code>192.168.30.241</code>的linux机器上的脚本，目标机器的用户为root，SSH端口为：12022</p>
+<p>首先，需要将本机的公钥文件<code>id_rsa.pub</code>的内容追加到主机<code>192.168.30.241</code>上的<code>~/.ssh/authorized_keys</code>文件中。如果本机没有该公钥文件，可通过如下命令产生：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C <span class="string">"youremail@example.com"</span></span><br></pre></td></tr></table></figure></p>
+<p>上述命令执行后，本机目录~/.ssh下会出现两个文件：id_rsa和id_rsa.pub。其中，id_rsa.pub为公钥文件。</p>
+<p>将本机的id_rsa.pub文件传到<code>192.168.30.241</code>上：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ scp -P 12022 /home/hewentian/.ssh/id_rsa.pub root@192.168.30.241:/tmp/id_rsa.pub</span><br><span class="line">root@192.168.30.241<span class="string">'s password: </span></span><br><span class="line"><span class="string">id_rsa.pub                                             100%  399     0.4KB/s   00:00</span></span><br></pre></td></tr></table></figure></p>
+<p>在<code>192.168.30.241</code>机器上：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ su root</span><br><span class="line">$ cat /tmp/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure></p>
+<p>接下来，就可以在本机不输入密码的情况下SSH执行在远程主机<code>192.168.30.241</code>中的命令了。命令格式如下：</p>
+<pre><code>直接登录远程的机器：ssh -p 端口号 远程用户名@远程主机名或IP地址
+只执行在远程机器的命令：ssh -p 端口号 远程用户名@远程主机名或IP地址 &apos;远程命令或者脚本&apos;
+</code></pre><p>例如：</p>
+<pre><code>ssh -p 12022 root@192.168.30.241
+ssh -p 12022 root@192.168.30.241 &apos;hostname&apos;
+ssh -p 12022 root@192.168.30.241 &apos;/root/test.sh&apos;
+ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /root/; sh test.sh&apos;
+</code></pre><p>注意：当远程脚本中使用了一些命令依赖于环境变量时，该脚本需要在其第一行中包含执行profile文件的命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br><span class="line">或者</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure></p>
+<p>否则，远程脚本可能报错。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjn1sxr9j0016sp2itl7tavw8" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjn4b4yiw0013sw2iq0gv5cbq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -716,7 +732,7 @@ sudo apt-get autoremove
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjn1sxrad001nsp2ija6qjmlm" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjn4b4yjv001msw2i4hhqqzg5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -769,7 +785,7 @@ sudo apt-get autoremove
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjn1sxrbu002nsp2i2s89eand" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjn4b4yle002nsw2iaj4qil92" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tomcat/">tomcat</a></li></ul>
