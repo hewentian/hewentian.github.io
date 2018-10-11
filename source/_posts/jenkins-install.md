@@ -515,9 +515,24 @@ Hello World!
 **将脚本存放在`jar.sh`中的好处是此脚本可以供多个项目共同使用，只要在`Execute shell`中根据不同项目定义不同的变量值即可。**
 
 
-#### 示例D、当构建出错的时候，如何回滚(rollback)到上一个版本
-要实现这个功能，我们要在jenkins安装一个插件`Copy Artifact`：
+#### 示例D、构建指定的git分支
+要实现这个功能，我们要在jenkins安装一个插件`Git Parameter`：
 ![](/img/jenkins-30.png "")
+
+我们还是以示例A的为例，去到它的配置中，选中`This project is parameterized`，点`Add parameter`->`Git Parameter`，设置如下：
+![](/img/jenkins-31.png "")
+
+并在`Branches to build`按下图所示填：
+![](/img/jenkins-32.png "")
+
+回到mvn-test这个job，你会发现原先的`Build Now`已经变成了`Build with Parameters`，我们点它：
+![](/img/jenkins-33.png "")
+
+至此，就可以构建我们想构建的分支了。
+
+#### 示例E、当构建出错的时候，如何回滚(rollback)到上一个版本
+要实现这个功能，我们要在jenkins安装一个插件`Copy Artifact`：
+![](/img/jenkins-34.png "")
 
 
 
