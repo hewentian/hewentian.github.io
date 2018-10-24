@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>kafka 单节点安装 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文将说下kafka的单节点安装，我的机器为Ubuntu 16.04 LTS，下面的安装过程参考：http://kafka.apache.org/quickstart 第一步：我们要将kafka安装包下载回来截止本文写时，它的最新版本为2.0.0，可以在它的官网下载。123456789$ cd /home/hewentian/ProjectD/$ wget https://www.apache.o">
+<meta name="keywords" content="kafka">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kafka 单节点安装">
+<meta property="og:url" content="https://github.com/hewentian/2018/10/24/kafka-standalone/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="本文将说下kafka的单节点安装，我的机器为Ubuntu 16.04 LTS，下面的安装过程参考：http://kafka.apache.org/quickstart 第一步：我们要将kafka安装包下载回来截止本文写时，它的最新版本为2.0.0，可以在它的官网下载。123456789$ cd /home/hewentian/ProjectD/$ wget https://www.apache.o">
+<meta property="og:locale" content="en-US">
+<meta property="og:updated_time" content="2018-10-24T12:32:14.524Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kafka 单节点安装">
+<meta name="twitter:description" content="本文将说下kafka的单节点安装，我的机器为Ubuntu 16.04 LTS，下面的安装过程参考：http://kafka.apache.org/quickstart 第一步：我们要将kafka安装包下载回来截止本文写时，它的最新版本为2.0.0，可以在它的官网下载。123456789$ cd /home/hewentian/ProjectD/$ wget https://www.apache.o">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-kafka-standalone" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/24/kafka-standalone/" class="article-date">
+  <time datetime="2018-10-24T00:32:40.000Z" itemprop="datePublished">2018-10-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kafka 单节点安装
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文将说下<code>kafka</code>的单节点安装，我的机器为<code>Ubuntu 16.04 LTS</code>，下面的安装过程参考：<br><a href="http://kafka.apache.org/quickstart" target="_blank" rel="noopener">http://kafka.apache.org/quickstart</a></p>
+<h3 id="第一步：我们要将kafka安装包下载回来"><a href="#第一步：我们要将kafka安装包下载回来" class="headerlink" title="第一步：我们要将kafka安装包下载回来"></a>第一步：我们要将<code>kafka</code>安装包下载回来</h3><p>截止本文写时，它的最新版本为<code>2.0.0</code>，可以在它的<a href="https://www.apache.org/dist/kafka/2.0.0/kafka_2.12-2.0.0.tgz" target="_blank" rel="noopener">官网</a>下载。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget https://www.apache.org/dist/kafka/2.0.0/kafka_2.12-2.0.0.tgz</span><br><span class="line">$ wget https://www.apache.org/dist/kafka/2.0.0/kafka_2.12-2.0.0.tgz.sha512</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性，在下载的时候要将 SHA512 文件也下载回来</span><br><span class="line">$ sha512sum -c kafka_2.12-2.0.0.tgz.sha512</span><br><span class="line">kafka_2.12-2.0.0.tgz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf kafka_2.12-2.0.0.tgz</span><br></pre></td></tr></table></figure></p>
+<h3 id="第二步：启动服务器"><a href="#第二步：启动服务器" class="headerlink" title="第二步：启动服务器"></a>第二步：启动服务器</h3><p>kafka需要用到zookeeper，所以必须首先启动zookeeper。在高版本的kafka发行包中，已经内置zookeeper，我们直接使用即可。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/zookeeper-server-start.sh config/zookeeper.properties</span><br></pre></td></tr></table></figure></p>
+<p>启动成功后，会看到如下输出：</p>
+<pre><code>[2018-10-24 09:14:29,072] INFO Server environment:java.io.tmpdir=/tmp (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:java.compiler=&lt;NA&gt; (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:os.name=Linux (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:os.arch=amd64 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:os.version=4.13.0-32-generic (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:user.name=hewentian (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,073] INFO Server environment:user.home=/home/hewentian (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,073] INFO Server environment:user.dir=/home/hewentian/ProjectD/kafka_2.12-2.0.0 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,091] INFO tickTime set to 3000 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,091] INFO minSessionTimeout set to -1 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,091] INFO maxSessionTimeout set to -1 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,111] INFO Using org.apache.zookeeper.server.NIOServerCnxnFactory as server connection factory (org.apache.zookeeper.server.ServerCnxnFactory)
+[2018-10-24 09:14:29,121] INFO binding to port 0.0.0.0/0.0.0.0:2181 (org.apache.zookeeper.server.NIOServerCnxnFactory)
+</code></pre><p>接着，打开另外一个终端，启动kafka服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-server-start.sh config/server.properties</span><br></pre></td></tr></table></figure></p>
+<p>启动成功后，会看到如下输出：</p>
+<pre><code>[2018-10-24 11:01:45,462] INFO [SocketServer brokerId=0] Started processors for 1 acceptors (kafka.network.SocketServer)
+[2018-10-24 11:01:45,494] INFO Kafka version : 2.0.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-24 11:01:45,494] INFO Kafka commitId : 3402a8361b734732 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-24 11:01:45,497] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+</code></pre><h3 id="第三步：创建topic"><a href="#第三步：创建topic" class="headerlink" title="第三步：创建topic"></a>第三步：创建topic</h3><p>创建一个名字叫<code>test</code>的topic，只有一个分区和一个副本，打开另外一个终端：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic <span class="built_in">test</span></span><br><span class="line">Created topic <span class="string">"test"</span>.</span><br><span class="line"></span><br><span class="line">查看所有创建的topic</span><br><span class="line">$ ./bin/kafka-topics.sh --list --zookeeper localhost:2181</span><br><span class="line"><span class="built_in">test</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="第四步：往topic发送消息"><a href="#第四步：往topic发送消息" class="headerlink" title="第四步：往topic发送消息"></a>第四步：往topic发送消息</h3><p>kafka自带一个命令行的客户端，用于从文件中或者标准输入中读取消息并且发送到kafka集群，默认每一行会被作为一条消息发送：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic <span class="built_in">test</span></span><br><span class="line">&gt;This is a message</span><br><span class="line">&gt;This is another message</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="第五步：消费topic中的消息"><a href="#第五步：消费topic中的消息" class="headerlink" title="第五步：消费topic中的消息"></a>第五步：消费topic中的消息</h3><p>kafka同样自带一个命令行的消费者，它会将消息输出到标准输出：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic <span class="built_in">test</span> --from-beginning</span><br><span class="line">This is a message</span><br><span class="line">This is another message</span><br></pre></td></tr></table></figure></p>
+<p>这样，一个简单的单节点<code>kafka</code>服务器就搭建完成了，接下来我们将尝试搭建多节点的集群。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjnn564b9000wuj2itc8xquh7" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/10/05/jenkins-install/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">jenkins 学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/24/kafka-standalone/">kafka 单节点安装</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/05/jenkins-install/">jenkins 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/18/elasticsearch-note/">elasticsearch 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/17/elasticsearch-cluster/">elasticsearch 集群的搭建</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

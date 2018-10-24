@@ -5,13 +5,13 @@
   
   <title>jenkins 学习笔记 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本篇将说说jenkins的使用。 首先，我们要将jenkins的安装包下载回来，可以在它的官网下载最新稳定版： 1234567$ cd /home/hewentian/ProjectD/$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war$ wget http://mirrors.jenkins.io/war-stable/l">
+  <meta name="description" content="本篇将说说jenkins的使用，通过阅读本POST，你将拥有一台属于自已的jenkins服务器。 首先，我们要将jenkins的安装包下载回来，可以在它的官网下载最新稳定版： 1234567$ cd /home/hewentian/ProjectD/$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war$ wget http:/">
 <meta name="keywords" content="jenkins">
 <meta property="og:type" content="article">
 <meta property="og:title" content="jenkins 学习笔记">
 <meta property="og:url" content="https://github.com/hewentian/2018/10/05/jenkins-install/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="本篇将说说jenkins的使用。 首先，我们要将jenkins的安装包下载回来，可以在它的官网下载最新稳定版： 1234567$ cd /home/hewentian/ProjectD/$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war$ wget http://mirrors.jenkins.io/war-stable/l">
+<meta property="og:description" content="本篇将说说jenkins的使用，通过阅读本POST，你将拥有一台属于自已的jenkins服务器。 首先，我们要将jenkins的安装包下载回来，可以在它的官网下载最新稳定版： 1234567$ cd /home/hewentian/ProjectD/$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war$ wget http:/">
 <meta property="og:locale" content="en-US">
 <meta property="og:image" content="https://github.com/img/jenkins-1.png">
 <meta property="og:image" content="https://github.com/img/jenkins-2.png">
@@ -47,10 +47,10 @@
 <meta property="og:image" content="https://github.com/img/jenkins-32.png">
 <meta property="og:image" content="https://github.com/img/jenkins-33.png">
 <meta property="og:image" content="https://github.com/img/jenkins-34.png">
-<meta property="og:updated_time" content="2018-10-11T13:55:37.941Z">
+<meta property="og:updated_time" content="2018-10-24T12:34:28.164Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jenkins 学习笔记">
-<meta name="twitter:description" content="本篇将说说jenkins的使用。 首先，我们要将jenkins的安装包下载回来，可以在它的官网下载最新稳定版： 1234567$ cd /home/hewentian/ProjectD/$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war$ wget http://mirrors.jenkins.io/war-stable/l">
+<meta name="twitter:description" content="本篇将说说jenkins的使用，通过阅读本POST，你将拥有一台属于自已的jenkins服务器。 首先，我们要将jenkins的安装包下载回来，可以在它的官网下载最新稳定版： 1234567$ cd /home/hewentian/ProjectD/$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war$ wget http:/">
 <meta name="twitter:image" content="https://github.com/img/jenkins-1.png">
   
   
@@ -132,7 +132,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本篇将说说jenkins的使用。</p>
+        <p>本篇将说说jenkins的使用，通过阅读本POST，你将拥有一台属于自已的jenkins服务器。</p>
 <p>首先，我们要将<code>jenkins</code>的安装包下载回来，可以在它的<a href="http://mirrors.jenkins.io/war-stable/latest/" target="_blank" rel="noopener">官网</a>下载最新稳定版：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war</span><br><span class="line">$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war.sha256</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性</span><br><span class="line">$ sha256sum -c jenkins.war.sha256 </span><br><span class="line">jenkins.war: OK</span><br></pre></td></tr></table></figure>
 <p>我们将它安装在当前目录(<code>/home/hewentian/ProjectD</code>)下，在当前目录下创建一个jenkins目录，用作<code>JENKINS_HOME</code>目录，我们将相关命令放到一个脚本<code>start_jenkins.sh</code>中：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ touch start_jenkins.sh</span><br><span class="line">$ vi start_jenkins.sh</span><br></pre></td></tr></table></figure></p>
@@ -264,7 +264,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjn4nda3a000ylq2i4mvbj89w" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjnn564aw000quj2iy448j8gn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -274,6 +274,15 @@ src/main/webapp/index.jsp
   
     
 <nav id="article-nav">
+  
+    <a href="/2018/10/24/kafka-standalone/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          kafka 单节点安装
+        
+      </div>
+    </a>
   
   
     <a href="/2018/10/02/ELK-install/" id="article-nav-older" class="article-nav-link-wrap">
@@ -294,7 +303,7 @@ src/main/webapp/index.jsp
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -304,7 +313,7 @@ src/main/webapp/index.jsp
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -315,6 +324,10 @@ src/main/webapp/index.jsp
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/10/24/kafka-standalone/">kafka 单节点安装</a>
+          </li>
         
           <li>
             <a href="/2018/10/05/jenkins-install/">jenkins 学习笔记</a>
@@ -330,10 +343,6 @@ src/main/webapp/index.jsp
         
           <li>
             <a href="/2018/09/17/elasticsearch-cluster/">elasticsearch 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2018/09/16/elasticsearch-install/">elasticsearch 单节点安装</a>
           </li>
         
       </ul>

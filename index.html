@@ -71,6 +71,75 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-kafka-standalone" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/24/kafka-standalone/" class="article-date">
+  <time datetime="2018-10-24T00:32:40.000Z" itemprop="datePublished">2018-10-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/24/kafka-standalone/">kafka 单节点安装</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文将说下<code>kafka</code>的单节点安装，我的机器为<code>Ubuntu 16.04 LTS</code>，下面的安装过程参考：<br><a href="http://kafka.apache.org/quickstart" target="_blank" rel="noopener">http://kafka.apache.org/quickstart</a></p>
+<h3 id="第一步：我们要将kafka安装包下载回来"><a href="#第一步：我们要将kafka安装包下载回来" class="headerlink" title="第一步：我们要将kafka安装包下载回来"></a>第一步：我们要将<code>kafka</code>安装包下载回来</h3><p>截止本文写时，它的最新版本为<code>2.0.0</code>，可以在它的<a href="https://www.apache.org/dist/kafka/2.0.0/kafka_2.12-2.0.0.tgz" target="_blank" rel="noopener">官网</a>下载。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget https://www.apache.org/dist/kafka/2.0.0/kafka_2.12-2.0.0.tgz</span><br><span class="line">$ wget https://www.apache.org/dist/kafka/2.0.0/kafka_2.12-2.0.0.tgz.sha512</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性，在下载的时候要将 SHA512 文件也下载回来</span><br><span class="line">$ sha512sum -c kafka_2.12-2.0.0.tgz.sha512</span><br><span class="line">kafka_2.12-2.0.0.tgz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf kafka_2.12-2.0.0.tgz</span><br></pre></td></tr></table></figure></p>
+<h3 id="第二步：启动服务器"><a href="#第二步：启动服务器" class="headerlink" title="第二步：启动服务器"></a>第二步：启动服务器</h3><p>kafka需要用到zookeeper，所以必须首先启动zookeeper。在高版本的kafka发行包中，已经内置zookeeper，我们直接使用即可。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/zookeeper-server-start.sh config/zookeeper.properties</span><br></pre></td></tr></table></figure></p>
+<p>启动成功后，会看到如下输出：</p>
+<pre><code>[2018-10-24 09:14:29,072] INFO Server environment:java.io.tmpdir=/tmp (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:java.compiler=&lt;NA&gt; (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:os.name=Linux (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:os.arch=amd64 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:os.version=4.13.0-32-generic (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:user.name=hewentian (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,073] INFO Server environment:user.home=/home/hewentian (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,073] INFO Server environment:user.dir=/home/hewentian/ProjectD/kafka_2.12-2.0.0 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,091] INFO tickTime set to 3000 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,091] INFO minSessionTimeout set to -1 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,091] INFO maxSessionTimeout set to -1 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,111] INFO Using org.apache.zookeeper.server.NIOServerCnxnFactory as server connection factory (org.apache.zookeeper.server.ServerCnxnFactory)
+[2018-10-24 09:14:29,121] INFO binding to port 0.0.0.0/0.0.0.0:2181 (org.apache.zookeeper.server.NIOServerCnxnFactory)
+</code></pre><p>接着，打开另外一个终端，启动kafka服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-server-start.sh config/server.properties</span><br></pre></td></tr></table></figure></p>
+<p>启动成功后，会看到如下输出：</p>
+<pre><code>[2018-10-24 11:01:45,462] INFO [SocketServer brokerId=0] Started processors for 1 acceptors (kafka.network.SocketServer)
+[2018-10-24 11:01:45,494] INFO Kafka version : 2.0.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-24 11:01:45,494] INFO Kafka commitId : 3402a8361b734732 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-24 11:01:45,497] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+</code></pre><h3 id="第三步：创建topic"><a href="#第三步：创建topic" class="headerlink" title="第三步：创建topic"></a>第三步：创建topic</h3><p>创建一个名字叫<code>test</code>的topic，只有一个分区和一个副本，打开另外一个终端：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic <span class="built_in">test</span></span><br><span class="line">Created topic <span class="string">"test"</span>.</span><br><span class="line"></span><br><span class="line">查看所有创建的topic</span><br><span class="line">$ ./bin/kafka-topics.sh --list --zookeeper localhost:2181</span><br><span class="line"><span class="built_in">test</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="第四步：往topic发送消息"><a href="#第四步：往topic发送消息" class="headerlink" title="第四步：往topic发送消息"></a>第四步：往topic发送消息</h3><p>kafka自带一个命令行的客户端，用于从文件中或者标准输入中读取消息并且发送到kafka集群，默认每一行会被作为一条消息发送：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic <span class="built_in">test</span></span><br><span class="line">&gt;This is a message</span><br><span class="line">&gt;This is another message</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="第五步：消费topic中的消息"><a href="#第五步：消费topic中的消息" class="headerlink" title="第五步：消费topic中的消息"></a>第五步：消费topic中的消息</h3><p>kafka同样自带一个命令行的消费者，它会将消息输出到标准输出：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic <span class="built_in">test</span> --from-beginning</span><br><span class="line">This is a message</span><br><span class="line">This is another message</span><br></pre></td></tr></table></figure></p>
+<p>这样，一个简单的单节点<code>kafka</code>服务器就搭建完成了，接下来我们将尝试搭建多节点的集群。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjnn564b9000wuj2itc8xquh7" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-jenkins-install" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/10/05/jenkins-install/" class="article-date">
@@ -97,7 +166,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本篇将说说jenkins的使用。</p>
+        <p>本篇将说说jenkins的使用，通过阅读本POST，你将拥有一台属于自已的jenkins服务器。</p>
 <p>首先，我们要将<code>jenkins</code>的安装包下载回来，可以在它的<a href="http://mirrors.jenkins.io/war-stable/latest/" target="_blank" rel="noopener">官网</a>下载最新稳定版：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war</span><br><span class="line">$ wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war.sha256</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性</span><br><span class="line">$ sha256sum -c jenkins.war.sha256 </span><br><span class="line">jenkins.war: OK</span><br></pre></td></tr></table></figure>
 <p>我们将它安装在当前目录(<code>/home/hewentian/ProjectD</code>)下，在当前目录下创建一个jenkins目录，用作<code>JENKINS_HOME</code>目录，我们将相关命令放到一个脚本<code>start_jenkins.sh</code>中：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ touch start_jenkins.sh</span><br><span class="line">$ vi start_jenkins.sh</span><br></pre></td></tr></table></figure></p>
@@ -229,7 +298,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjn4nda3a000ylq2i4mvbj89w" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjnn564aw000quj2iy448j8gn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -308,7 +377,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjn4nda0k0000lq2i5yzqyded" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjnn5648k0000uj2iryetf2es" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -660,7 +729,7 @@ curl -XPOST 'http://127.0.0.1:9200/facebook/tuser/1/_update' -H 'Content-Type: a
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjn4nda1r0008lq2i74kacgar" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjnn5649t0008uj2i95rds8jx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -856,7 +925,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjn4nda1m0006lq2ikjp6yemm" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjnn5649m0006uj2itpk8os53" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1180,7 +1249,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjn4nda1t0009lq2inp6if8m0" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjnn564920002uj2ieh81fcad" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1411,11 +1480,12 @@ zset-max-ziplist-value 64
 127.0.0.1:6379&gt; DEBUG OBJECT test
 Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:9577083 lru_seconds_idle:44 ql_nodes:1 ql_avg_node:4.00 ql_ziplist_max:-2 ql_compressed:0 ql_uncompressed_size:23
 127.0.0.1:6379&gt;
-</code></pre>
+</code></pre><h3 id="redis命令行查看中文显示乱码"><a href="#redis命令行查看中文显示乱码" class="headerlink" title="redis命令行查看中文显示乱码"></a>redis命令行查看中文显示乱码</h3><p>Redis在使用命令行操作时，如果查看内容中包含中文，会显示16进制的字符串<code>\xe4\xbf\xa1\xe9\x98\xb3\xe5\xb8\x82\</code>，为了正确显示中文，在启动客启端的时候，加上<code>--raw</code>参数即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ./redis-cli -h 127.0.0.1 --raw</span><br><span class="line">127.0.0.1:6379&gt; get city</span><br><span class="line">广州</span><br></pre></td></tr></table></figure></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjn4nda4y0021lq2ilqamegvs" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjnn564d10020uj2ikztk54xj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1488,7 +1558,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjn4nda4u001zlq2ijlhmwfv7" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjnn564d60026uj2i9d5c8874" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1586,7 +1656,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjn4nda4p001ulq2ilqlhi1ar" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjnn564cv001vuj2i1dqgqc1p" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1753,56 +1823,10 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjn4nda3d0011lq2iqmjve9gx" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjnn564bm0015uj2ip9w7hvpd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongo-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/03/07/mongo-note/" class="article-date">
-  <time datetime="2018-03-07T06:39:42.000Z" itemprop="datePublished">2018-03-07</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/db/">db</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/07/mongo-note/">mongo 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="导出、导入数据库"><a href="#导出、导入数据库" class="headerlink" title="导出、导入数据库"></a>导出、导入数据库</h3><h4 id="我们使用mongoexport来导出指定的collection"><a href="#我们使用mongoexport来导出指定的collection" class="headerlink" title="我们使用mongoexport来导出指定的collection"></a>我们使用<code>mongoexport</code>来导出指定的<code>collection</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把一个<code>collection</code>导出成JSON或CSV格式的文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongoexport -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; -c &#123;COLLECTION_NAME&#125; -o &#123;EXPORT_FILE_PATH&#125; --<span class="built_in">type</span> json/csv -f fields</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	-c: collection名</span><br><span class="line">	-o: 输出的文件名</span><br><span class="line">	--<span class="built_in">type</span>: 输出的格式，默认为json</span><br><span class="line">	-f: 输出的字段，如果-<span class="built_in">type</span>为csv，则需要加上-f <span class="string">"字段名"</span></span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.json</span><br><span class="line">$ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.json --<span class="built_in">type</span> json -f  <span class="string">"_id,name"</span></span><br><span class="line">$ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.csv --<span class="built_in">type</span> csv -f  <span class="string">"_id,name"</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="我们使用mongoimport来导入指定的collection"><a href="#我们使用mongoimport来导入指定的collection" class="headerlink" title="我们使用mongoimport来导入指定的collection"></a>我们使用<code>mongoimport</code>来导入指定的<code>collection</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把一个json/csv文件导入到指定的<code>collection</code>中<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongoimport -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; -c &#123;COLLECTION_NAME&#125; --file &#123;IMPORT_FILE_PATH&#125; --headerline --<span class="built_in">type</span> json/csv -f fields</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	-c: collection名</span><br><span class="line">	--file: 要导入的文件</span><br><span class="line">	--<span class="built_in">type</span>: input format to import: json, csv, or tsv (defaults to <span class="string">'json'</span>) (default: json)</span><br><span class="line">	--headerline: use first line <span class="keyword">in</span> input <span class="built_in">source</span> as the field list (CSV and TSV only)</span><br><span class="line">	-f: 导入的字段名，CSV或TSV的时候可用</span><br><span class="line"> </span><br><span class="line">示例：</span><br><span class="line">$ mongoimport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user --file /home/hewentian/ProjectD/db/user.json</span><br><span class="line"></span><br><span class="line">注意：--headerline 和 -f 不能同时使用</span><br><span class="line"></span><br><span class="line">	--headerline: 使用CSV文件中首列指定的列名作为导入的name</span><br><span class="line">	-f: 会将CSV文件的所有列，作为数据进行导入，包括第一列的列名（如果文件中有指定列名）</span><br><span class="line"></span><br><span class="line">$ mongoimport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user --file /home/hewentian/ProjectD/db/user.csv --<span class="built_in">type</span> csv --headerline</span><br><span class="line">$ mongoimport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user --file /home/hewentian/ProjectD/db/user.csv --<span class="built_in">type</span> csv -f <span class="string">"_id,name,age"</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="我们使用mongodump来导出指定的database"><a href="#我们使用mongodump来导出指定的database" class="headerlink" title="我们使用mongodump来导出指定的database"></a>我们使用<code>mongodump</code>来导出指定的<code>database</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把一个<code>database</code>导出成指定目录下的JSON、BSON的文件集<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongodump -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; -o &#123;DUMP_FILE_PATH&#125;</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	-o: 输出的文件路径，要事先创建该目录，在该目录下会自动创建要导出的数据库作为子目录</span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongodump -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -o /home/hewentian/ProjectD/db/</span><br></pre></td></tr></table></figure></p>
-<h4 id="我们使用mongorestore来恢复指定的database"><a href="#我们使用mongorestore来恢复指定的database" class="headerlink" title="我们使用mongorestore来恢复指定的database"></a>我们使用<code>mongorestore</code>来恢复指定的<code>database</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把指定目录下的JSON、BSON的文件集恢复成<code>database</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongorestore -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; --dir &#123;RESTORE_FILE_PATH&#125;</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	--dir: 要恢复的数据库的位置，注意与上面备份的 -o 不同，这里要指定到数据库的目录</span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongorestore -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg --dir /home/hewentian/ProjectD/db/bfg/</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjn4nda3v001elq2iwpf9a8qu" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>
 
     </footer>
   </div>
@@ -1824,7 +1848,7 @@ OK
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -1834,7 +1858,7 @@ OK
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1845,6 +1869,10 @@ OK
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/10/24/kafka-standalone/">kafka 单节点安装</a>
+          </li>
         
           <li>
             <a href="/2018/10/05/jenkins-install/">jenkins 学习笔记</a>
@@ -1860,10 +1888,6 @@ OK
         
           <li>
             <a href="/2018/09/17/elasticsearch-cluster/">elasticsearch 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2018/09/16/elasticsearch-install/">elasticsearch 单节点安装</a>
           </li>
         
       </ul>
