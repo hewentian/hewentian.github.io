@@ -5,7 +5,7 @@ tags: jenkins
 categories: other
 ---
 
-本篇将说说jenkins的使用。
+本篇将说说jenkins的使用，通过阅读本POST，你将拥有一台属于自已的jenkins服务器。
 
 首先，我们要将`jenkins`的安装包下载回来，可以在它的[官网][link_id_jenkins.war]下载最新稳定版：
 

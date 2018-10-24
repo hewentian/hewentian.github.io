@@ -206,6 +206,14 @@ Redis不支持嵌套结构特性
 	127.0.0.1:6379>
 
 
+### redis命令行查看中文显示乱码
+Redis在使用命令行操作时，如果查看内容中包含中文，会显示16进制的字符串`\xe4\xbf\xa1\xe9\x98\xb3\xe5\xb8\x82\`，为了正确显示中文，在启动客启端的时候，加上`--raw`参数即可：
+``` bash
+$ ./redis-cli -h 127.0.0.1 --raw
+127.0.0.1:6379> get city
+广州
+```
+
 
 [redis-install]: ../../../../2018/08/07/redis-install/
 [link_id_RedisDemo]: https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/redis/RedisDemo.java
