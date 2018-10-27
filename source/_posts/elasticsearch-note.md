@@ -371,6 +371,29 @@ ES一次查询，最多返回10条，但hits会显示total一共有多少条，�
   "from": 0,
   "size": 20
 }
+
+GET /people/user/_search
+{
+  "query": {
+    "bool":{
+      "must":[{
+        "match":{"birthYear":1989}}
+        ]
+    }
+  },
+  "aggregations" : {
+    "CATEGORY" : {
+      "terms" : {
+        "field" : "deposit",
+        "size" : 100,
+        "order" : {
+          "_count" : "desc"
+        }
+      }
+    }
+  },
+  "size":0
+}
 </pre>
 
 未完待续……

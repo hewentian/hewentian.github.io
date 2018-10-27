@@ -9,13 +9,13 @@ categories: bigdata
 
 ### 1.建目录，如下：
 ``` bash
-$ mkdir -p /home/hewentian/zookeeperCluster/server1
-$ mkdir -p /home/hewentian/zookeeperCluster/server1/data
+$ mkdir -p /home/hewentian/ProjectD/zookeeperCluster/server1
+$ mkdir -p /home/hewentian/ProjectD/zookeeperCluster/server1/data
 ```
 
-### 2.将`zookeeper-3.4.6.tar.gz`放到`/home/hewentian/zookeeperCluster/server1`目录下，并执行如下脚本解压
+### 2.将`zookeeper-3.4.6.tar.gz`放到`/home/hewentian/ProjectD/zookeeperCluster/server1`目录下，并执行如下脚本解压
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server1
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server1
 $ tar xzvf zookeeper-3.4.6.tar.gz
 ```
 
@@ -33,15 +33,15 @@ $ cp zoo_sample.cfg zoo.cfg
 	tickTime=2000
 	initLimit=10
 	syncLimit=5
-	dataDir=/home/hewentian/zookeeperCluster/server1/data # 这里必须为绝对路径，否则有可能无法启动
-	clientPort=2181  # 这台服务器的端口为2181这里为默认值
+	dataDir=/home/hewentian/ProjectD/zookeeperCluster/server1/data # 这里必须为绝对路径，否则有可能无法启动
+	clientPort=2181                                                # 这台服务器的端口为2181这里为默认值
 	server.1=127.0.0.1:2888:3888
 	server.2=127.0.0.1:2889:3889
 	server.3=127.0.0.1:2890:3890
 
-### 6.在`/home/hewentian/zookeeperCluster/server1/data`目录下建`myid`文件并在其中输入1，只输入1，代表server.1
+### 6.在`/home/hewentian/ProjectD/zookeeperCluster/server1/data`目录下建`myid`文件并在其中输入1，只输入1，代表server.1
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server1/data
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server1/data
 $ vi myid
 ```
 这样第一台服务器已经配置完毕。
@@ -49,74 +49,74 @@ $ vi myid
 
 ### 7.接下来我们将`server1`复制为`server2`, `server3`
 ``` bash
-$ cd /home/hewentian/zookeeperCluster
+$ cd /home/hewentian/ProjectD/zookeeperCluster
 $ cp -r server1 server2
 $ cp -r server1 server3
 ```
 
 ### 8.将`server2/data`目录下的`myid`的内容修改为2
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server2/data
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server2/data
 $ vi myid
 ```
 同理，将将`server3/data`目录下的`myid`的内容修改为3
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server3/data
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server3/data
 $ vi myid
 ```
 
 ### 9.修改`server2`的配置文件
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server2/zookeeper-3.4.6/conf/
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server2/zookeeper-3.4.6/conf/
 $ vi zoo.cfg
 ```
 仅修改两处地方即可，要修改的地方如下：
 
-	dataDir=/home/hewentian/zookeeperCluster/server2/data  # 这里是数据保存的位置
-	clientPort=2182                                        # 这台服务器的端口为2182
+	dataDir=/home/hewentian/ProjectD/zookeeperCluster/server2/data  # 这里是数据保存的位置
+	clientPort=2182                                                 # 这台服务器的端口为2182
 
 同理，修改`server3`的配置文件
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server3/zookeeper-3.4.6/conf/
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server3/zookeeper-3.4.6/conf/
 $ vi zoo.cfg
 ```
 仅修改两处地方即可，要修改的地方如下：
 
-	dataDir=/home/hewentian/zookeeperCluster/server3/data  # 这里是数据保存的位置
-	clientPort=2183                                        # 这台服务器的端口为2183
+	dataDir=/home/hewentian/ProjectD/zookeeperCluster/server3/data  # 这里是数据保存的位置
+	clientPort=2183                                                 # 这台服务器的端口为2183
 
 
 ### 10.到目前为此，我们已经将3台`zookeeper`服务器都配置好了。接下来，我们要将他们都启动
 启动server1
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server1/zookeeper-3.4.6/bin/
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server1/zookeeper-3.4.6/bin/
 $ ./zkServer.sh start
 ```
 启动server2
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server2/zookeeper-3.4.6/bin/
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server2/zookeeper-3.4.6/bin/
 $ ./zkServer.sh start
 ```
 启动server3
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server3/zookeeper-3.4.6/bin/
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server3/zookeeper-3.4.6/bin/
 $ ./zkServer.sh start
 ```
 
 ### 11.当三台服务器都启动好了，我们分别连到server1、server2、server3：
 连接到server1
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server1/zookeeper-3.4.6/bin/
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server1/zookeeper-3.4.6/bin/
 $ ./zkCli.sh -server 127.0.0.1:2181
 ```
 连接到server2
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server2/zookeeper-3.4.6/bin/
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server2/zookeeper-3.4.6/bin/
 $ ./zkCli.sh -server 127.0.0.1:2182
 ```
 连接到server1
 ``` bash
-$ cd /home/hewentian/zookeeperCluster/server3/zookeeper-3.4.6/bin/
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server3/zookeeper-3.4.6/bin/
 $ ./zkCli.sh -server 127.0.0.1:2183
 ```
 
