@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>kafka 集群的搭建 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇将说说kafka集群的搭建，如果你只是想简单体验一下kafka，可以直接使用我在上一篇介绍的 kafka 单节点安装 即可。 但是，如果你想在生产环境中使用，那么搭建一个集群可能更适合你。下面将说说kafka集群的安装使用，kafka同样是使用前面例子使用的2.0.0版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。 首先，你得搭建 zook">
+<meta name="keywords" content="kafka">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kafka 集群的搭建">
+<meta property="og:url" content="https://github.com/hewentian/2018/10/27/kafka-cluster/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="本篇将说说kafka集群的搭建，如果你只是想简单体验一下kafka，可以直接使用我在上一篇介绍的 kafka 单节点安装 即可。 但是，如果你想在生产环境中使用，那么搭建一个集群可能更适合你。下面将说说kafka集群的安装使用，kafka同样是使用前面例子使用的2.0.0版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。 首先，你得搭建 zook">
+<meta property="og:locale" content="en-US">
+<meta property="og:updated_time" content="2018-10-27T09:46:35.685Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kafka 集群的搭建">
+<meta name="twitter:description" content="本篇将说说kafka集群的搭建，如果你只是想简单体验一下kafka，可以直接使用我在上一篇介绍的 kafka 单节点安装 即可。 但是，如果你想在生产环境中使用，那么搭建一个集群可能更适合你。下面将说说kafka集群的安装使用，kafka同样是使用前面例子使用的2.0.0版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。 首先，你得搭建 zook">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-kafka-cluster" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/27/kafka-cluster/" class="article-date">
+  <time datetime="2018-10-27T05:11:43.000Z" itemprop="datePublished">2018-10-27</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kafka 集群的搭建
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇将说说kafka集群的搭建，如果你只是想简单体验一下kafka，可以直接使用我在上一篇介绍的 <a href="../../../../2018/10/24/kafka-standalone/">kafka 单节点安装</a> 即可。</p>
+<p>但是，如果你想在生产环境中使用，那么搭建一个集群可能更适合你。下面将说说kafka集群的安装使用，kafka同样是使用前面例子使用的<code>2.0.0</code>版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。</p>
+<p>首先，你得搭建 zookeeper 集群，因为高版本的kafka中内置了zookeeper组件，所以我们直接使用kafka中内置的zookeeper组件搭建zookeeper集群。但是，你也可以使用zookeeper独立的安装包来搭建zookeeper集群。两者的搭建方法都是一样的，可以参考 <a href="../../../../2017/12/06/zookeeper-install-cluster/">zookeeper集群版安装方法</a></p>
+<h3 id="计划在一台Ubuntu-Linux服务器上部署3台kafka服务器，分别为kafka1-kafka2-kafka3"><a href="#计划在一台Ubuntu-Linux服务器上部署3台kafka服务器，分别为kafka1-kafka2-kafka3" class="headerlink" title="计划在一台Ubuntu Linux服务器上部署3台kafka服务器，分别为kafka1, kafka2, kafka3"></a>计划在一台<code>Ubuntu Linux</code>服务器上部署3台<code>kafka</code>服务器，分别为<code>kafka1</code>, <code>kafka2</code>, <code>kafka3</code></h3><p>因为三台<code>kafka</code>服务器的配置都差不多，所以我们先设置好一台<code>kafka1</code>的配置，再将其复制成<code>kafka2</code>, <code>kafka3</code>并修改其中的配置即可。</p>
+<p>下面使用kafka内置的zookeeper组件搭建zookeeper集群，我们将kafka的所有服务器都放在同一个目录下：</p>
+<h3 id="1-建目录，如下："><a href="#1-建目录，如下：" class="headerlink" title="1.建目录，如下："></a>1.建目录，如下：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mkdir kafkaCluster</span><br></pre></td></tr></table></figure>
+<h3 id="2-将kafka-2-12-2-0-0-tgz放到-home-hewentian-ProjectD-kafkaCluster目录下，并执行如下脚本解压"><a href="#2-将kafka-2-12-2-0-0-tgz放到-home-hewentian-ProjectD-kafkaCluster目录下，并执行如下脚本解压" class="headerlink" title="2.将kafka_2.12-2.0.0.tgz放到/home/hewentian/ProjectD/kafkaCluster目录下，并执行如下脚本解压"></a>2.将<code>kafka_2.12-2.0.0.tgz</code>放到<code>/home/hewentian/ProjectD/kafkaCluster</code>目录下，并执行如下脚本解压</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster</span><br><span class="line">$ tar xzvf kafka_2.12-2.0.0.tgz</span><br><span class="line"></span><br><span class="line">$ ls</span><br><span class="line">kafka_2.12-2.0.0  kafka_2.12-2.0.0.tgz</span><br><span class="line"></span><br><span class="line">$ rm kafka_2.12-2.0.0.tgz</span><br><span class="line">$ mv kafka_2.12-2.0.0/ kafka1  <span class="comment"># 为方便起见，将其命名为 kafka1</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cd</span> kafka1/</span><br><span class="line">$ mkdir -p data/zk     <span class="comment"># 存放zookeeper数据的目录</span></span><br><span class="line">$ mkdir -p data/kafka  <span class="comment"># 存放kafka数据的目录</span></span><br><span class="line">$ mkdir logs           <span class="comment"># 新解压的 kafka 没有此目录，需手动创建。因为重定向的日志logs/zookeeper.log需要此目录</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-修改-home-hewentian-ProjectD-kafkaCluster-kafka1-config-zookeeper-properties并在其中修改如下内容："><a href="#3-修改-home-hewentian-ProjectD-kafkaCluster-kafka1-config-zookeeper-properties并在其中修改如下内容：" class="headerlink" title="3.修改/home/hewentian/ProjectD/kafkaCluster/kafka1/config/zookeeper.properties并在其中修改如下内容："></a>3.修改<code>/home/hewentian/ProjectD/kafkaCluster/kafka1/config/zookeeper.properties</code>并在其中修改如下内容：</h3><pre><code>tickTime=2000
+initLimit=10
+syncLimit=5
+dataDir=/home/hewentian/ProjectD/kafkaCluster/kafka1/data/zk  # 这里必须为绝对路径，否则有可能无法启动
+clientPort=2181                                               # 这台服务器的端口为2181这里为默认值
+server.1=127.0.0.1:2888:3888
+server.2=127.0.0.1:2889:3889
+server.3=127.0.0.1:2890:3890
+</code></pre><h3 id="4-在-home-hewentian-ProjectD-kafkaCluster-kafka1-data-zk目录下建myid文件并在其中输入1，只输入1，代表server-1"><a href="#4-在-home-hewentian-ProjectD-kafkaCluster-kafka1-data-zk目录下建myid文件并在其中输入1，只输入1，代表server-1" class="headerlink" title="4.在/home/hewentian/ProjectD/kafkaCluster/kafka1/data/zk目录下建myid文件并在其中输入1，只输入1，代表server.1"></a>4.在<code>/home/hewentian/ProjectD/kafkaCluster/kafka1/data/zk</code>目录下建<code>myid</code>文件并在其中输入1，只输入1，代表server.1</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1/data/zk</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure>
+<p>这样第一台服务器已经配置完毕。</p>
+<h3 id="5-接下来我们将kafka1复制为kafka2-kafka3"><a href="#5-接下来我们将kafka1复制为kafka2-kafka3" class="headerlink" title="5.接下来我们将kafka1复制为kafka2, kafka3"></a>5.接下来我们将<code>kafka1</code>复制为<code>kafka2</code>, <code>kafka3</code></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster</span><br><span class="line">$ cp -r kafka1 kafka2</span><br><span class="line">$ cp -r kafka1 kafka3</span><br></pre></td></tr></table></figure>
+<h3 id="6-将kafka2-data-zk目录下的myid的内容修改为2"><a href="#6-将kafka2-data-zk目录下的myid的内容修改为2" class="headerlink" title="6.将kafka2/data/zk目录下的myid的内容修改为2"></a>6.将<code>kafka2/data/zk</code>目录下的<code>myid</code>的内容修改为2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2/data/zk</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure>
+<p>同理，将将<code>kafka3/data/zk</code>目录下的<code>myid</code>的内容修改为3<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3/data/zk</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure></p>
+<h3 id="7-修改kafka2的配置文件"><a href="#7-修改kafka2的配置文件" class="headerlink" title="7.修改kafka2的配置文件"></a>7.修改<code>kafka2</code>的配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2/config</span><br><span class="line">$ vi zookeeper.properties</span><br></pre></td></tr></table></figure>
+<p>仅修改两处地方即可，要修改的地方如下：</p>
+<pre><code>dataDir=/home/hewentian/ProjectD/kafkaCluster/kafka2/data/zk  # 这里是数据保存的位置
+clientPort=2182                                               # 这台服务器的端口为2182
+</code></pre><p>同理，修改<code>kafka3</code>的配置文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3/config</span><br><span class="line">$ vi zookeeper.properties</span><br></pre></td></tr></table></figure></p>
+<p>仅修改两处地方即可，要修改的地方如下：</p>
+<pre><code>dataDir=/home/hewentian/ProjectD/kafkaCluster/kafka3/data/zk  # 这里是数据保存的位置
+clientPort=2183                                               # 这台服务器的端口为2183
+</code></pre><h3 id="8-到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动"><a href="#8-到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动" class="headerlink" title="8.到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动"></a>8.到目前为此，我们已经将3台<code>zookeeper</code>服务器都配置好了。接下来，我们要将他们都启动</h3><p>启动kafka1的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ nohup ./bin/zookeeper-server-start.sh config/zookeeper.properties &gt; logs/zookeeper.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure></p>
+<p>启动kafka2的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ mkdir logs</span><br><span class="line">$ nohup ./bin/zookeeper-server-start.sh config/zookeeper.properties &gt; logs/zookeeper.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure></p>
+<p>启动kafka3的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ mkdir logs</span><br><span class="line">$ nohup ./bin/zookeeper-server-start.sh config/zookeeper.properties &gt; logs/zookeeper.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure></p>
+<h3 id="9-当三台服务器都启动好了，我们分别连到三台zookeeper服务器："><a href="#9-当三台服务器都启动好了，我们分别连到三台zookeeper服务器：" class="headerlink" title="9.当三台服务器都启动好了，我们分别连到三台zookeeper服务器："></a>9.当三台服务器都启动好了，我们分别连到三台zookeeper服务器：</h3><p>连接到kafka1的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ ./bin/zookeeper-shell.sh 127.0.0.1:2181</span><br></pre></td></tr></table></figure></p>
+<p>连接到kafka2的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ ./bin/zookeeper-shell.sh 127.0.0.1:2182</span><br></pre></td></tr></table></figure></p>
+<p>连接到kafka3的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ./bin/zookeeper-shell.sh 127.0.0.1:2183</span><br></pre></td></tr></table></figure></p>
+<p>可以通过查看<code>logs/zookeeper.log</code>文件，如果没有报错就说明zookeeper集群启动成功。</p>
+<p>这样你在<code>kafka1</code>中的<code>zookeeper</code>所作的修改，都会同步到<code>kafka2</code>, <code>kafka3</code>。<br>例如你在kafka1的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ create /zk_test_cluster my_data_cluster</span><br></pre></td></tr></table></figure></p>
+<p>你在kafka2, kafka3的zookeeper客户端用<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls /</span><br></pre></td></tr></table></figure></p>
+<p>都会看到节点zk_test_cluster</p>
+<p>至此，zookeeper集群部署结束。</p>
+<h3 id="10-搭建kafka集群"><a href="#10-搭建kafka集群" class="headerlink" title="10.搭建kafka集群"></a>10.搭建kafka集群</h3><p>配置<code>kafka1</code>服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ vi config/server.properties</span><br><span class="line"></span><br><span class="line">broker.id=1                           <span class="comment"># 这里设置为1，另外两台分别设置为2、3</span></span><br><span class="line"></span><br><span class="line">listeners=PLAINTEXT://127.0.0.1:9092  <span class="comment"># IP地址和端口，这里使用默认的 9092，另外两台分别使用9093、9094</span></span><br><span class="line"></span><br><span class="line">log.dirs=/home/hewentian/ProjectD/kafkaCluster/kafka1/data/kafka</span><br><span class="line"></span><br><span class="line">zookeeper.connect=127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183</span><br></pre></td></tr></table></figure></p>
+<p>配置<code>kafka2</code>服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ vi config/server.properties</span><br><span class="line"></span><br><span class="line">broker.id=2</span><br><span class="line"></span><br><span class="line">listeners=PLAINTEXT://127.0.0.1:9093</span><br><span class="line"></span><br><span class="line">log.dirs=/home/hewentian/ProjectD/kafkaCluster/kafka2/data/kafka</span><br><span class="line"></span><br><span class="line">zookeeper.connect=127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183</span><br></pre></td></tr></table></figure></p>
+<p>配置<code>kafka3</code>服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ vi config/server.properties</span><br><span class="line"></span><br><span class="line">broker.id=3</span><br><span class="line"></span><br><span class="line">listeners=PLAINTEXT://127.0.0.1:9094</span><br><span class="line"></span><br><span class="line">log.dirs=/home/hewentian/ProjectD/kafkaCluster/kafka3/data/kafka</span><br><span class="line"></span><br><span class="line">zookeeper.connect=127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183</span><br></pre></td></tr></table></figure></p>
+<h3 id="11-启动三台kafka服务器"><a href="#11-启动三台kafka服务器" class="headerlink" title="11.启动三台kafka服务器"></a>11.启动三台kafka服务器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ ./bin/kafka-server-start.sh -daemon /home/hewentian/ProjectD/kafkaCluster/kafka1/config/server.properties</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ ./bin/kafka-server-start.sh -daemon /home/hewentian/ProjectD/kafkaCluster/kafka2/config/server.properties</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ./bin/kafka-server-start.sh -daemon /home/hewentian/ProjectD/kafkaCluster/kafka3/config/server.properties</span><br></pre></td></tr></table></figure>
+<p>分别从三台kafka服务器中查看启动日志<code>logs/server.log</code>，如果没报错，并且看到如下输出，则启动成功：</p>
+<pre><code># kafka1 的输出
+[2018-10-27 15:48:54,890] INFO Kafka version : 2.0.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:48:54,890] INFO Kafka commitId : 3402a8361b734732 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:48:54,895] INFO [KafkaServer id=1] started (kafka.server.KafkaServer)
+
+# kafka2 的输出
+[2018-10-27 15:49:22,694] INFO Kafka version : 2.0.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:49:22,694] INFO Kafka commitId : 3402a8361b734732 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:49:22,697] INFO [KafkaServer id=2] started (kafka.server.KafkaServer)
+
+# kafka3 的输出
+[2018-10-27 15:49:41,746] INFO Kafka version : 2.0.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:49:41,746] INFO Kafka commitId : 3402a8361b734732 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:49:41,749] INFO [KafkaServer id=3] started (kafka.server.KafkaServer)
+</code></pre><p>至此，kafka集群搭建成功。下面，我们简单的试用一下。</p>
+<h3 id="12-创建topic"><a href="#12-创建topic" class="headerlink" title="12.创建topic"></a>12.创建topic</h3><p>在任意一台kafka服务器上面创建topic，例如在kafka1上面创建一个名为 my-replicated-topic 的 topic，指定 1 个分区，3 个副本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ ./bin/kafka-topics.sh --create --zookeeper 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183 --replication-factor 3 --partitions 1 --topic my-replicated-topic</span><br><span class="line"></span><br><span class="line">Created topic <span class="string">"my-replicated-topic"</span>.</span><br></pre></td></tr></table></figure></p>
+<p>上面的参数<code>--zookeeper</code>是集群列表，可以指定所有节点，也可以指定为部分列表。</p>
+<p>查看topic的情况：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ ./bin/kafka-topics.sh --describe --zookeeper 127.0.0.1:2181 --topic my-replicated-topic</span><br><span class="line"></span><br><span class="line">Topic:my-replicated-topic	PartitionCount:1	ReplicationFactor:3	Configs:</span><br><span class="line">	Topic: my-replicated-topic	Partition: 0	Leader: 3	Replicas: 3,2,1	Isr: 3,2,1</span><br></pre></td></tr></table></figure></p>
+<h3 id="13-发送消息"><a href="#13-发送消息" class="headerlink" title="13.发送消息"></a>13.发送消息</h3><p>往我们刚才创建的toipc中发送消息，在任意一台kafka上面都可以的，我们在kafka2上面执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ ./bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094 --topic my-replicated-topic</span><br><span class="line">&gt;</span><br><span class="line">&gt;my <span class="built_in">test</span> message 1</span><br><span class="line">&gt;my <span class="built_in">test</span> message 2</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="14-消费消息"><a href="#14-消费消息" class="headerlink" title="14.消费消息"></a>14.消费消息</h3><p>将我们刚刚发送的消息消费掉，我们从kafka3上面执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ./bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094 --from-beginning --topic my-replicated-topic</span><br><span class="line"></span><br><span class="line">my <span class="built_in">test</span> message 1</span><br><span class="line">my <span class="built_in">test</span> message 2</span><br></pre></td></tr></table></figure></p>
+<p>我们在生产者中发送消息，在消费者中就能实时的看到消息。</p>
+<h3 id="15-容错测试"><a href="#15-容错测试" class="headerlink" title="15.容错测试"></a>15.容错测试</h3><p>从上面可知my-replicated-topic的leader为3，那我们将broker.id=3的进程杀掉：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ps -ef | grep kafka3/config/server.properties</span><br><span class="line">hewenti+ 22018  1897  5 17:19 pts/23   00:00:16 /usr/<span class="built_in">local</span>/java/jdk1.8.0_102/bin/java -Xmx1G -Xms1G -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">[中间省略部分]</span><br><span class="line"></span><br><span class="line">-0.10.jar:/home/hewentian/ProjectD/kafkaCluster/kafka3/bin/../libs/zookeeper-3.4.13.jar kafka.Kafka /home/hewentian/ProjectD/kafkaCluster/kafka3/config/server.properties</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">kill</span> -9 22018       <span class="comment"># 单机环境下不能通过执行： ./bin/kafka-server-stop.sh 来杀掉当前目录下的kafka，它会杀掉全部kafka</span></span><br></pre></td></tr></table></figure></p>
+<p>再查看my-replicated-topic的情况：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ./bin/kafka-topics.sh --describe --zookeeper 127.0.0.1:2181 --topic my-replicated-topic</span><br><span class="line">Topic:my-replicated-topic	PartitionCount:1	ReplicationFactor:3	Configs:</span><br><span class="line">	Topic: my-replicated-topic	Partition: 0	Leader: 1	Replicas: 3,2,1	Isr: 1</span><br></pre></td></tr></table></figure></p>
+<p>由上面可见，leader已经变为1。并且，生产消息和消费消息一样可用，不受影响：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ ./bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094 --topic my-replicated-topic</span><br><span class="line">&gt;</span><br><span class="line">&gt;my <span class="built_in">test</span> message 1</span><br><span class="line">&gt;my <span class="built_in">test</span> message 2</span><br><span class="line">&gt;</span><br><span class="line">&gt; Tim Ho</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ./bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094 --from-beginning --topic my-replicated-topic</span><br><span class="line"></span><br><span class="line">my <span class="built_in">test</span> message 1</span><br><span class="line">my <span class="built_in">test</span> message 2</span><br><span class="line"></span><br><span class="line">Tim Ho</span><br></pre></td></tr></table></figure>
+<p>未完，待续……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjnr9l4zt0014692iwhj5hv1e" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/10/24/kafka-standalone/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">kafka 单节点安装</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/24/kafka-standalone/">kafka 单节点安装</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/05/jenkins-install/">jenkins 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/18/elasticsearch-note/">elasticsearch 学习笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
