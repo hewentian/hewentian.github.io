@@ -71,6 +71,130 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-kafka-intro" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/12/kafka-intro/" class="article-date">
+  <time datetime="2018-11-12T01:04:49.000Z" itemprop="datePublished">2018-11-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/12/kafka-intro/">kafka 介绍</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这是一篇译文，因英文水平有限，翻译未免有不足之处。如果想看原文，请访问这里：<br><a href="http://kafka.apache.org/intro" target="_blank" rel="noopener">http://kafka.apache.org/intro</a></p>
+<p><strong> 如果想简单体验一下kafka，可以阅读我上两篇介绍的 <a href="../../../../2018/10/24/kafka-standalone/">kafka 单节点安装</a>、<a href="../../../../2018/10/27/kafka-cluster/">kafka 集群的搭建</a> </strong></p>
+<h3 id="Apache-Kafka是一个分布式的流媒体平台，那么，它到底指的是什么呢？"><a href="#Apache-Kafka是一个分布式的流媒体平台，那么，它到底指的是什么呢？" class="headerlink" title="Apache Kafka是一个分布式的流媒体平台，那么，它到底指的是什么呢？"></a>Apache Kafka是一个分布式的流媒体平台，那么，它到底指的是什么呢？</h3><p>流媒体平台有3个主要的性能指标：</p>
+<ol>
+<li>发布和订阅消息流，类似于消息队列或者企业消息系统；</li>
+<li>以容错方式、持久化存储流数据；</li>
+<li>实时处理流数据。</li>
+</ol>
+<p>kafka通常应用于两种广泛的场景：</p>
+<ol>
+<li>在系统或应用程序之间构建可靠的用于传输实时数据的管道; </li>
+<li>构建实时的流数据处理程序，来转换或处理数据流。</li>
+</ol>
+<h3 id="为了弄清楚kafka到底是怎样完成这些功能的，从下面开始我们钻研和探究一下kafka的功能"><a href="#为了弄清楚kafka到底是怎样完成这些功能的，从下面开始我们钻研和探究一下kafka的功能" class="headerlink" title="为了弄清楚kafka到底是怎样完成这些功能的，从下面开始我们钻研和探究一下kafka的功能"></a>为了弄清楚kafka到底是怎样完成这些功能的，从下面开始我们钻研和探究一下kafka的功能</h3><p>首先，了解一下几个概念：</p>
+<ol>
+<li>kafka可以以集群方式运行于一台或者多台服务器，这些服务器可以分布在不同的数据中心；</li>
+<li>kafka集群将流式数据分类存储，这种类别通常被称为主题；</li>
+<li>每一条消息由键、值和时间戳组成。</li>
+</ol>
+<p><img src="/img/kafka-1.png" alt="" title="来源：http://kafka.apache.org/20/images/kafka-apis.png"></p>
+<p>kafka有4个核心API：</p>
+<ol>
+<li><a href="http://kafka.apache.org/documentation.html#producerapi" target="_blank" rel="noopener">Producer API</a>允许应用程序将一条消息发布到一个或者多个kafka主题中；</li>
+<li><a href="http://kafka.apache.org/documentation.html#consumerapi" target="_blank" rel="noopener">Consumer API</a>允许应用程序订阅一个或者多个主题，并且处理被发往其中的数据流；</li>
+<li><a href="http://kafka.apache.org/documentation/streams" target="_blank" rel="noopener">Streams API</a>允许一个应用充当流式处理器：从作为输入流的一个或多个主题中消费消息，然后将处理过的消息输出到另一个或多个主题中。高效地将输入流的数据转换、传输到输出流中；</li>
+<li><a href="http://kafka.apache.org/documentation.html#connect" target="_blank" rel="noopener">Connector API</a>允许建立和重用已有的生产者或消费者，它们连接着某个kafka主题，而这些主题是和已存在的应用和数据系统连接着的。例如，关系数据库的连接器将会捕获对表的每一个修改。</li>
+</ol>
+<p>在kafka中，客户端和服务器端的通讯是通过一个简单、高效、语言无关的<a href="https://kafka.apache.org/protocol.html" target="_blank" rel="noopener">TCP协议</a>完成的。此协议是有版本代差的，但新版本向后兼容旧版本。我们提供一个JAVA客户端连接kafka，但是其他语言的客户端也提供。消费者和服务端建立的是长连接。</p>
+<h3 id="主题和日志（存储策略）"><a href="#主题和日志（存储策略）" class="headerlink" title="主题和日志（存储策略）"></a>主题和日志（存储策略）</h3><p>我们首先钻研一下kafka中为处理流记录而提供的核心抽象概念–主题。</p>
+<p>主题就是一个分类，或者说是专为发布消息而命名的。在kafka中主题通常有多个订阅者，也就是说一个主题可以有零个、一个或者多个消费者，这些消费者都订阅写往其中的消息。</p>
+<p>对每一个主题，kafka集群都使用分区存储，像下面这样：<br><img src="/img/kafka-2.png" alt="" title="来源：http://kafka.apache.org/20/images/log_anatomy.png"></p>
+<p>每一个分区中的消息都是按顺序存储的，持续往该分区中存放的数据的顺序都是不可改变的，结构化存储。分区中的每一条消息都会被分配一个有序的ID号，被称为偏移量，用于唯一标示该分区中的每一条消息。</p>
+<p>kafka集群会持久化发布到它的每一条消息，无论它们是否已经被消费过，可以通过配置文件配置该消息存放多久。例如，如果保存策略被设置为2天，那么当一条消息发布2天之内，它都是可以被消费的，只是一旦被消费之后，它就会被删掉以释放空间。kafka是持续高性能的，这与存储于它的数据大小关系不大，因此长期保存数据，都是没问题的。</p>
+<p><img src="/img/kafka-3.png" alt="" title="来源：http://kafka.apache.org/20/images/log_consumer.png"></p>
+<p>实际上，唯一存储于每一个消费者中的元数据是偏移量或者该消费者在这个分区中访问存储数据的位置。偏移量由消费者控制：通常，消费者中保存的偏移量随着它消费消息，将呈线性增长。但是，实际上，由于这个偏移量是由消费者控制的，所以它可以指定它消费的任何位置上的消息。例如：一个消费者可以重置到一个旧的偏移量来处理旧的数据或者跳过大部分记录，然后从当前位置开始消费消息。</p>
+<p>这个组合功能意味着kafka消费者是轻量级的，它们的连接和断开对集群和其他消费者影响极小。例如，你可以使用我们的命令行工具去不停地显示最新添加到某个主题的内容，而这，不会对任何订阅这个主题的消费者产生影响。</p>
+<p>分区在存储中扮演着不同的目的：首先，它允许存储的数据量超过单台服务器允许的规模。每个单独的分区能储存的数据量取决于它所在的服务器磁盘的大小等因素，但是一个主题可以有多个分区，因此它能储存任意数量的数据。其次，分区充当并行处理的单元–同时能处理的并发数。</p>
+<h3 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h3><p>一个主题的分区分布于kafka集群中的多台服务器中，每一台服务器都可以处理数据和向共享分区发送请求。为了容错，每一个分区都可以配置一定的副本数。</p>
+<p>每一个分区都有一台服务器担当主服务器，可以有零个或者多个从服务器。主服务器处理对分区的所有读和写请求，从服务器由主服务器调度。如果主服务器挂掉了，从服务器中会自动产生一个新的主服务器。集群中的每一台服务器既充当某个分区的主服务器，又充当其他分区的从服务器，所以整个集群是负载均衡的。</p>
+<h3 id="地域复制"><a href="#地域复制" class="headerlink" title="地域复制"></a>地域复制</h3><p>kafka的MirrorMaker为你的集群提供跨地域复制支持。使用MirrorMaker，消息可以跨越多个数据中心或者不同的云区进行同步。你可以在主从模式下用于备份和恢复，或者在主主模式下使数据更靠近你的用户，或者支持数据本地请求。</p>
+<h3 id="生产者"><a href="#生产者" class="headerlink" title="生产者"></a>生产者</h3><p>生产者往它们选定的主题中发送消息的时候，应该为每一条消息指定它要发送到的分区。我们可以使用环形策略，简单地使数据平均分配于所有分区中，也可以根据消息中的语义来自动地选择分区。接下来将会说下分区的使用。</p>
+<h3 id="消息者"><a href="#消息者" class="headerlink" title="消息者"></a>消息者</h3><p>我们可以对消费者分组，每个组有一个组名。每一条发送到指定主题中的消息，都会被订阅了这个主题的同一个组中的一个消费者消费。同一个组中的消费者可以在同一台机器或者多台机器中。</p>
+<p>如果所有消费者实例都在同一个组中，那么所有消息都会高效地平均发送到所有消费者实例。<br>如果所有消费者实例分布在不同的组中，那么每条消息都会被广播到所有组中的一个消费者。</p>
+<p><img src="/img/kafka-4.png" alt="" title="来源：http://kafka.apache.org/20/images/consumer-groups.png"></p>
+<p>上图所示：该kafka集群有2台服务器，4个分区（P0-P3），有2个消费者组。消费者组A有2个消费者实例，而消费者组B有4个。</p>
+<p>通常，主题都会有少量的消费者组，在逻辑上看，一个消费者组就是一个订阅者。每个组包含多个消费者，这能很好的实现扩展和容错。在订阅的语义上：订阅者只不过是一群消费者，而不是一个。</p>
+<p>消费的方式在kafka中的实现是通过将分区分配给所有消费者实例，因此在任何时刻，每一个实例都是一个”公平共享“分区的唯一消费者。维护组中成员关系的方式在kafak中是通过kafka协议自动实现的：如果新的实例加进组，那么它将从其他组员中获取一个分区（如果这个组员处理两个以上分区）；如果一个实例挂掉了，那么它所处理的分区将被分配给组中剩下的成员们。</p>
+<p>kafka对每一个分区中的消息都只提供一个总的顺序，同一个主题中不同分区中的顺序各不相同。每个分区排序组织该分区中数据的能力能满足大部分应用的需求。但是，如果你想要一个所有消息的总顺序，可以通过为这个主题设置一个分区来实现，不过，这意味着一个消费者组中只能有一个消费者来处理该主题的消息。</p>
+<h3 id="多租户架构"><a href="#多租户架构" class="headerlink" title="多租户架构"></a>多租户架构</h3><p>你可以以多租户架构方式部署kafka。多租户架构可以通过配置，来指定哪个主题可以生产和消费数据，并且支持设置操作指标。管理员可以定义和限制所有请求的指标，以控制客户端能使用的服务器资源数。</p>
+<p>更多相关信息，请访问<a href="https://kafka.apache.org/documentation/#security" target="_blank" rel="noopener">这里</a>。</p>
+<h3 id="保证"><a href="#保证" class="headerlink" title="保证"></a>保证</h3><p>在高层次看kafka提供以下保证：</p>
+<ol>
+<li>一个生产者发往指定主题中指定分区中的消息，将会按照它们发送的顺序出现。例如：如果一个生产者发送消息M1、M2，如果M1先发送，那么M1将会首先出现在那个分区中，并且M1的顺序号要比M2的小；</li>
+<li>消费者按顺序读取存储在主题中的消息；</li>
+<li>如果一个主题有 N 个副本，那么我们能承受高达 N-1 台服务器同时挂掉，而不会丢失任何消息。</li>
+</ol>
+<p>更多关于这些保证的描述将在相关章节中详细说明。</p>
+<h3 id="kafka作为一个消息系统"><a href="#kafka作为一个消息系统" class="headerlink" title="kafka作为一个消息系统"></a>kafka作为一个消息系统</h3><p>kafka的流媒体概念与传统的企业消息系统相比有什么不同？</p>
+<p>消息传输在传统上有2种模型：队列和发布-订阅。在队列模型中，一组消费者从一台服务器读取消息，每个消息只会发送到其中一个消费者；在发布-订阅模型中，每条消息都会广播到所有消费者。这两种模型各自都有优势和不足。队列的优势是允许你将消息平均分配给所有消费者处理，这能扩展系统的处理能力。不幸的是，队列不能有多个订阅者，消息一旦被其中一个消费者读取就会被删掉。发布-订阅模型允许你将消息广播到所有消费者，这种方式不能扩展处理能力，因为每条消息都会被发送到所有订阅者。</p>
+<p>消费者组的概念在kafka中通常包含上述两种概念。对队列来说，消费者组允许你将数据平均分配给所有消费者组来处理；对发布-订阅来说，kafka允许你将消息广播到所有消费者组。</p>
+<p>kafka模型的优势是每个主题都有这两种属性：它能扩展处理能力，同时也支持多个订阅者。我们不需要选择其中一个，或者另外一个。</p>
+<p>kafka相比于传统的消息系统，它更能保证消息的顺序。</p>
+<p>传统队列会将消息按顺序保存在服务器上，如果多个消费者同时消费这个队列，那么服务器将按消息的存储顺序来分发给消费者。然而，尽管服务器按顺序分发消息，但是消息是异步的发送到每个消费者的，所以不同的消费者接收到消息的顺序可能不同。这意味着，在并行处理的情况下，消息的顺序将不能保证。在消息系统中通常有一个概念：唯一消费者，它允许只有一个消费者消费一个队列，当然这也意味着这种情况下不存在并行处理。</p>
+<p>kafka在这方面做得比较好。在主题中，它有一个并行的概念–分区。kafka既能保证消息的顺序，又能在多个消费者之间保持负载均衡。通过将主题的分区分配给指定的消费者组，每个分区只能被消费者组中的一个消费者消费，来实现的。这样，我们能确保这个消费者是这个分区的唯一消费者和按顺序消费这个分区中的消息。尽管主题有很多个分区，我们仍能在多个消费者实例之间保持负载均衡。值得注意的是，消费者组中消费者的数量不能多于分区数。</p>
+<h3 id="kafka作为一个存储系统"><a href="#kafka作为一个存储系统" class="headerlink" title="kafka作为一个存储系统"></a>kafka作为一个存储系统</h3><p>任何允许发布与消费消息分离的消息队列，实际上充当了目前使用的消息存储系统。kafka的不同之处在于它还是一个非常优秀的存储系统。</p>
+<p>写入kafka的数据将会写入磁盘，并且进行副本复制以实现容错。kafka允许生产者等待确认，在收到回复之后才会认为写成功，并且即使写入的服务器失败了，也能保证这条消息是存在的。</p>
+<p>kafka能很好地使用磁盘结构来扩容：无论服务器上有 50KB 还是 50TB 的持久化数据，kafka的性能都是一样的，不会随着数据的增多而出现性能下降。</p>
+<p>由于kafka可以大规模的存储数据，并且允许客户控制其读取位置，您可以将kafka作为一种专用于高性能、低延迟提交日志存储，并且能复制和传播的分布式文件系统。</p>
+<p>更多关于kafka的提交日志存储和副本复制的设计，请访问<a href="https://kafka.apache.org/documentation/#design" target="_blank" rel="noopener">这里</a>。</p>
+<h3 id="kafka作为一个流媒体处理系统"><a href="#kafka作为一个流媒体处理系统" class="headerlink" title="kafka作为一个流媒体处理系统"></a>kafka作为一个流媒体处理系统</h3><p>kafka仅仅提供读取、写入和存储数据流是不够的，最终目的是实现流的实时处理。</p>
+<p>在kafka中，流处理器是指持续地从输入主题获取数据流，对获取到的数据流执行某种处理，并将处理过的数据，持续地输出到输出主题中。</p>
+<p>例如，零售店的应用程序可能会将销售额和货物作为输入流，通过相关计算，然后输出重新排序和根据此数据计算的价格调整的流。</p>
+<p>可以直接使用生产者和消费者的相关API进行简单处理。但是，对于更复杂的转换，kafka提供了完全集成的Streams API。这允许构建一些应用程序去执行非普通处理任务、计算流的聚合或者将流连接在一起。</p>
+<p>它能有效地解决此类应用程序面临的难题：处理无序数据，在代码更改时重新处理输入流，执行有状态计算等。</p>
+<p>流式API构建在kafka提供的核心基础功能上：它使用生产者和消费者API进行输入，使用kafka进行有状态存储，并在流处理器实例之间使用相同的组机制来实现容错。</p>
+<h3 id="把碎片整合在一起"><a href="#把碎片整合在一起" class="headerlink" title="把碎片整合在一起"></a>把碎片整合在一起</h3><p>将消息传递、存储和流处理组合在一起可能看起来没多大用处，但它对于kafka作为流媒体平台的作用至关重要。</p>
+<p>像HDFS这种分布式文件系统允许存储静态文件以进行批处理。kafka系统是高效的，它允许存储和处理过去的历史数据。</p>
+<p>传统的企业消息系统允许处理你订阅之后到达的数据。以这种方式构建的应用程序只能处理在它订阅之后到达的未来数据。</p>
+<p>kafka结合了这两种功能，这种组合对于kafka作为流媒体应用程序平台以及流数据管道的使用至关重要。</p>
+<p>通过组合存储和低延迟订阅，流应用程序可以以相同的方式处理过去和未来的数据。也就是说，单个应用程序也可以处理历史存储的数据，而不是在它处理到达最后一条记录时结束，它可以在未来数据到达时继续处理。这就是流处理包含批处理以及消息驱动应用程序的一般概念。</p>
+<p>同样，对于流数据管道，通过组合订阅实时事件，可以将kafka用作极低延迟的管道; 另外，能够可靠地存储数据，也使得可以将其用于必须保证安全的核心数据的传输，或者与仅定期加载数据的离线系统或可能长时间停机以进行扩展和维护集成。它的流处理能力使它可以实时的转换数据。</p>
+<p>更多关于kafka提供的保证、API和功能的信息，请参阅其余的<a href="http://kafka.apache.org/documentation.html" target="_blank" rel="noopener">文档</a>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjogylb9l000y352ipghqeyvx" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-kafka-cluster" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/10/27/kafka-cluster/" class="article-date">
@@ -171,7 +295,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjnr9l4zt0014692iwhj5hv1e" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjogylb9t0014352ig4ib803p" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -240,7 +364,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjnr9l5010017692ipt3jol0p" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjogylbap001l352i7ztt6ks9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -410,7 +534,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjnr9l4zn000y692iaqlkgf0z" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjogylb9o0011352iblktji09" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -489,7 +613,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjnr9l4wy0000692i1be3brz3" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjogylb710000352ilwhtipxj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -859,12 +983,35 @@ GET /people/user/_search
 }
 </pre>
 
+<h3 id="查询返回某些指定的字段"><a href="#查询返回某些指定的字段" class="headerlink" title="查询返回某些指定的字段"></a>查询返回某些指定的字段</h3><p>如果查询的结果字段很多，而我们仅需要其中的某些字段的时候，我们可能通过<code>_source</code>来指定，比如我们只要userName, address：</p>
+<pre>
+GET people/user/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "userName": "张三"
+          }
+        }
+      ]
+    }
+  },
+  "_source": [
+    "userName",
+    "address"
+  ],
+  "size": 2
+}
+</pre>
+
 <p>未完待续……</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjnr9l4ya0009692iznwajfg4" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjogylb7j0002352ih6pbhsk0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1060,7 +1207,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjnr9l4xz0006692iwn9so6qq" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjogylb810006352igl2oiwck" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1384,7 +1531,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjnr9l4y70008692inzjpob7l" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjogylb880008352ilwqnw1bw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1620,7 +1767,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjnr9l51r0029692ic932cbgv" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjogylbc6002o352ix5zop598" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1693,105 +1840,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjnr9l51o0027692isv8m0cy7" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis-install" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/08/07/redis-install/" class="article-date">
-  <time datetime="2018-08-07T02:50:27.000Z" itemprop="datePublished">2018-08-07</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/redis-install/">redis 的安装使用</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程："><a href="#要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程：" class="headerlink" title="要使用redis我们首先要安装这个软件。下面，我们说说redis的安装过程："></a>要使用<code>redis</code>我们首先要安装这个软件。下面，我们说说<code>redis</code>的安装过程：</h4><p>首先，我们要将<code>redis</code>安装包下载回来，截止本文写时，<code>redis</code>官网发布的最新版本为<code>4.0.11</code>。当然，我们也可以从这里下载 <a href="/download/redis-4.0.11.tar.gz">redis-4.0.11.tar.gz</a> 和 <a href="/download/redis-4.0.11.tar.gz.md5">redis-4.0.11.tar.gz.md5</a>。推荐从<code>redis</code>官网下载最新版本。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget http://download.redis.io/releases/redis-4.0.11.tar.gz</span><br><span class="line"></span><br><span class="line">// 验证下载文件的完整性，在下载的时候要将MD5文件或者SHA256文件也下载回来</span><br><span class="line">$ md5sum -c redis-4.0.11.tar.gz.md5 </span><br><span class="line">redis-4.0.11.tar.gz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf redis-4.0.11.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> redis-4.0.11/</span><br><span class="line">$ make</span><br></pre></td></tr></table></figure>
-<h4 id="After-building-Redis-it-is-a-good-idea-to-test-it-using"><a href="#After-building-Redis-it-is-a-good-idea-to-test-it-using" class="headerlink" title="After building Redis, it is a good idea to test it using:"></a>After building Redis, it is a good idea to test it using:</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ make <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line">// 如果见到下面的结果，证明我们已经成功安装</span><br><span class="line">\o/ All tests passed without errors!</span><br></pre></td></tr></table></figure>
-<h4 id="下面的内容摘自-REDIS-HOME-README-md"><a href="#下面的内容摘自-REDIS-HOME-README-md" class="headerlink" title="下面的内容摘自${REDIS_HOME}/README.md"></a>下面的内容摘自<code>${REDIS_HOME}/README.md</code></h4><h2 id="Running-Redis"><a href="#Running-Redis" class="headerlink" title="Running Redis"></a>Running Redis</h2><p>To run Redis with the default configuration just type:</p>
-<pre><code>$ cd src
-$ ./redis-server
-</code></pre><p>If you want to provide your redis.conf, you have to run it using an additional<br>parameter (the path of the configuration file):</p>
-<pre><code>$ cd src
-$ ./redis-server /path/to/redis.conf
-</code></pre><p>It is possible to alter the Redis configuration by passing parameters directly<br>as options using the command line. Examples:</p>
-<pre><code>$ ./redis-server --port 9999 --slaveof 127.0.0.1 6379
-$ ./redis-server /etc/redis/6379.conf --loglevel debug
-</code></pre><p>All the options in redis.conf are also supported as options using the command<br>line, with exactly the same name.</p>
-<h2 id="Playing-with-Redis"><a href="#Playing-with-Redis" class="headerlink" title="Playing with Redis"></a>Playing with Redis</h2><p>You can use redis-cli to play with Redis. Start a redis-server instance,<br>then in another terminal try the following:</p>
-<pre><code>$ cd src
-$ ./redis-cli    # 如果需要连接到指定的redis可以使用：-h {IP_ADDRESS}参数，如：./redis-cli -h 127.0.0.1
-redis&gt; ping
-PONG
-redis&gt; set foo bar
-OK
-redis&gt; get foo
-&quot;bar&quot;
-redis&gt; incr mycounter
-(integer) 1
-redis&gt; incr mycounter
-(integer) 2
-redis&gt;
-</code></pre><p>You can find the list of all the available commands at <a href="http://redis.io/commands" target="_blank" rel="noopener">http://redis.io/commands</a>.</p>
-<p>  <strong><em>注意：启动Redis服务器的时候，请务必指定它的配置文件，否则有可能会出现意想不到的情况。</em></strong></p>
-<h4 id="为Redis设置登录密码"><a href="#为Redis设置登录密码" class="headerlink" title="为Redis设置登录密码"></a>为Redis设置登录密码</h4><p>  为Redis设置登录密码的方法比较简单，打开<code>${REDIS_HOME}/redis.conf</code>文件，找到<code>requirepass foobared</code>这一行，如下：</p>
-<pre><code>################################## SECURITY ###################################
-
-# Require clients to issue AUTH &lt;PASSWORD&gt; before processing any other
-# commands.  This might be useful in environments in which you do not trust
-# others with access to the host running redis-server.
-#
-# This should stay commented out for backward compatibility and because most
-# people do not need auth (e.g. they run their own servers).
-#
-# Warning: since Redis is pretty fast an outside user can try up to
-# 150k passwords per second against a good box. This means that you should
-# use a very strong password otherwise it will be very easy to break.
-#
-# requirepass foobared
-</code></pre><p>将<code>requirepass foobared</code>的注释打开，并把foobared设置成自己的密码即可，如将其设为abc123： </p>
-<pre><code>requirepass abc123
-</code></pre><p>保存文件，并重启Redis。</p>
-<p>在使用客户端登录的时候，将使用如下命令：</p>
-<pre><code>$ cd src
-$ ./redis-cli -a abc123
-
-或者使用下面的方式更安全
-$ cd src
-$ ./redis-cli
-127.0.0.1:6379&gt; AUTH abc123
-OK
-</code></pre>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjnr9l51h0022692i9gbqkf8b" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjogylbbq002a352in2fq55l8" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1816,7 +1865,7 @@ OK
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -1826,7 +1875,7 @@ OK
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1837,6 +1886,10 @@ OK
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
+          </li>
         
           <li>
             <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
@@ -1852,10 +1905,6 @@ OK
         
           <li>
             <a href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2018/09/18/elasticsearch-note/">elasticsearch 学习笔记</a>
           </li>
         
       </ul>
