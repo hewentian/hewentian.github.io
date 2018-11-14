@@ -396,6 +396,30 @@ GET /people/user/_search
 }
 </pre>
 
+### 查询返回某些指定的字段
+如果查询的结果字段很多，而我们仅需要其中的某些字段的时候，我们可能通过`_source`来指定，比如我们只要userName, address：
+<pre>
+GET people/user/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "userName": "张三"
+          }
+        }
+      ]
+    }
+  },
+  "_source": [
+    "userName",
+    "address"
+  ],
+  "size": 2
+}
+</pre>
+
 未完待续……
 
 [link_id_elasticsearch-install]: ../../../../2018/09/16/elasticsearch-install "elasticsearch 单节点安装"

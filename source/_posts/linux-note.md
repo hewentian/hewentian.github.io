@@ -430,8 +430,11 @@ $ crontab -e
 */1 * * * * /bin/date >> /home/hewentian/Documents/a.txt
 ```
 
-在资源浏览器 [Connect to Server] 窗口输入：smb://需要访问的机器IP
-等同于Windows下输入：\\IP
+### Ubuntu中访问共享文件夹和FTP
+1. 访问共享文件夹：在资源浏览器`[Connect to Server]`窗口输入：smb://需要访问的机器IP，等同于Windows下输入：\\IP
+2. 访问FTP机器：在资源浏览器`[Connect to Server]`窗口输入：ftp://192.168.1.128/
+3. `[Connect to Server]`在`~/.config/nautilus/servers`中，可以编辑它的bookmark
+![](/img/connect-to-server.png "Connect to Server")
 
 
 ### curl模拟http发送get或post请求
@@ -1267,4 +1270,123 @@ $ source /etc/profile
 $ source ~/.bash_profile
 ```
 否则，远程脚本可能报错。
+
+### FTP工具filezilla
+在Ubuntu上面安装`filezilla`还是很方便的，首先检查系统是否已安装此软件:
+``` bash
+$ filezilla
+The program 'filezilla' is currently not installed. You can install it by typing:
+sudo apt install filezilla
+```
+由上可知，系统中并未安装此`filezilla`，我们按提示安装即可：
+``` bash
+$ sudo apt install filezilla
+[sudo] password for hewentian: 
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+...
+...
+...
+Setting up libwxbase3.0-0v5:amd64 (3.0.2+dfsg-1.3) ...
+Setting up libwxgtk3.0-0v5:amd64 (3.0.2+dfsg-1.3) ...
+Setting up filezilla (3.15.0.2-1ubuntu1) ...
+Processing triggers for libc-bin (2.23-0ubuntu10) ...
+```
+安装成功后，使用很简单。在命令行中直接输入`filezilla`即可。
+![](/img/filezilla.png "")
+
+
+### ubuntu安装小便签
+我们选择安装`indicator-stickynotes`，这个可以在
+http://ppa.launchpad.net/umang/indicator-stickynotes/ubuntu/pool/main/i/indicator-stickynotes/
+下载，我们下载目前的最新版本`indicator-stickynotes_1.0.0-0_ppa1_all.deb`
+安装方法也很简单：
+``` bash
+$ sudo dpkg -i indicator-stickynotes_1.0.0-0_ppa1_all.deb 
+```
+启动方式可以直接在命令行中输入`indicator-stickynotes`，当然也可以在资源管理器中查找：
+![](/img/indicator-stickynotes.png "")
+
+
+### ubuntu下面，微信的使用
+微信的官网好像没有Linux版本下载，但是可以在以下连接下载到：
+https://github.com/geeeeeeeeek/electronic-wechat
+下载相应版本后，解压后，即可使用。
+
+
+
+### 截屏软件
+shutter是值得推荐的一款截图软件，功能丰富，堪称神器，安装方式如下：
+``` bash
+$ sudo apt-get install shutter
+```
+
+
+### 录屏软件
+Simple Screen Recorder是一款简单的屏幕录像工具，能够在屏幕上录制视频、教程，界面简单，功能够用。安装的过程可能有点慢，请耐心等待，并多试几次。
+``` bash
+$ sudo add-apt-repository ppa:maarten-baert/simplescreenrecorder
+$ sudo apt-get update
+$ sudo apt-get install simplescreenrecorder
+```
+![](/img/simpleScreenRecorder.png "")
+
+
+### 系统监视器
+它可以实时查看电脑的cpu、内存占用率、温度等等，非常方便，还可以自已定制要显示的内容。
+``` bash
+$ sudo add-apt-repository ppa:fossfreedom/indicator-sysmonitor
+$ sudo apt-get update
+$ sudo apt-get install indicator-sysmonitor
+```
+
+
+### 下载软件
+ubuntu上面目前没有迅雷可用，但是可以使用uget：
+``` bash
+$ sudo add-apt-repository ppa:plushuang-tw/uget-stable
+$ sudo apt-get update
+$ sudo apt-get install uget
+```
+
+
+### 代理软件
+推荐使用 shadowsocks：
+``` bash
+$ sudo add-apt-repository ppa:hzwhuang/ss-qt5
+$ sudo apt-get update
+$ sudo apt-get install shadowsocks-qt5
+```
+当然，这仅是工具，你还得有相关帐号。
+
+
+### Markdown编辑器
+ubuntu上面一个好用的markdown编辑器typora：
+``` bash
+$ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys BA300B7755AFCFAE
+$ sudo add-apt-repository 'deb https://typora.io ./linux/'
+$ sudo apt-get update
+$ sudo apt-get install typora
+```
+
+
+### 剪贴板软件
+clipit非常好用，在设置中记得将`Automatically paste selected item`选上，否则选中了不会自动粘贴：
+``` bash
+$ sudo add-apt-repository ppa:shantzu/clipit
+$ sudo apt-get update
+$ sudo apt-get install clipit
+```
+
+
+### 图片编辑器
+ubuntu上可以使用GIMP，好用:
+``` bash
+$ sudo apt-get install gimp
+```
+
+
+### 思维导图 Xmind
+到 http://www.xmind.net/download/linux/ 下载 xmind-8-update8-linux.zip，解压后即可使用。
 

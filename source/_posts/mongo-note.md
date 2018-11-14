@@ -4,6 +4,45 @@ date: 2018-03-07 14:39:42
 tags: mongo
 categories: db
 ---
+### mongodb查询数组大小
+mongodb查询数组大小使用`$size`，例如：我们有一个名为`person`的集合，其中有个字段为`childrenNames`，是数组类型，如果我们要查询`childrenNames`长度为2的数据，则查询语句为：
+
+	db.getCollection('person').find({'childrenNames':{'$size':2}})
+
+但是它不能限定数组的大小范围，只能查询指定的长度。要查询数组范围，我们使用`$exists`，例如：查询数组长度大于等于3的语句如下（检查数组第3个元素是否存了）
+
+	db.getCollection('person').find({'childrenNames.2':{'$exists':1}})
+
+
+### mongodb分组查询
+如果我们要对集合`person`中的地区字段`area`来分组统计，语法如下：
+
+	db.getCollection('person').aggregate({'$group':{'_id':'$area','count':{'$sum':1}}})
+
+如果我们还想将分组统计结果，按数量倒序输出显示：
+
+	db.getCollection('person').aggregate([{'$group':{'_id':'$area','count':{'$sum':1}}},{'$sort':{'count':-1}}])
+
+对应的JAVA代码如下：
+``` java
+MongoDatabase mongoDatabase = MongoUtil.getMongoDatabase(); // 这个是我自已写的工具类
+MongoCollection<Document> personCollection = mongoDatabase.getCollection("person");
+
+List<BasicDBObject> pipeline = new ArrayList<BasicDBObject>();
+pipeline.add(new BasicDBObject("$group", new BasicDBObject("_id", "$area").append("count", new BasicDBObject("$sum", 1))));
+pipeline.add(new BasicDBObject("$sort", new BasicDBObject("count", -1))); // 如果不要排序，则注释这一行
+
+AggregateIterable<Document> aggregate = personCollection.aggregate(pipeline);
+MongoCursor<Document> iterator = aggregate.iterator();
+```
+
+### mongodb更新部分字段
+例如我们要将`person`中`_id`为`123`的数据的`address`修改为：广东，语句如下：
+
+	db.getCollection('person').update({'_id':'123'},{$set:{'address':'广东'}})
+
+
+
 
 ### 导出、导入数据库
 #### 我们使用`mongoexport`来导出指定的`collection`
