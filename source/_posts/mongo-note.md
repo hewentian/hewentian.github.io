@@ -42,6 +42,27 @@ MongoCursor<Document> iterator = aggregate.iterator();
 	db.getCollection('person').update({'_id':'123'},{$set:{'address':'广东'}})
 
 
+### 删除数据
+删除数据的时候，要注意条件为null的情况，这在组成json条件的时候，会变成{}，这会将整个库的数据都删掉，这个要避免。
+``` java
+MongoCollection<Document> mongoCollection = null; // 这里不建连接，仅演示
+JSONArray userNames = new JSONArray();
+for (String userName : Arrays.asList("", null, "xiao ming")) {
+    JSONObject obj = new JSONObject();
+    obj.put("userName", userName);
+    userNames.add(obj);
+}
+
+JSONObject condition = new JSONObject();
+condition.put("$or", userNames);
+
+// 删除原有的数据
+log.info("删除的语句为：" + condition); // {"$or":[{"userName":""},{},{"userName":"xiao ming"}]}
+DeleteResult deleteResult = mongoCollection.deleteMany(BsonDocument.parse(condition.toJSONString()));
+
+log.info("======mongo删除原有的数据条数：======" + deleteResult.getDeletedCount());
+```
+
 
 
 ### 导出、导入数据库

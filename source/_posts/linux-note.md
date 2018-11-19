@@ -5,11 +5,15 @@ tags: Linux
 categories: Linux
 ---
 
-在安装ubuntu的过程中的分区顺序: /boot -> / -> swap:
+在安装ubuntu的过程中的分区顺序: EFI -> /boot -> swap -> /:
 
-	/boot	primary		512M
-	/		primary		剩下的容量减去内存2倍
-	swap	logic		内存2倍
+    EFI		primary 	200M
+    /boot	primary		512M
+    swap	logic		内存2倍
+    /		primary		剩下的容量
+
+例如在小米笔记本安装 ubuntu 18.04 的时候，必须关闭安全启动，secure BOOT, 
+重启电脑，出现mi时，F2进入BIOS中，在secure中关闭安全启动，对了，要首先设置superviser password， 否则secure boot 无法关闭。 
 
 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误
 
@@ -1389,4 +1393,12 @@ $ sudo apt-get install gimp
 
 ### 思维导图 Xmind
 到 http://www.xmind.net/download/linux/ 下载 xmind-8-update8-linux.zip，解压后即可使用。
+
+
+### ubuntu18.04怎么设置字体样式，调整字体大小
+安装gnome-tweaks桌面配置工具
+``` bash
+sudo apt install gnome-tweaks
+```
+alt+f2 在运行窗口输入 gnome-tweaks 命令，然后回车。
 
