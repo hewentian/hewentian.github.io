@@ -5,22 +5,22 @@
   
   <title>Linux 学习笔记 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
+  <meta name="description" content="在安装ubuntu的过程中的分区顺序: EFI -&amp;gt; /boot -&amp;gt; swap -&amp;gt; /: EFI        primary     200M /boot    primary        512M swap    logic        内存2倍 /        primary        剩下的容量 例如在小米笔记本安装 ubuntu 18.04 的时候，必须关">
 <meta name="keywords" content="Linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux 学习笔记">
 <meta property="og:url" content="https://github.com/hewentian/2017/09/12/linux-note/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
+<meta property="og:description" content="在安装ubuntu的过程中的分区顺序: EFI -&amp;gt; /boot -&amp;gt; swap -&amp;gt; /: EFI        primary     200M /boot    primary        512M swap    logic        内存2倍 /        primary        剩下的容量 例如在小米笔记本安装 ubuntu 18.04 的时候，必须关">
 <meta property="og:locale" content="en-US">
 <meta property="og:image" content="https://github.com/img/connect-to-server.png">
 <meta property="og:image" content="https://github.com/img/filezilla.png">
 <meta property="og:image" content="https://github.com/img/indicator-stickynotes.png">
 <meta property="og:image" content="https://github.com/img/simpleScreenRecorder.png">
-<meta property="og:updated_time" content="2018-11-14T09:21:23.997Z">
+<meta property="og:updated_time" content="2018-11-19T11:47:07.442Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
-<meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: /boot -&amp;gt; / -&amp;gt; swap: /boot    primary        512M /        primary        剩下的容量减去内存2倍 swap    logic        内存2倍 Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误 错误如下： sudo apt-g">
+<meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: EFI -&amp;gt; /boot -&amp;gt; swap -&amp;gt; /: EFI        primary     200M /boot    primary        512M swap    logic        内存2倍 /        primary        剩下的容量 例如在小米笔记本安装 ubuntu 18.04 的时候，必须关">
 <meta name="twitter:image" content="https://github.com/img/connect-to-server.png">
   
   
@@ -102,11 +102,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在安装ubuntu的过程中的分区顺序: /boot -&gt; / -&gt; swap:</p>
-<pre><code>/boot    primary        512M
-/        primary        剩下的容量减去内存2倍
+        <p>在安装ubuntu的过程中的分区顺序: EFI -&gt; /boot -&gt; swap -&gt; /:</p>
+<pre><code>EFI        primary     200M
+/boot    primary        512M
 swap    logic        内存2倍
-</code></pre><p>Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误</p>
+/        primary        剩下的容量
+</code></pre><p>例如在小米笔记本安装 ubuntu 18.04 的时候，必须关闭安全启动，secure BOOT,<br>重启电脑，出现mi时，F2进入BIOS中，在secure中关闭安全启动，对了，要首先设置superviser password， 否则secure boot 无法关闭。 </p>
+<p>Ubuntu安装ssh时出现软件包 openssh-server 还没有可供安装的候选者错误</p>
 <p>错误如下：</p>
 <p>sudo apt-get install opensshserver正在读取软件包列表…</p>
 <p>完成正在分析软件包的依赖关系树正在读取状态信息…</p>
@@ -434,11 +436,13 @@ ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /r
 <h3 id="剪贴板软件"><a href="#剪贴板软件" class="headerlink" title="剪贴板软件"></a>剪贴板软件</h3><p>clipit非常好用，在设置中记得将<code>Automatically paste selected item</code>选上，否则选中了不会自动粘贴：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo add-apt-repository ppa:shantzu/clipit</span><br><span class="line">$ sudo apt-get update</span><br><span class="line">$ sudo apt-get install clipit</span><br></pre></td></tr></table></figure></p>
 <h3 id="图片编辑器"><a href="#图片编辑器" class="headerlink" title="图片编辑器"></a>图片编辑器</h3><p>ubuntu上可以使用GIMP，好用:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install gimp</span><br></pre></td></tr></table></figure></p>
 <h3 id="思维导图-Xmind"><a href="#思维导图-Xmind" class="headerlink" title="思维导图 Xmind"></a>思维导图 Xmind</h3><p>到 <a href="http://www.xmind.net/download/linux/" target="_blank" rel="noopener">http://www.xmind.net/download/linux/</a> 下载 xmind-8-update8-linux.zip，解压后即可使用。</p>
+<h3 id="ubuntu18-04怎么设置字体样式，调整字体大小"><a href="#ubuntu18-04怎么设置字体样式，调整字体大小" class="headerlink" title="ubuntu18.04怎么设置字体样式，调整字体大小"></a>ubuntu18.04怎么设置字体样式，调整字体大小</h3><p>安装gnome-tweaks桌面配置工具<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install gnome-tweaks</span><br></pre></td></tr></table></figure></p>
+<p>alt+f2 在运行窗口输入 gnome-tweaks 命令，然后回车。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjogzpslq001evv2i85rz30uk" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjoo8xasv001nu23kw6gzgrw9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
