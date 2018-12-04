@@ -35,12 +35,21 @@ $ sudo apt-get update
 ```
 更新完毕后执行：
 ``` bash
+$ sudo apt-get install openssh-client
 $ sudo apt-get install openssh-server
 ```
-最后我们用命令ps -e|grep ssh 来看下open-server安装成功没有，如果出现如下截图红色标出的部分，说明安装成功了。
+
+安装完毕之后，启动SSH
 ``` bash
-$ ps -e|grep ssh
+$ sudo service ssh start
 ```
+
+最后我们用命令ps -e | grep ssh 来看下open-server安装成功没有，如果出现如下截图红色标出的部分，说明安装成功了。
+``` bash
+$ ps -e | grep ssh
+```
+这样就可以在其他机器连到这台机器或者执行scp命令了。
+
 
 在ubuntu中的vi编辑器中怎么使用
 默认情况下ubuntu上也安装有vi但是奇怪的是这个vi是vim-common版本，基本上用不了所以要先把这个版本的vi卸载掉才可以，卸载命令是
@@ -473,7 +482,7 @@ export M2_HOME=/usr/local/apache-maven-3.3.9
 export PATH=$M2_HOME/bin:$PATH
 
 保存，并退出，执行如下语句，验证安装结果
-$ sour$ce /etc/profile
+$ source /etc/profile
 $ mvn -version
 
 $ # 如无意外，你将看到如下输出
@@ -1326,6 +1335,20 @@ shutter是值得推荐的一款截图软件，功能丰富，堪称神器，安�
 $ sudo apt-get install shutter
 ```
 
+在Ubuntu 18.04中安装后，发现编辑按钮变编程灰色。Shutter需要libgoo-canvas-perl库，该库在Ubuntu 18.04主存档中不可用，解决方法：
+
+    下载下面这三个软件，前两个可能系统已经安装。
+    https://launchpad.net/ubuntu/+archive/primary/+files/libgoocanvas-common_1.0.0-1_all.deb
+	https://launchpad.net/ubuntu/+archive/primary/+files/libgoocanvas3_1.0.0-1_amd64.deb
+	https://launchpad.net/ubuntu/+archive/primary/+files/libgoo-canvas-perl_0.06-2ubuntu3_amd64.deb
+	
+	sudo dpkg -i libgoocanvas-common_1.0.0-1_all.deb 
+    sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb 
+    sudo dpkg -i libgoo-canvas-perl_0.06-2ubuntu3_amd64.deb
+    sudo apt --fix-broken install 
+    sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb 
+重启电脑生效。
+
 
 ### 录屏软件
 Simple Screen Recorder是一款简单的屏幕录像工具，能够在屏幕上录制视频、教程，界面简单，功能够用。安装的过程可能有点慢，请耐心等待，并多试几次。
@@ -1401,4 +1424,50 @@ $ sudo apt-get install gimp
 sudo apt install gnome-tweaks
 ```
 alt+f2 在运行窗口输入 gnome-tweaks 命令，然后回车。
+
+### ubuntu 18.04系统设置应用到桌面快捷方式的使用方法
+首先在系统文件夹/usr/share/applications中找到对应的desktop文件，将其复制到桌面文件夹即可，如果找不到对应文件则需要按如下步骤生成desktop文件。
+
+1. “Ctrl+Alt+t"打开终端，输入命令：gnome-desktop-item-edit；如果显示不存在，则需要安装命令：sudo apt install gnome-panel
+
+2. 安装完成后执行创建快捷方式：gnome-desktop-item-edit ~/Desktop/ --create-new，弹出对话框后，填入和选择相应的参数及路径。
+
+
+### ubuntu18.04将最小、最大、关闭按钮放到左边
+
+	gsettings set org.gnome.desktop.wm.preferences button-layout 'minimize,maximize,close:' 
+
+
+### ubuntu18.04安装nvidia显卡
+参考：https://linuxconfig.org/how-to-install-the-nvidia-drivers-on-ubuntu-18-04-bionic-beaver-linux
+
+First, detect the model of your nvidia graphic card and the recommended driver. To do so execute:
+``` bash
+$ ubuntu-drivers devices
+== /sys/devices/pci0000:00/0000:00:1c.0/0000:01:00.0 ==
+modalias : pci:v000010DEd00001D12sv00001D72sd00001703bc03sc02i00
+vendor   : NVIDIA Corporation
+driver   : nvidia-driver-390 - distro non-free recommended
+driver   : xserver-xorg-video-nouveau - distro free builtin
+```
+
+From the above output we can conclude that the current system has NVIDIA graphic card installed and the recommend driver to install is nvidia-driver-390.
+
+If you agree with the recommendation feel free to use ubuntu-drivers command again to install all recommended drivers:
+
+    $ sudo ubuntu-drivers autoinstall
+
+Alternatively, install desired driver selectively using the apt command. For example:
+
+    $ sudo apt install nvidia-driver-390
+
+Once the installation is concluded, reboot your system and you are done.
+
+### 免密登录远程主机
+将本地公钥添加到远程主机的`authorized_keys`中，例如远程主机为 192.168.1.123，然后就可以ssh免密登录过去了
+``` bash
+$ ssh-copy-id 192.168.1.123
+
+$ ssh 192.168.1.123
+```
 
