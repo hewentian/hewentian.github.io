@@ -17,7 +17,7 @@
 <meta property="og:image" content="https://github.com/img/filezilla.png">
 <meta property="og:image" content="https://github.com/img/indicator-stickynotes.png">
 <meta property="og:image" content="https://github.com/img/simpleScreenRecorder.png">
-<meta property="og:updated_time" content="2018-11-19T11:47:07.442Z">
+<meta property="og:updated_time" content="2018-12-04T13:18:36.628Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: EFI -&amp;gt; /boot -&amp;gt; swap -&amp;gt; /: EFI        primary     200M /boot    primary        512M swap    logic        内存2倍 /        primary        剩下的容量 例如在小米笔记本安装 ubuntu 18.04 的时候，必须关">
@@ -67,7 +67,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -116,8 +116,10 @@ swap    logic        内存2倍
 <p>但是他被其他的软件包引用了这可能意味着这个缺失的软件包可能已被废弃，或者只能在其他发布源中找到</p>
 <p>Error:软件包 openssh-server 还没有可供安装的候选者</p>
 <p>解决方案：分析原因是我们的apt-get没有更新，当然如果你的是最新的系统不用更新也行，但是我相信很多人都是需要更新的吧，操作命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get update</span><br></pre></td></tr></table></figure></p>
-<p>更新完毕后执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install openssh-server</span><br></pre></td></tr></table></figure></p>
-<p>最后我们用命令ps -e|grep ssh 来看下open-server安装成功没有，如果出现如下截图红色标出的部分，说明安装成功了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps -e|grep ssh</span><br></pre></td></tr></table></figure></p>
+<p>更新完毕后执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install openssh-client</span><br><span class="line">$ sudo apt-get install openssh-server</span><br></pre></td></tr></table></figure></p>
+<p>安装完毕之后，启动SSH<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo service ssh start</span><br></pre></td></tr></table></figure></p>
+<p>最后我们用命令ps -e | grep ssh 来看下open-server安装成功没有，如果出现如下截图红色标出的部分，说明安装成功了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps -e | grep ssh</span><br></pre></td></tr></table></figure></p>
+<p>这样就可以在其他机器连到这台机器或者执行scp命令了。</p>
 <p>在ubuntu中的vi编辑器中怎么使用<br>默认情况下ubuntu上也安装有vi但是奇怪的是这个vi是vim-common版本，基本上用不了所以要先把这个版本的vi卸载掉才可以，卸载命令是<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get remove vim-common</span><br></pre></td></tr></table></figure></p>
 <p>卸载成功之后接着执行 sudo apt-get install vim,安装好之后就能使用了</p>
 <h3 id="useradd与adduser区别"><a href="#useradd与adduser区别" class="headerlink" title="useradd与adduser区别"></a>useradd与adduser区别</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ adduser username	<span class="comment"># 会在/home下建立一个文件夹username</span></span><br><span class="line">$ useradd username	<span class="comment"># 不会在/home下建立一个文件夹username</span></span><br><span class="line">$ useradd -m username	<span class="comment"># 跟adduser一样，会在/home下建立一个文件夹username</span></span><br></pre></td></tr></table></figure>
@@ -234,7 +236,7 @@ swap    logic        内存2倍
 <li><p>json格式的post请求<br>curl -l -H “Content-type: application/json” -X POST -d ‘{“phone”:”13800138000”,”password”:”passwd”}’ <a href="http://domain/apis/users.json" target="_blank" rel="noopener">http://domain/apis/users.json</a></p>
 </li>
 </ol>
-<h3 id="在ubuntu上面安装-maven"><a href="#在ubuntu上面安装-maven" class="headerlink" title="在ubuntu上面安装 maven"></a>在ubuntu上面安装 maven</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ su root 	<span class="comment"># 切换到 root 用户</span></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/Downloads	<span class="comment"># 进入到 maven 下载的目录</span></span><br><span class="line">$ tar xzvf apache-maven-3.3.9-bin.tar.gz</span><br><span class="line"><span class="comment"># cd /usr/local</span></span><br><span class="line"><span class="comment"># mv /home/hewentian/Downloads/apache-maven-3.3.9 ./</span></span><br><span class="line"><span class="variable">$#</span> 在 /etc/profile 文件中添加 maven 路径</span><br><span class="line"><span class="comment"># vi /etc/profile</span></span><br><span class="line">$ <span class="comment"># 在打开的文件中添加如下代码</span></span><br><span class="line"><span class="comment"># add maven</span></span><br><span class="line"><span class="built_in">export</span> M2_HOME=/usr/<span class="built_in">local</span>/apache-maven-3.3.9</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$M2_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line">保存，并退出，执行如下语句，验证安装结果</span><br><span class="line">$ sour<span class="variable">$ce</span> /etc/profile</span><br><span class="line">$ mvn -version</span><br><span class="line"></span><br><span class="line">$ <span class="comment"># 如无意外，你将看到如下输出</span></span><br><span class="line">Maven home: /usr/<span class="built_in">local</span>/apache-maven-3.3.9</span><br><span class="line">Java version: 1.8.0_102, vendor: Oracle Corporation</span><br><span class="line">Java home: /usr/<span class="built_in">local</span>/java/jdk1.8.0_102/jre</span><br><span class="line">Default locale: en_US, platform encoding: UTF-8</span><br><span class="line">OS name: <span class="string">"linux"</span>, version: <span class="string">"4.10.0-28-generic"</span>, arch: <span class="string">"amd64"</span>, family: <span class="string">"unix"</span></span><br></pre></td></tr></table></figure>
+<h3 id="在ubuntu上面安装-maven"><a href="#在ubuntu上面安装-maven" class="headerlink" title="在ubuntu上面安装 maven"></a>在ubuntu上面安装 maven</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ su root 	<span class="comment"># 切换到 root 用户</span></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/Downloads	<span class="comment"># 进入到 maven 下载的目录</span></span><br><span class="line">$ tar xzvf apache-maven-3.3.9-bin.tar.gz</span><br><span class="line"><span class="comment"># cd /usr/local</span></span><br><span class="line"><span class="comment"># mv /home/hewentian/Downloads/apache-maven-3.3.9 ./</span></span><br><span class="line"><span class="variable">$#</span> 在 /etc/profile 文件中添加 maven 路径</span><br><span class="line"><span class="comment"># vi /etc/profile</span></span><br><span class="line">$ <span class="comment"># 在打开的文件中添加如下代码</span></span><br><span class="line"><span class="comment"># add maven</span></span><br><span class="line"><span class="built_in">export</span> M2_HOME=/usr/<span class="built_in">local</span>/apache-maven-3.3.9</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$M2_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line">保存，并退出，执行如下语句，验证安装结果</span><br><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br><span class="line">$ mvn -version</span><br><span class="line"></span><br><span class="line">$ <span class="comment"># 如无意外，你将看到如下输出</span></span><br><span class="line">Maven home: /usr/<span class="built_in">local</span>/apache-maven-3.3.9</span><br><span class="line">Java version: 1.8.0_102, vendor: Oracle Corporation</span><br><span class="line">Java home: /usr/<span class="built_in">local</span>/java/jdk1.8.0_102/jre</span><br><span class="line">Default locale: en_US, platform encoding: UTF-8</span><br><span class="line">OS name: <span class="string">"linux"</span>, version: <span class="string">"4.10.0-28-generic"</span>, arch: <span class="string">"amd64"</span>, family: <span class="string">"unix"</span></span><br></pre></td></tr></table></figure>
 <h3 id="ubuntu-16-04-安装-google-chrome-stable-current-amd64-deb-方法"><a href="#ubuntu-16-04-安装-google-chrome-stable-current-amd64-deb-方法" class="headerlink" title="ubuntu 16.04 安装 google-chrome-stable_current_amd64.deb 方法"></a>ubuntu 16.04 安装 google-chrome-stable_current_amd64.deb 方法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> &#123;google-chome所在目录&#125;</span><br><span class="line">$ sudo dpkg -i google-chrome-stable_current_amd64.deb</span><br><span class="line">$ <span class="comment"># 如果安装过程输出如下错误</span></span><br><span class="line">$ <span class="comment"># google-chrome-stable depends on libappindicator1; however:</span></span><br><span class="line">$ <span class="comment"># 那么执行如下命令</span></span><br><span class="line">$ sudo apt-get -f install libappindicator1 libindicator7</span><br><span class="line">$ <span class="comment"># 然后再执行原来的安装命令</span></span><br><span class="line">$ sudo dpkg -i google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
 <h3 id="Ubuntu-16-04-关闭笔记本触摸板"><a href="#Ubuntu-16-04-关闭笔记本触摸板" class="headerlink" title="Ubuntu 16.04 关闭笔记本触摸板"></a>Ubuntu 16.04 关闭笔记本触摸板</h3><ol>
 <li><p>禁用触摸板</p>
@@ -426,6 +428,18 @@ ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /r
 <p>启动方式可以直接在命令行中输入<code>indicator-stickynotes</code>，当然也可以在资源管理器中查找：<br><img src="/img/indicator-stickynotes.png" alt=""></p>
 <h3 id="ubuntu下面，微信的使用"><a href="#ubuntu下面，微信的使用" class="headerlink" title="ubuntu下面，微信的使用"></a>ubuntu下面，微信的使用</h3><p>微信的官网好像没有Linux版本下载，但是可以在以下连接下载到：<br><a href="https://github.com/geeeeeeeeek/electronic-wechat">https://github.com/geeeeeeeeek/electronic-wechat</a><br>下载相应版本后，解压后，即可使用。</p>
 <h3 id="截屏软件"><a href="#截屏软件" class="headerlink" title="截屏软件"></a>截屏软件</h3><p>shutter是值得推荐的一款截图软件，功能丰富，堪称神器，安装方式如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install shutter</span><br></pre></td></tr></table></figure></p>
+<p>在Ubuntu 18.04中安装后，发现编辑按钮变编程灰色。Shutter需要libgoo-canvas-perl库，该库在Ubuntu 18.04主存档中不可用，解决方法：</p>
+<pre><code>下载下面这三个软件，前两个可能系统已经安装。
+https://launchpad.net/ubuntu/+archive/primary/+files/libgoocanvas-common_1.0.0-1_all.deb
+https://launchpad.net/ubuntu/+archive/primary/+files/libgoocanvas3_1.0.0-1_amd64.deb
+https://launchpad.net/ubuntu/+archive/primary/+files/libgoo-canvas-perl_0.06-2ubuntu3_amd64.deb
+
+sudo dpkg -i libgoocanvas-common_1.0.0-1_all.deb 
+sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb 
+sudo dpkg -i libgoo-canvas-perl_0.06-2ubuntu3_amd64.deb
+sudo apt --fix-broken install 
+sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb 
+</code></pre><p>重启电脑生效。</p>
 <h3 id="录屏软件"><a href="#录屏软件" class="headerlink" title="录屏软件"></a>录屏软件</h3><p>Simple Screen Recorder是一款简单的屏幕录像工具，能够在屏幕上录制视频、教程，界面简单，功能够用。安装的过程可能有点慢，请耐心等待，并多试几次。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo add-apt-repository ppa:maarten-baert/simplescreenrecorder</span><br><span class="line">$ sudo apt-get update</span><br><span class="line">$ sudo apt-get install simplescreenrecorder</span><br></pre></td></tr></table></figure></p>
 <p><img src="/img/simpleScreenRecorder.png" alt=""></p>
 <h3 id="系统监视器"><a href="#系统监视器" class="headerlink" title="系统监视器"></a>系统监视器</h3><p>它可以实时查看电脑的cpu、内存占用率、温度等等，非常方便，还可以自已定制要显示的内容。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo add-apt-repository ppa:fossfreedom/indicator-sysmonitor</span><br><span class="line">$ sudo apt-get update</span><br><span class="line">$ sudo apt-get install indicator-sysmonitor</span><br></pre></td></tr></table></figure></p>
@@ -438,11 +452,28 @@ ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /r
 <h3 id="思维导图-Xmind"><a href="#思维导图-Xmind" class="headerlink" title="思维导图 Xmind"></a>思维导图 Xmind</h3><p>到 <a href="http://www.xmind.net/download/linux/" target="_blank" rel="noopener">http://www.xmind.net/download/linux/</a> 下载 xmind-8-update8-linux.zip，解压后即可使用。</p>
 <h3 id="ubuntu18-04怎么设置字体样式，调整字体大小"><a href="#ubuntu18-04怎么设置字体样式，调整字体大小" class="headerlink" title="ubuntu18.04怎么设置字体样式，调整字体大小"></a>ubuntu18.04怎么设置字体样式，调整字体大小</h3><p>安装gnome-tweaks桌面配置工具<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install gnome-tweaks</span><br></pre></td></tr></table></figure></p>
 <p>alt+f2 在运行窗口输入 gnome-tweaks 命令，然后回车。</p>
+<h3 id="ubuntu-18-04系统设置应用到桌面快捷方式的使用方法"><a href="#ubuntu-18-04系统设置应用到桌面快捷方式的使用方法" class="headerlink" title="ubuntu 18.04系统设置应用到桌面快捷方式的使用方法"></a>ubuntu 18.04系统设置应用到桌面快捷方式的使用方法</h3><p>首先在系统文件夹/usr/share/applications中找到对应的desktop文件，将其复制到桌面文件夹即可，如果找不到对应文件则需要按如下步骤生成desktop文件。</p>
+<ol>
+<li><p>“Ctrl+Alt+t”打开终端，输入命令：gnome-desktop-item-edit；如果显示不存在，则需要安装命令：sudo apt install gnome-panel</p>
+</li>
+<li><p>安装完成后执行创建快捷方式：gnome-desktop-item-edit ~/Desktop/ –create-new，弹出对话框后，填入和选择相应的参数及路径。</p>
+</li>
+</ol>
+<h3 id="ubuntu18-04将最小、最大、关闭按钮放到左边"><a href="#ubuntu18-04将最小、最大、关闭按钮放到左边" class="headerlink" title="ubuntu18.04将最小、最大、关闭按钮放到左边"></a>ubuntu18.04将最小、最大、关闭按钮放到左边</h3><pre><code>gsettings set org.gnome.desktop.wm.preferences button-layout &apos;minimize,maximize,close:&apos; 
+</code></pre><h3 id="ubuntu18-04安装nvidia显卡"><a href="#ubuntu18-04安装nvidia显卡" class="headerlink" title="ubuntu18.04安装nvidia显卡"></a>ubuntu18.04安装nvidia显卡</h3><p>参考：<a href="https://linuxconfig.org/how-to-install-the-nvidia-drivers-on-ubuntu-18-04-bionic-beaver-linux" target="_blank" rel="noopener">https://linuxconfig.org/how-to-install-the-nvidia-drivers-on-ubuntu-18-04-bionic-beaver-linux</a></p>
+<p>First, detect the model of your nvidia graphic card and the recommended driver. To do so execute:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ubuntu-drivers devices</span><br><span class="line">== /sys/devices/pci0000:00/0000:00:1c.0/0000:01:00.0 ==</span><br><span class="line">modalias : pci:v000010DEd00001D12sv00001D72sd00001703bc03sc02i00</span><br><span class="line">vendor   : NVIDIA Corporation</span><br><span class="line">driver   : nvidia-driver-390 - distro non-free recommended</span><br><span class="line">driver   : xserver-xorg-video-nouveau - distro free <span class="built_in">builtin</span></span><br></pre></td></tr></table></figure></p>
+<p>From the above output we can conclude that the current system has NVIDIA graphic card installed and the recommend driver to install is nvidia-driver-390.</p>
+<p>If you agree with the recommendation feel free to use ubuntu-drivers command again to install all recommended drivers:</p>
+<pre><code>$ sudo ubuntu-drivers autoinstall
+</code></pre><p>Alternatively, install desired driver selectively using the apt command. For example:</p>
+<pre><code>$ sudo apt install nvidia-driver-390
+</code></pre><p>Once the installation is concluded, reboot your system and you are done.</p>
+<h3 id="免密登录远程主机"><a href="#免密登录远程主机" class="headerlink" title="免密登录远程主机"></a>免密登录远程主机</h3><p>将本地公钥添加到远程主机的<code>authorized_keys</code>中，例如远程主机为 192.168.1.123，然后就可以ssh免密登录过去了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-copy-id 192.168.1.123</span><br><span class="line"></span><br><span class="line">$ ssh 192.168.1.123</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjoo8xasv001nu23kw6gzgrw9" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjp9rtuss001ful3kb19r8wmn" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -454,7 +485,7 @@ ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /r
 <nav id="article-nav">
   
     <a href="/2017/09/27/markdown-learn-note/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">Récent</strong>
       <div class="article-nav-title">
         
           markdown 学习笔记
@@ -464,7 +495,7 @@ ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /r
   
   
     <a href="/2017/09/12/online-implementing/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">Ancien</strong>
       <div class="article-nav-title">系统上线注意事项</div>
     </a>
   
@@ -479,9 +510,9 @@ ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /r
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -491,7 +522,7 @@ ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /r
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -499,9 +530,13 @@ ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /r
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>
+          </li>
         
           <li>
             <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
@@ -517,10 +552,6 @@ ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /r
         
           <li>
             <a href="/2018/10/05/jenkins-install/">jenkins 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
           </li>
         
       </ul>
@@ -546,7 +577,7 @@ ssh -p 12022 root@192.168.30.241 &apos;source /etc/profile &gt; /dev/null; cd /r
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2018 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -70,6 +70,101 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-hadoop-cluster" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/12/04/hadoop-cluster/" class="article-date">
+  <time datetime="2018-12-04T01:12:43.000Z" itemprop="datePublished">2018-12-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇将说说hadoop集群的搭建，这里说的集群是真集群，不是伪集群。不过，这里的真集群是在虚拟机环境中搭建的。</p>
+<p>在我的笔记本电脑中，安装虚拟机VirtualBox，在虚拟机中安装三台服务器：server1、server2、server3来搭建hadoop集群。我们使用<code>ubuntu 18.04</code>来作为我们的服务器，先在虚拟机中安装好一台服务器server1，将Jdk、hadoop在上面安装好，然后将server1克隆出server2、server3。以server1为namenode，server2、server3作为datanode。相关配置如下：</p>
+<pre><code>server1：
+    ip: 10.0.2.111
+    hostname: hadoop-host-master
+server2:
+    ip: 10.0.2.112
+    hostname: hadoop-host-slave-1
+server3:
+    ip: 10.0.2.113
+    hostname: hadoop-host-slave-2
+</code></pre><h3 id="下面开始server1的安装"><a href="#下面开始server1的安装" class="headerlink" title="下面开始server1的安装"></a>下面开始server1的安装</h3><p>在虚拟机中安装server1的过程中我们会设置一个用户用于登录，我们将用户名、密码都设为hadoop，当然也可以为其他名字，其他安装过程略。安装好之后，使用默认的网关配置NAT，NAT可以访问外网，我们将<code>jdk-8u102-linux-x64.tar.gz</code>和<code>hadoop-2.7.3.tar.gz</code>从它们的官网下载到用户的<code>/home/hadoop/</code>目录下。然后将网关设置为<code>Bridged Adapter</code>，如下图所示。</p>
+<p><img src="/img/hadoop-1.png" alt="" title="网络配置"></p>
+<p>网关设置好了之后，我们接下来配置IP地址。在server1中 [Settings] -&gt; [Network] -&gt; [Wired 这里打开] -&gt; [IPv4] 按如下设置：</p>
+<p><img src="/img/hadoop-2.png" alt="" title="网络配置"></p>
+<h3 id="安装ssh-openssh-rsync"><a href="#安装ssh-openssh-rsync" class="headerlink" title="安装ssh openssh rsync"></a>安装ssh openssh rsync</h3><p>项系统已安装，则省略下面的安装操作<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install ssh openssh-server rsync</span><br></pre></td></tr></table></figure></p>
+<p>如果上述命令无法执行，请先执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get update</span><br></pre></td></tr></table></figure></p>
+<p>JDK的安装请参考我之前的笔记：<a href="../../../../2017/12/08/install-jdk/">安装 JDK</a>，这里不再赘述。安装到此目录<code>/usr/local/jdk1.8.0_102/</code>下，记住此路径，下面会用到。下在进行hadoop的安装。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/</span><br><span class="line">$ tar xf hadoop-2.7.3.tar.gz</span><br></pre></td></tr></table></figure>
+<p>解压后得到hadoop-2.7.3目录，hadoop的相关配置就在此目录中。</p>
+<h3 id="建保存数据的目录"><a href="#建保存数据的目录" class="headerlink" title="建保存数据的目录"></a>建保存数据的目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3</span><br><span class="line">$ mkdir -p hdfs/tmp</span><br><span class="line">$ mkdir -p hdfs/name</span><br><span class="line">$ mkdir -p hdfs/data</span><br><span class="line">$</span><br><span class="line">$ chmod -R 777 hdfs/</span><br></pre></td></tr></table></figure>
+<h3 id="配置文件浏览"><a href="#配置文件浏览" class="headerlink" title="配置文件浏览"></a>配置文件浏览</h3><p>hadoop的配置文件都位于下面的目录下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/etc/hadoop</span><br><span class="line">$ ls </span><br><span class="line">capacity-scheduler.xml      httpfs-env.sh            mapred-env.sh</span><br><span class="line">configuration.xsl           httpfs-log4j.properties  mapred-queues.xml.template</span><br><span class="line">container-executor.cfg      httpfs-signature.secret  mapred-site.xml.template</span><br><span class="line">core-site.xml               httpfs-site.xml          slaves</span><br><span class="line">hadoop-env.cmd              kms-acls.xml             ssl-client.xml.example</span><br><span class="line">hadoop-env.sh               kms-env.sh               ssl-server.xml.example</span><br><span class="line">hadoop-metrics2.properties  kms-log4j.properties     yarn-env.cmd</span><br><span class="line">hadoop-metrics.properties   kms-site.xml             yarn-env.sh</span><br><span class="line">hadoop-policy.xml           log4j.properties         yarn-site.xml</span><br><span class="line">hdfs-site.xml               mapred-env.cmd</span><br></pre></td></tr></table></figure></p>
+<h3 id="配置hadoop-env-sh，加上JDK绝对路径"><a href="#配置hadoop-env-sh，加上JDK绝对路径" class="headerlink" title="配置hadoop-env.sh，加上JDK绝对路径"></a>配置hadoop-env.sh，加上JDK绝对路径</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/local/jdk1.8.0_102/</span><br></pre></td></tr></table></figure>
+<h3 id="配置core-site-xml，在该文件中加入如下内容"><a href="#配置core-site-xml，在该文件中加入如下内容" class="headerlink" title="配置core-site.xml，在该文件中加入如下内容"></a>配置core-site.xml，在该文件中加入如下内容</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">name</span>&gt;</span>hadoop.tmp.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">value</span>&gt;</span>file:/home/hadoop/hadoop-2.7.3/hdfs/tmp<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">description</span>&gt;</span>Abase for other temporary directories.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">name</span>&gt;</span>fs.defaultFS<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://hadoop-host-master:9000<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置hdfs-site-xml，在该文件中加入如下内容"><a href="#配置hdfs-site-xml，在该文件中加入如下内容" class="headerlink" title="配置hdfs-site.xml，在该文件中加入如下内容"></a>配置hdfs-site.xml，在该文件中加入如下内容</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.nameservices<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">value</span>&gt;</span>hadoop-cluster<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.replication<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">value</span>&gt;</span>2<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.namenode.name.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">value</span>&gt;</span>file:/home/hadoop/hadoop-2.7.3/hdfs/name<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.datanode.data.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">value</span>&gt;</span>file:/home/hadoop/hadoop-2.7.3/hdfs/data<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>至此，server1中要安装的通用环境配置完成。在虚拟机中将server1复制出server2、server3。并参考上面配置IP地址的方法将server2的ip配置为:<code>10.0.2.112</code>，server3的ip配置为：<code>10.0.2.113</code>。</p>
+<h3 id="配置主机名"><a href="#配置主机名" class="headerlink" title="配置主机名"></a>配置主机名</h3><p>配置server1的主机名为<code>hadoop-host-master</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/hostname</span><br><span class="line"></span><br><span class="line">修改为如下内容</span><br><span class="line">hadoop-host-master</span><br></pre></td></tr></table></figure></p>
+<p>配置server2的主机名为<code>hadoop-host-slave-1</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/hostname</span><br><span class="line"></span><br><span class="line">修改为如下内容</span><br><span class="line">hadoop-host-slave-1</span><br></pre></td></tr></table></figure></p>
+<p>配置server3的主机名为<code>hadoop-host-slave-2</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/hostname</span><br><span class="line"></span><br><span class="line">修改为如下内容</span><br><span class="line">hadoop-host-slave-2</span><br></pre></td></tr></table></figure></p>
+<p><strong> 注意：各个节点的主机名一定要不同，否则相同主机名的节点，只会有一个连得上namenode节点，并且集群会报错 </strong></p>
+<h3 id="配置域名解析"><a href="#配置域名解析" class="headerlink" title="配置域名解析"></a>配置域名解析</h3><p>分别对server1、server2和server3都执行如下操作：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/hosts</span><br><span class="line"></span><br><span class="line">修改为如下内容</span><br><span class="line">127.0.0.1	localhost</span><br><span class="line">10.0.2.111	hadoop-host-master</span><br><span class="line">10.0.2.112	hadoop-host-slave-1</span><br><span class="line">10.0.2.113	hadoop-host-slave-2</span><br></pre></td></tr></table></figure></p>
+<p>至此，集群配置完成，下面将启动集群。</p>
+<h3 id="启动集群"><a href="#启动集群" class="headerlink" title="启动集群"></a>启动集群</h3><p>首先启动nodename节点，也就是server1，首次启动的时候，要格式化namenode。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hdfs namenode -format    <span class="comment"># 再次启动的时候不需要执行此操作</span></span><br><span class="line">$ ./sbin/hadoop-daemon.sh start namenode</span><br><span class="line">$</span><br><span class="line">$ jps    <span class="comment"># 查看是否启动成功</span></span><br><span class="line">4016 Jps</span><br><span class="line">2556 NameNode</span><br></pre></td></tr></table></figure></p>
+<p>接下来启动datanode节点，也就是server2、server3，在这两台服务器上都执行如下启动脚本。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./sbin/hadoop-daemon.sh start datanode</span><br><span class="line">$</span><br><span class="line">$ jps    <span class="comment"># 查看是否启动成功</span></span><br><span class="line">2451 Jps</span><br><span class="line">2162 DataNode</span><br></pre></td></tr></table></figure></p>
+<p>可以在任何节点的浏览器中输入：<br><a href="http://10.0.2.111:50070/" target="_blank" rel="noopener">http://10.0.2.111:50070/</a><br>来查看是否启动成功。</p>
+<p>如果是在namenode节点，则可以直接使用：<br><a href="http://localhost:50070/" target="_blank" rel="noopener">http://localhost:50070/</a></p>
+<p><img src="/img/hadoop-3.png" alt="" title="hadoop管理界面：Overview"></p>
+<p>切换tab到Datanodes可以看到有2个datanode节点，如下图所示：<br><img src="/img/hadoop-4.png" alt="" title="hadoop管理界面:Datanodes"></p>
+<p>切换到<code>Utilities -&gt; Browse the file system</code>，如下图所示：<br><img src="/img/hadoop-5.png" alt="" title="hadoop管理界面:Browse the file system"></p>
+<p>从上面的界面可以，目前HDFS中没有任何文件。我们尝试往其中放一个文件，就将我们的hadoop压缩包放进去吧<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hdfs dfs -put /home/hadoop/hadoop-2.7.3.tar.gz /</span><br><span class="line"></span><br><span class="line">$ ./bin/hdfs dfs -ls /</span><br><span class="line">Found 1 items</span><br><span class="line">-rw-r--r--   2 hadoop supergroup  214092195 2018-12-04 15:14 hadoop-2.7.3.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>我们在图形界面中查看，如下图：<br><img src="/img/hadoop-6.png" alt="" title="hadoop管理界面:Browse the file system"></p>
+<p>我们点击列表中的文件，将会显示它的数据具体分布在哪些节点上，如下图：<br><img src="/img/hadoop-7.png" alt="" title="hadoop管理界面:Browse the file system"></p>
+<h3 id="停掉集群"><a href="#停掉集群" class="headerlink" title="停掉集群"></a>停掉集群</h3><p>先停掉datanode节点，在server2、server3上面执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./sbin/hadoop-daemon.sh stop datanode</span><br></pre></td></tr></table></figure></p>
+<p>然后停掉namenode节点：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./sbin/hadoop-daemon.sh stop namenode</span><br></pre></td></tr></table></figure></p>
+<h3 id="集中式管理集群"><a href="#集中式管理集群" class="headerlink" title="集中式管理集群"></a>集中式管理集群</h3><p>如果我们的集群里面有成千上万台机器，在每一台机器上面都这样来启动，肯定是不行的。下面我们将通过配置，只在一台机器上面执行一个脚本，就将整个集群启动。</p>
+<p>配置SSH无密码登陆，分别在server1、server2和server3上面执行如下脚本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -P <span class="string">""</span></span><br></pre></td></tr></table></figure></p>
+<p>在server1上面执行如下脚本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-copy-id hadoop-host-master</span><br><span class="line">$ ssh-copy-id hadoop-host-slave-1</span><br><span class="line">$ ssh-copy-id hadoop-host-slave-2</span><br></pre></td></tr></table></figure></p>
+<p>每执行一条命令的时候，都先输入yes，然后再输入目标机器的登录密码。</p>
+<p>如果能成功运行如下命令，则配置免密登录其他机器成功。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ssh hadoop-host-master</span><br><span class="line">$ ssh hadoop-host-slave-1</span><br><span class="line">$ ssh hadoop-host-slave-2</span><br></pre></td></tr></table></figure></p>
+<p>在server1上面执行如下脚本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/etc/hadoop/</span><br><span class="line">$ vi slaves    <span class="comment"># 加入如下内容</span></span><br><span class="line">$</span><br><span class="line">hadoop-host-slave-1</span><br><span class="line">hadoop-host-slave-2</span><br></pre></td></tr></table></figure></p>
+<p>在server1上面启动整个集群：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./sbin/start-dfs.sh</span><br></pre></td></tr></table></figure></p>
+<p>分别在server1、server2和server3上面通过<code>jps</code>命令可以看到整个集群已经成功启动。同样的，停掉整个集群的命令，如下，同样是在server1上面执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./sbin/stop-dfs.sh</span><br></pre></td></tr></table></figure></p>
+<p>相关操作，如下图所示：<br><img src="/img/hadoop-8.png" alt="" title="hadoop集中式管理"></p>
+<h3 id="启动YARN"><a href="#启动YARN" class="headerlink" title="启动YARN"></a>启动YARN</h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjp9rtusd000dul3kxm603oy7" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-kafka-intro" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -183,7 +278,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjoo8xaso0011u23kjwe9a05v" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjp9rtusr001cul3k2x13f36n" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -295,7 +390,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjoo8xasq0017u23k5vluied2" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjp9rtuso0014ul3ktgjzha31" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -364,7 +459,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjoo8xasr0019u23kywspe0kt" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjp9rtusv001mul3keucuvowm" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -534,7 +629,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjoo8xasn000yu23kqct0ifo9" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjp9rtusp0016ul3kt7mvwikt" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -613,7 +708,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjoo8xas40001u23k1sthzca4" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjp9rtus00000ul3kdzn409th" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1011,7 +1106,7 @@ GET people/user/_search
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjoo8xasc0009u23kbjzurtaj" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjp9rtusf000ful3k7ly6q9g3" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1207,7 +1302,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjoo8xasb0007u23kc1suexep" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjp9rtusa0008ul3km4l2ds5f" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1531,7 +1626,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjoo8xasc0008u23ktusi1hue" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjp9rtus80006ul3kpulrcman" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1767,80 +1862,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjoo8xat4002cu23kylhd2v1p" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis-master-slave" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/08/14/redis-master-slave/" class="article-date">
-  <time datetime="2018-08-14T06:53:19.000Z" itemprop="datePublished">2018-08-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/14/redis-master-slave/">redis 主从配置</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>要配置主从，我们必须安装两台<code>redis</code>：主服务器为<code>master</code>，从服务器为<code>slave</code>。安装步骤请参考我的上一篇 <a href="../../../../2018/08/07/redis-install/">redis 的安装使用</a></p>
-<h3 id="我们在一台机器上面配置主从，多台的配置是一样的，只要修改下IP和PORT即可。以我们上一篇安装好的一台redis为基础，它的安装路径为：-home-hewentian-ProjectD-redis-4-0-11"><a href="#我们在一台机器上面配置主从，多台的配置是一样的，只要修改下IP和PORT即可。以我们上一篇安装好的一台redis为基础，它的安装路径为：-home-hewentian-ProjectD-redis-4-0-11" class="headerlink" title="我们在一台机器上面配置主从，多台的配置是一样的，只要修改下IP和PORT即可。以我们上一篇安装好的一台redis为基础，它的安装路径为：/home/hewentian/ProjectD/redis-4.0.11"></a>我们在一台机器上面配置主从，多台的配置是一样的，只要修改下<code>IP</code>和<code>PORT</code>即可。以我们上一篇安装好的一台<code>redis</code>为基础，它的安装路径为：<code>/home/hewentian/ProjectD/redis-4.0.11</code></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mv redis-4.0.11 redis-4.0.11_master</span><br><span class="line">$ cp -r redis-4.0.11_master/ redis-4.0.11_slave/</span><br></pre></td></tr></table></figure>
-<p><code>master</code>服务器为：<code>/home/hewentian/ProjectD/redis-4.0.11_master</code><br><code>slave</code>服务器为：<code>/home/hewentian/ProjectD/redis-4.0.11_slave</code></p>
-<h3 id="master服务器使用默认端口6379，所以不用配置。下面我们配置slave服务器："><a href="#master服务器使用默认端口6379，所以不用配置。下面我们配置slave服务器：" class="headerlink" title="master服务器使用默认端口6379，所以不用配置。下面我们配置slave服务器："></a><code>master</code>服务器使用默认端口<code>6379</code>，所以不用配置。下面我们配置<code>slave</code>服务器：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/redis-4.0.11_slave/</span><br><span class="line">$ vi redis.conf</span><br><span class="line"></span><br><span class="line">// 将默认端口改为6380，并加上 slaveof 127.0.0.1 6379 和 pidfile，在文件里面改动如下：</span><br><span class="line">port 6380</span><br><span class="line">slaveof 127.0.0.1 6379</span><br><span class="line">pidfile /var/run/redis_6380.pid</span><br></pre></td></tr></table></figure>
-<p>保存文件并退出，<code>slave</code>服务器配置完成。</p>
-<h3 id="接着我们启动master和slave服务器"><a href="#接着我们启动master和slave服务器" class="headerlink" title="接着我们启动master和slave服务器"></a>接着我们启动<code>master</code>和<code>slave</code>服务器</h3><p>启动<code>master</code>服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/redis-4.0.11_master/src/</span><br><span class="line">$ ./redis-server /home/hewentian/ProjectD/redis-4.0.11_master/redis.conf</span><br></pre></td></tr></table></figure></p>
-<p>启动<code>slave</code>服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/redis-4.0.11_slave/src/</span><br><span class="line">$ ./redis-server /home/hewentian/ProjectD/redis-4.0.11_slave/redis.conf</span><br></pre></td></tr></table></figure></p>
-<p>在<code>master</code>服务器窗口中，可以看到如下信息：</p>
-<pre><code>1514:M 14 Aug 15:58:33.568 * Slave 127.0.0.1:6380 asks for synchronization
-1514:M 14 Aug 15:58:33.568 * Full resync requested by slave 127.0.0.1:6380
-1514:M 14 Aug 15:58:33.568 * Starting BGSAVE for SYNC with target: disk
-1514:M 14 Aug 15:58:33.569 * Background saving started by pid 1584
-1584:C 14 Aug 15:58:33.573 * DB saved on disk
-1584:C 14 Aug 15:58:33.573 * RDB: 0 MB of memory used by copy-on-write
-1514:M 14 Aug 15:58:33.576 * Background saving terminated with success
-1514:M 14 Aug 15:58:33.576 * Synchronization with slave 127.0.0.1:6380 succeeded
-</code></pre><p>在<code>slave</code>服务器窗口中，可以看到如下信息：</p>
-<pre><code>1579:S 14 Aug 15:58:33.567 * Connecting to MASTER 127.0.0.1:6379
-1579:S 14 Aug 15:58:33.567 * MASTER &lt;-&gt; SLAVE sync started
-1579:S 14 Aug 15:58:33.568 * Non blocking connect for SYNC fired the event.
-1579:S 14 Aug 15:58:33.568 * Master replied to PING, replication can continue...
-1579:S 14 Aug 15:58:33.568 * Partial resynchronization not possible (no cached master)
-1579:S 14 Aug 15:58:33.569 * Full resync from master: 7f883c61e9326b040b150462901e70afd5c4a49c:0
-1579:S 14 Aug 15:58:33.576 * MASTER &lt;-&gt; SLAVE sync: receiving 176 bytes from master
-1579:S 14 Aug 15:58:33.577 * MASTER &lt;-&gt; SLAVE sync: Flushing old data
-1579:S 14 Aug 15:58:33.577 * MASTER &lt;-&gt; SLAVE sync: Loading DB in memory
-1579:S 14 Aug 15:58:33.577 * MASTER &lt;-&gt; SLAVE sync: Finished with success
-</code></pre><p>从上面的信息中，我们可以知道，<code>slave</code>服务器已经连上<code>master</code>服务器。</p>
-<h3 id="测试同步数据"><a href="#测试同步数据" class="headerlink" title="测试同步数据"></a>测试同步数据</h3><p>登录<code>master</code>服务器并在其中插入一个键<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/redis-4.0.11_master/src/</span><br><span class="line">$ ./redis-cli -p 6379</span><br><span class="line"></span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">(empty list or <span class="built_in">set</span>)</span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> name <span class="string">"Tim Ho"</span></span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get name</span><br><span class="line"><span class="string">"Tim Ho"</span></span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure></p>
-<p>登录<code>slave</code>服务器并在其中获取一个键<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/redis-4.0.11_slave/src/</span><br><span class="line">$ ./redis-cli -p 6380</span><br><span class="line"></span><br><span class="line">127.0.0.1:6380&gt; keys *</span><br><span class="line">(empty list or <span class="built_in">set</span>)</span><br><span class="line">127.0.0.1:6380&gt; keys *</span><br><span class="line">1) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6380&gt; get name </span><br><span class="line"><span class="string">"Tim Ho"</span></span><br><span class="line">127.0.0.1:6380&gt;</span><br></pre></td></tr></table></figure></p>
-<p>至此，主从配置完成。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjoo8xat30029u23k27w9401l" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjp9rtuta002zul3kn8hrnfk9" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1863,9 +1885,9 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -1875,7 +1897,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1883,9 +1905,13 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>
+          </li>
         
           <li>
             <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
@@ -1901,10 +1927,6 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
         
           <li>
             <a href="/2018/10/05/jenkins-install/">jenkins 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
           </li>
         
       </ul>
@@ -1930,7 +1952,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2018 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
