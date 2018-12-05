@@ -358,7 +358,7 @@ http://hadoop-host-master:8088/
 
 ![](/img/hadoop-9.png "yarn资源管理")
 
-点击图中的`Unhealthy Nodes`可以看到下图，出现这个原因是由于我虚拟机中主机的磁盘空间不足所致。
+点击图中的`Active Nodes`可以看到下图的详情，（如果`Unhealthy Nodes`有节点，则可能是由于虚拟机中主机的磁盘空间不足所致）。
 
 ![](/img/hadoop-10.png "yarn资源管理")
 
@@ -395,6 +395,22 @@ $ ./sbin/mr-jobhistory-daemon.sh start historyserver
 http://hadoop-host-master:19888/
 
 ![](/img/hadoop-12.png "MR作业日志管理器")
+
+
+### 尝试向集群中提交一个mapReduce任务
+我们在namenode节点中向集群提交一个计算圆周率的mapReduce任务：
+``` bash
+$ cd /home/hadoop/hadoop-2.7.3/
+$ ./bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar pi 4 10
+```
+
+![](/img/hadoop-13.png "计算圆周率")
+
+![](/img/hadoop-14.png "计算圆周率")
+
+从上图可以看出，圆周率已经被计算出来：`3.14`。另外，在yarn中也可以看到任务的执行情况：
+![](/img/hadoop-15.png "计算圆周率")
+
 
 至此， 集群搭建完毕。
 
