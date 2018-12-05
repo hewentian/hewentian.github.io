@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -164,7 +164,7 @@ server3:
 <p>在server2、server3上面分别启动nodemanager<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./sbin/yarn-daemon.sh start nodemanager</span><br></pre></td></tr></table></figure></p>
 <p>我们可以通过浏览器，查看资源管理器：<br><a href="http://hadoop-host-master:8088/" target="_blank" rel="noopener">http://hadoop-host-master:8088/</a></p>
 <p><img src="/img/hadoop-9.png" alt="" title="yarn资源管理"></p>
-<p>点击图中的<code>Unhealthy Nodes</code>可以看到下图，出现这个原因是由于我虚拟机中主机的磁盘空间不足所致。</p>
+<p>点击图中的<code>Active Nodes</code>可以看到下图的详情，（如果<code>Unhealthy Nodes</code>有节点，则可能是由于虚拟机中主机的磁盘空间不足所致）。</p>
 <p><img src="/img/hadoop-10.png" alt="" title="yarn资源管理"></p>
 <p>当然相应的停止命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ./sbin/yarn-daemon.sh stop resourcemanager</span><br><span class="line">$ ./sbin/yarn-daemon.sh stop nodemanager</span><br></pre></td></tr></table></figure></p>
 <p>如果有配置集中式管理，我们也可以通过在server1上面通过一个命令启动、停止YARN<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ./sbin/start-yarn.sh    <span class="comment"># 启动yarn</span></span><br><span class="line">$ ./sbin/stop-yarn.sh    <span class="comment"># 停止yarn</span></span><br></pre></td></tr></table></figure></p>
@@ -173,12 +173,16 @@ server3:
 <h3 id="启动MR作业日志管理器"><a href="#启动MR作业日志管理器" class="headerlink" title="启动MR作业日志管理器"></a>启动MR作业日志管理器</h3><p>在nodename节点，也就是server1，启动MR作业日志管理器。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./sbin/mr-jobhistory-daemon.sh start historyserver</span><br></pre></td></tr></table></figure></p>
 <p>它同样有自已的图形界面：<br><a href="http://hadoop-host-master:19888/" target="_blank" rel="noopener">http://hadoop-host-master:19888/</a></p>
 <p><img src="/img/hadoop-12.png" alt="" title="MR作业日志管理器"></p>
+<h3 id="尝试向集群中提交一个mapReduce任务"><a href="#尝试向集群中提交一个mapReduce任务" class="headerlink" title="尝试向集群中提交一个mapReduce任务"></a>尝试向集群中提交一个mapReduce任务</h3><p>我们在namenode节点中向集群提交一个计算圆周率的mapReduce任务：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar pi 4 10</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/hadoop-13.png" alt="" title="计算圆周率"></p>
+<p><img src="/img/hadoop-14.png" alt="" title="计算圆周率"></p>
+<p>从上图可以看出，圆周率已经被计算出来：<code>3.14</code>。另外，在yarn中也可以看到任务的执行情况：<br><img src="/img/hadoop-15.png" alt="" title="计算圆周率"></p>
 <p>至此， 集群搭建完毕。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjpalrjuh000k273k3d1q9up3" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjpauvc04000dxu3k3uh1ln4w" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -302,7 +306,7 @@ server3:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjpalrjur001g273k3wnp6xwt" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjpauvc0i001bxu3k54m9jthq" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -414,7 +418,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjpalrjuo0016273kgoxk0b0a" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjpauvc0g0017xu3ktixxgxg5" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -483,7 +487,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjpalrjup001b273kpdrya7me" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjpauvc0k001hxu3k614iktrv" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -653,7 +657,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjpalrjun0014273kghwinlfa" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjpauvc0f0014xu3kybpv8eqx" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -732,7 +736,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjpalrju00000273k6p54fey3" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjpauvbzw0002xu3kkpicowt2" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1130,7 +1134,7 @@ GET people/user/_search
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjpalrjua0009273kvkf8ne3h" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjpauvc06000exu3kzr3ug321" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1326,7 +1330,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjpalrju80006273kwo7evd5c" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjpauvc000006xu3kbnl688mb" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1650,7 +1654,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjpalrju90008273k54pq0ebl" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjpauvc010008xu3kurugu7yk" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1886,7 +1890,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjpalrjv2002i273k11dfjzg8" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjpauvc0x002mxu3kqb6ll2l4" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1909,7 +1913,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
@@ -1929,7 +1933,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
         
@@ -1976,7 +1980,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2018 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
