@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -517,7 +517,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjpauvc140037xu3k7ge92xen" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-note/" data-id="cjpc7q3rd00383d3kj57htc3l" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -567,7 +567,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjpauvc0w002kxu3kiska3tof" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/10/29/solr-commit-types/" data-id="cjpc7q3r6002n3d3ko7yuibck" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -632,7 +632,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjpauvc0z002sxu3kg7rwk433" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/10/28/solr-install/" data-id="cjpc7q3r8002t3d3kw1h4e1gf" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -707,7 +707,7 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjpauvc0d000xxu3kf9eed7as" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="cjpc7q3qe000d3d3k52q3fy09" class="article-share-link">Share</a>
       
       
     </footer>
@@ -984,7 +984,7 @@ _   underscore
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjpauvc0o001uxu3kwau49bc8" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/09/27/markdown-learn-note/" data-id="cjpc7q3qt001j3d3k0g2dm4eg" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1387,11 +1387,16 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
 <pre><code>$ sudo apt install nvidia-driver-390
 </code></pre><p>Once the installation is concluded, reboot your system and you are done.</p>
 <h3 id="免密登录远程主机"><a href="#免密登录远程主机" class="headerlink" title="免密登录远程主机"></a>免密登录远程主机</h3><p>将本地公钥添加到远程主机的<code>authorized_keys</code>中，例如远程主机为 192.168.1.123，然后就可以ssh免密登录过去了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-copy-id 192.168.1.123</span><br><span class="line"></span><br><span class="line">$ ssh 192.168.1.123</span><br></pre></td></tr></table></figure></p>
+<h3 id="Ubuntu-18-04-解决耳机插入没有声音的问题"><a href="#Ubuntu-18-04-解决耳机插入没有声音的问题" class="headerlink" title="Ubuntu 18.04 解决耳机插入没有声音的问题"></a>Ubuntu 18.04 解决耳机插入没有声音的问题</h3><p>下载pulseaudio音量控制软件配置驱动即可。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install pavucontrol</span><br></pre></td></tr></table></figure></p>
+<p>安装后进入配置选项，将内置音频的声卡安装选为模拟立体声双工即可。<br>或者进入<code>Output Devices -&gt; Port</code>选择<code>Headphones(unplugged)</code>这里耳机就会有声音，而电脑自带扬声器没声。</p>
+<h3 id="Ubuntu-18-04禁用关闭笔记本盖子自动待机"><a href="#Ubuntu-18-04禁用关闭笔记本盖子自动待机" class="headerlink" title="Ubuntu 18.04禁用关闭笔记本盖子自动待机"></a>Ubuntu 18.04禁用关闭笔记本盖子自动待机</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/systemd/logind.conf</span><br><span class="line"></span><br><span class="line">将其中的：</span><br><span class="line"><span class="comment">#HandleLidSwitch=suspend</span></span><br><span class="line">改成：</span><br><span class="line">HandleLidSwitch=ignore</span><br></pre></td></tr></table></figure>
+<p>之后重启systemd-logind<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo service systemd-logind restart</span><br></pre></td></tr></table></figure></p>
+<p>ok.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjpauvc0q0021xu3kcws6jzww" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjpc7q3qw001t3d3klh9611he" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -1434,7 +1439,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjpauvc0n001qxu3kubx4yoe7" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/online-implementing/" data-id="cjpc7q3r000233d3kdwv3x1oh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -1487,7 +1492,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjpauvc10002vxu3kmezhdv52" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/09/11/tomcat-note/" data-id="cjpc7q3r9002w3d3kw8v1wa5u" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tomcat/">tomcat</a></li></ul>
@@ -1510,7 +1515,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
@@ -1530,7 +1535,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
         
@@ -1577,7 +1582,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2018 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
