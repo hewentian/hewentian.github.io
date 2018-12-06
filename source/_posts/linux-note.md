@@ -1471,3 +1471,27 @@ $ ssh-copy-id 192.168.1.123
 $ ssh 192.168.1.123
 ```
 
+### Ubuntu 18.04 解决耳机插入没有声音的问题
+下载pulseaudio音量控制软件配置驱动即可。
+``` bash
+$ sudo apt install pavucontrol
+```
+安装后进入配置选项，将内置音频的声卡安装选为模拟立体声双工即可。
+或者进入`Output Devices -> Port`选择`Headphones(unplugged)`这里耳机就会有声音，而电脑自带扬声器没声。
+
+
+### Ubuntu 18.04禁用关闭笔记本盖子自动待机
+``` bash
+$ sudo vi /etc/systemd/logind.conf
+
+将其中的：
+#HandleLidSwitch=suspend
+改成：
+HandleLidSwitch=ignore
+```
+之后重启systemd-logind
+``` bash
+$ sudo service systemd-logind restart
+```
+ok.
+
