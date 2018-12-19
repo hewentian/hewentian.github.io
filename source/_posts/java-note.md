@@ -24,6 +24,26 @@ ${typecomment}
 ${type_declaration}
 ```
 
+而在IDEA中的操作方法是：
+`File -> Settings -> File and Code Templates`，在右则选中Class，然后填入：
+``` java
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+#parse("File Header.java")
+/**
+ * 
+ * <p>
+ * <b>${NAME}</b> 是 
+ * </p>
+ *
+ * @author <a href="mailto:wentian.he@qq.com">hewentian</a>
+ * @date ${YEAR}-${MONTH}-${DAY} ${HOUR}:${MINUTE}:${SECOND}
+ * @since JDK 1.8
+ *
+ */
+public class ${NAME} {
+}
+```
+
 ### Remote System Explorer Operation总是运行后台服务，卡死eclipse解决办法
 eclipse后台进程在远程操作，右下角显示的“Remote System Explorer Operation”。折腾了半天，在Stack Overflow找到答案 [源地址](https://stackoverflow.com/questions/1631817/remote-system-explorer-operation-causing-freeze-for-couple-of-seconds)。解决方案如下：
 
