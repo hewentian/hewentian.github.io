@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>hadoop mapreduce示例 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="关于hadoop集群的搭建，请参考我的上一篇 hadoop 集群的搭建，这里将说说如何写一个简单的统计单词个数的mapReduce示例程序，并部署在YARN上面运行。 代码托管在：https://github.com/hewentian/hadoop-demo 下面详细说明。 第一步：将要统计单词个数的文件放到HDFS中例如我们将hadoop安装目录下的README.txt文件放到HDFS中的/目">
+<meta name="keywords" content="hadoop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hadoop mapreduce示例">
+<meta property="og:url" content="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="关于hadoop集群的搭建，请参考我的上一篇 hadoop 集群的搭建，这里将说说如何写一个简单的统计单词个数的mapReduce示例程序，并部署在YARN上面运行。 代码托管在：https://github.com/hewentian/hadoop-demo 下面详细说明。 第一步：将要统计单词个数的文件放到HDFS中例如我们将hadoop安装目录下的README.txt文件放到HDFS中的/目">
+<meta property="og:locale" content="en-US">
+<meta property="og:image" content="https://github.com/img/hadoop-mapreduce-1.png">
+<meta property="og:image" content="https://github.com/img/hadoop-mapreduce-2.png">
+<meta property="og:image" content="https://github.com/img/hadoop-mapreduce-3.png">
+<meta property="og:updated_time" content="2018-12-19T13:34:06.191Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hadoop mapreduce示例">
+<meta name="twitter:description" content="关于hadoop集群的搭建，请参考我的上一篇 hadoop 集群的搭建，这里将说说如何写一个简单的统计单词个数的mapReduce示例程序，并部署在YARN上面运行。 代码托管在：https://github.com/hewentian/hadoop-demo 下面详细说明。 第一步：将要统计单词个数的文件放到HDFS中例如我们将hadoop安装目录下的README.txt文件放到HDFS中的/目">
+<meta name="twitter:image" content="https://github.com/img/hadoop-mapreduce-1.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-hadoop-mapreduce" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/12/19/hadoop-mapreduce/" class="article-date">
+  <time datetime="2018-12-19T12:06:47.000Z" itemprop="datePublished">2018-12-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      hadoop mapreduce示例
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>关于hadoop集群的搭建，请参考我的上一篇 <a href="../../../../2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>，这里将说说如何写一个简单的统计单词个数的<code>mapReduce</code>示例程序，并部署在<code>YARN</code>上面运行。</p>
+<p>代码托管在：<a href="https://github.com/hewentian/hadoop-demo">https://github.com/hewentian/hadoop-demo</a></p>
+<p>下面详细说明。</p>
+<h3 id="第一步：将要统计单词个数的文件放到HDFS中"><a href="#第一步：将要统计单词个数的文件放到HDFS中" class="headerlink" title="第一步：将要统计单词个数的文件放到HDFS中"></a>第一步：将要统计单词个数的文件放到HDFS中</h3><p>例如我们将hadoop安装目录下的<code>README.txt</code>文件放到HDFS中的<code>/</code>目录下，在<code>master</code>节点上面执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hdfs dfs -put /home/hadoop/hadoop-2.7.3/README.txt /</span><br></pre></td></tr></table></figure></p>
+<p><code>README.txt</code>文件的内容如下：</p>
+<pre><code>For the latest information about Hadoop, please visit our website at:
+
+   http://hadoop.apache.org/core/
+
+and our wiki, at:
+
+   http://wiki.apache.org/hadoop/
+
+This distribution includes cryptographic software.  The country in 
+which you currently reside may have restrictions on the import, 
+possession, use, and/or re-export to another country, of 
+encryption software.  BEFORE using any encryption software, please 
+check your country&apos;s laws, regulations and policies concerning the
+import, possession, or use, and re-export of encryption software, to 
+see if this is permitted.  See &lt;http://www.wassenaar.org/&gt; for more
+information.
+
+The U.S. Government Department of Commerce, Bureau of Industry and
+Security (BIS), has classified this software as Export Commodity 
+Control Number (ECCN) 5D002.C.1, which includes information security
+software using or performing cryptographic functions with asymmetric
+algorithms.  The form and manner of this Apache Software Foundation
+distribution makes it eligible for export under the License Exception
+ENC Technology Software Unrestricted (TSU) exception (see the BIS 
+Export Administration Regulations, Section 740.13) for both object 
+code and source code.
+
+The following provides more details on the included cryptographic
+software:
+  Hadoop Core uses the SSL libraries from the Jetty project written 
+by mortbay.org.
+</code></pre><h3 id="第二步：建立一个maven工程"><a href="#第二步：建立一个maven工程" class="headerlink" title="第二步：建立一个maven工程"></a>第二步：建立一个maven工程</h3><p>新建一个maven工程，目录结构如下：</p>
+<p><img src="/img/hadoop-mapreduce-1.png" alt="" title="mapreduce工程项目结构"></p>
+<p>其中，pom.xml内容如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.hewentian<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hadoop<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">packaging</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hadoop/<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url</span>&gt;</span>http://maven.apache.org<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hadoop<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hadoop-common<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.7.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hadoop<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hadoop-hdfs<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.7.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hadoop<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hadoop-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.7.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-compiler-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">source</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">source</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">target</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="第三步：编写mapper程序"><a href="#第三步：编写mapper程序" class="headerlink" title="第三步：编写mapper程序"></a>第三步：编写mapper程序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hewentian.hadoop.mr;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang.StringUtils;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.IntWritable;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.LongWritable;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.Text;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.MapReduceBase;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.Mapper;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.OutputCollector;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.Reporter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.StringTokenizer;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;WordCountMapper&lt;/b&gt; 是</span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2018-12-18 23:06:02</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WordCountMapper</span> <span class="keyword">extends</span> <span class="title">MapReduceBase</span> <span class="keyword">implements</span> <span class="title">Mapper</span>&lt;<span class="title">LongWritable</span>, <span class="title">Text</span>, <span class="title">Text</span>, <span class="title">IntWritable</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 每次调用map方法会传入split中的一行数据</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key             该行数据在文件中的位置下标</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value           这行数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> outputCollector</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> reporter</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">map</span><span class="params">(LongWritable key, Text value, OutputCollector&lt;Text, IntWritable&gt; outputCollector, Reporter reporter)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        String line = value.toString();</span><br><span class="line">        <span class="keyword">if</span> (StringUtils.isNotBlank(line)) &#123;</span><br><span class="line">            StringTokenizer st = <span class="keyword">new</span> StringTokenizer(line);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (st.hasMoreTokens()) &#123;</span><br><span class="line">                String word = st.nextToken();</span><br><span class="line">                outputCollector.collect(<span class="keyword">new</span> Text(word), <span class="keyword">new</span> IntWritable(<span class="number">1</span>)); <span class="comment">// map 的输出</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="第四步：编写reducer程序"><a href="#第四步：编写reducer程序" class="headerlink" title="第四步：编写reducer程序"></a>第四步：编写reducer程序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hewentian.hadoop.mr;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.IntWritable;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.Text;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.MapReduceBase;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.OutputCollector;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.Reducer;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.Reporter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;WordCountReducer&lt;/b&gt; 是</span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2018-12-18 23:47:12</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WordCountReducer</span> <span class="keyword">extends</span> <span class="title">MapReduceBase</span> <span class="keyword">implements</span> <span class="title">Reducer</span>&lt;<span class="title">Text</span>, <span class="title">IntWritable</span>, <span class="title">Text</span>, <span class="title">IntWritable</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reduce</span><span class="params">(Text key, Iterator&lt;IntWritable&gt; values, OutputCollector&lt;Text, IntWritable&gt; outputCollector, Reporter reporter)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (values.hasNext()) &#123;</span><br><span class="line">            sum += values.next().get();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        outputCollector.collect(key, <span class="keyword">new</span> IntWritable(sum));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="第五步：编写job程序"><a href="#第五步：编写job程序" class="headerlink" title="第五步：编写job程序"></a>第五步：编写job程序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hewentian.hadoop.mr;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.fs.Path;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.IntWritable;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.Text;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.FileInputFormat;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.FileOutputFormat;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.JobClient;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.JobConf;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;WordCountJob&lt;/b&gt; 是</span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2018-12-19 09:05:18</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WordCountJob</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (args.length != <span class="number">2</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">"need: input file and output dir."</span>);</span><br><span class="line">            System.out.println(<span class="string">"eg: &#123;HADOOP_HOME&#125;/bin/hadoop jar /home/hadoop/wordCount.jar /README.txt /output/wc/"</span>);</span><br><span class="line">            System.exit(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        JobConf jobConf = <span class="keyword">new</span> JobConf(WordCountJob.class);</span><br><span class="line">        jobConf.setJobName(<span class="string">"word count mapreduce demo"</span>);</span><br><span class="line"></span><br><span class="line">        jobConf.setMapperClass(WordCountMapper.class);</span><br><span class="line">        jobConf.setReducerClass(WordCountReducer.class);</span><br><span class="line">        jobConf.setOutputKeyClass(Text.class);</span><br><span class="line">        jobConf.setOutputValueClass(IntWritable.class);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// mapreduce 输入数据所在的目录或文件</span></span><br><span class="line">        FileInputFormat.addInputPath(jobConf, <span class="keyword">new</span> Path(args[<span class="number">0</span>]));</span><br><span class="line">        <span class="comment">// mr执行之后的输出数据的目录</span></span><br><span class="line">        FileOutputFormat.setOutputPath(jobConf, <span class="keyword">new</span> Path(args[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">        JobClient.runJob(jobConf);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="第六步：将程序打包成JAR文件"><a href="#第六步：将程序打包成JAR文件" class="headerlink" title="第六步：将程序打包成JAR文件"></a>第六步：将程序打包成JAR文件</h3><p>将上述工程打包成JAR文件，并设置默认运行的类为<code>WordCountJob</code>，打包后得文件<code>wordCount.jar</code>，我们将它上传到<code>master</code>节点的<code>home</code>目录下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ scp wordCount.jar hadoop@hadoop-host-master:~/</span><br></pre></td></tr></table></figure></p>
+<h3 id="第七步：登录master节点执行JAR文件"><a href="#第七步：登录master节点执行JAR文件" class="headerlink" title="第七步：登录master节点执行JAR文件"></a>第七步：登录master节点执行JAR文件</h3><p>登录master节点：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh hadoop@hadoop-host-master</span><br></pre></td></tr></table></figure></p>
+<p>执行JAR文件，若指定的输出目录不存在，HDFS会自动创建：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hadoop jar /home/hadoop/wordCount.jar /README.txt /output/wc/</span><br></pre></td></tr></table></figure></p>
+<p>执行过程中部分输出如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">18/12/07 02:48:57 INFO client.RMProxy: Connecting to ResourceManager at hadoop-host-master/192.168.56.110:8032</span><br><span class="line">18/12/07 02:48:58 INFO client.RMProxy: Connecting to ResourceManager at hadoop-host-master/192.168.56.110:8032</span><br><span class="line">18/12/07 02:48:58 WARN mapreduce.JobResourceUploader: Hadoop command-line option parsing not performed. Implement the Tool interface and execute your application with ToolRunner to remedy this.</span><br><span class="line">18/12/07 02:49:00 INFO mapred.FileInputFormat: Total input paths to process : 1</span><br><span class="line"></span><br><span class="line">18/12/07 02:49:00 INFO mapreduce.JobSubmitter: number of splits:2</span><br><span class="line">18/12/07 02:49:00 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1544066791145_0005</span><br><span class="line">18/12/07 02:49:00 INFO impl.YarnClientImpl: Submitted application application_1544066791145_0005</span><br><span class="line">18/12/07 02:49:01 INFO mapreduce.Job: The url to track the job: http://hadoop-host-master:8088/proxy/application_1544066791145_0005/</span><br><span class="line">18/12/07 02:49:01 INFO mapreduce.Job: Running job: job_1544066791145_0005</span><br><span class="line">18/12/07 02:49:10 INFO mapreduce.Job: Job job_1544066791145_0005 running in uber mode : false</span><br><span class="line">18/12/07 02:49:10 INFO mapreduce.Job:  map 0% reduce 0%</span><br><span class="line">18/12/07 02:49:20 INFO mapreduce.Job:  map 100% reduce 0%</span><br><span class="line">18/12/07 02:49:27 INFO mapreduce.Job:  map 100% reduce 100%</span><br><span class="line">18/12/07 02:49:28 INFO mapreduce.Job: Job job_1544066791145_0005 completed successfully</span><br><span class="line">18/12/07 02:49:28 INFO mapreduce.Job: Counters: 49</span><br><span class="line">	File System Counters</span><br><span class="line">		FILE: Number of bytes read=2419</span><br><span class="line">		FILE: Number of bytes written=360364</span><br><span class="line">		FILE: Number of read operations=0</span><br><span class="line">		FILE: Number of large read operations=0</span><br><span class="line">		FILE: Number of write operations=0</span><br><span class="line">		HDFS: Number of bytes read=2235</span><br><span class="line">		HDFS: Number of bytes written=1306</span><br><span class="line">		HDFS: Number of read operations=9</span><br><span class="line">		HDFS: Number of large read operations=0</span><br><span class="line">		HDFS: Number of write operations=2</span><br><span class="line">	Job Counters </span><br><span class="line">		Launched map tasks=2</span><br><span class="line">		Launched reduce tasks=1</span><br><span class="line">		Data-local map tasks=2</span><br><span class="line">		Total time spent by all maps in occupied slots (ms)=16581</span><br><span class="line">		Total time spent by all reduces in occupied slots (ms)=4407</span><br><span class="line">		Total time spent by all map tasks (ms)=16581</span><br><span class="line">		Total time spent by all reduce tasks (ms)=4407</span><br><span class="line">		Total vcore-milliseconds taken by all map tasks=16581</span><br><span class="line">		Total vcore-milliseconds taken by all reduce tasks=4407</span><br><span class="line">		Total megabyte-milliseconds taken by all map tasks=16978944</span><br><span class="line">		Total megabyte-milliseconds taken by all reduce tasks=4512768</span><br><span class="line">	Map-Reduce Framework</span><br><span class="line">		Map input records=31</span><br><span class="line">		Map output records=179</span><br><span class="line">		Map output bytes=2055</span><br><span class="line">		Map output materialized bytes=2425</span><br><span class="line">		Input split bytes=186</span><br><span class="line">		Combine input records=0</span><br><span class="line">		Combine output records=0</span><br><span class="line">		Reduce input groups=131</span><br><span class="line">		Reduce shuffle bytes=2425</span><br><span class="line">		Reduce input records=179</span><br><span class="line">		Reduce output records=131</span><br><span class="line">		Spilled Records=358</span><br><span class="line">		Shuffled Maps =2</span><br><span class="line">		Failed Shuffles=0</span><br><span class="line">		Merged Map outputs=2</span><br><span class="line">		GC time elapsed (ms)=364</span><br><span class="line">		CPU time spent (ms)=1510</span><br><span class="line">		Physical memory (bytes) snapshot=480575488</span><br><span class="line">		Virtual memory (bytes) snapshot=5843423232</span><br><span class="line">		Total committed heap usage (bytes)=262725632</span><br><span class="line">	Shuffle Errors</span><br><span class="line">		BAD_ID=0</span><br><span class="line">		CONNECTION=0</span><br><span class="line">		IO_ERROR=0</span><br><span class="line">		WRONG_LENGTH=0</span><br><span class="line">		WRONG_MAP=0</span><br><span class="line">		WRONG_REDUCE=0</span><br><span class="line">	File Input Format Counters </span><br><span class="line">		Bytes Read=2049</span><br><span class="line">	File Output Format Counters </span><br><span class="line">		Bytes Written=1306</span><br></pre></td></tr></table></figure></p>
+<p>等执行成功后，在<code>master</code>节点上查看结果（部分）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hdfs dfs -cat /output/wc/*</span><br><span class="line">(BIS),	1</span><br><span class="line">(ECCN)	1</span><br><span class="line">(TSU)	1</span><br><span class="line">(see	1</span><br><span class="line">5D002.C.1,	1</span><br><span class="line">740.13)	1</span><br><span class="line">&lt;http://www.wassenaar.org/&gt;	1</span><br><span class="line">Administration	1</span><br><span class="line">Apache	1</span><br><span class="line">BEFORE	1</span><br><span class="line">BIS	1</span><br><span class="line">Bureau	1</span><br><span class="line">Commerce,	1</span><br><span class="line">Commodity	1</span><br><span class="line">Control	1</span><br><span class="line">Core	1</span><br><span class="line">Department	1</span><br><span class="line">ENC	1</span><br><span class="line">Exception	1</span><br><span class="line">Export	2</span><br><span class="line">For	1</span><br><span class="line">Foundation	1</span><br></pre></td></tr></table></figure></p>
+<h3 id="我们在浏览器中查看HDFS和YARN中的数据"><a href="#我们在浏览器中查看HDFS和YARN中的数据" class="headerlink" title="我们在浏览器中查看HDFS和YARN中的数据"></a>我们在浏览器中查看HDFS和YARN中的数据</h3><p>在HDFS管理器中查看：</p>
+<p><img src="/img/hadoop-mapreduce-2.png" alt="" title="mapreduce的结果在HDFS中"></p>
+<p>在YARN管理器中查看：</p>
+<p><img src="/img/hadoop-mapreduce-3.png" alt="" title="mapreduce在YARN中的记录"></p>
+<p>大功告成！！！ <strong> （hadoop集群中的时间与我本机的时间不一致，毕竟，很久没启动集群了） </strong></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjpv81vsk000dsi3kz7cf0mh6" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/12/04/hadoop-cluster/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">hadoop 集群的搭建</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/12/19/hadoop-mapreduce/">hadoop mapreduce示例</a>
+          </li>
+        
+          <li>
+            <a href="/2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/24/kafka-standalone/">kafka 单节点安装</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> -->
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
