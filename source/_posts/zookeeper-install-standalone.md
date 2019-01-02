@@ -4,6 +4,7 @@ date: 2017-12-06 16:33:23
 tags: zookeeper
 categories: bigdata
 ---
+
 ### 下面演示在 Ubuntu 16.04 LTS 下面安装 zookeeper
 将`zookeeper-3.4.6.tar.gz`放到一个目录下，如`/home/hewentian/ProjectD`
 执行如下脚本解压
@@ -22,12 +23,13 @@ $ cp zoo_sample.cfg zoo.cfg
 修改zoo.cfg并在其中修改如下内容：
 
 	tickTime=2000
-	dataDir=/var/lib/zookeeper
+	dataDir=/home/hewentian/ProjectD/zookeeper-3.4.6/data
 	clientPort=2181
 
-如果`/var/lib/zookeeper`这个目录没有，就要执行如下命令创建
+解压后的`zookeeper-3.4.6`目录下是没有`data`这个文件夹的，要执行如下命令创建
 ``` bash
-$ mkdir -p /var/lib/zookeeper
+$ cd /home/hewentian/ProjectD/zookeeper-3.4.6/
+$ mkdir data
 ```
 
 修改好后，我们就可以进入bin目录下启动zookeeper了

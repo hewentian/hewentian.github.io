@@ -34,10 +34,10 @@ $ cp zoo_sample.cfg zoo.cfg
 	initLimit=10
 	syncLimit=5
 	dataDir=/home/hewentian/ProjectD/zookeeperCluster/server1/data # 这里必须为绝对路径，否则有可能无法启动
-	clientPort=2181                                                # 这台服务器的端口为2181这里为默认值
-	server.1=127.0.0.1:2888:3888
-	server.2=127.0.0.1:2889:3889
-	server.3=127.0.0.1:2890:3890
+	clientPort=2181                 # 这台服务器的端口为2181（即默认值），当部署为真集群的时候各个节点的端口都是2181
+	server.1=127.0.0.1:2888:3888    # 当部署成真集群的时候：
+	server.2=127.0.0.1:2889:3889    # server.1、server.2和server.3后面的IP要修改成各个节点的真实IP或者域名
+	server.3=127.0.0.1:2890:3890    # 并且server.2、server.3后面的两个端口要和server.1的是一样的，都是2888:3888
 
 ### 6.在`/home/hewentian/ProjectD/zookeeperCluster/server1/data`目录下建`myid`文件并在其中输入1，只输入1，代表server.1
 ``` bash

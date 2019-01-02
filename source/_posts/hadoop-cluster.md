@@ -58,7 +58,7 @@ $ ssh-copy-id hadoop@hadoop-host-master
 
 
 ### 安装ssh openssh rsync
-项系统已安装，则省略下面的安装操作
+如系统已安装，则勿略下面的安装操作
 ``` bash
 $ sudo apt-get install ssh openssh-server rsync
 ```
@@ -199,7 +199,7 @@ $ sudo vi /etc/hosts
 
 
 ### 启动集群
-首先启动nodename节点，也就是master，首次启动的时候，要格式化namenode。
+首先启动namenode节点，也就是master，首次启动的时候，要格式化namenode。
 ``` bash
 $ cd /home/hadoop/hadoop-2.7.3/
 $ ./bin/hdfs namenode -format    # 再次启动的时候不需要执行此操作
@@ -410,7 +410,7 @@ $ ./sbin/start-yarn.sh
 
 
 ### 启动MR作业日志管理器
-在nodename节点，也就是master，启动MR作业日志管理器。
+在namenode节点，也就是master，启动MR作业日志管理器。
 ``` bash
 $ cd /home/hadoop/hadoop-2.7.3/
 $ ./sbin/mr-jobhistory-daemon.sh start historyserver
