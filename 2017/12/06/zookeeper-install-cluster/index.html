@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="计划在一台Ubuntu Linux服务器上部署3台zookeeper服务器，分别为server1, server2, server3因为三台zookeeper服务器的配置都差不多，所以我们先设置好一台server1的配置，再将其复制成server2, server3并修改其中的配置即可。 1.建目录，如下：12$ mkdir -p /home/hewentian/ProjectD/zookeepe">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2018-10-27T09:49:06.000Z">
+<meta property="og:updated_time" content="2019-01-02T03:31:33.979Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="zookeeper 集群版安装方法">
 <meta name="twitter:description" content="计划在一台Ubuntu Linux服务器上部署3台zookeeper服务器，分别为server1, server2, server3因为三台zookeeper服务器的配置都差不多，所以我们先设置好一台server1的配置，再将其复制成server2, server3并修改其中的配置即可。 1.建目录，如下：12$ mkdir -p /home/hewentian/ProjectD/zookeepe">
@@ -62,7 +62,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -106,10 +106,10 @@
 initLimit=10
 syncLimit=5
 dataDir=/home/hewentian/ProjectD/zookeeperCluster/server1/data # 这里必须为绝对路径，否则有可能无法启动
-clientPort=2181                                                # 这台服务器的端口为2181这里为默认值
-server.1=127.0.0.1:2888:3888
-server.2=127.0.0.1:2889:3889
-server.3=127.0.0.1:2890:3890
+clientPort=2181                 # 这台服务器的端口为2181（即默认值），当部署为真集群的时候各个节点的端口都是2181
+server.1=127.0.0.1:2888:3888    # 当部署成真集群的时候：
+server.2=127.0.0.1:2889:3889    # server.1、server.2和server.3后面的IP要修改成各个节点的真实IP或者域名
+server.3=127.0.0.1:2890:3890    # 并且server.2、server.3后面的两个端口要和server.1的是一样的，都是2888:3888
 </code></pre><h3 id="6-在-home-hewentian-ProjectD-zookeeperCluster-server1-data目录下建myid文件并在其中输入1，只输入1，代表server-1"><a href="#6-在-home-hewentian-ProjectD-zookeeperCluster-server1-data目录下建myid文件并在其中输入1，只输入1，代表server-1" class="headerlink" title="6.在/home/hewentian/ProjectD/zookeeperCluster/server1/data目录下建myid文件并在其中输入1，只输入1，代表server.1"></a>6.在<code>/home/hewentian/ProjectD/zookeeperCluster/server1/data</code>目录下建<code>myid</code>文件并在其中输入1，只输入1，代表server.1</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/zookeeperCluster/server1/data</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure>
 <p>这样第一台服务器已经配置完毕。</p>
 <h3 id="7-接下来我们将server1复制为server2-server3"><a href="#7-接下来我们将server1复制为server2-server3" class="headerlink" title="7.接下来我们将server1复制为server2, server3"></a>7.接下来我们将<code>server1</code>复制为<code>server2</code>, <code>server3</code></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/zookeeperCluster</span><br><span class="line">$ cp -r server1 server2</span><br><span class="line">$ cp -r server1 server3</span><br></pre></td></tr></table></figure>
@@ -146,7 +146,7 @@ clientPort=2183                                                 # 这台服务�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjpv81vtl003fsi3k8gho2to1" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjqemmdx50034rg3k21or6xls" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -158,7 +158,7 @@ clientPort=2183                                                 # 这台服务�
 <nav id="article-nav">
   
     <a href="/2017/12/07/mysql-note/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">Récent</strong>
       <div class="article-nav-title">
         
           mysql 学习笔记
@@ -168,7 +168,7 @@ clientPort=2183                                                 # 这台服务�
   
   
     <a href="/2017/12/06/zookeeper-install-standalone/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">Ancien</strong>
       <div class="article-nav-title">zookeeper 单机版安装方法</div>
     </a>
   
@@ -183,9 +183,9 @@ clientPort=2183                                                 # 这台服务�
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -195,7 +195,7 @@ clientPort=2183                                                 # 这台服务�
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -203,9 +203,13 @@ clientPort=2183                                                 # 这台服务�
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
+          </li>
         
           <li>
             <a href="/2018/12/19/hadoop-mapreduce/">hadoop mapreduce示例</a>
@@ -221,10 +225,6 @@ clientPort=2183                                                 # 这台服务�
         
           <li>
             <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/24/kafka-standalone/">kafka 单节点安装</a>
           </li>
         
       </ul>
@@ -249,8 +249,8 @@ clientPort=2183                                                 # 这台服务�
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      &copy; 2019 Tim Ho<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

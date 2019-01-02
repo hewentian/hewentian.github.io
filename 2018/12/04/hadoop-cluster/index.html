@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://github.com/img/hadoop-14.png">
 <meta property="og:image" content="https://github.com/img/hadoop-15.png">
 <meta property="og:image" content="https://github.com/img/hadoop-16.png">
-<meta property="og:updated_time" content="2018-12-06T06:19:29.321Z">
+<meta property="og:updated_time" content="2019-01-02T03:31:01.683Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hadoop 集群的搭建">
 <meta name="twitter:description" content="本篇将说说hadoop集群的搭建，这里说的集群是真集群，不是伪集群。不过，这里的真集群是在虚拟机环境中搭建的。 在我的笔记本电脑中，安装虚拟机VirtualBox，在虚拟机中安装三台服务器：master、slave1、slave2来搭建hadoop集群。安装好VirtualBox后，启动它。依次点File -&amp;gt; Host Network Manager -&amp;gt; Create，来创建一个网">
@@ -79,7 +79,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -137,7 +137,7 @@ slave2:
 </code></pre><p>然后就可以通过如下方式登录了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh hadoop@hadoop-host-master</span><br></pre></td></tr></table></figure></p>
 <p>在实体机中通过下面的配置，就可以无密码登录了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-copy-id hadoop@hadoop-host-master</span><br></pre></td></tr></table></figure></p>
 <p><strong> 下面的操作，均是在实体机中通过SSH到虚拟机执行的操作。 </strong></p>
-<h3 id="安装ssh-openssh-rsync"><a href="#安装ssh-openssh-rsync" class="headerlink" title="安装ssh openssh rsync"></a>安装ssh openssh rsync</h3><p>项系统已安装，则省略下面的安装操作<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install ssh openssh-server rsync</span><br></pre></td></tr></table></figure></p>
+<h3 id="安装ssh-openssh-rsync"><a href="#安装ssh-openssh-rsync" class="headerlink" title="安装ssh openssh rsync"></a>安装ssh openssh rsync</h3><p>如系统已安装，则勿略下面的安装操作<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install ssh openssh-server rsync</span><br></pre></td></tr></table></figure></p>
 <p>如果上述命令无法执行，请先执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get update</span><br></pre></td></tr></table></figure></p>
 <p>JDK的安装请参考我之前的笔记：<a href="../../../../2017/12/08/install-jdk/">安装 JDK</a>，这里不再赘述。安装到此目录<code>/usr/local/jdk1.8.0_102/</code>下，记住此路径，下面会用到。下在进行hadoop的安装。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/</span><br><span class="line">$ tar xf hadoop-2.7.3.tar.gz</span><br></pre></td></tr></table></figure>
@@ -154,7 +154,7 @@ slave2:
 <p><strong> 注意：各个节点的主机名一定要不同，否则相同主机名的节点，只会有一个连得上namenode节点，并且集群会报错，修改主机名后，要重启才生效。 </strong></p>
 <h3 id="配置域名解析"><a href="#配置域名解析" class="headerlink" title="配置域名解析"></a>配置域名解析</h3><p>分别对master、slave1和slave2都执行如下操作：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/hosts</span><br><span class="line"></span><br><span class="line">修改为如下内容</span><br><span class="line">127.0.0.1	localhost</span><br><span class="line">192.168.56.110	hadoop-host-master</span><br><span class="line">192.168.56.111	hadoop-host-slave-1</span><br><span class="line">192.168.56.112	hadoop-host-slave-2</span><br></pre></td></tr></table></figure></p>
 <p>至此，集群配置完成，下面将启动集群。</p>
-<h3 id="启动集群"><a href="#启动集群" class="headerlink" title="启动集群"></a>启动集群</h3><p>首先启动nodename节点，也就是master，首次启动的时候，要格式化namenode。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hdfs namenode -format    <span class="comment"># 再次启动的时候不需要执行此操作</span></span><br><span class="line">$ ./sbin/hadoop-daemon.sh start namenode</span><br><span class="line">$</span><br><span class="line">$ jps    <span class="comment"># 查看是否启动成功</span></span><br><span class="line">4016 Jps</span><br><span class="line">2556 NameNode</span><br></pre></td></tr></table></figure></p>
+<h3 id="启动集群"><a href="#启动集群" class="headerlink" title="启动集群"></a>启动集群</h3><p>首先启动namenode节点，也就是master，首次启动的时候，要格式化namenode。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hdfs namenode -format    <span class="comment"># 再次启动的时候不需要执行此操作</span></span><br><span class="line">$ ./sbin/hadoop-daemon.sh start namenode</span><br><span class="line">$</span><br><span class="line">$ jps    <span class="comment"># 查看是否启动成功</span></span><br><span class="line">4016 Jps</span><br><span class="line">2556 NameNode</span><br></pre></td></tr></table></figure></p>
 <p>接下来启动datanode节点，也就是slave1、slave2，在这两台服务器上都执行如下启动脚本。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./sbin/hadoop-daemon.sh start datanode</span><br><span class="line">$</span><br><span class="line">$ jps    <span class="comment"># 查看是否启动成功</span></span><br><span class="line">2451 Jps</span><br><span class="line">2162 DataNode</span><br></pre></td></tr></table></figure></p>
 <p>可以在实体机的浏览器中输入：<br><a href="http://hadoop-host-master:50070/" target="_blank" rel="noopener">http://hadoop-host-master:50070/</a><br>来查看是否启动成功。</p>
 <p><img src="/img/hadoop-4.png" alt="" title="hadoop管理界面：Overview"></p>
@@ -194,7 +194,7 @@ slave2:
 <p>如果有配置集中式管理，我们也可以通过在master上面通过一个命令启动、停止YARN<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ./sbin/start-yarn.sh    <span class="comment"># 启动yarn</span></span><br><span class="line">$ ./sbin/stop-yarn.sh    <span class="comment"># 停止yarn</span></span><br></pre></td></tr></table></figure></p>
 <p>或者在master上面，通过一个命令启动hadoop和yarn<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ./sbin/start-all.sh</span><br><span class="line">或者按顺序执行如下两个命令</span><br><span class="line">$ ./sbin/start-dfs.sh</span><br><span class="line">$ ./sbin/start-yarn.sh</span><br></pre></td></tr></table></figure></p>
 <p><img src="/img/hadoop-12.png" alt="" title="yarn集中启动管理"></p>
-<h3 id="启动MR作业日志管理器"><a href="#启动MR作业日志管理器" class="headerlink" title="启动MR作业日志管理器"></a>启动MR作业日志管理器</h3><p>在nodename节点，也就是master，启动MR作业日志管理器。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./sbin/mr-jobhistory-daemon.sh start historyserver</span><br></pre></td></tr></table></figure></p>
+<h3 id="启动MR作业日志管理器"><a href="#启动MR作业日志管理器" class="headerlink" title="启动MR作业日志管理器"></a>启动MR作业日志管理器</h3><p>在namenode节点，也就是master，启动MR作业日志管理器。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./sbin/mr-jobhistory-daemon.sh start historyserver</span><br></pre></td></tr></table></figure></p>
 <p>它同样有自已的图形界面：<br><a href="http://hadoop-host-master:19888/" target="_blank" rel="noopener">http://hadoop-host-master:19888/</a></p>
 <p><img src="/img/hadoop-13.png" alt="" title="MR作业日志管理器"></p>
 <h3 id="尝试向集群中提交一个mapReduce任务"><a href="#尝试向集群中提交一个mapReduce任务" class="headerlink" title="尝试向集群中提交一个mapReduce任务"></a>尝试向集群中提交一个mapReduce任务</h3><p>我们在namenode节点中向集群提交一个计算圆周率的mapReduce任务：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar pi 4 10</span><br></pre></td></tr></table></figure></p>
@@ -206,7 +206,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjpv81vsp000psi3kfzp4bdra" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjqemmdw8000drg3k27ulvu7z" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -218,7 +218,7 @@ slave2:
 <nav id="article-nav">
   
     <a href="/2018/12/19/hadoop-mapreduce/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">Récent</strong>
       <div class="article-nav-title">
         
           hadoop mapreduce示例
@@ -228,7 +228,7 @@ slave2:
   
   
     <a href="/2018/11/12/kafka-intro/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">Ancien</strong>
       <div class="article-nav-title">kafka 介绍</div>
     </a>
   
@@ -243,9 +243,9 @@ slave2:
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -255,7 +255,7 @@ slave2:
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -263,9 +263,13 @@ slave2:
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
+          </li>
         
           <li>
             <a href="/2018/12/19/hadoop-mapreduce/">hadoop mapreduce示例</a>
@@ -281,10 +285,6 @@ slave2:
         
           <li>
             <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/24/kafka-standalone/">kafka 单节点安装</a>
           </li>
         
       </ul>
@@ -309,8 +309,8 @@ slave2:
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      &copy; 2019 Tim Ho<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

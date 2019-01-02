@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -70,6 +70,330 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-elasticsearch-install" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/16/elasticsearch-install/" class="article-date">
+  <time datetime="2018-09-16T03:18:34.000Z" itemprop="datePublished">2018-09-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/16/elasticsearch-install/">elasticsearch 单节点安装</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文将说下<code>elasticsearch</code>的单节点安装，我的机器为<code>Ubuntu 16.04 LTS</code>，当前用户为<code>hewentian</code></p>
+<p>首先，我们要将<code>elasticsearch</code>安装包下载回来，截止本文写时，它的最新版本为<code>6.4.0</code>，可以在它的<a href="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz" target="_blank" rel="noopener">官网</a>下载，当然，我们也可以从这里下载 <a href="https://pan.baidu.com/s/1Rns322X-h0D5pRaqaGPaZQ" title="百度网盘" target="_blank" rel="noopener">elasticsearch-6.4.0.tar.gz</a>，推荐从<code>elasticsearch</code>官网下载最新版本。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz.sha512</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性，在下载的时候要将 SHA512 文件也下载回来</span><br><span class="line">$ sha512sum -c elasticsearch-6.4.0.tar.gz.sha512 </span><br><span class="line">elasticsearch-6.4.0.tar.gz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf elasticsearch-6.4.0.tar.gz</span><br></pre></td></tr></table></figure>
+<p>对<code>elasticsearch</code>进行设置（目前是单节点，所以也可以不对<code>elasticsearch.yml</code>进行设置，可直接跳过）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/config</span><br><span class="line">$ vi elasticsearch.yml 		<span class="comment"># 增加下面的配置</span></span><br><span class="line"></span><br><span class="line">cluster.name: hewentian-cluster	<span class="comment"># 配置集群的名字</span></span><br><span class="line">node.name: node-1		<span class="comment"># 配置集群下的节点的名字</span></span><br><span class="line"></span><br><span class="line">network.host: 127.0.0.1		<span class="comment"># 设置本机IP地址，这里可不设置，但是在集群环境中必须设置。如果在这里指定了IP，则localhost可能无法使用，这个要注意</span></span><br><span class="line"></span><br><span class="line">http.port: 9200			<span class="comment"># 默认也是这个端口</span></span><br><span class="line"></span><br><span class="line">下面的配置保持默认即可，它会将数据和日志保存到elasticsearch-6.4.0目录下的data和logs目录</span><br><span class="line"><span class="comment">#path.data: /path/to/data</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># Path to log files:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#path.logs: /path/to/logs</span></span><br></pre></td></tr></table></figure></p>
+<p>内存大小的设置，根据机器内存大小而设置，一般不超过系统总内存的一半：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/config</span><br><span class="line">$ vi jvm.options</span><br><span class="line"></span><br><span class="line">-Xms1g</span><br><span class="line">-Xmx1g</span><br></pre></td></tr></table></figure></p>
+<p>启动<code>elasticsearch</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/bin</span><br><span class="line">$ ./elasticsearch</span><br></pre></td></tr></table></figure></p>
+<p>我们也可以在启动的时候加上参数<code>-d</code>，以后台运行方式启动：<code>./elasticsearch -d</code>。这样单节点版本的<code>elasticsearch</code>就安装完了，在浏览器中输入如下地址：<a href="http://localhost:9200/" target="_blank" rel="noopener">http://localhost:9200/</a></p>
+<pre><code>{
+&quot;name&quot; : &quot;node-1&quot;,
+  &quot;cluster_name&quot; : &quot;hewentian-cluster&quot;,
+  &quot;cluster_uuid&quot; : &quot;ihLk1iOlTEis2PkQrLhmLQ&quot;,
+  &quot;version&quot; : {
+    &quot;number&quot; : &quot;6.4.0&quot;,
+    &quot;build_flavor&quot; : &quot;default&quot;,
+    &quot;build_type&quot; : &quot;tar&quot;,
+    &quot;build_hash&quot; : &quot;595516e&quot;,
+    &quot;build_date&quot; : &quot;2018-08-17T23:18:47.308994Z&quot;,
+    &quot;build_snapshot&quot; : false,
+    &quot;lucene_version&quot; : &quot;7.4.0&quot;,
+    &quot;minimum_wire_compatibility_version&quot; : &quot;5.6.0&quot;,
+    &quot;minimum_index_compatibility_version&quot; : &quot;5.0.0&quot;
+  },
+  &quot;tagline&quot; : &quot;You Know, for Search&quot;
+}
+</code></pre><p>如果你见到上面的输出，证明安装成功了。</p>
+<p>不过，你在安装的过程中，有可能会遇到下面的问题之一：</p>
+<pre><code>ERROR: [3] bootstrap checks failed
+[1]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65536]
+[2]: max number of threads [2048] for user [hewentian] is too low, increase to at least [4096]
+[3]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+</code></pre><p>解决方法如下，就算它不报上面的错误，我们也应该根据机器的性能，对下面的选项作相应配置（下面是根据我机器的情况作的配置）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ su root			<span class="comment"># 必须在 root 下才有权限修改系统配置文件</span></span><br><span class="line">Password: </span><br><span class="line">$ vi /etc/security/limits.conf	<span class="comment"># 添加如下配置</span></span><br><span class="line">* soft nofile 65536		<span class="comment"># 上面第一个错误有提示</span></span><br><span class="line">* hard nofile 131072		<span class="comment"># 一般为 soft nofile 的2倍</span></span><br><span class="line">* soft nproc 4096		<span class="comment"># 这个设置线程数</span></span><br><span class="line">* hard nproc 8192</span><br><span class="line"></span><br><span class="line">$ vi /etc/sysctl.conf		<span class="comment"># 添加如下配置</span></span><br><span class="line">vm.max_map_count=262144</span><br><span class="line"></span><br><span class="line">$ sysctl -p			<span class="comment"># 最后执行这个命令，你会见到如下输出</span></span><br><span class="line">vm.max_map_count=262144</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">exit</span>				<span class="comment"># 退出 root</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="elasticsearch-head的安装"><a href="#elasticsearch-head的安装" class="headerlink" title="elasticsearch-head的安装"></a>elasticsearch-head的安装</h4><p>为了更方便的与elasticsearch交互，我们还要安装<code>elasticsearch-head</code>插件，安装步骤如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/gitHub</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/mobz/elasticsearch-head.git</span><br><span class="line">$ <span class="built_in">cd</span> elasticsearch-head</span><br><span class="line">$ npm install 		<span class="comment"># 这个安装过程可能会报错，但是一般不影响。安装完之后，运行下面的命令即可</span></span><br><span class="line">$ npm run start 	<span class="comment"># 运行此命令，你会看到如下输出</span></span><br><span class="line"></span><br><span class="line">&gt; elasticsearch-head@0.0.0 start /home/hewentian/ProjectD/gitHub/elasticsearch-head</span><br><span class="line">&gt; grunt server</span><br><span class="line"></span><br><span class="line">Running <span class="string">"connect:server"</span> (connect) task</span><br><span class="line">Waiting forever...</span><br><span class="line">Started connect web server on http://localhost:9100</span><br><span class="line"></span><br><span class="line">也可以使用下面这种方式启动</span><br><span class="line">$ nohup npm run start &amp;</span><br></pre></td></tr></table></figure></p>
+<p>安装结束之后，可以试着打开这个连接：<a href="http://localhost:9100/" target="_blank" rel="noopener">http://localhost:9100/</a><br>这个连接可以打开，就证明<code>elasticsearch-head</code>安装成功，但是你可能会发现，它无法连上<code>elasticsearch</code>。因为，我们还没有对<code>elasticsearch</code>进行设置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearch-6.4.0/config</span><br><span class="line">$ vi elasticsearch.yml 	<span class="comment"># 增加下面的配置</span></span><br><span class="line"></span><br><span class="line">允许跨域，否则 elasticsearch head 不能访问 elasticsearch</span><br><span class="line">http.cors.enabled: <span class="literal">true</span></span><br><span class="line">http.cors.allow-origin: <span class="string">"*"</span></span><br></pre></td></tr></table></figure></p>
+<p>配置好之后，重启<code>elasticsearch</code>，就可以使用<code>elasticsearch-head</code>访问<code>elasticsearch</code>了，如下图所示：<br><img src="/img/elasticsearch-head.png" alt="" title="elasticsearch-head"></p>
+<h3 id="elasticsearch使用示例"><a href="#elasticsearch使用示例" class="headerlink" title="elasticsearch使用示例"></a>elasticsearch使用示例</h3><p>使用示例我不打算自已写，因为<code>elasticsearch</code>官方的<code>README.textile</code>已经写得非常详细了。下面的示例摘自<code>elasticsearch-6.4.0/README.textile</code>：<br><strong>下面代码的缩进尽量不要使用tab，要使用空格</strong></p>
+<h4 id="Indexing"><a href="#Indexing" class="headerlink" title="Indexing"></a>Indexing</h4><p>Let’s try and index some twitter like information. First, let’s index some tweets (the @twitter@ index will be created automatically):</p>
+<pre>
+curl -XPUT 'http://localhost:9200/twitter/doc/1?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T13:12:00",
+    "message": "Trying out Elasticsearch, so far so good?"
+}'
+
+curl -XPUT 'http://localhost:9200/twitter/doc/2?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T14:12:12",
+    "message": "Another tweet, will it be indexed?"
+}'
+
+curl -XPUT 'http://localhost:9200/twitter/doc/3?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "elastic",
+    "post_date": "2010-01-15T01:46:38",
+    "message": "Building the site, should be kewl"
+}'
+</pre>
+
+
+<h4 id="Getting"><a href="#Getting" class="headerlink" title="Getting"></a>Getting</h4><p>Now, let’s see if the information was added by GETting it:</p>
+<pre>
+curl -XGET 'http://localhost:9200/twitter/doc/1?pretty=true'
+curl -XGET 'http://localhost:9200/twitter/doc/2?pretty=true'
+curl -XGET 'http://localhost:9200/twitter/doc/3?pretty=true'
+
+</pre>
+
+<p>The results show below:</p>
+<pre>
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "1",
+  "_version" : 1,
+  "found" : true,
+  "_source" : {
+    "user" : "kimchy",
+    "post_date" : "2009-11-15T13:12:00",
+    "message" : "Trying out Elasticsearch, so far so good?"
+  }
+}
+
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "2",
+  "_version" : 1,
+  "found" : true,
+  "_source" : {
+    "user" : "kimchy",
+    "post_date" : "2009-11-15T14:12:12",
+    "message" : "Another tweet, will it be indexed?"
+  }
+}
+
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "3",
+  "_version" : 1,
+  "found" : true,
+  "_source" : {
+    "user" : "elastic",
+    "post_date" : "2010-01-15T01:46:38",
+    "message" : "Building the site, should be kewl"
+  }
+}
+</pre>
+
+
+<h4 id="Updating"><a href="#Updating" class="headerlink" title="Updating"></a>Updating</h4><p>The updating operation is the same as Indexing.</p>
+<pre>
+curl -XPUT 'http://localhost:9200/twitter/doc/1?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T13:12:00",
+    "message": "Trying out Elasticsearch, so far so good? yes"
+}'
+
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "1",
+  "_version" : 2,
+  "result" : "updated",
+  "_shards" : {
+    "total" : 2,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "_seq_no" : 1,
+  "_primary_term" : 1
+}
+</pre>
+
+
+<h4 id="Deleting"><a href="#Deleting" class="headerlink" title="Deleting"></a>Deleting</h4><p>The deleting operation is also easy.</p>
+<pre>
+curl -XDELETE 'http://localhost:9200/twitter/doc/1'
+
+{"_index":"twitter","_type":"doc","_id":"1","_version":3,"result":"deleted","_shards":{"total":2,"successful":1,"failed":0},"_seq_no":2,"_primary_term":1}
+</pre>
+
+<h4 id="Searching"><a href="#Searching" class="headerlink" title="Searching"></a>Searching</h4><p>Mmm search…, shouldn’t it be elastic?<br>Let’s find all the tweets that @kimchy@ posted:</p>
+<pre>
+curl -XGET 'http://localhost:9200/twitter/_search?q=user:kimchy&pretty=true'
+
+{
+  "took" : 42,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 2,
+    "max_score" : 0.2876821,
+    "hits" : [
+      {
+        "_index" : "twitter",
+        "_type" : "doc",
+        "_id" : "2",
+        "_score" : 0.2876821,
+        "_source" : {
+          "user" : "kimchy",
+          "post_date" : "2009-11-15T14:12:12",
+          "message" : "Another tweet, will it be indexed?"
+        }
+      },
+      {
+        "_index" : "twitter",
+        "_type" : "doc",
+        "_id" : "1",
+        "_score" : 0.2876821,
+        "_source" : {
+          "user" : "kimchy",
+          "post_date" : "2009-11-15T13:12:00",
+          "message" : "Trying out Elasticsearch, so far so good?"
+        }
+      }
+    ]
+  }
+}
+</pre>
+
+<p>We can also use the JSON query language Elasticsearch provides instead of a query string:</p>
+<pre>
+curl -XGET 'http://localhost:9200/twitter/_search?pretty=true' -H 'Content-Type: application/json' -d '
+{
+    "query" : {
+        "match" : { "user": "kimchy" }
+    }
+}'
+</pre>
+
+<p>Just for kicks, let’s get all the documents stored (we should see the tweet from @elastic@ as well):</p>
+<pre>
+curl -XGET 'http://localhost:9200/twitter/_search?pretty=true' -H 'Content-Type: application/json' -d '
+{
+    "query" : {
+        "match_all" : {}
+    }
+}'
+</pre>
+
+<p>We can also do range search (the @post_date@ was automatically identified as date)</p>
+<pre>
+curl -XGET 'http://localhost:9200/twitter/_search?pretty=true' -H 'Content-Type: application/json' -d '
+{
+    "query" : {
+        "range" : {
+            "post_date" : { "from" : "2009-11-15T13:00:00", "to" : "2009-11-15T14:00:00" }
+        }
+    }
+}'
+</pre>
+
+<p>There are many more options to perform search, after all, it’s a search product no? All the familiar Lucene queries are available through the JSON query language, or through the query parser.</p>
+<h4 id="Multi-Tenant-Indices-and-Types"><a href="#Multi-Tenant-Indices-and-Types" class="headerlink" title="Multi Tenant - Indices and Types"></a>Multi Tenant - Indices and Types</h4><p>Man, that twitter index might get big (in this case, index size == valuation). Let’s see if we can structure our twitter system a bit differently in order to support such large amounts of data.</p>
+<p>Elasticsearch supports multiple indices. In the previous example we used an index called @twitter@ that stored tweets for every user.</p>
+<p>Another way to define our simple twitter system is to have a different index per user (note, though that each index has an overhead). Here is the indexing curl’s in this case:</p>
+<pre>
+curl -XPUT 'http://localhost:9200/kimchy/doc/1?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T13:12:00",
+    "message": "Trying out Elasticsearch, so far so good?"
+}'
+
+curl -XPUT 'http://localhost:9200/kimchy/doc/2?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T14:12:12",
+    "message": "Another tweet, will it be indexed?"
+}'
+</pre>
+
+<p>The above will index information into the @kimchy@ index. Each user will get their own special index.</p>
+<p>Complete control on the index level is allowed. As an example, in the above case, we would want to change from the default 5 shards with 1 replica per index, to only 1 shard with 1 replica per index (== per twitter user). Here is how this can be done (the configuration can be in yaml as well):</p>
+<pre>
+curl -XPUT http://localhost:9200/another_user?pretty -H 'Content-Type: application/json' -d '
+{
+    "index" : {
+        "number_of_shards" : 1,
+        "number_of_replicas" : 1
+    }
+}'
+</pre>
+
+<p>Search (and similar operations) are multi index aware. This means that we can easily search on more than one<br>index (twitter user), for example:</p>
+<pre>
+curl -XGET 'http://localhost:9200/kimchy,another_user/_search?pretty=true' -H 'Content-Type: application/json' -d '
+{
+    "query" : {
+        "match_all" : {}
+    }
+}'
+</pre>
+
+<p>Or on all the indices:</p>
+<pre>
+curl -XGET 'http://localhost:9200/_search?pretty=true' -H 'Content-Type: application/json' -d '
+{
+    "query" : {
+        "match_all" : {}
+    }
+}'
+</pre>
+
+<p>{One liner teaser}: And the cool part about that? You can easily search on multiple twitter users (indices), with different boost levels per user (index), making social search so much simpler (results from my friends rank higher than results from friends of my friends).</p>
+<h4 id="Cat-Index"><a href="#Cat-Index" class="headerlink" title="Cat Index"></a>Cat Index</h4><pre>
+curl -XGET 'http://localhost:9200/_cat/indices?v'
+
+health status index   uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+yellow open   twitter 1aZo0hSfRkKG1INAEZgpnQ   5   1          2            0       14kb           14kb
+yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0      1.2kb          1.2kb
+</pre>
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjqemmdw20006rg3kiiq26pqn" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-redis-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -295,7 +619,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjpv81vtc002psi3kmb4zvg08" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjqemmdx40031rg3k3b0itpv8" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -368,7 +692,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjpv81vta002isi3k8d4raelk" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjqemmdwz002lrg3k88nl5q2l" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -466,7 +790,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjpv81vt8002bsi3k337rtq0u" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjqemmdwx002erg3knepw43rt" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -633,7 +957,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjpv81vsx001esi3khqfxu9an" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjqemmdwo001lrg3k1tupipen" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
@@ -691,7 +1015,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjpv81vt4001zsi3kqur4gg9j" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjqemmdwr001vrg3k5v6mtsca" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>
@@ -773,7 +1097,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjpv81vtb002ksi3k73mwmjtj" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjqemmdx0002prg3k45x819fq" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -882,7 +1206,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjpv81vt60027si3kj2odagzp" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjqemmdwt0022rg3k9kje2fgh" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/neo4j/">neo4j</a></li></ul>
@@ -961,7 +1285,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjpv81vsg0008si3kk44h5uv5" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjqemmdwa000frg3k6ggqilts" class="article-share-link">Partager</a>
       
       
     </footer>
@@ -1053,91 +1377,10 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjpv81vsl000esi3kvnz2djeq" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjqemmdvz0002rg3kwrw2ax0o" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/">activemq</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-rabbitmq-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/01/17/rabbitmq-note/" class="article-date">
-  <time datetime="2018-01-17T04:06:58.000Z" itemprop="datePublished">2018-01-17</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/17/rabbitmq-note/">rabbitMQ学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在安装好<code>rabbitMQ</code>后，执行<code>rabbitmq-plugins enable rabbitmq_management</code>命令，开启Web管理插件，这样我们就可以通过浏览器来进行管理了。默认地址为：<br><a href="http://localhost:15672/" target="_blank" rel="noopener">http://localhost:15672/</a><br>并使用默认用户guest登录，密码也为guest。这个guest用户只能在安装rabbitMQ的机器上登录，如果要在其他机器登录，则用guest登录后，再创建其他用户即可，创建的用户要授权，否则用API是无法访问的，有可能会报错。因为新创建的用户默认是没有权限访问<code>/</code>的，可以在WEB上面授权，或者用命令授权。<br>列出用户权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ sudo rabbitmqctl list_users</span><br><span class="line"></span><br><span class="line">Listing users ...</span><br><span class="line">hewentian [administrator]</span><br><span class="line">guest [administrator]</span><br><span class="line"></span><br><span class="line">授权</span><br><span class="line">$ sudo rabbitmqctl set_permissions -p / hewentian <span class="string">'.*'</span> <span class="string">'.*'</span> <span class="string">'.*'</span></span><br></pre></td></tr></table></figure></p>
-<p>该命令使用户hewentian具有<code>/</code>这个virtual host中所有资源的配置、写、读权限以便管理其中的资源</p>
-<p>其使用也是非常容易入门的：<br>在spring boot项目的application.properties中配置关于rabbitMQ的连接和用户信息<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">spring.application.name=rabbitmq-demo</span><br><span class="line"></span><br><span class="line">spring.rabbitmq.host=10.1.32.97</span><br><span class="line">spring.rabbitmq.port=5672</span><br><span class="line">spring.rabbitmq.username=hewentian</span><br><span class="line">spring.rabbitmq.password=12345678</span><br></pre></td></tr></table></figure></p>
-<p>创建消息生产者Sender，将消息发送到<code>myqueue</code>这个队列<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.amqp.core.AmqpTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.amqp.rabbit.core.RabbitTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sender</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> AmqpTemplate rabbitTemplate;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		String context = <span class="string">"hello "</span> + <span class="keyword">new</span> Date();</span><br><span class="line">		<span class="keyword">this</span>.rabbitTemplate.convertAndSend(<span class="string">"myqueue"</span>, context);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>创建消息消费者Receiver，对队列<code>myqueue</code>进行监听<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.amqp.rabbit.annotation.RabbitHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.amqp.rabbit.annotation.RabbitListener;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RabbitListener</span>(queues = <span class="string">"myqueue"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Receiver</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@RabbitHandler</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(String ctx)</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"Receiver : "</span> + ctx);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>创建RabbitMQ的配置类RabbitConfig<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.amqp.core.Queue;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RabbitConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Queue <span class="title">helloQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> Queue(<span class="string">"myqueue"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>这样一个简单的例子就完成了。更多详细例子，请参考<a href="https://github.com/hewentian/mq-demo">这里</a>。另外，下面这两篇文章，值得我们认真看下：<br><a href="http://www.rabbitmq.com/amqp-0-9-1-quickref.html" target="_blank" rel="noopener">http://www.rabbitmq.com/amqp-0-9-1-quickref.html</a><br><a href="http://www.rabbitmq.com/tutorials/amqp-concepts.html" target="_blank" rel="noopener">http://www.rabbitmq.com/tutorials/amqp-concepts.html</a></p>
-<p>The default exchange is a direct exchange with no name (empty string) pre-declared by the broker.</p>
-<h4 id="Direct-Exchange"><a href="#Direct-Exchange" class="headerlink" title="Direct Exchange"></a>Direct Exchange</h4><p>Direct exchanges are often used to distribute tasks between multiple workers (instances of the same application) in a round robin manner. When doing so, it is important to understand that, in AMQP 0-9-1, messages are load balanced between consumers and not between queues.</p>
-<h4 id="Fanout-Exchange"><a href="#Fanout-Exchange" class="headerlink" title="Fanout Exchange"></a>Fanout Exchange</h4><p>A fanout exchange routes messages to all of the queues that are bound to it and the routing key is ignored. If N queues are bound to a fanout exchange, when a new message is published to that exchange a copy of the message is delivered to all N queues. Fanout exchanges are ideal for the broadcast routing of messages.</p>
-<p>Because a fanout exchange delivers a copy of a message to every queue bound to it, its use cases are quite similar:</p>
-<ul>
-<li>Massively multi-player online (MMO) games can use it for leaderboard updates or other global events</li>
-<li>Sport news sites can use fanout exchanges for distributing score updates to mobile clients in near real-time</li>
-<li>Distributed systems can broadcast various state and configuration updates</li>
-<li>Group chats can distribute messages between participants using a fanout exchange (although AMQP does not have a built-in concept of presence, so XMPP may be a better choice)</li>
-</ul>
-<h4 id="Topic-Exchange"><a href="#Topic-Exchange" class="headerlink" title="Topic Exchange"></a>Topic Exchange</h4><p>Topic exchanges route messages to one or many queues based on matching between a message routing key and the pattern that was used to bind a queue to an exchange. The topic exchange type is often used to implement various publish/subscribe pattern variations. Topic exchanges are commonly used for the multicast routing of messages.</p>
-<p>Topic exchanges have a very broad set of use cases. Whenever a problem involves multiple consumers/applications that selectively choose which type of messages they want to receive, the use of topic exchanges should be considered.</p>
-<p>Example uses:</p>
-<ul>
-<li>Distributing data relevant to specific geographic location, for example, points of sale</li>
-<li>Background task processing done by multiple workers, each capable of handling specific set of tasks</li>
-<li>Stocks price updates (and updates on other kinds of financial data)</li>
-<li>News updates that involve categorization or tagging (for example, only for a particular sport or team)</li>
-<li>Orchestration of services of different kinds in the cloud</li>
-<li>Distributed architecture/OS-specific software builds or packaging where each builder can handle only one architecture or OS</li>
-</ul>
-<h4 id="Headers-Exchange"><a href="#Headers-Exchange" class="headerlink" title="Headers Exchange"></a>Headers Exchange</h4><p>A headers exchange is designed for routing on multiple attributes that are more easily expressed as message headers than a routing key. Headers exchanges ignore the routing key attribute. Instead, the attributes used for routing are taken from the headers attribute. A message is considered matching if the value of the header equals the value specified upon binding.</p>
-<p>It is possible to bind a queue to a headers exchange using more than one header for matching. In this case, the broker needs one more piece of information from the application developer, namely, should it consider messages with any of the headers matching, or all of them? This is what the “x-match” binding argument is for. When the “x-match” argument is set to “any”, just one matching header value is sufficient. Alternatively, setting “x-match” to “all” mandates that all the values must match.</p>
-<p>Headers exchanges can be looked upon as “direct exchanges on steroids”. Because they route based on header values, they can be used as direct exchanges where the routing key does not have to be a string; it could be an integer or a hash (dictionary) for example.</p>
-<h4 id="Consumers"><a href="#Consumers" class="headerlink" title="Consumers"></a>Consumers</h4><p>Storing messages in queues is useless unless applications can consume them. In the AMQP 0-9-1 Model, there are two ways for applications to do this:</p>
-<ul>
-<li>Have messages delivered to them (“push API”)</li>
-<li>Fetch messages as needed (“pull API”)</li>
-</ul>
-<p>With the “push API”, applications have to indicate interest in consuming messages from a particular queue. When they do so, we say that they register a consumer or, simply put, subscribe to a queue. It is possible to have more than one consumer per queue or to register an exclusive consumer (excludes all other consumers from the queue while it is consuming).</p>
-<h4 id="Connections"><a href="#Connections" class="headerlink" title="Connections"></a>Connections</h4><p>AMQP connections are typically long-lived. AMQP is an application level protocol that uses TCP for reliable delivery. AMQP connections use authentication and can be protected using TLS (SSL). When an application no longer needs to be connected to an AMQP broker, it should gracefully close the AMQP connection instead of abruptly closing the underlying TCP connection.</p>
-<p>未完待续。。。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjpv81vt50023si3kx85hgkjk" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabbitmq/">rabbitmq</a></li></ul>
 
     </footer>
   </div>
@@ -1157,9 +1400,9 @@ at java.lang.Thread.run(Thread.java:745)
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -1169,7 +1412,7 @@ at java.lang.Thread.run(Thread.java:745)
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1177,9 +1420,13 @@ at java.lang.Thread.run(Thread.java:745)
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
+          </li>
         
           <li>
             <a href="/2018/12/19/hadoop-mapreduce/">hadoop mapreduce示例</a>
@@ -1195,10 +1442,6 @@ at java.lang.Thread.run(Thread.java:745)
         
           <li>
             <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/24/kafka-standalone/">kafka 单节点安装</a>
           </li>
         
       </ul>
@@ -1223,8 +1466,8 @@ at java.lang.Thread.run(Thread.java:745)
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      &copy; 2019 Tim Ho<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
