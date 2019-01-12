@@ -497,3 +497,24 @@ where length( name ) = ( select max( length( name ) ) from my_table );
 ```
 
 
+### skip-grant-tables 参数的使用
+这是个非常有用的mysql启动参数
+
+在my.cnf文件中增加一行：
+
+    [mysqld]
+    skip-grant-tables
+
+或者以命令行参数启动mysql：
+
+    /usr/bin/mysqld_safe --skip-grant-tables &
+
+登陆mysql修改管理员密码：
+
+    use mysql;
+    update user set password=password('root') where user='root';
+    flush privileges;
+    exit;
+
+重启mysql
+

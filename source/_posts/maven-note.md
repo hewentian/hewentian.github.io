@@ -36,3 +36,6 @@ categories: other
 ```
 去掉`<java.home>/usr/local/java/jdk1.8.0_102</java.home>`配置，这时`java.home`变量继承自`eclipse`的`java.home`配置。从pom.xml文件的Effective POM可以查看到java.home变量被替换了，eclipse的java.home路径在`help->about eclipse->Installation Details->configuration`页可以找到。
 
+### ik-analyzer的使用
+如果项目中要使用到`ik-analyzer`分词，可以到如下地址下载，并安装：
+https://github.com/wks/ik-analyzer

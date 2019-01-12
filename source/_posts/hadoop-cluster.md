@@ -25,7 +25,7 @@ categories: bigdata
 
 
 ### 下面开始master的安装
-在虚拟机中安装`master`的过程中我们会设置一个用户用于登录，我们将用户名、密码都设为`hadoop`，当然也可以为其他名字，其他安装过程略。安装好之后，使用默认的网关配置NAT，NAT可以访问外网，我们将`jdk-8u102-linux-x64.tar.gz`和`hadoop-2.7.3.tar.gz`从它们的官网下载到用户的`/home/hadoop/`目录下。或在实体机中通过SCP命令传进去。然后将网关设置为`Host-only Adapter`，如下图所示。
+在虚拟机中安装`master`的过程中我们会设置一个用户用于登录，我们将用户名、密码都设为`hadoop`，当然也可以为其他名字，其他安装过程略。安装好之后，使用默认的网关配置NAT，NAT可以访问外网，我们将`jdk-8u102-linux-x64.tar.gz`和[hadoop-2.7.3.tar.gz][link_id_hadoop-2-7-3]从它们的官网下载到用户的`/home/hadoop/`目录下。或在实体机中通过SCP命令传进去。然后将网关设置为`Host-only Adapter`，如下图所示。
 
 ![](/img/hadoop-2.png "网络配置")
 
@@ -439,3 +439,4 @@ $ ./bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar pi
 至此， 集群搭建完毕。
 
 [link_id_install-jdk]: ../../../../2017/12/08/install-jdk/
+[link_id_hadoop-2-7-3]: http://archive.apache.org/dist/hadoop/core/hadoop-2.7.3/
