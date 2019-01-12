@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -70,6 +70,100 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-activemq-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/01/23/activemq-note/" class="article-date">
+  <time datetime="2018-01-23T12:46:34.000Z" itemprop="datePublished">2018-01-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/23/activemq-note/">activeMQ学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Installation-Procedure-for-Unix"><a href="#Installation-Procedure-for-Unix" class="headerlink" title="Installation Procedure for Unix"></a>Installation Procedure for Unix</h3><p>Unix Binary Installation<br>This procedure explains how to download and install the binary distribution on a Unix system.<br><strong>NOTE</strong>: There are several alternative ways to perform this type of installation.</p>
+<ol>
+<li><p>Download the activemq zipped tarball file to the Unix machine, using either a browser or a tool, i.e., wget, scp, ftp, etc. for example:<br>(see <a href="http://activemq.apache.org/download.html" target="_blank" rel="noopener">Download</a> -&gt; “The latest stable release”)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://activemq.apache.org/path/tofile/apache-activemq-x.x.x-bin.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Extract the files from the zipped tarball into a directory of your choice. For example:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]</span><br><span class="line">$ tar zxvf activemq-x.x.x-bin.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Starting-ActiveMQ"><a href="#Starting-ActiveMQ" class="headerlink" title="Starting ActiveMQ"></a>Starting ActiveMQ</h3><p>On Unix:<br>From a command shell, change to the installation directory and run ActiveMQ as a foregroud process:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq console</span><br></pre></td></tr></table></figure></p>
+<p>From a command shell, change to the installation directory and run ActiveMQ as a daemon process:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq start</span><br></pre></td></tr></table></figure></p>
+<h3 id="Stopping-ActiveMQ"><a href="#Stopping-ActiveMQ" class="headerlink" title="Stopping ActiveMQ"></a>Stopping ActiveMQ</h3><p>For both Windows and Unix installations, terminate ActiveMQ by typing “CTRL-C” in the console or command shell in which it is running.<br>If ActiveMQ was started in the background on Unix, the process can be killed, with the following:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq stop</span><br></pre></td></tr></table></figure></p>
+<h3 id="Testing-the-Installation"><a href="#Testing-the-Installation" class="headerlink" title="Testing the Installation"></a>Testing the Installation</h3><p>Using the administrative interface</p>
+<ul>
+<li>Open the administrative interface</li>
+<li>URL: <a href="http://127.0.0.1:8161/admin/" target="_blank" rel="noopener">http://127.0.0.1:8161/admin/</a></li>
+<li>Login: admin</li>
+<li>Passwort: admin</li>
+<li>Navigate to “Queues”</li>
+<li>Add a queue name and click create</li>
+<li>Send test message by klicking on “Send to”</li>
+</ul>
+<h3 id="Listen-port"><a href="#Listen-port" class="headerlink" title="Listen port"></a>Listen port</h3><p>ActiveMQ’s default port is 61616. From another window run netstat and search for port 61616.From a Unix command shell, type:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ netstat -nl | grep 61616</span><br><span class="line">tcp6       0      0 :::61616                :::*                    LISTEN</span><br></pre></td></tr></table></figure></p>
+<p>部分示例可以在<a href="https://github.com/hewentian/mq-demo">这里</a>找到。</p>
+<h3 id="安全问题"><a href="#安全问题" class="headerlink" title="安全问题"></a>安全问题</h3><p>ObjectMessage objects depend on Java serialization of marshal/unmarshal object payload. This process is generally considered unsafe as malicious payload can exploit the host system. That’s why starting with versions 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist packages that can be exchanged using ObjectMessages.</p>
+<p>ActiveMQ从5.12.2、5.13.0开始，如果传送的消息是一个<code>JavaBean</code>就要设置一个传输对象包名的白名单列表，否则会报如下错：</p>
+<pre><code>javax.jms.JMSException: Failed to build body from content. Serializable class not available to broker. Reason: java.lang.ClassNotFoundException: Forbidden class java.lang.Integer! This class is not trusted to be serialized as ObjectMessage payload. Please take a look at http://activemq.apache.org/objectmessage.html for more information on how to configure trusted classes.
+at org.apache.activemq.util.JMSExceptionSupport.create(JMSExceptionSupport.java:36)
+at org.apache.activemq.command.ActiveMQObjectMessage.getObject(ActiveMQObjectMessage.java:213)
+at com.hewentian.activemq.bean.Consumer$1.onMessage(Consumer.java:48)
+at org.apache.activemq.ActiveMQMessageConsumer.dispatch(ActiveMQMessageConsumer.java:1404)
+at org.apache.activemq.ActiveMQSessionExecutor.dispatch(ActiveMQSessionExecutor.java:131)
+at org.apache.activemq.ActiveMQSessionExecutor.iterate(ActiveMQSessionExecutor.java:202)
+at org.apache.activemq.thread.PooledTaskRunner.runTask(PooledTaskRunner.java:133)
+at org.apache.activemq.thread.PooledTaskRunner$1.run(PooledTaskRunner.java:48)
+at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+at java.lang.Thread.run(Thread.java:745)
+</code></pre><p>根据提示，我们打开<a href="http://activemq.apache.org/objectmessage.html" target="_blank" rel="noopener">http://activemq.apache.org/objectmessage.html</a>，可以发现解决此报错的详细说明。解决方法有二：<br><strong>注意： 我是用方法二解决的，方法一试了，无效。</strong></p>
+<ol>
+<li><p>The <code>setTrustedPackages()</code> method allows you to set the list of trusted packages you want to be to unserialize, like</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ActiveMQConnectionFactory factory = <span class="keyword">new</span> ActiveMQConnectionFactory(<span class="string">"tcp://localhost:61616"</span>);</span><br><span class="line">factory.setTrustedPackages(<span class="keyword">new</span> ArrayList(Arrays.asList(<span class="string">"org.apache.activemq.test,com.hewentian.activemq.bean"</span>.split(<span class="string">","</span>))));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>The <code>setTrustAllPackages()</code> allows you to turn off security check and trust all classes. It’s useful for testing purposes.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ActiveMQConnectionFactory factory = <span class="keyword">new</span> ActiveMQConnectionFactory(<span class="string">"tcp://localhost:61616"</span>);</span><br><span class="line">factory.setTrustAllPackages(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果是springBoot工程，你也可以在<code>application.properties</code>作如下设置：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring.activemq.packages.trust-all=<span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">or</span><br><span class="line"></span><br><span class="line">spring.activemq.packages.trusted=&lt;package1&gt;,&lt;package2&gt;,&lt;package3&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="消息的消费者接收消息可以采用两种方式："><a href="#消息的消费者接收消息可以采用两种方式：" class="headerlink" title="消息的消费者接收消息可以采用两种方式："></a>消息的消费者接收消息可以采用两种方式：</h3><ol>
+<li>consumer.receive() 或 consumer.receive(int timeout)；</li>
+<li>使用setMessageListener。<br>采用第一种方式，消息的接收者会一直等待下去，直到有消息到达，或者超时。后一种方式会注册一个监听器，当有消息到达的时候，会回调它的onMessage()方法。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjqta4i3i00087y3ke9dnj4r5" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/">activemq</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-rabbitmq-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -140,7 +234,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjqemmdwv0028rg3kxh0tbnyj" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjqta4i4b002m7y3kwrabj7j4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabbitmq/">rabbitmq</a></li></ul>
@@ -199,7 +293,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjqemmdx3002yrg3kple69gqw" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjqta4i4h00337y3ktuzvzqhx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -253,7 +347,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjqemmdx6003arg3kuc61jouf" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjqta4i4i00367y3k4rw3yt9p" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -322,7 +416,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjqemmdwh0011rg3kp2hzngk1" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjqta4i3v00147y3k0vdkvkv3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jdk/">jdk</a></li></ul>
@@ -497,11 +591,23 @@
 <p>另外，如果需要查询 id 不是连续的一段，最佳的方法就是先找出 id ，然后用 in 查询，代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table WHERE id IN(10000, 100000, 1000000...);</span><br></pre></td></tr></table></figure></p>
 <p>再分享一点<br>查询字段一较长字符串的时候，表设计时要为该字段多加一个字段,如，存储网址的字段，查询的时候，不要直接查询字符串，效率低下，应该查诡该字串的crc32或md5 </p>
 <h3 id="mysql-查询一个字符串字段-最长的一条记录"><a href="#mysql-查询一个字符串字段-最长的一条记录" class="headerlink" title="mysql 查询一个字符串字段 最长的一条记录"></a>mysql 查询一个字符串字段 最长的一条记录</h3><p>参考：<a href="http://stackoverflow.com/questions/2357620/maxlengthfield-in-mysql" target="_blank" rel="noopener">http://stackoverflow.com/questions/2357620/maxlengthfield-in-mysql</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select name, length( name )</span><br><span class="line">from my_table</span><br><span class="line">where length( name ) = ( select max( length( name ) ) from my_table );</span><br></pre></td></tr></table></figure></p>
+<h3 id="skip-grant-tables-参数的使用"><a href="#skip-grant-tables-参数的使用" class="headerlink" title="skip-grant-tables 参数的使用"></a>skip-grant-tables 参数的使用</h3><p>这是个非常有用的mysql启动参数</p>
+<p>在my.cnf文件中增加一行：</p>
+<pre><code>[mysqld]
+skip-grant-tables
+</code></pre><p>或者以命令行参数启动mysql：</p>
+<pre><code>/usr/bin/mysqld_safe --skip-grant-tables &amp;
+</code></pre><p>登陆mysql修改管理员密码：</p>
+<pre><code>use mysql;
+update user set password=password(&apos;root&apos;) where user=&apos;root&apos;;
+flush privileges;
+exit;
+</code></pre><p>重启mysql</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjqemmdwu0025rg3kzs45v4z4" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjqta4i45001x7y3k7h4fhpdl" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
@@ -588,7 +694,7 @@ clientPort=2183                                                 # 这台服务�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjqemmdx50034rg3k21or6xls" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjqta4i4k003c7y3k1hgh3f27" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -648,7 +754,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjqemmdx50036rg3khdwiolvq" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjqta4i4l003f7y3kld02xopm" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -726,7 +832,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/02/hexo-note/" data-id="cjqemmdwk0019rg3kr7q4r3of" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/12/02/hexo-note/" data-id="cjqta4i3s000t7y3kt78b0ea8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -811,7 +917,7 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjqemmdwj0015rg3krnl5wpmu" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjqta4i3x001b7y3kxgh5fcvw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -823,55 +929,10 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
 
 
   
-    <article id="post-maven-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/11/10/maven-note/" class="article-date">
-  <time datetime="2017-11-09T16:48:44.000Z" itemprop="datePublished">2017-11-10</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/other/">other</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/10/maven-note/">maven笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在<code>eclipse</code>中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8</p>
-<p>原因：tools.jar包是JDK的，而tools.jar并未在仓库<code>maven repository</code>中</p>
-<p>解决方案：在pom文件中添加如下代码即可<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>jdk.tools<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jdk.tools<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">scope</span>&gt;</span>system<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">systemPath</span>&gt;</span>$&#123;JAVA_HOME&#125;/lib/tools.jar<span class="tag">&lt;/<span class="name">systemPath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>在 pom.xml文件中不要写如下这样的配置：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">java.home</span>&gt;</span>/usr/local/java/jdk1.8.0_102<span class="tag">&lt;/<span class="name">java.home</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>jre<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jre<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">version</span>&gt;</span>8.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">scope</span>&gt;</span>system<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">systemPath</span>&gt;</span>$&#123;java.home&#125;/lib/rt.jar<span class="tag">&lt;/<span class="name">systemPath</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>去掉<code>&lt;java.home&gt;/usr/local/java/jdk1.8.0_102&lt;/java.home&gt;</code>配置，这时<code>java.home</code>变量继承自<code>eclipse</code>的<code>java.home</code>配置。从pom.xml文件的Effective POM可以查看到java.home变量被替换了，eclipse的java.home路径在<code>help-&gt;about eclipse-&gt;Installation Details-&gt;configuration</code>页可以找到。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/maven-note/" data-id="cjqemmdwq001rrg3kt3ig9bey" class="article-share-link">Partager</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">__('next') &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/">__('next') &raquo;</a>
   </nav>
 </section>
         
@@ -879,9 +940,9 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -891,7 +952,7 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -899,9 +960,13 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
@@ -917,10 +982,6 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
         
           <li>
             <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
           </li>
         
       </ul>
@@ -946,7 +1007,7 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -70,6 +70,110 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-hive-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/01/10/hive-note/" class="article-date">
+  <time datetime="2019-01-10T14:30:12.000Z" itemprop="datePublished">2019-01-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/01/10/hive-note/">hive 学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Hive-介绍"><a href="#Hive-介绍" class="headerlink" title="Hive 介绍"></a>Hive 介绍</h3><p>hive的<a href="https://hive.apache.org/" target="_blank" rel="noopener">官方文档</a>中有对hive的详细介绍，这里不再赘述。我们用一句话描述如下：<br>The Apache Hive ™ data warehouse software facilitates reading, writing, and managing large datasets residing in distributed storage using SQL. Structure can be projected onto data already in storage. A command line tool and JDBC driver are provided to connect users to Hive.</p>
+<h3 id="hive-的安装"><a href="#hive-的安装" class="headerlink" title="hive 的安装"></a>hive 的安装</h3><p>安装过程参考这里：<br><a href="https://cwiki.apache.org/confluence/display/Hive/GettingStarted" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/Hive/GettingStarted</a></p>
+<p>hive依赖于HADOOP，我们在上一篇<a href="../../../../2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>的基础上安装hive。</p>
+<p>首先下载hive，我们下载的时候，要选择适合我们HADOOP版本的hive，我们下载的稳定版为<a href="http://archive.apache.org/dist/hive/hive-1.2.2/" target="_blank" rel="noopener">apache-hive-1.2.2-bin.tar.gz</a>，我们将在HADOOP集群的namenode上面安装，即在master机器上面安装。将压缩包传到<code>/home/hadoop/</code>目录下。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/</span><br><span class="line">$ tar xzvf apache-hive-1.2.2-bin.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>解压后得到目录<code>apache-hive-1.2.2-bin</code>，我们看下压缩包中的内容：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/apache-hive-1.2.2-bin</span><br><span class="line">$ ls</span><br><span class="line">bin  conf  examples  hcatalog  lib  LICENSE  NOTICE  README.txt  RELEASE_NOTES.txt  scripts</span><br><span class="line">$</span><br><span class="line">$ ls conf/</span><br><span class="line">beeline-log4j.properties.template  hive-env.sh.template                 hive-log4j.properties.template</span><br><span class="line">hive-default.xml.template          hive-exec-log4j.properties.template  ivysettings.xml</span><br></pre></td></tr></table></figure></p>
+<p>配置HADOOP_HOME：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/apache-hive-1.2.2-bin/conf/</span><br><span class="line">$ cp hive-default.xml.template hive-site.xml</span><br><span class="line">$ cp hive-env.sh.template hive-env.sh</span><br><span class="line">$ vi hive-env.sh</span><br><span class="line"></span><br><span class="line">HADOOP_HOME=/home/hadoop/hadoop-2.7.3</span><br></pre></td></tr></table></figure></p>
+<p>到这里，hive就配置好了，可以运行了。但，不妨看下下面的<code>配置hive元数据的存储位置</code>，因为生产环境可能会这样用。我们这次的安装将不会执行这个步骤。</p>
+<p>配置hive元数据的存储位置（可选配置）<br>hive默认将元数据存储在<code>derby</code>数据库中（hive安装包自带），当然我们也可以选择存储在其他数据库，如mysql中。下面演示一下：<br>首先在MYSQL数据库中创建一个数据库，用于存储hive的元数据，我们就将库名创建为hive：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create database hive;</span><br></pre></td></tr></table></figure></p>
+<p>然后配置hive使用mysql存储元数据：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/apache-hive-1.2.2-bin/conf/</span><br><span class="line">$ vi hive-site.xml</span><br></pre></td></tr></table></figure></p>
+<p>修改下面部分，假定我们的数据库地址、用户名和密码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://192.168.1.188:3306/hive<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span></span><br><span class="line">      JDBC connect string for a JDBC metastore.</span><br><span class="line">      To use SSL to encrypt/authenticate the connection, provide database-specific SSL flag in the connection URL.</span><br><span class="line">      For example, jdbc:postgresql://myhost/db?ssl=true for postgres database.</span><br><span class="line">    <span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Driver class name for a JDBC metastore<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>root<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Username to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>root<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>password to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>最后，将mysql连接JDBC的jar包<a href="http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.42/mysql-connector-java-5.1.42.jar" target="_blank" rel="noopener">mysql-connector-java-5.1.42.jar</a>放到<code>apache-hive-1.2.2-bin/lib</code>目录下</p>
+<p>好了，以上这部分是<strong>可选配置</strong>部分。</p>
+<h3 id="启动hive"><a href="#启动hive" class="headerlink" title="启动hive"></a>启动hive</h3><p>初次启动hive，需在HDFS中创建几个目录，用于存储hive的数据，我们在安装hive的master节点执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hdfs dfs -mkdir /tmp</span><br><span class="line">$ ./bin/hdfs dfs -mkdir -p /user/hive/warehouse</span><br><span class="line">$</span><br><span class="line">$ ./bin/hdfs dfs -chmod g+w /tmp</span><br><span class="line">$ ./bin/hdfs dfs -chmod g+w /user/hive/warehouse</span><br></pre></td></tr></table></figure></p>
+<p>正式启动hive<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/apache-hive-1.2.2-bin/bin</span><br><span class="line">$ ./hive</span><br></pre></td></tr></table></figure></p>
+<p>启动的时候可能会报如下错误：</p>
+<pre><code>Exception in thread &quot;main&quot; java.lang.IllegalArgumentException: java.net.URISyntaxException: Relative path in absolute URI: ${system:java.io.tmpdir%7D/$%7Bsystem:user.name%7D
+    at org.apache.hadoop.fs.Path.initialize(Path.java:205)
+    at org.apache.hadoop.fs.Path.&lt;init&gt;(Path.java:171)
+    at org.apache.hadoop.hive.ql.session.SessionState.createSessionDirs(SessionState.java:659)
+    at org.apache.hadoop.hive.ql.session.SessionState.start(SessionState.java:582)
+    at org.apache.hadoop.hive.ql.session.SessionState.beginStart(SessionState.java:549)
+    at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:750)
+    at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:498)
+    at org.apache.hadoop.util.RunJar.run(RunJar.java:221)
+    at org.apache.hadoop.util.RunJar.main(RunJar.java:136)
+Caused by: java.net.URISyntaxException: Relative path in absolute URI: ${system:java.io.tmpdir%7D/$%7Bsystem:user.name%7D
+    at java.net.URI.checkPath(URI.java:1823)
+    at java.net.URI.&lt;init&gt;(URI.java:745)
+    at org.apache.hadoop.fs.Path.initialize(Path.java:202)
+    ... 12 more
+</code></pre><p>解决方法如下，先建目录：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/apache-hive-1.2.2-bin/</span><br><span class="line">$ mkdir iotmp</span><br></pre></td></tr></table></figure></p>
+<p>将<code>hive-site.xml</code>中</p>
+<ol>
+<li>包含<code>${system:java.io.tmpdir}</code>的配置项替换为上面的路径<code>/home/hadoop/apache-hive-1.2.2-bin/iotmp</code>，一共有4处；</li>
+<li>包含<code>${system:user.name}</code>的配置项替换为<code>hadoop</code>。<br>修改项如下：<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.exec.local.scratchdir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/apache-hive-1.2.2-bin/iotmp/hadoop<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Local scratch space for Hive jobs<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.downloaded.resources.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/apache-hive-1.2.2-bin/iotmp/$&#123;hive.session.id&#125;_resources<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Temporary local directory for added resources in the remote file system.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.querylog.location<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/apache-hive-1.2.2-bin/iotmp/hadoop<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Location of Hive run time structured log file<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.server2.logging.operation.log.location<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/apache-hive-1.2.2-bin/iotmp/hadoop/operation_logs<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Top level directory where operation logs are stored if logging functionality is enabled<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>重新启动hive：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/apache-hive-1.2.2-bin/bin</span><br><span class="line">$ ./hive</span><br><span class="line"></span><br><span class="line">Logging initialized using configuration <span class="keyword">in</span> jar:file:/home/hadoop/apache-hive-1.2.2-bin/lib/hive-common-1.2.2.jar!/hive-log4j.properties</span><br><span class="line">hive&gt; show databases;</span><br><span class="line">OK</span><br><span class="line">default</span><br><span class="line">Time taken: 0.821 seconds, Fetched: 1 row(s)</span><br><span class="line">hive&gt; </span><br><span class="line">    &gt; use default;</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.043 seconds</span><br><span class="line">hive&gt; </span><br><span class="line">    &gt; show tables;</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.094 seconds</span><br><span class="line">hive&gt;</span><br></pre></td></tr></table></figure></p>
+<p>至此，hive安装成功。从上面可知，hive有一个默认的数据库<code>default</code>，并且里面一张表也没有。</p>
+<h3 id="hive初体验"><a href="#hive初体验" class="headerlink" title="hive初体验"></a>hive初体验</h3><ul>
+<li><p>A longer tutorial that covers more features of HiveQL:<br><a href="https://cwiki.apache.org/confluence/display/Hive/Tutorial" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/Hive/Tutorial</a></p>
+</li>
+<li><p>The HiveQL Language Manual:<br><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/Hive/LanguageManual</a></p>
+</li>
+</ul>
+<h3 id="创建数据库："><a href="#创建数据库：" class="headerlink" title="创建数据库："></a>创建数据库：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; CREATE DATABASE IF NOT EXISTS tim;</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.323 seconds</span><br><span class="line">hive&gt;</span><br><span class="line">    &gt; show databases;</span><br><span class="line">OK</span><br><span class="line">default</span><br><span class="line">tim</span><br><span class="line">Time taken: 0.025 seconds, Fetched: 2 row(s)</span><br></pre></td></tr></table></figure>
+<p>同样，我们可以在HDFS中查看到：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hdfs dfs -ls /user/hive/warehouse</span><br><span class="line">Found 1 items</span><br><span class="line">drwxrwxr-x   - hadoop supergroup          0 2019-01-01 19:32 /user/hive/warehouse/tim.db</span><br></pre></td></tr></table></figure></p>
+<h3 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; use tim;</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.042 seconds</span><br><span class="line">hive&gt; </span><br><span class="line">    &gt; CREATE TABLE IF NOT EXISTS t_user (</span><br><span class="line">    &gt; id INT,</span><br><span class="line">    &gt; name STRING COMMENT <span class="string">'user name'</span>,</span><br><span class="line">    &gt; age INT COMMENT <span class="string">'user age'</span>,</span><br><span class="line">    &gt; sex STRING COMMENT <span class="string">'user sex'</span>,</span><br><span class="line">    &gt; birthday DATE COMMENT <span class="string">'user birthday'</span>,</span><br><span class="line">    &gt; address STRING COMMENT <span class="string">'user address'</span></span><br><span class="line">    &gt; )</span><br><span class="line">    &gt; COMMENT <span class="string">'This is the use info table'</span></span><br><span class="line">    &gt; ROW FORMAT DELIMITED</span><br><span class="line">    &gt;  FIELDS TERMINATED BY <span class="string">'\t'</span></span><br><span class="line">    &gt; STORED AS TEXTFILE;</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.521 seconds</span><br><span class="line">hive&gt; </span><br><span class="line">    &gt; show tables;</span><br><span class="line">OK</span><br><span class="line">t_user</span><br><span class="line">Time taken: 0.035 seconds, Fetched: 1 row(s)</span><br><span class="line">hive&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="查看表结构"><a href="#查看表结构" class="headerlink" title="查看表结构"></a>查看表结构</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; desc t_user;</span><br><span class="line">OK</span><br><span class="line">id                  	int</span><br><span class="line">name                	string              	user name</span><br><span class="line">age                 	int                 	user age</span><br><span class="line">sex                 	string              	user sex</span><br><span class="line">birthday            	date                	user birthday</span><br><span class="line">address             	string              	user address</span><br><span class="line">Time taken: 0.074 seconds, Fetched: 6 row(s)</span><br><span class="line">hive&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; INSERT INTO t_user(id, name, age, sex, birthday, address) VALUES(1, <span class="string">'Tim Ho'</span>, 23, <span class="string">'M'</span>, <span class="string">'1989-05-01'</span>, <span class="string">'Higher Education Mega Center South, Guangzhou city, Guangdong Province'</span>);</span><br><span class="line">Query ID = hadoop_20190102160558_640a90a7-9122-4650-af78-acb436e2643b</span><br><span class="line">Total <span class="built_in">jobs</span> = 3</span><br><span class="line">Launching Job 1 out of 3</span><br><span class="line">Number of reduce tasks is <span class="built_in">set</span> to 0 since there<span class="string">'s no reduce operator</span></span><br><span class="line"><span class="string">Starting Job = job_1546186928725_0015, Tracking URL = http://hadoop-host-master:8088/proxy/application_1546186928725_0015/</span></span><br><span class="line"><span class="string">Kill Command = /home/hadoop/hadoop-2.7.3/bin/hadoop job  -kill job_1546186928725_0015</span></span><br><span class="line"><span class="string">Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0</span></span><br><span class="line"><span class="string">2019-01-02 16:06:08,341 Stage-1 map = 0%,  reduce = 0%</span></span><br><span class="line"><span class="string">2019-01-02 16:06:14,565 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.39 sec</span></span><br><span class="line"><span class="string">MapReduce Total cumulative CPU time: 1 seconds 390 msec</span></span><br><span class="line"><span class="string">Ended Job = job_1546186928725_0015</span></span><br><span class="line"><span class="string">Stage-4 is selected by condition resolver.</span></span><br><span class="line"><span class="string">Stage-3 is filtered out by condition resolver.</span></span><br><span class="line"><span class="string">Stage-5 is filtered out by condition resolver.</span></span><br><span class="line"><span class="string">Moving data to: hdfs://hadoop-cluster-ha/user/hive/warehouse/tim.db/t_user/.hive-staging_hive_2019-01-02_16-05-58_785_7094384272339204067-1/-ext-10000</span></span><br><span class="line"><span class="string">Loading data to table tim.t_user</span></span><br><span class="line"><span class="string">Table tim.t_user stats: [numFiles=1, numRows=1, totalSize=96, rawDataSize=95]</span></span><br><span class="line"><span class="string">MapReduce Jobs Launched: </span></span><br><span class="line"><span class="string">Stage-Stage-1: Map: 1   Cumulative CPU: 1.39 sec   HDFS Read: 4763 HDFS Write: 162 SUCCESS</span></span><br><span class="line"><span class="string">Total MapReduce CPU Time Spent: 1 seconds 390 msec</span></span><br><span class="line"><span class="string">OK</span></span><br><span class="line"><span class="string">Time taken: 17.079 seconds</span></span><br><span class="line"><span class="string">hive&gt;</span></span><br></pre></td></tr></table></figure>
+<p>执行插入操作它会产生一个mapReduce任务。</p>
+<h3 id="查询数据"><a href="#查询数据" class="headerlink" title="查询数据"></a>查询数据</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; select * from t_user;</span><br><span class="line">OK</span><br><span class="line">1	Tim Ho	23	M	1989-05-01	Higher Education Mega Center South, Guangzhou city, Guangdong Province</span><br><span class="line">Time taken: 0.196 seconds, Fetched: 1 row(s)</span><br><span class="line">hive&gt; </span><br><span class="line">    &gt; select * from t_user <span class="built_in">where</span> name=<span class="string">'Tim Ho'</span>;</span><br><span class="line">OK</span><br><span class="line">1	Tim Ho	23	M	1989-05-01	Higher Education Mega Center South, Guangzhou city, Guangdong Province</span><br><span class="line">Time taken: 0.258 seconds, Fetched: 1 row(s)</span><br><span class="line">hive&gt; </span><br><span class="line">    &gt; select count(*) from t_user;</span><br><span class="line">Query ID = hadoop_20190102161100_d60df721-539d-4e5b-a3db-a4951ac884b4</span><br><span class="line">Total <span class="built_in">jobs</span> = 1</span><br><span class="line">Launching Job 1 out of 1</span><br><span class="line">Number of reduce tasks determined at compile time: 1</span><br><span class="line">In order to change the average load <span class="keyword">for</span> a reducer (<span class="keyword">in</span> bytes):</span><br><span class="line">  <span class="built_in">set</span> hive.exec.reducers.bytes.per.reducer=&lt;number&gt;</span><br><span class="line">In order to <span class="built_in">limit</span> the maximum number of reducers:</span><br><span class="line">  <span class="built_in">set</span> hive.exec.reducers.max=&lt;number&gt;</span><br><span class="line">In order to <span class="built_in">set</span> a constant number of reducers:</span><br><span class="line">  <span class="built_in">set</span> mapreduce.job.reduces=&lt;number&gt;</span><br><span class="line">Starting Job = job_1546186928725_0016, Tracking URL = http://hadoop-host-master:8088/proxy/application_1546186928725_0016/</span><br><span class="line">Kill Command = /home/hadoop/hadoop-2.7.3/bin/hadoop job  -<span class="built_in">kill</span> job_1546186928725_0016</span><br><span class="line">Hadoop job information <span class="keyword">for</span> Stage-1: number of mappers: 1; number of reducers: 1</span><br><span class="line">2019-01-02 16:11:10,739 Stage-1 map = 0%,  reduce = 0%</span><br><span class="line">2019-01-02 16:11:16,997 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.05 sec</span><br><span class="line">2019-01-02 16:11:23,280 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.37 sec</span><br><span class="line">MapReduce Total cumulative CPU time: 2 seconds 370 msec</span><br><span class="line">Ended Job = job_1546186928725_0016</span><br><span class="line">MapReduce Jobs Launched: </span><br><span class="line">Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.37 sec   HDFS Read: 7285 HDFS Write: 2 SUCCESS</span><br><span class="line">Total MapReduce CPU Time Spent: 2 seconds 370 msec</span><br><span class="line">OK</span><br><span class="line">1</span><br><span class="line">Time taken: 24.444 seconds, Fetched: 1 row(s)</span><br><span class="line">hive&gt;</span><br></pre></td></tr></table></figure>
+<p>由上面可知，执行简单的查询操作不会启动mapReduce，但执行像COUNT这样的统计操作将会产生一个mapReduce。</p>
+<h3 id="从文件中导入数据"><a href="#从文件中导入数据" class="headerlink" title="从文件中导入数据"></a>从文件中导入数据</h3><p>语法：</p>
+<pre><code>LOAD DATA [LOCAL] INPATH &apos;filepath&apos; [OVERWRITE] INTO TABLE tablename [PARTITION (partcol1=val1, partcol2=val2 ...)]
+</code></pre><p>我们可以按定义表结构时的使用的字段分隔符(\t)，将数据存放在文本文件里，然后使用LOAD命令来导入。例如我们将数据存放在<code>/home/hadoop/user.txt</code>中：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2	scott	25	M	1977-10-21	USA</span><br><span class="line">3	tiger	21	F	1977-08-12	UK</span><br></pre></td></tr></table></figure></p>
+<p>然后在hive中执行LOAD命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; LOAD DATA LOCAL INPATH <span class="string">'/home/hadoop/user.txt'</span> INTO TABLE t_user;</span><br><span class="line">Loading data to table tim.t_user</span><br><span class="line">Table tim.t_user stats: [numFiles=2, numRows=0, totalSize=151, rawDataSize=0]</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.214 seconds</span><br><span class="line">hive&gt; </span><br><span class="line">    &gt; select * from t_user;</span><br><span class="line">OK</span><br><span class="line">1	Tim Ho	23	M	1989-05-01	Higher Education Mega Center South, Guangzhou city, Guangdong Province</span><br><span class="line">2	scott	25	M	1977-10-21	USA</span><br><span class="line">3	tiger	21	F	1977-08-12	UK</span><br><span class="line">Time taken: 0.085 seconds, Fetched: 3 row(s)</span><br><span class="line">hive&gt;</span><br></pre></td></tr></table></figure></p>
+<p>未完待续……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="cjqta4i3q000l7y3kap5zb6lh" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-hadoop-cluster-ha" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -188,7 +292,7 @@ slave3:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjqemmdw50009rg3k8jmlt8gt" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjqta4i3r000q7y3k9nzngcja" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -282,7 +386,7 @@ by mortbay.org.
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjqemmdwf000trg3ku486lljh" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjqta4i3u000x7y3kptbw11ov" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -333,7 +437,7 @@ slave1:
 slave2:
     ip: 192.168.56.112
     hostname: hadoop-host-slave-2
-</code></pre><h3 id="下面开始master的安装"><a href="#下面开始master的安装" class="headerlink" title="下面开始master的安装"></a>下面开始master的安装</h3><p>在虚拟机中安装<code>master</code>的过程中我们会设置一个用户用于登录，我们将用户名、密码都设为<code>hadoop</code>，当然也可以为其他名字，其他安装过程略。安装好之后，使用默认的网关配置NAT，NAT可以访问外网，我们将<code>jdk-8u102-linux-x64.tar.gz</code>和<code>hadoop-2.7.3.tar.gz</code>从它们的官网下载到用户的<code>/home/hadoop/</code>目录下。或在实体机中通过SCP命令传进去。然后将网关设置为<code>Host-only Adapter</code>，如下图所示。</p>
+</code></pre><h3 id="下面开始master的安装"><a href="#下面开始master的安装" class="headerlink" title="下面开始master的安装"></a>下面开始master的安装</h3><p>在虚拟机中安装<code>master</code>的过程中我们会设置一个用户用于登录，我们将用户名、密码都设为<code>hadoop</code>，当然也可以为其他名字，其他安装过程略。安装好之后，使用默认的网关配置NAT，NAT可以访问外网，我们将<code>jdk-8u102-linux-x64.tar.gz</code>和<a href="http://archive.apache.org/dist/hadoop/core/hadoop-2.7.3/" target="_blank" rel="noopener">hadoop-2.7.3.tar.gz</a>从它们的官网下载到用户的<code>/home/hadoop/</code>目录下。或在实体机中通过SCP命令传进去。然后将网关设置为<code>Host-only Adapter</code>，如下图所示。</p>
 <p><img src="/img/hadoop-2.png" alt="" title="网络配置"></p>
 <p>网关设置好了之后，我们接下来配置IP地址。在<code>master</code>中<code>[Settings] -&gt; [Network] -&gt; [Wired 这里打开] -&gt; [IPv4]</code>按如下设置：</p>
 <p><img src="/img/hadoop-3.png" alt="" title="网络配置"></p>
@@ -412,7 +516,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjqemmdw8000drg3k27ulvu7z" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjqta4i3m000d7y3kwu4nr55u" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -536,7 +640,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjqemmdwp001org3kjb2aw143" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjqta4i41001n7y3krfwyhun0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -648,7 +752,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjqemmdwl001brg3khs0p1ubv" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjqta4i3y001e7y3ktbm2gxl1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -717,7 +821,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjqemmdwn001irg3ko7g2191p" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjqta4i44001u7y3k6scjowj4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -887,7 +991,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjqemmdwm001erg3kiixmzmhs" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjqta4i3z001h7y3k8xrie7a0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -966,7 +1070,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjqemmdvu0000rg3k4sr6xyuy" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjqta4i3800007y3k711mnqks" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1364,203 +1468,7 @@ GET people/user/_search
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjqemmdwd000mrg3kf173ytte" class="article-share-link">Partager</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-elasticsearch-cluster" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/09/17/elasticsearch-cluster/" class="article-date">
-  <time datetime="2018-09-17T02:36:12.000Z" itemprop="datePublished">2018-09-17</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/17/elasticsearch-cluster/">elasticsearch 集群的搭建</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>下面说说elasticsearch集群的搭建，同样是使用前面例子<a href="../../../../2018/09/16/elasticsearch-install" title="elasticsearch 安装">elasticsearch 单节点安装</a>使用的<code>elasticsearch-6.4.0.tar.gz</code>版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。</p>
-<h3 id="下面开始搭建elasticsearch集群"><a href="#下面开始搭建elasticsearch集群" class="headerlink" title="下面开始搭建elasticsearch集群"></a>下面开始搭建elasticsearch集群</h3><p>创建一个目录用于存放集群使用到的所有实例信息<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mkdir elasticsearchCluster	<span class="comment"># 集群的文件都放在这里</span></span><br></pre></td></tr></table></figure></p>
-<p>将一个elasticsearch压缩包放到这个目录，我之前已在ProjectD目录下载好了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster</span><br><span class="line">$ cp /home/hewentian/ProjectD/elasticsearch-6.4.0.tar.gz ./</span><br><span class="line">$ tar xzvf elasticsearch-6.4.0.tar.gz</span><br><span class="line"></span><br><span class="line">为方便起见，这里将其重命名为elasticsearch-node1，先将elasticsearch-node1配置好，</span><br><span class="line">后面会将其复制为elasticsearch-node2, elasticsearch-node3</span><br><span class="line">$ mv elasticsearch-6.4.0 elasticsearch-node1</span><br></pre></td></tr></table></figure></p>
-<p>对<code>elasticsearch-node1</code>进行设置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node1/config</span><br><span class="line">$ vi elasticsearch.yml 		<span class="comment"># 增加下面的配置</span></span><br><span class="line"></span><br><span class="line">cluster.name: hewentian-cluster	<span class="comment"># 配置集群的名字</span></span><br><span class="line">node.name: node-1		<span class="comment"># 配置集群下的节点的名字</span></span><br><span class="line"></span><br><span class="line">node.master: <span class="literal">true</span>		<span class="comment"># 是否有资格被选举为master节点， 默认为 true</span></span><br><span class="line">node.data: <span class="literal">true</span>			<span class="comment"># 设置该节点是否存储数据， 默认为 true</span></span><br><span class="line"></span><br><span class="line">network.host: 127.0.0.1		<span class="comment"># 设置本机IP地址</span></span><br><span class="line">http.port: 9201			<span class="comment"># 将端口设置成9201</span></span><br><span class="line">transport.tcp.port: 9301	<span class="comment"># 内部节点之间沟通的端口</span></span><br><span class="line"></span><br><span class="line">discovery.zen.ping.unicast.hosts: [<span class="string">"127.0.0.1:9301"</span>, <span class="string">"127.0.0.1:9302"</span>, <span class="string">"127.0.0.1:9303"</span>]</span><br><span class="line"></span><br><span class="line">discovery.zen.minimum_master_nodes: 2	<span class="comment"># total number of master-eligible nodes / 2 + 1</span></span><br><span class="line"></span><br><span class="line">action.destructive_requires_name: <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">允许跨域，否则 elasticsearch head 不能访问 elasticsearch</span><br><span class="line">http.cors.enabled: <span class="literal">true</span></span><br><span class="line">http.cors.allow-origin: <span class="string">"*"</span></span><br></pre></td></tr></table></figure></p>
-<p>这样一个节点就配置好了，我们只要以这个为蓝本，复制出两份，并修改其中的三点：node.name、http.port、transport.tcp.port即可。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster</span><br><span class="line">$ cp -r elasticsearch-node1 elasticsearch-node2</span><br><span class="line">$ cp -r elasticsearch-node1 elasticsearch-node3</span><br><span class="line"></span><br><span class="line">$ ls </span><br><span class="line">elasticsearch-6.4.0.tar.gz  elasticsearch-node1  elasticsearch-node2  elasticsearch-node3</span><br><span class="line"></span><br><span class="line">对 elasticsearch-node2 进行设置，只修改如下三项</span><br><span class="line">$ vi /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node2/config/elasticsearch.yml</span><br><span class="line"></span><br><span class="line">node.name: node-2</span><br><span class="line">http.port: 9202</span><br><span class="line">transport.tcp.port: 9302</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">对 elasticsearch-node3 进行设置，只修改如下三项</span><br><span class="line">$ vi /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node3/config/elasticsearch.yml</span><br><span class="line"></span><br><span class="line">node.name: node-3</span><br><span class="line">http.port: 9203</span><br><span class="line">transport.tcp.port: 9303</span><br></pre></td></tr></table></figure></p>
-<p>内存大小的设置，根据机器内存大小而设置，一般不超过系统总内存的一半，分别对三个节点进行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node1/config/</span><br><span class="line">$ vi jvm.options</span><br><span class="line"></span><br><span class="line">-Xms1g</span><br><span class="line">-Xmx1g</span><br></pre></td></tr></table></figure></p>
-<p>在每个节点所在的机器上都作下面的配置（下面是根据我机器的情况作的配置，我的是伪集群，所以只配置一次）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ su root			<span class="comment"># 必须在 root 下才有权限修改系统配置文件</span></span><br><span class="line">Password: </span><br><span class="line">$ vi /etc/security/limits.conf	<span class="comment"># 添加如下配置</span></span><br><span class="line">* soft nofile 65536		<span class="comment"># 上面第一个错误有提示</span></span><br><span class="line">* hard nofile 131072		<span class="comment"># 一般为 soft nofile 的2倍</span></span><br><span class="line">* soft nproc 4096		<span class="comment"># 这个设置线程数</span></span><br><span class="line">* hard nproc 8192</span><br><span class="line"></span><br><span class="line">$ vi /etc/sysctl.conf		<span class="comment"># 添加如下配置</span></span><br><span class="line">vm.max_map_count=262144</span><br><span class="line"></span><br><span class="line">$ sysctl -p			<span class="comment"># 最后执行这个命令，你会见到如下输出</span></span><br><span class="line">vm.max_map_count=262144</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">exit</span>				<span class="comment"># 退出 root</span></span><br></pre></td></tr></table></figure></p>
-<p>分别启动三个节点：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node1/bin</span><br><span class="line">$ ./elasticsearch</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node2/bin</span><br><span class="line">$ ./elasticsearch</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node3/bin</span><br><span class="line">$ ./elasticsearch</span><br></pre></td></tr></table></figure></p>
-<p>部分输出如下：</p>
-<pre><code>[2018-09-17T17:27:08,325][INFO ][o.e.n.Node               ] [node-1] initializing ...
-[2018-09-17T17:27:08,430][INFO ][o.e.e.NodeEnvironment    ] [node-1] using [1] data paths, mounts [[/ (/dev/sda2)]], net usable_space [59.7gb], net total_space [101.7gb], types [ext4]
-
-[2018-09-17T17:27:19,552][DEBUG][o.e.a.ActionModule       ] Using REST wrapper from plugin org.elasticsearch.xpack.security.Security
-[2018-09-17T17:27:19,878][INFO ][o.e.d.DiscoveryModule    ] [node-1] using discovery type [zen]
-[2018-09-17T17:27:21,289][INFO ][o.e.n.Node               ] [node-1] initialized
-[2018-09-17T17:27:21,289][INFO ][o.e.n.Node               ] [node-1] starting ...
-[2018-09-17T17:27:21,496][INFO ][o.e.t.TransportService   ] [node-1] publish_address {127.0.0.1:9301}, bound_addresses {127.0.0.1:9301}
-[2018-09-17T17:27:24,571][WARN ][o.e.d.z.ZenDiscovery     ] [node-1] not enough master nodes discovered during pinging (found [[Candidate{node={node-1}{D7fISYxgQFahYdTEbqMO4g}{7x0Hu4tQTP-N73j_A073DA}{127.0.0.1}{127.0.0.1:9301}{ml.machine_memory=8305086464, xpack.installed=true, ml.max_open_jobs=20, ml.enabled=true}, clusterStateVersion=-1}]], but needed [2]), pinging again
-
-发现节点 node-2
-[2018-09-17T17:28:37,362][INFO ][o.e.c.s.MasterService    ] [node-1] zen-disco-elected-as-master ([1] nodes joined)[, ], reason: new_master {node-1}{D7fISYxgQFahYdTEbqMO4g}{7x0Hu4tQTP-N73j_A073DA}{127.0.0.1}{127.0.0.1:9301}{ml.machine_memory=8305086464, xpack.installed=true, ml.max_open_jobs=20, ml.enabled=true}, added {{node-2}{LNHhP-WPSDaGZJeRHYwBQQ}{zRaTzS0OQkyfCdaRhczR9A}{127.0.0.1}{127.0.0.1:9302}{ml.machine_memory=8305086464, ml.max_open_jobs=20, xpack.installed=true, ml.enabled=true},}
-
-发现节点 node-3
-[node-1] zen-disco-node-join, reason: added {{node-3}{4rqo1NL0R8KVCAkzI0w4UQ}{s599uwThRGi74YE4WFULIg}{127.0.0.1}{127.0.0.1:9303}{ml.machine_memory=8305086464, ml.max_open_jobs=20, xpack.installed=true, ml.enabled=true},}
-[2018-09-17T17:29:27,022][INFO ][o.e.c.s.ClusterApplierService] [node-1] added {{node-3}{4rqo1NL0R8KVCAkzI0w4UQ}{s599uwThRGi74YE4WFULIg}{127.0.0.1}{127.0.0.1:9303}{ml.machine_memory=8305086464, ml.max_open_jobs=20, xpack.installed=true, ml.enabled=true},}, reason: apply cluster state (from master [master {node-1}{D7fISYxgQFahYdTEbqMO4g}{7x0Hu4tQTP-N73j_A073DA}{127.0.0.1}{127.0.0.1:9301}{ml.machine_memory=8305086464, xpack.installed=true, ml.max_open_jobs=20, ml.enabled=true} committed version [15] source [zen-disco-node-join]])
-</code></pre><p>在浏览器中输入如下地址：<br><a href="http://localhost:9201/" target="_blank" rel="noopener">http://localhost:9201/</a><br><a href="http://localhost:9202/" target="_blank" rel="noopener">http://localhost:9202/</a><br><a href="http://localhost:9203/" target="_blank" rel="noopener">http://localhost:9203/</a></p>
-<pre><code>{
-  &quot;name&quot; : &quot;node-1&quot;,
-  &quot;cluster_name&quot; : &quot;hewentian-cluster&quot;,
-  &quot;cluster_uuid&quot; : &quot;odUSNw8jS4q-w_Vl66q1qg&quot;,
-  &quot;version&quot; : {
-    &quot;number&quot; : &quot;6.4.0&quot;,
-    &quot;build_flavor&quot; : &quot;default&quot;,
-    &quot;build_type&quot; : &quot;tar&quot;,
-    &quot;build_hash&quot; : &quot;595516e&quot;,
-    &quot;build_date&quot; : &quot;2018-08-17T23:18:47.308994Z&quot;,
-    &quot;build_snapshot&quot; : false,
-    &quot;lucene_version&quot; : &quot;7.4.0&quot;,
-    &quot;minimum_wire_compatibility_version&quot; : &quot;5.6.0&quot;,
-    &quot;minimum_index_compatibility_version&quot; : &quot;5.0.0&quot;
-  },
-  &quot;tagline&quot; : &quot;You Know, for Search&quot;
-}
-
-{
-  &quot;name&quot; : &quot;node-2&quot;,
-  &quot;cluster_name&quot; : &quot;hewentian-cluster&quot;,
-  &quot;cluster_uuid&quot; : &quot;odUSNw8jS4q-w_Vl66q1qg&quot;,
-  &quot;version&quot; : {
-    &quot;number&quot; : &quot;6.4.0&quot;,
-    &quot;build_flavor&quot; : &quot;default&quot;,
-    &quot;build_type&quot; : &quot;tar&quot;,
-    &quot;build_hash&quot; : &quot;595516e&quot;,
-    &quot;build_date&quot; : &quot;2018-08-17T23:18:47.308994Z&quot;,
-    &quot;build_snapshot&quot; : false,
-    &quot;lucene_version&quot; : &quot;7.4.0&quot;,
-    &quot;minimum_wire_compatibility_version&quot; : &quot;5.6.0&quot;,
-    &quot;minimum_index_compatibility_version&quot; : &quot;5.0.0&quot;
-  },
-  &quot;tagline&quot; : &quot;You Know, for Search&quot;
-}
-
-{
-  &quot;name&quot; : &quot;node-3&quot;,
-  &quot;cluster_name&quot; : &quot;hewentian-cluster&quot;,
-  &quot;cluster_uuid&quot; : &quot;odUSNw8jS4q-w_Vl66q1qg&quot;,
-  &quot;version&quot; : {
-    &quot;number&quot; : &quot;6.4.0&quot;,
-    &quot;build_flavor&quot; : &quot;default&quot;,
-    &quot;build_type&quot; : &quot;tar&quot;,
-    &quot;build_hash&quot; : &quot;595516e&quot;,
-    &quot;build_date&quot; : &quot;2018-08-17T23:18:47.308994Z&quot;,
-    &quot;build_snapshot&quot; : false,
-    &quot;lucene_version&quot; : &quot;7.4.0&quot;,
-    &quot;minimum_wire_compatibility_version&quot; : &quot;5.6.0&quot;,
-    &quot;minimum_index_compatibility_version&quot; : &quot;5.0.0&quot;
-  },
-  &quot;tagline&quot; : &quot;You Know, for Search&quot;
-}
-</code></pre><p>启动elasticsearch-head，我们就可以看到集群如下图所示：<br><img src="/img/elasticsearch-cluster-1.png" alt="" title="elasticsearch-集群"><br>从图中可以看到<code>node-1</code>已经成为master节点。我们尝试往集群中PUT一些数据，分别往3个不同的端口中PUT数据：</p>
-<pre>
-curl -XPUT 'http://localhost:9201/twitter/doc/1?pretty' -H 'Content-Type: application/json' -d '
-{
-    "user": "kimchy",
-    "post_date": "2009-11-15T13:12:00",
-    "message": "Trying out Elasticsearch, so far so good?"
-}'
-
-curl -XPUT 'http://localhost:9202/twitter/doc/2?pretty' -H 'Content-Type: application/json' -d '
-{
-    "user": "kimchy",
-    "post_date": "2009-11-15T14:12:12",
-    "message": "Another tweet, will it be indexed?"
-}'
-
-curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: application/json' -d '
-{
-    "user": "elastic",
-    "post_date": "2010-01-15T01:46:38",
-    "message": "Building the site, should be kewl"
-}'
-</pre>
-
-<p>输出结果如下：</p>
-<pre>
-{
-  "_index" : "twitter",
-  "_type" : "doc",
-  "_id" : "1",
-  "_version" : 1,
-  "result" : "created",
-  "_shards" : {
-    "total" : 2,
-    "successful" : 2,
-    "failed" : 0
-  },
-  "_seq_no" : 0,
-  "_primary_term" : 1
-}
-
-{
-  "_index" : "twitter",
-  "_type" : "doc",
-  "_id" : "2",
-  "_version" : 1,
-  "result" : "created",
-  "_shards" : {
-    "total" : 2,
-    "successful" : 2,
-    "failed" : 0
-  },
-  "_seq_no" : 0,
-  "_primary_term" : 1
-}
-
-{
-  "_index" : "twitter",
-  "_type" : "doc",
-  "_id" : "3",
-  "_version" : 1,
-  "result" : "created",
-  "_shards" : {
-    "total" : 2,
-    "successful" : 2,
-    "failed" : 0
-  },
-  "_seq_no" : 0,
-  "_primary_term" : 1
-}
-</pre>
-
-<h4 id="我们在elasticsearch-head中查看数据"><a href="#我们在elasticsearch-head中查看数据" class="headerlink" title="我们在elasticsearch-head中查看数据"></a>我们在elasticsearch-head中查看数据</h4><p>elasticsearch-集群状态：<br><img src="/img/elasticsearch-cluster-2.png" alt="" title="elasticsearch-集群状态"></p>
-<p>elasticsearch-集群数据<br><img src="/img/elasticsearch-cluster-3.png" alt="" title="elasticsearch-集群数据"></p>
-<p>至此，集群搭建结束。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjqemmdw40008rg3kkwvx9k83" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjqta4i3p000j7y3k1b7nppad" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1575,7 +1483,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">__('next') &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">__('next') &raquo;</a>
   </nav>
 </section>
         
@@ -1583,9 +1491,9 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -1595,7 +1503,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1603,9 +1511,13 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
@@ -1621,10 +1533,6 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
         
           <li>
             <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
           </li>
         
       </ul>
@@ -1650,7 +1558,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

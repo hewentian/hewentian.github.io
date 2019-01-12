@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -70,6 +70,202 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-elasticsearch-cluster" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/17/elasticsearch-cluster/" class="article-date">
+  <time datetime="2018-09-17T02:36:12.000Z" itemprop="datePublished">2018-09-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/17/elasticsearch-cluster/">elasticsearch 集群的搭建</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面说说elasticsearch集群的搭建，同样是使用前面例子<a href="../../../../2018/09/16/elasticsearch-install" title="elasticsearch 安装">elasticsearch 单节点安装</a>使用的<code>elasticsearch-6.4.0.tar.gz</code>版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。</p>
+<h3 id="下面开始搭建elasticsearch集群"><a href="#下面开始搭建elasticsearch集群" class="headerlink" title="下面开始搭建elasticsearch集群"></a>下面开始搭建elasticsearch集群</h3><p>创建一个目录用于存放集群使用到的所有实例信息<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mkdir elasticsearchCluster	<span class="comment"># 集群的文件都放在这里</span></span><br></pre></td></tr></table></figure></p>
+<p>将一个elasticsearch压缩包放到这个目录，我之前已在ProjectD目录下载好了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster</span><br><span class="line">$ cp /home/hewentian/ProjectD/elasticsearch-6.4.0.tar.gz ./</span><br><span class="line">$ tar xzvf elasticsearch-6.4.0.tar.gz</span><br><span class="line"></span><br><span class="line">为方便起见，这里将其重命名为elasticsearch-node1，先将elasticsearch-node1配置好，</span><br><span class="line">后面会将其复制为elasticsearch-node2, elasticsearch-node3</span><br><span class="line">$ mv elasticsearch-6.4.0 elasticsearch-node1</span><br></pre></td></tr></table></figure></p>
+<p>对<code>elasticsearch-node1</code>进行设置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node1/config</span><br><span class="line">$ vi elasticsearch.yml 		<span class="comment"># 增加下面的配置</span></span><br><span class="line"></span><br><span class="line">cluster.name: hewentian-cluster	<span class="comment"># 配置集群的名字</span></span><br><span class="line">node.name: node-1		<span class="comment"># 配置集群下的节点的名字</span></span><br><span class="line"></span><br><span class="line">node.master: <span class="literal">true</span>		<span class="comment"># 是否有资格被选举为master节点， 默认为 true</span></span><br><span class="line">node.data: <span class="literal">true</span>			<span class="comment"># 设置该节点是否存储数据， 默认为 true</span></span><br><span class="line"></span><br><span class="line">network.host: 127.0.0.1		<span class="comment"># 设置本机IP地址</span></span><br><span class="line">http.port: 9201			<span class="comment"># 将端口设置成9201</span></span><br><span class="line">transport.tcp.port: 9301	<span class="comment"># 内部节点之间沟通的端口</span></span><br><span class="line"></span><br><span class="line">discovery.zen.ping.unicast.hosts: [<span class="string">"127.0.0.1:9301"</span>, <span class="string">"127.0.0.1:9302"</span>, <span class="string">"127.0.0.1:9303"</span>]</span><br><span class="line"></span><br><span class="line">discovery.zen.minimum_master_nodes: 2	<span class="comment"># total number of master-eligible nodes / 2 + 1</span></span><br><span class="line"></span><br><span class="line">action.destructive_requires_name: <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">允许跨域，否则 elasticsearch head 不能访问 elasticsearch</span><br><span class="line">http.cors.enabled: <span class="literal">true</span></span><br><span class="line">http.cors.allow-origin: <span class="string">"*"</span></span><br></pre></td></tr></table></figure></p>
+<p>这样一个节点就配置好了，我们只要以这个为蓝本，复制出两份，并修改其中的三点：node.name、http.port、transport.tcp.port即可。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster</span><br><span class="line">$ cp -r elasticsearch-node1 elasticsearch-node2</span><br><span class="line">$ cp -r elasticsearch-node1 elasticsearch-node3</span><br><span class="line"></span><br><span class="line">$ ls </span><br><span class="line">elasticsearch-6.4.0.tar.gz  elasticsearch-node1  elasticsearch-node2  elasticsearch-node3</span><br><span class="line"></span><br><span class="line">对 elasticsearch-node2 进行设置，只修改如下三项</span><br><span class="line">$ vi /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node2/config/elasticsearch.yml</span><br><span class="line"></span><br><span class="line">node.name: node-2</span><br><span class="line">http.port: 9202</span><br><span class="line">transport.tcp.port: 9302</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">对 elasticsearch-node3 进行设置，只修改如下三项</span><br><span class="line">$ vi /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node3/config/elasticsearch.yml</span><br><span class="line"></span><br><span class="line">node.name: node-3</span><br><span class="line">http.port: 9203</span><br><span class="line">transport.tcp.port: 9303</span><br></pre></td></tr></table></figure></p>
+<p>内存大小的设置，根据机器内存大小而设置，一般不超过系统总内存的一半，分别对三个节点进行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node1/config/</span><br><span class="line">$ vi jvm.options</span><br><span class="line"></span><br><span class="line">-Xms1g</span><br><span class="line">-Xmx1g</span><br></pre></td></tr></table></figure></p>
+<p>在每个节点所在的机器上都作下面的配置（下面是根据我机器的情况作的配置，我的是伪集群，所以只配置一次）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ su root			<span class="comment"># 必须在 root 下才有权限修改系统配置文件</span></span><br><span class="line">Password: </span><br><span class="line">$ vi /etc/security/limits.conf	<span class="comment"># 添加如下配置</span></span><br><span class="line">* soft nofile 65536		<span class="comment"># 上面第一个错误有提示</span></span><br><span class="line">* hard nofile 131072		<span class="comment"># 一般为 soft nofile 的2倍</span></span><br><span class="line">* soft nproc 4096		<span class="comment"># 这个设置线程数</span></span><br><span class="line">* hard nproc 8192</span><br><span class="line"></span><br><span class="line">$ vi /etc/sysctl.conf		<span class="comment"># 添加如下配置</span></span><br><span class="line">vm.max_map_count=262144</span><br><span class="line"></span><br><span class="line">$ sysctl -p			<span class="comment"># 最后执行这个命令，你会见到如下输出</span></span><br><span class="line">vm.max_map_count=262144</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">exit</span>				<span class="comment"># 退出 root</span></span><br></pre></td></tr></table></figure></p>
+<p>分别启动三个节点：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node1/bin</span><br><span class="line">$ ./elasticsearch</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node2/bin</span><br><span class="line">$ ./elasticsearch</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node3/bin</span><br><span class="line">$ ./elasticsearch</span><br></pre></td></tr></table></figure></p>
+<p>部分输出如下：</p>
+<pre><code>[2018-09-17T17:27:08,325][INFO ][o.e.n.Node               ] [node-1] initializing ...
+[2018-09-17T17:27:08,430][INFO ][o.e.e.NodeEnvironment    ] [node-1] using [1] data paths, mounts [[/ (/dev/sda2)]], net usable_space [59.7gb], net total_space [101.7gb], types [ext4]
+
+[2018-09-17T17:27:19,552][DEBUG][o.e.a.ActionModule       ] Using REST wrapper from plugin org.elasticsearch.xpack.security.Security
+[2018-09-17T17:27:19,878][INFO ][o.e.d.DiscoveryModule    ] [node-1] using discovery type [zen]
+[2018-09-17T17:27:21,289][INFO ][o.e.n.Node               ] [node-1] initialized
+[2018-09-17T17:27:21,289][INFO ][o.e.n.Node               ] [node-1] starting ...
+[2018-09-17T17:27:21,496][INFO ][o.e.t.TransportService   ] [node-1] publish_address {127.0.0.1:9301}, bound_addresses {127.0.0.1:9301}
+[2018-09-17T17:27:24,571][WARN ][o.e.d.z.ZenDiscovery     ] [node-1] not enough master nodes discovered during pinging (found [[Candidate{node={node-1}{D7fISYxgQFahYdTEbqMO4g}{7x0Hu4tQTP-N73j_A073DA}{127.0.0.1}{127.0.0.1:9301}{ml.machine_memory=8305086464, xpack.installed=true, ml.max_open_jobs=20, ml.enabled=true}, clusterStateVersion=-1}]], but needed [2]), pinging again
+
+发现节点 node-2
+[2018-09-17T17:28:37,362][INFO ][o.e.c.s.MasterService    ] [node-1] zen-disco-elected-as-master ([1] nodes joined)[, ], reason: new_master {node-1}{D7fISYxgQFahYdTEbqMO4g}{7x0Hu4tQTP-N73j_A073DA}{127.0.0.1}{127.0.0.1:9301}{ml.machine_memory=8305086464, xpack.installed=true, ml.max_open_jobs=20, ml.enabled=true}, added {{node-2}{LNHhP-WPSDaGZJeRHYwBQQ}{zRaTzS0OQkyfCdaRhczR9A}{127.0.0.1}{127.0.0.1:9302}{ml.machine_memory=8305086464, ml.max_open_jobs=20, xpack.installed=true, ml.enabled=true},}
+
+发现节点 node-3
+[node-1] zen-disco-node-join, reason: added {{node-3}{4rqo1NL0R8KVCAkzI0w4UQ}{s599uwThRGi74YE4WFULIg}{127.0.0.1}{127.0.0.1:9303}{ml.machine_memory=8305086464, ml.max_open_jobs=20, xpack.installed=true, ml.enabled=true},}
+[2018-09-17T17:29:27,022][INFO ][o.e.c.s.ClusterApplierService] [node-1] added {{node-3}{4rqo1NL0R8KVCAkzI0w4UQ}{s599uwThRGi74YE4WFULIg}{127.0.0.1}{127.0.0.1:9303}{ml.machine_memory=8305086464, ml.max_open_jobs=20, xpack.installed=true, ml.enabled=true},}, reason: apply cluster state (from master [master {node-1}{D7fISYxgQFahYdTEbqMO4g}{7x0Hu4tQTP-N73j_A073DA}{127.0.0.1}{127.0.0.1:9301}{ml.machine_memory=8305086464, xpack.installed=true, ml.max_open_jobs=20, ml.enabled=true} committed version [15] source [zen-disco-node-join]])
+</code></pre><p>在浏览器中输入如下地址：<br><a href="http://localhost:9201/" target="_blank" rel="noopener">http://localhost:9201/</a><br><a href="http://localhost:9202/" target="_blank" rel="noopener">http://localhost:9202/</a><br><a href="http://localhost:9203/" target="_blank" rel="noopener">http://localhost:9203/</a></p>
+<pre><code>{
+  &quot;name&quot; : &quot;node-1&quot;,
+  &quot;cluster_name&quot; : &quot;hewentian-cluster&quot;,
+  &quot;cluster_uuid&quot; : &quot;odUSNw8jS4q-w_Vl66q1qg&quot;,
+  &quot;version&quot; : {
+    &quot;number&quot; : &quot;6.4.0&quot;,
+    &quot;build_flavor&quot; : &quot;default&quot;,
+    &quot;build_type&quot; : &quot;tar&quot;,
+    &quot;build_hash&quot; : &quot;595516e&quot;,
+    &quot;build_date&quot; : &quot;2018-08-17T23:18:47.308994Z&quot;,
+    &quot;build_snapshot&quot; : false,
+    &quot;lucene_version&quot; : &quot;7.4.0&quot;,
+    &quot;minimum_wire_compatibility_version&quot; : &quot;5.6.0&quot;,
+    &quot;minimum_index_compatibility_version&quot; : &quot;5.0.0&quot;
+  },
+  &quot;tagline&quot; : &quot;You Know, for Search&quot;
+}
+
+{
+  &quot;name&quot; : &quot;node-2&quot;,
+  &quot;cluster_name&quot; : &quot;hewentian-cluster&quot;,
+  &quot;cluster_uuid&quot; : &quot;odUSNw8jS4q-w_Vl66q1qg&quot;,
+  &quot;version&quot; : {
+    &quot;number&quot; : &quot;6.4.0&quot;,
+    &quot;build_flavor&quot; : &quot;default&quot;,
+    &quot;build_type&quot; : &quot;tar&quot;,
+    &quot;build_hash&quot; : &quot;595516e&quot;,
+    &quot;build_date&quot; : &quot;2018-08-17T23:18:47.308994Z&quot;,
+    &quot;build_snapshot&quot; : false,
+    &quot;lucene_version&quot; : &quot;7.4.0&quot;,
+    &quot;minimum_wire_compatibility_version&quot; : &quot;5.6.0&quot;,
+    &quot;minimum_index_compatibility_version&quot; : &quot;5.0.0&quot;
+  },
+  &quot;tagline&quot; : &quot;You Know, for Search&quot;
+}
+
+{
+  &quot;name&quot; : &quot;node-3&quot;,
+  &quot;cluster_name&quot; : &quot;hewentian-cluster&quot;,
+  &quot;cluster_uuid&quot; : &quot;odUSNw8jS4q-w_Vl66q1qg&quot;,
+  &quot;version&quot; : {
+    &quot;number&quot; : &quot;6.4.0&quot;,
+    &quot;build_flavor&quot; : &quot;default&quot;,
+    &quot;build_type&quot; : &quot;tar&quot;,
+    &quot;build_hash&quot; : &quot;595516e&quot;,
+    &quot;build_date&quot; : &quot;2018-08-17T23:18:47.308994Z&quot;,
+    &quot;build_snapshot&quot; : false,
+    &quot;lucene_version&quot; : &quot;7.4.0&quot;,
+    &quot;minimum_wire_compatibility_version&quot; : &quot;5.6.0&quot;,
+    &quot;minimum_index_compatibility_version&quot; : &quot;5.0.0&quot;
+  },
+  &quot;tagline&quot; : &quot;You Know, for Search&quot;
+}
+</code></pre><p>启动elasticsearch-head，我们就可以看到集群如下图所示：<br><img src="/img/elasticsearch-cluster-1.png" alt="" title="elasticsearch-集群"><br>从图中可以看到<code>node-1</code>已经成为master节点。我们尝试往集群中PUT一些数据，分别往3个不同的端口中PUT数据：</p>
+<pre>
+curl -XPUT 'http://localhost:9201/twitter/doc/1?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T13:12:00",
+    "message": "Trying out Elasticsearch, so far so good?"
+}'
+
+curl -XPUT 'http://localhost:9202/twitter/doc/2?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "kimchy",
+    "post_date": "2009-11-15T14:12:12",
+    "message": "Another tweet, will it be indexed?"
+}'
+
+curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: application/json' -d '
+{
+    "user": "elastic",
+    "post_date": "2010-01-15T01:46:38",
+    "message": "Building the site, should be kewl"
+}'
+</pre>
+
+<p>输出结果如下：</p>
+<pre>
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "1",
+  "_version" : 1,
+  "result" : "created",
+  "_shards" : {
+    "total" : 2,
+    "successful" : 2,
+    "failed" : 0
+  },
+  "_seq_no" : 0,
+  "_primary_term" : 1
+}
+
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "2",
+  "_version" : 1,
+  "result" : "created",
+  "_shards" : {
+    "total" : 2,
+    "successful" : 2,
+    "failed" : 0
+  },
+  "_seq_no" : 0,
+  "_primary_term" : 1
+}
+
+{
+  "_index" : "twitter",
+  "_type" : "doc",
+  "_id" : "3",
+  "_version" : 1,
+  "result" : "created",
+  "_shards" : {
+    "total" : 2,
+    "successful" : 2,
+    "failed" : 0
+  },
+  "_seq_no" : 0,
+  "_primary_term" : 1
+}
+</pre>
+
+<h4 id="我们在elasticsearch-head中查看数据"><a href="#我们在elasticsearch-head中查看数据" class="headerlink" title="我们在elasticsearch-head中查看数据"></a>我们在elasticsearch-head中查看数据</h4><p>elasticsearch-集群状态：<br><img src="/img/elasticsearch-cluster-2.png" alt="" title="elasticsearch-集群状态"></p>
+<p>elasticsearch-集群数据<br><img src="/img/elasticsearch-cluster-3.png" alt="" title="elasticsearch-集群数据"></p>
+<p>至此，集群搭建结束。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjqta4i3d00027y3kmgl7hzzz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-elasticsearch-install" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -383,7 +579,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjqemmdw20006rg3kiiq26pqn" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjqta4i3h00067y3kscnmi8gf" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -619,7 +815,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjqemmdx40031rg3k3b0itpv8" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjqta4i4f002y7y3krxmks6y5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -692,7 +888,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjqemmdwz002lrg3k88nl5q2l" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjqta4i4c002o7y3k5dd0oxbz" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -790,7 +986,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjqemmdwx002erg3knepw43rt" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjqta4i4a002h7y3kjnv4ueqp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -957,7 +1153,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjqemmdwo001lrg3k1tupipen" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjqta4i40001l7y3kdhxfdf42" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
@@ -1015,7 +1211,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjqemmdwr001vrg3k5v6mtsca" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjqta4i4700277y3kvddnw6n2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>
@@ -1097,7 +1293,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjqemmdx0002prg3k45x819fq" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjqta4i4d002s7y3kulgm43bn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -1206,7 +1402,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjqemmdwt0022rg3k9kje2fgh" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjqta4i4500207y3k128x5hr8" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/neo4j/">neo4j</a></li></ul>
@@ -1285,103 +1481,9 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjqemmdwa000frg3k6ggqilts" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjqta4i3j00097y3kbrxzywj9" class="article-share-link">Share</a>
       
       
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-activemq-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/01/23/activemq-note/" class="article-date">
-  <time datetime="2018-01-23T12:46:34.000Z" itemprop="datePublished">2018-01-23</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/23/activemq-note/">activeMQ学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="Installation-Procedure-for-Unix"><a href="#Installation-Procedure-for-Unix" class="headerlink" title="Installation Procedure for Unix"></a>Installation Procedure for Unix</h3><p>Unix Binary Installation<br>This procedure explains how to download and install the binary distribution on a Unix system.<br><strong>NOTE</strong>: There are several alternative ways to perform this type of installation.</p>
-<ol>
-<li><p>Download the activemq zipped tarball file to the Unix machine, using either a browser or a tool, i.e., wget, scp, ftp, etc. for example:<br>(see <a href="http://activemq.apache.org/download.html" target="_blank" rel="noopener">Download</a> -&gt; “The latest stable release”)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://activemq.apache.org/path/tofile/apache-activemq-x.x.x-bin.tar.gz</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Extract the files from the zipped tarball into a directory of your choice. For example:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]</span><br><span class="line">$ tar zxvf activemq-x.x.x-bin.tar.gz</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="Starting-ActiveMQ"><a href="#Starting-ActiveMQ" class="headerlink" title="Starting ActiveMQ"></a>Starting ActiveMQ</h3><p>On Unix:<br>From a command shell, change to the installation directory and run ActiveMQ as a foregroud process:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq console</span><br></pre></td></tr></table></figure></p>
-<p>From a command shell, change to the installation directory and run ActiveMQ as a daemon process:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq start</span><br></pre></td></tr></table></figure></p>
-<h3 id="Stopping-ActiveMQ"><a href="#Stopping-ActiveMQ" class="headerlink" title="Stopping ActiveMQ"></a>Stopping ActiveMQ</h3><p>For both Windows and Unix installations, terminate ActiveMQ by typing “CTRL-C” in the console or command shell in which it is running.<br>If ActiveMQ was started in the background on Unix, the process can be killed, with the following:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> [activemq_install_dir]/bin</span><br><span class="line">$ ./activemq stop</span><br></pre></td></tr></table></figure></p>
-<h3 id="Testing-the-Installation"><a href="#Testing-the-Installation" class="headerlink" title="Testing the Installation"></a>Testing the Installation</h3><p>Using the administrative interface</p>
-<ul>
-<li>Open the administrative interface</li>
-<li>URL: <a href="http://127.0.0.1:8161/admin/" target="_blank" rel="noopener">http://127.0.0.1:8161/admin/</a></li>
-<li>Login: admin</li>
-<li>Passwort: admin</li>
-<li>Navigate to “Queues”</li>
-<li>Add a queue name and click create</li>
-<li>Send test message by klicking on “Send to”</li>
-</ul>
-<h3 id="Listen-port"><a href="#Listen-port" class="headerlink" title="Listen port"></a>Listen port</h3><p>ActiveMQ’s default port is 61616. From another window run netstat and search for port 61616.From a Unix command shell, type:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ netstat -nl | grep 61616</span><br><span class="line">tcp6       0      0 :::61616                :::*                    LISTEN</span><br></pre></td></tr></table></figure></p>
-<p>部分示例可以在<a href="https://github.com/hewentian/mq-demo">这里</a>找到。</p>
-<h3 id="安全问题"><a href="#安全问题" class="headerlink" title="安全问题"></a>安全问题</h3><p>ObjectMessage objects depend on Java serialization of marshal/unmarshal object payload. This process is generally considered unsafe as malicious payload can exploit the host system. That’s why starting with versions 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist packages that can be exchanged using ObjectMessages.</p>
-<p>ActiveMQ从5.12.2、5.13.0开始，如果传送的消息是一个<code>JavaBean</code>就要设置一个传输对象包名的白名单列表，否则会报如下错：</p>
-<pre><code>javax.jms.JMSException: Failed to build body from content. Serializable class not available to broker. Reason: java.lang.ClassNotFoundException: Forbidden class java.lang.Integer! This class is not trusted to be serialized as ObjectMessage payload. Please take a look at http://activemq.apache.org/objectmessage.html for more information on how to configure trusted classes.
-at org.apache.activemq.util.JMSExceptionSupport.create(JMSExceptionSupport.java:36)
-at org.apache.activemq.command.ActiveMQObjectMessage.getObject(ActiveMQObjectMessage.java:213)
-at com.hewentian.activemq.bean.Consumer$1.onMessage(Consumer.java:48)
-at org.apache.activemq.ActiveMQMessageConsumer.dispatch(ActiveMQMessageConsumer.java:1404)
-at org.apache.activemq.ActiveMQSessionExecutor.dispatch(ActiveMQSessionExecutor.java:131)
-at org.apache.activemq.ActiveMQSessionExecutor.iterate(ActiveMQSessionExecutor.java:202)
-at org.apache.activemq.thread.PooledTaskRunner.runTask(PooledTaskRunner.java:133)
-at org.apache.activemq.thread.PooledTaskRunner$1.run(PooledTaskRunner.java:48)
-at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-at java.lang.Thread.run(Thread.java:745)
-</code></pre><p>根据提示，我们打开<a href="http://activemq.apache.org/objectmessage.html" target="_blank" rel="noopener">http://activemq.apache.org/objectmessage.html</a>，可以发现解决此报错的详细说明。解决方法有二：<br><strong>注意： 我是用方法二解决的，方法一试了，无效。</strong></p>
-<ol>
-<li><p>The <code>setTrustedPackages()</code> method allows you to set the list of trusted packages you want to be to unserialize, like</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ActiveMQConnectionFactory factory = <span class="keyword">new</span> ActiveMQConnectionFactory(<span class="string">"tcp://localhost:61616"</span>);</span><br><span class="line">factory.setTrustedPackages(<span class="keyword">new</span> ArrayList(Arrays.asList(<span class="string">"org.apache.activemq.test,com.hewentian.activemq.bean"</span>.split(<span class="string">","</span>))));</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>The <code>setTrustAllPackages()</code> allows you to turn off security check and trust all classes. It’s useful for testing purposes.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ActiveMQConnectionFactory factory = <span class="keyword">new</span> ActiveMQConnectionFactory(<span class="string">"tcp://localhost:61616"</span>);</span><br><span class="line">factory.setTrustAllPackages(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>如果是springBoot工程，你也可以在<code>application.properties</code>作如下设置：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring.activemq.packages.trust-all=<span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">or</span><br><span class="line"></span><br><span class="line">spring.activemq.packages.trusted=&lt;package1&gt;,&lt;package2&gt;,&lt;package3&gt;</span><br></pre></td></tr></table></figure></p>
-<h3 id="消息的消费者接收消息可以采用两种方式："><a href="#消息的消费者接收消息可以采用两种方式：" class="headerlink" title="消息的消费者接收消息可以采用两种方式："></a>消息的消费者接收消息可以采用两种方式：</h3><ol>
-<li>consumer.receive() 或 consumer.receive(int timeout)；</li>
-<li>使用setMessageListener。<br>采用第一种方式，消息的接收者会一直等待下去，直到有消息到达，或者超时。后一种方式会注册一个监听器，当有消息到达的时候，会回调它的onMessage()方法。</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjqemmdvz0002rg3kwrw2ax0o" class="article-share-link">Partager</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/">activemq</a></li></ul>
-
     </footer>
   </div>
   
@@ -1392,7 +1494,7 @@ at java.lang.Thread.run(Thread.java:745)
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">__('next') &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">__('next') &raquo;</a>
   </nav>
 </section>
         
@@ -1400,9 +1502,9 @@ at java.lang.Thread.run(Thread.java:745)
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -1412,7 +1514,7 @@ at java.lang.Thread.run(Thread.java:745)
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1420,9 +1522,13 @@ at java.lang.Thread.run(Thread.java:745)
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
@@ -1438,10 +1544,6 @@ at java.lang.Thread.run(Thread.java:745)
         
           <li>
             <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
           </li>
         
       </ul>
@@ -1467,7 +1569,7 @@ at java.lang.Thread.run(Thread.java:745)
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos;, last_name) AS user_name, COUNT(*) AS c FROM user_ta">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2018-05-15T12:33:22.000Z">
+<meta property="og:updated_time" content="2019-01-12T09:37:49.384Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql 学习笔记">
 <meta name="twitter:description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos;, last_name) AS user_name, COUNT(*) AS c FROM user_ta">
@@ -62,7 +62,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -234,11 +234,23 @@
 <p>另外，如果需要查询 id 不是连续的一段，最佳的方法就是先找出 id ，然后用 in 查询，代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table WHERE id IN(10000, 100000, 1000000...);</span><br></pre></td></tr></table></figure></p>
 <p>再分享一点<br>查询字段一较长字符串的时候，表设计时要为该字段多加一个字段,如，存储网址的字段，查询的时候，不要直接查询字符串，效率低下，应该查诡该字串的crc32或md5 </p>
 <h3 id="mysql-查询一个字符串字段-最长的一条记录"><a href="#mysql-查询一个字符串字段-最长的一条记录" class="headerlink" title="mysql 查询一个字符串字段 最长的一条记录"></a>mysql 查询一个字符串字段 最长的一条记录</h3><p>参考：<a href="http://stackoverflow.com/questions/2357620/maxlengthfield-in-mysql" target="_blank" rel="noopener">http://stackoverflow.com/questions/2357620/maxlengthfield-in-mysql</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select name, length( name )</span><br><span class="line">from my_table</span><br><span class="line">where length( name ) = ( select max( length( name ) ) from my_table );</span><br></pre></td></tr></table></figure></p>
+<h3 id="skip-grant-tables-参数的使用"><a href="#skip-grant-tables-参数的使用" class="headerlink" title="skip-grant-tables 参数的使用"></a>skip-grant-tables 参数的使用</h3><p>这是个非常有用的mysql启动参数</p>
+<p>在my.cnf文件中增加一行：</p>
+<pre><code>[mysqld]
+skip-grant-tables
+</code></pre><p>或者以命令行参数启动mysql：</p>
+<pre><code>/usr/bin/mysqld_safe --skip-grant-tables &amp;
+</code></pre><p>登陆mysql修改管理员密码：</p>
+<pre><code>use mysql;
+update user set password=password(&apos;root&apos;) where user=&apos;root&apos;;
+flush privileges;
+exit;
+</code></pre><p>重启mysql</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjqemmdwu0025rg3kzs45v4z4" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjqta4i45001x7y3k7h4fhpdl" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
@@ -250,7 +262,7 @@
 <nav id="article-nav">
   
     <a href="/2017/12/08/install-jdk/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Récent</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           安装 JDK
@@ -260,7 +272,7 @@
   
   
     <a href="/2017/12/06/zookeeper-install-cluster/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Ancien</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">zookeeper 集群版安装方法</div>
     </a>
   
@@ -275,9 +287,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -287,7 +299,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -295,9 +307,13 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
@@ -313,10 +329,6 @@
         
           <li>
             <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
           </li>
         
       </ul>
@@ -342,7 +354,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

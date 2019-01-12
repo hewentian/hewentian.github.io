@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://github.com/img/hadoop-14.png">
 <meta property="og:image" content="https://github.com/img/hadoop-15.png">
 <meta property="og:image" content="https://github.com/img/hadoop-16.png">
-<meta property="og:updated_time" content="2019-01-02T03:31:01.683Z">
+<meta property="og:updated_time" content="2019-01-12T09:37:19.225Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hadoop 集群的搭建">
 <meta name="twitter:description" content="本篇将说说hadoop集群的搭建，这里说的集群是真集群，不是伪集群。不过，这里的真集群是在虚拟机环境中搭建的。 在我的笔记本电脑中，安装虚拟机VirtualBox，在虚拟机中安装三台服务器：master、slave1、slave2来搭建hadoop集群。安装好VirtualBox后，启动它。依次点File -&amp;gt; Host Network Manager -&amp;gt; Create，来创建一个网">
@@ -79,7 +79,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -127,7 +127,7 @@ slave1:
 slave2:
     ip: 192.168.56.112
     hostname: hadoop-host-slave-2
-</code></pre><h3 id="下面开始master的安装"><a href="#下面开始master的安装" class="headerlink" title="下面开始master的安装"></a>下面开始master的安装</h3><p>在虚拟机中安装<code>master</code>的过程中我们会设置一个用户用于登录，我们将用户名、密码都设为<code>hadoop</code>，当然也可以为其他名字，其他安装过程略。安装好之后，使用默认的网关配置NAT，NAT可以访问外网，我们将<code>jdk-8u102-linux-x64.tar.gz</code>和<code>hadoop-2.7.3.tar.gz</code>从它们的官网下载到用户的<code>/home/hadoop/</code>目录下。或在实体机中通过SCP命令传进去。然后将网关设置为<code>Host-only Adapter</code>，如下图所示。</p>
+</code></pre><h3 id="下面开始master的安装"><a href="#下面开始master的安装" class="headerlink" title="下面开始master的安装"></a>下面开始master的安装</h3><p>在虚拟机中安装<code>master</code>的过程中我们会设置一个用户用于登录，我们将用户名、密码都设为<code>hadoop</code>，当然也可以为其他名字，其他安装过程略。安装好之后，使用默认的网关配置NAT，NAT可以访问外网，我们将<code>jdk-8u102-linux-x64.tar.gz</code>和<a href="http://archive.apache.org/dist/hadoop/core/hadoop-2.7.3/" target="_blank" rel="noopener">hadoop-2.7.3.tar.gz</a>从它们的官网下载到用户的<code>/home/hadoop/</code>目录下。或在实体机中通过SCP命令传进去。然后将网关设置为<code>Host-only Adapter</code>，如下图所示。</p>
 <p><img src="/img/hadoop-2.png" alt="" title="网络配置"></p>
 <p>网关设置好了之后，我们接下来配置IP地址。在<code>master</code>中<code>[Settings] -&gt; [Network] -&gt; [Wired 这里打开] -&gt; [IPv4]</code>按如下设置：</p>
 <p><img src="/img/hadoop-3.png" alt="" title="网络配置"></p>
@@ -206,7 +206,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjqemmdw8000drg3k27ulvu7z" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjqta4i3m000d7y3kwu4nr55u" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -218,7 +218,7 @@ slave2:
 <nav id="article-nav">
   
     <a href="/2018/12/19/hadoop-mapreduce/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Récent</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           hadoop mapreduce示例
@@ -228,7 +228,7 @@ slave2:
   
   
     <a href="/2018/11/12/kafka-intro/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Ancien</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">kafka 介绍</div>
     </a>
   
@@ -243,9 +243,9 @@ slave2:
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -255,7 +255,7 @@ slave2:
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -263,9 +263,13 @@ slave2:
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
@@ -281,10 +285,6 @@ slave2:
         
           <li>
             <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
           </li>
         
       </ul>
@@ -310,7 +310,7 @@ slave2:
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
