@@ -259,7 +259,7 @@ hive>
 
 ### 插入数据
 ``` bash
-hive> INSERT INTO t_user(id, name, age, sex, birthday, address) VALUES(1, 'Tim Ho', 23, 'M', '1989-05-01', 'Higher Education Mega Center South, Guangzhou city, Guangdong Province');
+hive> INSERT INTO TABLE t_user(id, name, age, sex, birthday, address) VALUES(1, 'Tim Ho', 23, 'M', '1989-05-01', 'Higher Education Mega Center South, Guangzhou city, Guangdong Province');
 Query ID = hadoop_20190102160558_640a90a7-9122-4650-af78-acb436e2643b
 Total jobs = 3
 Launching Job 1 out of 3
@@ -357,10 +357,75 @@ Time taken: 0.085 seconds, Fetched: 3 row(s)
 hive> 
 ```
 
+
+### 通过JAVA代码操作hive
+HQL脚本通常有以下几种方式执行：
+1. hive -e "hql"; 
+2. hive -f "hql.file";
+3. hive jdbc code.
+
+本节主要讲讲如何通过java来操作hive，首先启动HiveServer2，首次启动的时候需执行如下脚本：
+``` bash
+$ cd /home/hadoop/apache-hive-1.2.2-bin/bin
+$ ./schematool -dbType derby -initSchema
+```
+
+启动hiveserver2，hiveserver2命令未来可用于替代hive命令
+``` bash
+$ cd /home/hadoop/apache-hive-1.2.2-bin/bin
+$ ./hiveserver2
+```
+
+启动后，你可能会发现，啥也没输出。这时我们在另一个SHELL窗口中启动beelie
+``` bash
+$ cd /home/hadoop/apache-hive-1.2.2-bin/bin
+$ ./beeline -u jdbc:hive2://hadoop-host-master:10000 -n hadoop -p hadoop
+
+Connecting to jdbc:hive2://hadoop-host-master:10000
+Connected to: Apache Hive (version 1.2.2)
+Driver: Hive JDBC (version 1.2.2)
+Transaction isolation: TRANSACTION_REPEATABLE_READ
+Beeline version 1.2.2 by Apache Hive
+0: jdbc:hive2://hadoop-host-master:10000> 
+0: jdbc:hive2://hadoop-host-master:10000> show databases;
++----------------+--+
+| database_name  |
++----------------+--+
+| default        |
+| tim            |
++----------------+--+
+2 rows selected (0.217 seconds)
+0: jdbc:hive2://hadoop-host-master:10000> use tim;
+No rows affected (0.08 seconds)
+0: jdbc:hive2://hadoop-host-master:10000> show tables;
++-----------+--+
+| tab_name  |
++-----------+--+
+| t_user    |
++-----------+--+
+1 row selected (0.071 seconds)
+0: jdbc:hive2://hadoop-host-master:10000> select * from t_user;
++------------+--------------+-------------+-------------+------------------+-------------------------------------------------------------------------+--+
+| t_user.id  | t_user.name  | t_user.age  | t_user.sex  | t_user.birthday  |                             t_user.address                              |
++------------+--------------+-------------+-------------+------------------+-------------------------------------------------------------------------+--+
+| 1          | Tim Ho       | 23          | M           | 1989-05-01       | Higher Education Mega Center South, Guangzhou city, Guangdong Province  |
+| 2          | scott        | 25          | M           | 1977-10-21       | USA                                                                     |
+| 3          | tiger        | 21          | F           | 1977-08-12       | UK                                                                      |
++------------+--------------+-------------+-------------+------------------+-------------------------------------------------------------------------+--+
+3 rows selected (0.219 seconds)
+0: jdbc:hive2://hadoop-host-master:10000> 
+```
+
+由上面可知，和在hive命令下的操作是一样的。上面的命令也可以没有`-p hadoop`这个参数，这个可以在`hive-site.xml`中配置。
+
+java代码操作hive的例子在这里：[HiveUtil.java][link_id_HiveUtil]、[HiveDemo.java][link_id_HiveDemo]
+
 未完待续……
 
 [link_id_hive-home]: https://hive.apache.org/
 [link_id_hadoop-cluster-ha]: ../../../../2019/01/01/hadoop-cluster-ha/
 [link_id_hive-1-2-2]: http://archive.apache.org/dist/hive/hive-1.2.2/
 [link_id_mysql-connector-java]: http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.42/mysql-connector-java-5.1.42.jar
+[link_id_HiveUtil]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/HiveUtil.java
+[link_id_HiveDemo]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/hive/HiveDemo.java
 
