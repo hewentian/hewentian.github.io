@@ -316,6 +316,28 @@ java性能测试工具jmeter：http://jmeter.apache.org/
 和它的好搭档badboy：http://www.badboy.com.au/
 jvisualvm
 
+### trim()无法去掉空格
+ascii码里有两个空格(space), 一个是ascii码32，一个是ascii码160，它们的区别是：
+1. 平时我们用键盘输入的空格的ASCII值是32；
+2. 而这个ASCII值为160的空格，其实是不间断空格(non-breaking space)，我们平时一定也用过很多次，就是页面上的`&nbsp;`所产生的空格；
+3. 不间断空格non-breaking space的缩写正是nbsp。这中空格的作用就是在页面换行时不被打断，例如：页面某一行的末尾是一个人名Zhu Xiaoli
 
+ 1. 如果使用了平常的空格，就会被页面压缩，变成下边这样
+Zhu 
+Xiaoli
 
+ 2. 如果使用了160空格，就会是这样： Zhu Xiaoli
+
+但是不间断空格有个问题，就是它无法被trim()所裁剪，也无法被正则表达式的\s所匹配，也无法被StringUtils的isBlank()所识别，也就是说，无法像裁剪寻常空格那样移除这个不间断空格。不过，我们可以利用不间断空格的Unicode编码来移除它，其编码为`\u00A0`。
+``` java
+String s = "abc";
+s = (char) 32 + s;
+s = s + (char) 160;
+
+s = s.trim();
+System.out.println(s); // abc ，前面的空格去掉了，但是后面的还在
+
+s = s.replaceAll("[\\u00A0]+", "");
+System.out.println(s); // abc，这里后面的空格也去掉了
+```
 

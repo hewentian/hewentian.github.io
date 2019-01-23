@@ -1495,3 +1495,12 @@ $ sudo service systemd-logind restart
 ```
 ok.
 
+
+### 设置日期和时间
+在ubuntu下可以通过以下命令设置时间日期，或者使用NTP进行时间同步
+``` bash
+$ timedatectl set-ntp no
+$ timedatectl set-time '2019-01-23 16:01:23'
+```
+
+

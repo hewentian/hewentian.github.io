@@ -162,3 +162,33 @@ $ mongorestore -h {SERVER_ADDRESS} --port {SERVER_PORT} -u {USER_NAME} -p {PASSW
 示例：
 $ mongorestore -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg --dir /home/hewentian/ProjectD/db/bfg/
 ```
+
+
+### mongodb类型转换
+如下所示，将字符串类型的数据转换为int, double, date类型：
+``` java
+先插入一条数据，都是字符串类型：
+db.getCollection("userInfo").insert({"age":"20", "salary":"30", "birthday":"2018-12-21"})
+
+{
+    "_id" : ObjectId("5c45b7099a14ab9807edaa75"),
+    "age" : "20",
+    "salary" : "30",
+    "birthday" : "2018-12-21"
+}
+
+改变字段类型：
+db.getCollection("userInfo").find({}).forEach(function(doc) {
+    db.getCollection('userInfo').updateOne({_id: doc._id}, {$set: {"age": NumberInt(doc.age), "salary": parseInt(doc.salary), "birthday": new ISODate(doc.birthday)}})
+})
+
+{
+    "_id" : ObjectId("5c45b7099a14ab9807edaa75"),
+    "age" : 20,
+    "salary" : 30.0,
+    "birthday" : ISODate("2018-12-21T00:00:00.000Z")
+}
+```
+
+
+
