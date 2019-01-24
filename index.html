@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -70,6 +70,108 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-hbase-cluster" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/01/20/hbase-cluster/" class="article-date">
+  <time datetime="2019-01-20T04:31:29.000Z" itemprop="datePublished">2019-01-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Hbase-介绍"><a href="#Hbase-介绍" class="headerlink" title="Hbase 介绍"></a>Hbase 介绍</h3><p>Hbase的<a href="http://hbase.apache.org/book.html" target="_blank" rel="noopener">官方文档</a>中有对Hbase的详细介绍，这里不再赘述。这里用一句话描述如下：</p>
+<p>Apache HBase™ is the Hadoop database, a distributed, scalable, big data store.</p>
+<p>Use Apache HBase™ when you need random, realtime read/write access to your Big Data. This project’s goal is the hosting of very large tables – billions of rows X millions of columns – atop clusters of commodity hardware. Apache HBase is an open-source, distributed, versioned, non-relational database modeled after Google’s Bigtable: A Distributed Storage System for Structured Data by Chang et al. Just as Bigtable leverages the distributed data storage provided by the Google File System, Apache HBase provides Bigtable-like capabilities on top of Hadoop and HDFS.</p>
+<h3 id="Hbase-的安装"><a href="#Hbase-的安装" class="headerlink" title="Hbase 的安装"></a>Hbase 的安装</h3><p>安装过程参考这里：<br><a href="http://hbase.apache.org/book.html#quickstart_fully_distributed" target="_blank" rel="noopener">http://hbase.apache.org/book.html#quickstart_fully_distributed</a></p>
+<p>Hbase依赖于HADOOP，我们在上一篇<a href="../../../../2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>的基础上安装Hbase。</p>
+<p>节点分布如下：</p>
+<pre><code>master：
+    ip: 192.168.56.110
+    hostname: hadoop-host-master
+slave1:
+    ip: 192.168.56.111
+    hostname: hadoop-host-slave-1
+slave2:
+    ip: 192.168.56.112
+    hostname: hadoop-host-slave-2
+slave3:
+    ip: 192.168.56.113
+    hostname: hadoop-host-slave-3
+</code></pre><p>如下图（绿色代表在这些节点上面安装这些程序，与<code>hadoop 集群的搭建HA</code>安装中的图类似，这里多了后面两列）：</p>
+<p><img src="/img/hbase-1.png" alt="" title="HBase集群 节点分布"></p>
+<h3 id="安装NTP"><a href="#安装NTP" class="headerlink" title="安装NTP"></a>安装NTP</h3><p>可能还要在各节点服务器上面安装NTP服务，实现服务器节点间时间的一致。如果服务器节点间的时间不一致，可能会引发HBase的异常，这一点在HBase官网上有特别强调。在这里，设置我的笔记本电脑为NTP的服务端节点，即是我的电脑从国家授时中心同步时间，然后其它节点（master、slave1、slave2、slave3）作为客户端从我的笔记本同步时间。此篇的安装过程将省略这个步骤，在后续篇章中再介绍，本篇将手动将各节点的时间调成一致。</p>
+<h3 id="修改ulimit"><a href="#修改ulimit" class="headerlink" title="修改ulimit"></a>修改ulimit</h3><p>Configuring the maximum number of file descriptors and processes for the user who is running the HBase process is an operating system configuration, rather than an HBase configuration. It is also important to be sure that the settings are changed for the user that actually runs HBase. To see which user started HBase, and that user’s ulimit configuration, look at the first line of the HBase log for that instance.</p>
+<p>修改ulimit，以增加linux系统能同时打开文件的数量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ vi /etc/security/limits.conf</span><br><span class="line"></span><br><span class="line">hadoop  -       nofile  32768</span><br><span class="line">hadoop  -       nproc   32000</span><br></pre></td></tr></table></figure>
+<p>修改后需重启系统才能生效。</p>
+<h3 id="下载Hbase"><a href="#下载Hbase" class="headerlink" title="下载Hbase"></a>下载Hbase</h3><p>首先下载Hbase，我们下载的时候，要选择适合我们HADOOP版本的Hbase，我们下载的稳定版为<a href="http://archive.apache.org/dist/hbase/1.2.6/" target="_blank" rel="noopener">hbase-1.2.6-bin.tar.gz</a>，将压缩包首先传到<code>master</code>节点的<code>/home/hadoop/</code>目录下，先在<code>master</code>节点配置好，然后同步到其他3个节点。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/</span><br><span class="line">$ tar xzvf hbase-1.2.6-bin.tar.gz</span><br><span class="line">$ </span><br><span class="line">$ <span class="built_in">cd</span> hbase-1.2.6/</span><br><span class="line">$ ls</span><br><span class="line">bin  CHANGES.txt  conf  docs  hbase-webapps  LEGAL  lib  LICENSE.txt  NOTICE.txt  README.txt</span><br></pre></td></tr></table></figure></p>
+<h3 id="配置hbase-env-sh，加上JDK绝对路径"><a href="#配置hbase-env-sh，加上JDK绝对路径" class="headerlink" title="配置hbase-env.sh，加上JDK绝对路径"></a>配置hbase-env.sh，加上JDK绝对路径</h3><ol>
+<li>JDK的路径就是安装JDK的时候的路径；</li>
+<li>Hbase内置有zookeeper，但是为了方便管理，我们单独部署zookeeper，即使用HADOOP中用作ZKFC的zookeeper；</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6/conf</span><br><span class="line">$ vi hbase-env.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/<span class="built_in">local</span>/jdk1.8.0_102/</span><br><span class="line"><span class="built_in">export</span> HBASE_MANAGES_ZK=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置hbase-site-xml"><a href="#配置hbase-site-xml" class="headerlink" title="配置hbase-site.xml"></a>配置hbase-site.xml</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6/conf</span><br><span class="line">$ vi hbase-site.xml</span><br><span class="line"></span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;hbase.rootdir&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;hdfs://hadoop-host-master:8020/hbase&lt;/value&gt;</span><br><span class="line">        &lt;description&gt;Do not create the dir hbase, the system will create it automatically, and the value is dfs.namenode.rpc-address.hadoop-cluster-ha.nn1&lt;/description&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;<span class="literal">true</span>&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;hbase.zookeeper.property.clientPort&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;2181&lt;/value&gt;</span><br><span class="line">        &lt;description&gt;Property from ZooKeeper<span class="string">'s config zoo.cfg. The port at which the clients will connect.&lt;/description&gt;</span></span><br><span class="line"><span class="string">    &lt;/property&gt;</span></span><br><span class="line"><span class="string">    &lt;property&gt;</span></span><br><span class="line"><span class="string">        &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;</span></span><br><span class="line"><span class="string">        &lt;value&gt;hadoop-host-master,hadoop-host-slave-1,hadoop-host-slave-2&lt;/value&gt;</span></span><br><span class="line"><span class="string">    &lt;/property&gt;</span></span><br><span class="line"><span class="string">    &lt;property&gt;</span></span><br><span class="line"><span class="string">        &lt;name&gt;hbase.zookeeper.property.dataDir&lt;/name&gt;</span></span><br><span class="line"><span class="string">        &lt;value&gt;/home/hadoop/zookeeper-3.4.6/data&lt;/value&gt;</span></span><br><span class="line"><span class="string">        &lt;description&gt;Property from ZooKeeper'</span>s config zoo.cfg. The directory <span class="built_in">where</span> the snapshot is stored.&lt;/description&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="配置regionservers"><a href="#配置regionservers" class="headerlink" title="配置regionservers"></a>配置regionservers</h3><p>在将要运行regionservers的节点加入此文件中<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6/conf</span><br><span class="line">$ vi regionservers</span><br><span class="line"></span><br><span class="line">hadoop-host-slave-1</span><br><span class="line">hadoop-host-slave-2</span><br><span class="line">hadoop-host-slave-3</span><br></pre></td></tr></table></figure></p>
+<h3 id="配置backup-masters"><a href="#配置backup-masters" class="headerlink" title="配置backup-masters"></a>配置backup-masters</h3><p>我们将<code>hadoop-host-master</code>作为Hbase集群的master，并配置HBase使用<code>hadoop-host-slave-1</code>作为backup master，在conf目录下创建一个文件backup-masters, 并在其中添加作为backup master的主机名<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6/conf</span><br><span class="line">$ vi backup-masters</span><br><span class="line"></span><br><span class="line">hadoop-host-slave-1</span><br></pre></td></tr></table></figure></p>
+<h3 id="复制hdfs-site-xml配置文件"><a href="#复制hdfs-site-xml配置文件" class="headerlink" title="复制hdfs-site.xml配置文件"></a>复制hdfs-site.xml配置文件</h3><p>复制<code>$HADOOP_HOME/etc/hadoop/hdfs-site.xml</code>到<code>$HBASE_HOME/conf</code>目录下，这样以保证HDFS与Hbase两边配置一致，这也是官网所推荐的方式。例子，如果HDFS中配置的副本数量为5（默认为3），如果没有将hadoop的<code>hdfs-site.xml</code>复制到<code>$HBASE_HOME/conf</code>目录下，则Hbase将会按3份备份，从而两边不一致，导致出现异常。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6/conf/</span><br><span class="line">$ cp /home/hadoop/hadoop-2.7.3/etc/hadoop/hdfs-site.xml .</span><br></pre></td></tr></table></figure>
+<p>至此，配置完毕，将这些配置同步到其他三个节点，在<code>hadoop-host-master</code>上面执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/</span><br><span class="line">$ scp -r hbase-1.2.6 hadoop@hadoop-host-slave-1:/home/hadoop/</span><br><span class="line">$ scp -r hbase-1.2.6 hadoop@hadoop-host-slave-2:/home/hadoop/</span><br><span class="line">$ scp -r hbase-1.2.6 hadoop@hadoop-host-slave-3:/home/hadoop/</span><br></pre></td></tr></table></figure></p>
+<h3 id="启动Hbase"><a href="#启动Hbase" class="headerlink" title="启动Hbase"></a>启动Hbase</h3><p>可使用<code>$HBASE_HOME/bin/start-hbase.sh</code>指令启动整个集群，如果要使用该命令，则集群的节点间必须实现ssh的免密码登录，这样才能到不同的节点启动服务。</p>
+<p>按我们前面的规划，<code>hadoop-host-master</code>将作为Hbase集群的master，其实在哪台机器上面运行<code>start-hbase.sh</code>指令，那么这台机器将成为master。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6/bin</span><br><span class="line">$ ./start-hbase.sh</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/hbase-2.png" alt="" title="HBase集群启动"></p>
+<p>当执行<code>jps</code>指令后，可以看到<code>hadoop-host-master</code>上面多了一个<code>HMaster</code>进程，在<code>hadoop-host-slave-1</code>中会同时存在<code>HMaster</code>、<code>HRegionServer</code>进程，而在其他两个节点则只存在<code>HRegionServer</code>进程。</p>
+<p>另外，我们可以在其他任何机器通过以下命令启动一个master<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6/bin</span><br><span class="line">$ ./hbase-daemon.sh start master</span><br><span class="line"></span><br><span class="line">或者启动作为backup master</span><br><span class="line">$ ./hbase-daemon.sh start master --backup</span><br></pre></td></tr></table></figure></p>
+<p>可以在实体机的浏览器中输入：<br><a href="http://hadoop-host-master:16010/" target="_blank" rel="noopener">http://hadoop-host-master:16010/</a><br><a href="http://hadoop-host-slave-1:16010/" target="_blank" rel="noopener">http://hadoop-host-slave-1:16010/</a></p>
+<p>来查看是否启动成功，如无意外的话，你会看到如下结果页面。其中一个是Master，另一个是Back Master：</p>
+<p><img src="/img/hbase-3.png" alt="" title="HBase集群管理界面 Master"></p>
+<p><img src="/img/hbase-4.png" alt="" title="HBase集群管理界面 Back Master"></p>
+<p>同样的它在HDFS中也自动创建了保存数据的目录：</p>
+<p><img src="/img/hbase-5.png" alt="" title="HBase集群在HDFS中的目录"></p>
+<p>至此，集群搭建成功。</p>
+<h3 id="Hbase初体验"><a href="#Hbase初体验" class="headerlink" title="Hbase初体验"></a>Hbase初体验</h3><p>首先我们通过SHELL的方式简单体验一下Hbase：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6/</span><br><span class="line">$ ./bin/hbase shell</span><br><span class="line">2019-01-23 19:16:36,118 WARN  [main] util.NativeCodeLoader: Unable to load native-hadoop library <span class="keyword">for</span> your platform... using <span class="built_in">builtin</span>-java classes <span class="built_in">where</span> applicable</span><br><span class="line">HBase Shell; enter <span class="string">'help&lt;RETURN&gt;'</span> <span class="keyword">for</span> list of supported commands.</span><br><span class="line">Type <span class="string">"exit&lt;RETURN&gt;"</span> to leave the HBase Shell</span><br><span class="line">Version 1.2.6, rUnknown, Mon May 29 02:25:32 CDT 2017</span><br><span class="line"></span><br><span class="line">hbase(main):001:0&gt; list</span><br><span class="line">TABLE</span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.6030 seconds</span><br><span class="line"></span><br><span class="line">=&gt; []</span><br></pre></td></tr></table></figure></p>
+<p>由上述结果可知，Hbase中现在没有一张表。我们尝试创建一张表<code>t_student</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):002:0&gt; create <span class="string">'t_student'</span>, <span class="string">'cf1'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 2.4700 seconds</span><br><span class="line"></span><br><span class="line">=&gt; Hbase::Table - t_student</span><br><span class="line">hbase(main):003:0&gt; list</span><br><span class="line">TABLE</span><br><span class="line">t_student</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.0250 seconds</span><br><span class="line"></span><br><span class="line">=&gt; [<span class="string">"t_student"</span>]</span><br><span class="line">hbase(main):004:0&gt; desc <span class="string">'t_student'</span></span><br><span class="line">Table t_student is ENABLED</span><br><span class="line">t_student</span><br><span class="line">COLUMN FAMILIES DESCRIPTION</span><br><span class="line">&#123;NAME =&gt; <span class="string">'cf1'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>, VERSIONS =&gt; <span class="string">'1'</span>, IN_MEMORY =&gt; <span class="string">'false'</span>, KEEP_DELETED_CELLS =&gt; <span class="string">'FALSE'</span>, DATA_BLOCK_ENCODING =&gt; <span class="string">'NONE'</span>, TTL =&gt; <span class="string">'FOREVER'</span>, COMPRESSION =&gt; <span class="string">'NONE'</span>, MIN_VERSIONS =&gt; <span class="string">'0'</span>, BLO</span><br><span class="line">CKCACHE =&gt; <span class="string">'true'</span>, BLOCKSIZE =&gt; <span class="string">'65536'</span>, REPLICATION_SCOPE =&gt; <span class="string">'0'</span>&#125;</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.2010 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):005:0&gt;</span><br></pre></td></tr></table></figure></p>
+<p>往表中插入一条数据：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):005:0&gt; put <span class="string">'t_student'</span>, <span class="string">'01'</span>, <span class="string">'cf1:name'</span>, <span class="string">'tim'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.1840 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):006:0&gt; scan <span class="string">'t_student'</span></span><br><span class="line">ROW                                                  COLUMN+CELL</span><br><span class="line"> 01                                                  column=cf1:name, timestamp=1548242390794, value=tim</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.1460 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):007:0&gt;</span><br></pre></td></tr></table></figure></p>
+<p>插入数据之后，可能在HDFS中还不能立刻看到，因为数据还在内存中，但可以通过以下命令将数据立刻写到HDFS中：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):008:0&gt; flush <span class="string">'t_student'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.7290 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):009:0&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后我们可以在HDFS、Hbase的管理界面分别看到表信息：</p>
+<p><img src="/img/hbase-6.png" alt="" title="HBase的数据在HDFS中"></p>
+<p><img src="/img/hbase-7.png" alt="" title="HBase集群管理界面 用户表信息"></p>
+<p>当我们在HDFS中看到表中的某个块的数据，如下：</p>
+<p><img src="/img/hbase-8.png" alt="" title="HBase的数据在HDFS中"></p>
+<p>我们可以通过Hbase中的命令来查看数据的真实内容：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6</span><br><span class="line">$ ./bin/hbase hfile -p -f /hbase/data/default/t_student/b76cccf6c6a7926bf8f40b4eafc6991e/cf1/2ed0a233411447778982edce04e96fe3</span><br><span class="line">2019-01-23 19:45:33,200 WARN  [main] util.NativeCodeLoader: Unable to load native-hadoop library <span class="keyword">for</span> your platform... using <span class="built_in">builtin</span>-java classes <span class="built_in">where</span> applicable</span><br><span class="line">2019-01-23 19:45:34,046 INFO  [main] hfile.CacheConfig: Created cacheConfig: CacheConfig:disabled</span><br><span class="line">K: 01/cf1:name/1548242390794/Put/vlen=3/seqid=4 V: tim</span><br><span class="line">Scanned kv count -&gt; 1</span><br></pre></td></tr></table></figure></p>
+<p>未完，待续……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2019/01/20/hbase-cluster/" data-id="cjr9xt1qv000k1f3kldl04z98" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hbase/">hbase</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-hive-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -174,7 +276,7 @@ Caused by: java.net.URISyntaxException: Relative path in absolute URI: ${system:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="cjqwfywu9000wpy3k497n852o" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="cjr9xt1r100131f3k8xj0dkei" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li></ul>
@@ -303,7 +405,7 @@ slave3:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjqwfywu5000ipy3kscatva43" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjr9xt1qx000r1f3ke6zzvxpe" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -397,7 +499,7 @@ by mortbay.org.
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjqwfywu7000ppy3krutj8p4z" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjr9xt1qy000u1f3kp6vxbs50" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -527,7 +629,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjqwfywu6000lpy3k40t3b5oi" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjr9xt1qw000n1f3k08xqlbxd" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -651,7 +753,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjqwfywui001mpy3kx4w4l6t0" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjr9xt1r7001q1f3kdnx71jhk" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -763,7 +865,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjqwfywug001gpy3k908dokkh" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjr9xt1r4001g1f3kugpkloez" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -832,7 +934,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjqwfywus002jpy3krcxewasm" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjr9xt1ri002q1f3k0nwwijj3" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -1002,7 +1104,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjqwfywuf001cpy3kjbsgf6ro" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjr9xt1r5001j1f3kvl082usg" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -1081,405 +1183,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjqwfywtt0003py3kghg9a5en" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-elasticsearch-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/09/18/elasticsearch-note/" class="article-date">
-  <time datetime="2018-09-18T02:21:01.000Z" itemprop="datePublished">2018-09-18</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/18/elasticsearch-note/">elasticsearch 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>参考资料：<br><a href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/index.html" title="Elasticsearch 权威指南" target="_blank" rel="noopener">Elasticsearch 权威指南</a><br><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html" title="Elasticsearch Reference" target="_blank" rel="noopener">Elasticsearch Reference</a><br><a href="http://es.xiaoleilu.com/080_Structured_Search/20_contains.html" target="_blank" rel="noopener">http://es.xiaoleilu.com/080_Structured_Search/20_contains.html</a><br><a href="https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core">https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core</a></p>
-<p>首先，你必须至少有一台<code>elasticsearch</code>服务器可以使用，如果还没安装，可以参考我的上两篇 <a href="../../../../2018/09/16/elasticsearch-install" title="elasticsearch 单节点安装">elasticsearch 单节点安装</a>、<a href="../../../../2018/09/17/elasticsearch-cluster" title="elasticsearch 集群的搭建">elasticsearch 集群的搭建</a></p>
-<p>使用JAVA API来操作<code>elasticsearch</code>的例子可以在这里找到：<a href="https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/util/EsJestUtil.java">EsJestUtil.java</a>、<a href="https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/es/EsJestDemo.java">EsJestDemo.java</a></p>
-<h4 id="要单独创建一个索引"><a href="#要单独创建一个索引" class="headerlink" title="要单独创建一个索引"></a>要单独创建一个索引</h4><pre>
-curl -XPUT 'http://localhost:9200/user_index' -H 'Content-Type: application/json' -d '{
-    "settings" : {
-        "index" : {
-            "number_of_shards" : 4,
-            "number_of_replicas" : 1
-        }
-    }
-}'
-
-{"acknowledged":true,"shards_acknowledged":true,"index":"user_index"}
-</pre>
-
-
-<h4 id="删除索引的命令"><a href="#删除索引的命令" class="headerlink" title="删除索引的命令"></a>删除索引的命令</h4><pre>
-curl -XDELETE 'http://localhost:9200/user_index/'
-
-{"acknowledged":true}
-</pre>
-
-
-<h4 id="为user-index中的user创建mapping"><a href="#为user-index中的user创建mapping" class="headerlink" title="为user_index中的user创建mapping"></a>为user_index中的user创建mapping</h4><pre>
-curl -XPUT 'http://localhost:9200/user_index/_mapping/user' -H 'Content-Type: application/json' -d '{
-    "properties": {
-        "id": {
-            "type": "long",
-            "index": "false"
-        },
-        "name": {
-            "type": "keyword"
-        },
-        "age": {
-            "type": "integer"
-        },
-        "tags": {
-            "type": "keyword",
-            "boost": 3.0
-       },
-       "birthday": {
-            "type": "date",
-            "format": "strict_date_optional_time || epoch_millis || yyyy-MM-dd HH:mm:ss"
-       }
-   }
-}'
-</pre>
-
-
-<h4 id="ES中的一些概念"><a href="#ES中的一些概念" class="headerlink" title="ES中的一些概念"></a>ES中的一些概念</h4><p><strong>cluster</strong><br>代表一个集群，集群中有多个节点，其中有一个为主节点，这个主节点是可以通过选举产生的，主从节点是对于集群内部来说的。es的一个概念就是去中心化，字面上理解就是无中心节点，这是对于集群外部来说的，因为从外部来看es集群，在逻辑上是个整体，你与任何一个节点的通信和与整个es集群通信是等价的。</p>
-<p><strong>shards</strong><br>代表索引分片，es可以把一个完整的索引分成多个分片，这样的好处是可以把一个大的索引拆分成多个，分布到不同的节点上。构成分布式搜索。分片的数量只能在索引创建前指定，并且索引创建后不能更改。</p>
-<p><strong>replicas</strong><br>代表索引副本，es可以设置多个索引的副本，副本的作用一是提高系统的容错性，当某个节点某个分片损坏或丢失时可以从副本中恢复。二是提高es的查询效率，es会自动对搜索请求进行负载均衡。</p>
-<p><strong>recovery</strong><br>代表数据恢复或叫数据重新分布，es在有节点加入或退出时会根据机器的负载对索引分片进行重新分配，挂掉的节点重新启动时也会进行数据恢复。</p>
-<p><strong>river</strong><br>代表es的一个数据源，也是其它存储方式（如：数据库）同步数据到es的一个方法。它是以插件方式存在的一个es服务，通过读取river中的数据并把它索引到es中，官方的river有couchDB的，RabbitMQ的，Twitter的，Wikipedia的。</p>
-<p><strong>gateway</strong><br>代表es索引快照的存储方式，es默认是先把索引存放到内存中，当内存满了时再持久化到本地硬盘。gateway对索引快照进行存储，当这个es集群关闭再重新启动时就会从gateway中读取索引备份数据。es支持多种类型的gateway，有本地文件系统（默认），分布式文件系统，Hadoop的HDFS和amazon的s3云存储服务。</p>
-<p><strong>discovery.zen</strong><br>代表es的自动发现节点机制，es是一个基于p2p的系统，它先通过广播寻找存在的节点，再通过多播协议来进行节点之间的通信，同时也支持点对点的交互。</p>
-<p><strong>Transport</strong><br>代表es内部节点或集群与客户端的交互方式，默认内部是使用tcp协议进行交互，同时它支持http协议（json格式）、thrift、servlet、memcached、zeroMQ等的传输协议（通过插件方式集成）。</p>
-<p>Date formats can be customised, but if no format is specified then it uses the default:</p>
-<pre><code>&quot;strict_date_optional_time||epoch_millis&quot;
-</code></pre><p>if you set it like this:</p>
-<pre><code>PUT my_index
-{
-  &quot;mappings&quot;: {
-    &quot;_doc&quot;: {
-      &quot;properties&quot;: {
-        &quot;date&quot;: {
-          &quot;type&quot;:   &quot;date&quot;,
-          &quot;format&quot;: &quot;yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis&quot;
-        }
-      }
-    }
-  }
-}
-</code></pre><p>you can use the below method to set date:</p>
-<pre>
-PUT my_index/_doc/1
-{ "date": "2015-01-01 12:10:30" } 
-
-PUT my_index/_doc/2
-{ "date": "2015-01-01T12:10:30Z" } 
-
-PUT my_index/_doc/3
-{ "date": 1420070400001 }
-</pre>
-
-<h4 id="文件的部分更新"><a href="#文件的部分更新" class="headerlink" title="文件的部分更新"></a>文件的部分更新</h4><p>文档是不可变的：他们不能被修改，只能被替换。 update API 必须遵循同样的规则。 从外部来看，我们在一个文档的某个位置进行部分更新。然而在内部， update API 简单使用与之前描述相同的 检索-修改-重建索引 的处理过程。 区别在于这个过程发生在分片内部，这样就避免了多次请求的网络开销。通过减少检索和重建索引步骤之间的时间，我们也减少了其他进程的变更带来冲突的可能性。</p>
-<p>方法一：update 请求最简单的一种形式是接收文档的一部分作为 doc 的参数， 它只是与现有的文档进行合并。对象被合并到一起，覆盖现有的字段，增加新的字段。 例如，我们增加字段 tags 和 views 到我们的博客文章，如下所示：</p>
-<pre><code>POST /website/blog/1/_update
-{
-       &quot;doc&quot; : {
-          &quot;tags&quot; : [ &quot;testing&quot; ],
-          &quot;views&quot;: 0
-       }
-}
-</code></pre><p>测试示例：</p>
-<pre>
-先插件一条数据：
-curl -XPUT 'http://localhost:9200/facebook/tuser/1?pretty' -H 'Content-Type: application/json' -d '
-{
-    "user": "tim",
-    "post_date": "2009-11-15T13:12:00",
-    "message": "Elasticsearch, so far so good?"
-}'
-
-再将这条数所的 message 字段修改一下
-curl -XPOST 'http://localhost:9200/facebook/tuser/1/_update' -H 'Content-Type: application/json' -d '
-{
-    "doc":{
-        "message": "Elasticsearch, so far so good? yes"
-    }
-}'
-</pre>
-
-
-<p>方法二：使用脚本部分更新文档编辑<br>脚本可以在 update API中用来改变 _source 的字段内容， 它在更新脚本中称为 ctx._source 。 例如，我们可以使用脚本来增加博客文章中 views 的数量：</p>
-<pre><code>POST /website/blog/1/_update
-{
-       &quot;script&quot; : &quot;ctx._source.views+=1&quot;
-}
-</code></pre><pre>
-curl -XPOST 'http://127.0.0.1:9200/facebook/tuser/1/_update' -H 'Content-Type: application/json' -d '
-{
-    "script" : "ctx._source.message=\"yes, you are right.\""
-}'
-</pre>
-
-<p>下面的命令可以列出每个 Index 所包含的 Type<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -XGET <span class="string">'http://127.0.0.1:9200/user_index/_mapping?pretty=true'</span></span><br></pre></td></tr></table></figure></p>
-<ol>
-<li>cluster.name<br>配置es的集群名称，默认是elasticsearch，不同的集群用名字来区分，es会自动发现在同一网段下的es，配置成相同集群名字的各个节点形成一个集群。如果在同一网段下有多个集群，就可以用这个属性来区分不同的集群。</li>
-<li>http.port<br>设置对外服务的http端口，默认为9200。不能相同，否则会冲突。</li>
-</ol>
-<p>ES有很多插件，我们可以选择安装一些，例如，以安装head插件为例。有两种方式安装，一种为在线安装，另一种为本地安装，本地安装要下载插件(git clone)。<br>插件下载地址为：<br><a href="https://github.com/mobz/elasticsearch-head">https://github.com/mobz/elasticsearch-head</a></p>
-<p>这里以在线安装为例，我之前在介绍<a href="../../../../2018/09/16/elasticsearch-install" title="elasticsearch 单节点安装">elasticsearch 单节点安装</a>中使用的是本地安装，推荐使用本地安装。旧版本安装过程如下：<br>进入ES的HOME目录，执行plugin命令，如下，</p>
-<pre><code>cd ${ES_HOME}/bin
-./elasticsearch-plugin install mobz/elasticsearch-head
-</code></pre><p>安装完毕后，要重启ES。在浏览器中输入：<a href="http://localhost:9200/_plugin/head/，如果看到了页面，则表明安装成功。" target="_blank" rel="noopener">http://localhost:9200/_plugin/head/，如果看到了页面，则表明安装成功。</a></p>
-<p>ES一次查询，最多返回10条，但hits会显示total一共有多少条，要使用from, size指定。<br>在ES里面删除数据的时候要非常小心，如果全部都清空了，可能整个库的MAPPING都会有问题。这时，一些原先可以执行的语句可能会无法执行</p>
-<h4 id="以下是一些常查询："><a href="#以下是一些常查询：" class="headerlink" title="以下是一些常查询："></a>以下是一些常查询：</h4><pre>
-{
-  "query": {
-    "bool": {
-      "should": [
-        {
-          "match": {
-            "_id": "http://www.abc.com"
-          }
-        },
-        {
-          "match": {
-            "_id": "http://www.csdn.net/tag/scala"
-          }
-        }
-      ]
-    }
-  }
-}
-
-
-{
-  "query": {
-    "bool": {
-      "must": [
-        {
-          "match": {
-            "address": "*canton*"
-          }
-        },
-        {
-          "match": {
-            "name": "Tim"
-          }
-        }
-      ]
-    }
-  }
-}
-
-
-{
-  "query": {
-    "bool": {
-      "must": [
-        {
-          "bool": {
-            "should": [
-              {
-                "match": {
-                  "title": {
-                    "minimum_should_match": "100%",
-                    "query": "Air Quality"
-                  }
-                }
-              },
-              {
-                "match": {
-                  "body_text": {
-                    "minimum_should_match": "100%",
-                    "query": "Air Quality"
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "wildcard": {
-            "user_ids": "*760aa069-2ed2-40d6-89da-f62e83f82887*"
-          }
-        }
-      ]
-    }
-  },
-  "from": 0,
-  "size": 20
-}
-
-
-{
-  "sort": [
-    {
-      "updatetime_6h": {
-        "order": "desc"
-      }
-    },
-    {
-      "_score": {
-        "order": "desc"
-      }
-    }
-  ],
-  "query": {
-    "filtered": {
-      "query": {
-        "bool": {
-          "must_not": [],
-          "should": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "match_phrase": {
-                      "app_type.title": {
-                        "query": "china"
-                      }
-                    }
-                  },
-                  {
-                    "match_phrase": {
-                      "app_type.title": {
-                        "query": "中国"
-                      }
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "bool": {
-                "should": [
-                  {
-                    "match_phrase": {
-                      "app_type.body_text": {
-                        "query": "china"
-                      }
-                    }
-                  },
-                  {
-                    "match_phrase": {
-                      "app_type.body_text": {
-                        "query": "中国"
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          "must": []
-        }
-      },
-      "filter": {
-        "bool": {
-          "should": [],
-          "must": [
-            {
-              "range": {
-                "updatetime": {
-                  "lte": 1474617163524
-                }
-              }
-            },
-            {
-              "query": {
-                "wildcard": {
-                  "user_ids": "*760aa069-2ed2-40d6-89da-f62e83f82887*"
-                }
-              }
-            }
-          ]
-        }
-      }
-    }
-  },
-  "from": 0,
-  "size": 20
-}
-
-GET /people/user/_search
-{
-  "query": {
-    "bool":{
-      "must":[{
-        "match":{"birthYear":1989}}
-        ]
-    }
-  },
-  "aggregations" : {
-    "CATEGORY" : {
-      "terms" : {
-        "field" : "deposit",
-        "size" : 100,
-        "order" : {
-          "_count" : "desc"
-        }
-      }
-    }
-  },
-  "size":0
-}
-</pre>
-
-<h3 id="查询返回某些指定的字段"><a href="#查询返回某些指定的字段" class="headerlink" title="查询返回某些指定的字段"></a>查询返回某些指定的字段</h3><p>如果查询的结果字段很多，而我们仅需要其中的某些字段的时候，我们可能通过<code>_source</code>来指定，比如我们只要userName, address：</p>
-<pre>
-GET people/user/_search
-{
-  "query": {
-    "bool": {
-      "must": [
-        {
-          "match": {
-            "userName": "张三"
-          }
-        }
-      ]
-    }
-  },
-  "_source": [
-    "userName",
-    "address"
-  ],
-  "size": 2
-}
-</pre>
-
-<p>未完待续……</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjqwfywty0008py3kvveji5fe" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjr9xt1qh00011f3k1onrrjbl" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1502,9 +1206,9 @@ GET people/user/_search
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -1514,7 +1218,7 @@ GET people/user/_search
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1522,9 +1226,13 @@ GET people/user/_search
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
+          </li>
         
           <li>
             <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
@@ -1540,10 +1248,6 @@ GET people/user/_search
         
           <li>
             <a href="/2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
           </li>
         
       </ul>
@@ -1569,7 +1273,7 @@ GET people/user/_search
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

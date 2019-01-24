@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -70,6 +70,83 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-gitbook-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/01/29/gitbook-note/" class="article-date">
+  <time datetime="2018-01-29T05:59:48.000Z" itemprop="datePublished">2018-01-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/other/">other</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/29/gitbook-note/">gitbook学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面说下如何安装gitbook</p>
+<h3 id="1-安装-Node-js"><a href="#1-安装-Node-js" class="headerlink" title="1. 安装 Node.js"></a>1. 安装 Node.js</h3><p>先测试一下Node.js是否已安装，在命令行中直接输入<code>node</code>可以看到提示符变成了一个向右<br>的箭头就表示成功了，然后按ctrl + c退出node模式，出现$符号才表示正常了</p>
+<p>如果未安裝 node，安裝方法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install nodejs-legacy</span><br></pre></td></tr></table></figure></p>
+<p>剩下的安装过程参考<a href="https://yq.aliyun.com/articles/7506" target="_blank" rel="noopener">https://yq.aliyun.com/articles/7506</a>，但是会有一些不同，如下所示：</p>
+<h3 id="2-安装gitbook"><a href="#2-安装gitbook" class="headerlink" title="2. 安装gitbook"></a>2. 安装gitbook</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo npm install -g gitbook-cli</span><br></pre></td></tr></table></figure>
+<h3 id="3-初始化"><a href="#3-初始化" class="headerlink" title="3. 初始化"></a>3. 初始化</h3><p>在你的文档目录下新建文件 SUMMARY.md，这个文件就是这本书的目录啦：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> docs</span><br><span class="line">$ touch SUMMARY.md</span><br></pre></td></tr></table></figure></p>
+<p>SUMMARY.md 的格式规范如下：</p>
+<pre><code># uitest 文档
+
+- [uitest 是什么](users/index.md)
+    - [如何使用 uitest](users/use.md)
+    - [如何编写自定义的测试用例](users/case.md)
+    - [browserjs API 文档](users/api.md)
+- [uitest 开发者文档](devs/index.md)
+    - [browserjs 开发者文档](devs/browserjs.md)
+    - [utci 文档](devs/utci.md)
+    - [utserver &amp; utclient 文档](devs/utserver.md)
+- [相关文章沉淀](artical.md)
+- [关于 gitbook](gitbook.md)
+</code></pre><p>然后执行<code>gitbook init</code>初始化，gitbook 会根据 SUMMARY 的结构生成对应的目录文件：</p>
+<pre><code>├── README.md           // 首页
+├── SUMMARY.md          // 目录
+└── users               // 用户文档
+    └── index.md        // 是什么
+    ├── use.md          // 如何使用
+    ├── api.md          // browserjs API
+    ├── case.md         // 如何写测试用例
+├── devs                // 开发者文档目录
+    │   ├── index.md        // 开发者文文档首页
+    │   ├── browserjs.md    // browserjs 开发文档
+    │   ├── utci.md         // utci 开发文档
+    │   └── utserver.md     // utserver 和 utclien 开发文档
+├── artical.md          // 文章沉淀
+├── gitbook.md          // gitbook 相关
+</code></pre><h3 id="4-本地调试"><a href="#4-本地调试" class="headerlink" title="4. 本地调试"></a>4. 本地调试</h3><p>在对应的文档目录下运行<code>gitbook serve</code>会启动一个本地的静态服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> docs</span><br><span class="line">$ gitbook serve</span><br><span class="line"></span><br><span class="line">Live reload server started on port: 35729</span><br><span class="line">Press CTRL+C to quit ...</span><br><span class="line"></span><br><span class="line">info: 7 plugins are installed </span><br><span class="line">info: loading plugin <span class="string">"livereload"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"highlight"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"search"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"lunr"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"sharing"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"fontsettings"</span>... OK </span><br><span class="line">info: loading plugin <span class="string">"theme-default"</span>... OK </span><br><span class="line">info: found 27 pages </span><br><span class="line">info: found 2 asset files</span><br></pre></td></tr></table></figure></p>
+<p>访问 <a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a> 就可以实时的预览啦，并且支持<code>livereload</code>, 灰常赞~接下来结合预览的功能编辑对应的文档，完成之后就可以发布啦。</p>
+<h3 id="5-发布"><a href="#5-发布" class="headerlink" title="5. 发布"></a>5. 发布</h3><p>在文档目录下执行<code>gitbook build</code>会生成一个<code>_book</code>的目录，这个目录就是我们的静态网站啦，然后通过 demo 平台或者 github pages 就可以很简单的完成部署了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/01/29/gitbook-note/" data-id="cjr9xt1qq00091f3kipb98imo" class="article-share-link">Partager</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-activemq-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -153,7 +230,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjqwfywtp0001py3k3thwdlpp" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/23/activemq-note/" data-id="cjr9xt1qo00071f3kuzpexwvg" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activemq/">activemq</a></li></ul>
@@ -234,7 +311,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjqwfywuo0024py3ktbmdfd4f" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/17/rabbitmq-note/" data-id="cjr9xt1rf002g1f3kpoaliehp" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabbitmq/">rabbitmq</a></li></ul>
@@ -293,7 +370,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjqwfywuy0032py3krx0a9kye" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-ikanalyzer/" data-id="cjr9xt1rm00361f3k50fe5z2h" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -347,7 +424,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjqwfywuz0034py3kio5w2zlh" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/01/08/solr-pinyin/" data-id="cjr9xt1ro003b1f3kgmiij135" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -416,7 +493,7 @@ at java.lang.Thread.run(Thread.java:745)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjqwfywua000zpy3kbe9m50es" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/08/install-jdk/" data-id="cjr9xt1r4001d1f3ksdmxd8ml" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jdk/">jdk</a></li></ul>
@@ -607,7 +684,7 @@ exit;
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjqwfywuq002bpy3kcuoryajo" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjr9xt1rg002k1f3k1fe9vrxo" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
@@ -694,7 +771,7 @@ clientPort=2183                                                 # 这台服务�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjqwfywv2003dpy3k6uxt8kzr" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjr9xt1ro003e1f3knyw4jzfu" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -754,7 +831,7 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjqwfywv3003gpy3k2ns530sv" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-standalone/" data-id="cjr9xt1rp003h1f3kx3w8dmcg" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
@@ -832,96 +909,9 @@ clientPort=2181
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/02/hexo-note/" data-id="cjqwfywu8000spy3k4jdzrm1z" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/02/hexo-note/" data-id="cjr9xt1qz000x1f3k1ps37q08" class="article-share-link">Partager</a>
       
       
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-java-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/11/16/java-note/" class="article-date">
-  <time datetime="2017-11-16T11:58:45.000Z" itemprop="datePublished">2017-11-16</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/java/">java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/16/java-note/">java 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息"><a href="#想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息" class="headerlink" title="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息"></a>想在<code>eclipse</code>中新建类的时候，自动在类的头部插入作者、时间等信息</h3><p>方法是<code>Window -&gt; Preferences -&gt; Java -&gt; Code Style -&gt; Code Templates</code>在右则民展开<code>Code -&gt; New Java files</code>点<code>Edit...</code>并加入如下代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$&#123;filecomment&#125;</span><br><span class="line">$&#123;package_declaration&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;$&#123;file_name&#125;&lt;/b&gt; 是 </span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> $&#123;currentDate:date('yyyy-MM-dd')&#125; $&#123;time&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">$&#123;typecomment&#125;</span><br><span class="line">$&#123;type_declaration&#125;</span><br></pre></td></tr></table></figure></p>
-<p>而在IDEA中的操作方法是：<br><code>File -&gt; Settings -&gt; File and Code Templates</code>，在右则选中Class，然后填入：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#if ($&#123;PACKAGE_NAME&#125; &amp;&amp; $&#123;PACKAGE_NAME&#125; != "")package $&#123;PACKAGE_NAME&#125;;#end</span><br><span class="line">#parse("File Header.java")</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;$&#123;NAME&#125;&lt;/b&gt; 是 </span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> $&#123;YEAR&#125;-$&#123;MONTH&#125;-$&#123;DAY&#125; $&#123;HOUR&#125;:$&#123;MINUTE&#125;:$&#123;SECOND&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> $</span>&#123;NAME&#125; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="Remote-System-Explorer-Operation总是运行后台服务，卡死eclipse解决办法"><a href="#Remote-System-Explorer-Operation总是运行后台服务，卡死eclipse解决办法" class="headerlink" title="Remote System Explorer Operation总是运行后台服务，卡死eclipse解决办法"></a>Remote System Explorer Operation总是运行后台服务，卡死eclipse解决办法</h3><p>eclipse后台进程在远程操作，右下角显示的“Remote System Explorer Operation”。折腾了半天，在Stack Overflow找到答案 <a href="https://stackoverflow.com/questions/1631817/remote-system-explorer-operation-causing-freeze-for-couple-of-seconds" target="_blank" rel="noopener">源地址</a>。解决方案如下：</p>
-<pre><code>step1: Eclipse -&gt; Preferences -&gt; General -&gt; Startup and Shutdown.
-    -Uncheck RSE UI.
-
-step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
-    -Uncheck Re-open Remote Systems view to previous state.
-</code></pre><p>Update your Eclipse to 4.3.1 (at least) due to a bug on previous version.</p>
-<p>Restart Eclipse and its done.</p>
-<ol>
-<li>线程安全概念：当多个线程访问某一个类（对象或方法）时，这个类始终都能表现出正确的行为，那么这个类（对象或方法）就是线程安全的。</li>
-<li>synchronized：可以在何意对象及方法上加锁，而加锁的这段段码称为“互斥区”或“临界区”。</li>
-</ol>
-<p>当多个线程访问某个synchronized修饰的方法时，以排队的方式进行处理（这里的排除是按照CPU分配时间片的先后顺序而定的），一个线程想要执行这个方法时，首先是尝试获得锁，如果拿到锁，就执行；否则，就会不断的尝试去获得这把锁，直到拿到为止，而且是多个线程同时去竞争这把锁。在static方法上加上synchronized关键字，表示锁定.class类，类一级别的锁（独占.class类)</p>
-<p>一个类中有两个方法都有synchronized修饰的话，多线程分别访问这两个方法都会进行等待，因为它们都共用同一个锁。如果其中一个没有synchronized修饰的话，多线程就可以同时访问，而不需等待。</p>
-<h3 id="Integer-valueOf产生的死锁"><a href="#Integer-valueOf产生的死锁" class="headerlink" title="Integer.valueOf产生的死锁"></a>Integer.valueOf产生的死锁</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SyncAddRunnable</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> a;</span><br><span class="line">	<span class="keyword">int</span> b;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">SyncAddRunnable</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.a = a;</span><br><span class="line">		<span class="keyword">this</span>.b = b;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">synchronized</span> (Integer.valueOf(a)) &#123;</span><br><span class="line">			<span class="keyword">synchronized</span> (Integer.valueOf(b)) &#123;</span><br><span class="line">				System.out.println(a + b);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException, IOException </span>&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">			<span class="keyword">new</span> Thread(<span class="keyword">new</span> SyncAddRunnable(<span class="number">1</span>, <span class="number">2</span>)).start();</span><br><span class="line">			<span class="keyword">new</span> Thread(<span class="keyword">new</span> SyncAddRunnable(<span class="number">2</span>, <span class="number">1</span>)).start();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<p>上面的程序会造成死锁，其原因是Integer.valueOf方法基于减少对象创建次数和节省内存的考虑，[-128, 127]之间的数字会被缓存（默认值，实际值取决于<code>java.lang.Integer.IntegerCache.high</code>参数的设置），当valueOf()方法传入的参数在这个范围之内，将直接返回缓存中的对象，也就是说，代码中调用了200次Integer.valueOf方法一共就只返回了2个不同的对象。假如在某个线程的两个synchronized块之间发生了线程切换，那就会出现线程A等待被线程B持有的Integer.valueOf(1)，而线程B又等待着线程A持有的Integer.valueOf(2)，结果就出现了死锁了。</p>
-<h3 id="只保留3位小数"><a href="#只保留3位小数" class="headerlink" title="只保留3位小数"></a>只保留3位小数</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java.text.NumberFormat numberFormat = java.text.NumberFormat.getNumberInstance();</span><br><span class="line">numberFormat.setMaximumFractionDigits(<span class="number">3</span>);</span><br><span class="line">System.out.println(numberFormat.format(<span class="number">3.1415927</span>d)); <span class="comment">// 3.142</span></span><br></pre></td></tr></table></figure>
-<h3 id="数字转成百分比"><a href="#数字转成百分比" class="headerlink" title="数字转成百分比"></a>数字转成百分比</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">java.text.NumberFormat percentFormat = java.text.NumberFormat.getPercentInstance();</span><br><span class="line">percentFormat.setMaximumFractionDigits(<span class="number">2</span>); <span class="comment">// 最大小数位数</span></span><br><span class="line">percentFormat.setMinimumFractionDigits(<span class="number">2</span>); <span class="comment">// 最小小数位数</span></span><br><span class="line">percentFormat.setMaximumIntegerDigits(<span class="number">2</span>); <span class="comment">// 最大整数位数，多了会截掉最前面的</span></span><br><span class="line">percentFormat.setMinimumIntegerDigits(<span class="number">2</span>); <span class="comment">// 最小整数位数，不够会在最前面补0</span></span><br><span class="line">System.out.println(percentFormat.format(<span class="number">3.1415927</span>d)); <span class="comment">// 14.16%</span></span><br><span class="line">System.out.println(percentFormat.format(<span class="number">0.0415927</span>d)); <span class="comment">// 04.16%</span></span><br></pre></td></tr></table></figure>
-<h3 id="btrace的使用"><a href="#btrace的使用" class="headerlink" title="btrace的使用"></a>btrace的使用</h3><p>要使用btrace，必须先到这里下载：<br><a href="https://github.com/btraceio/btrace">https://github.com/btraceio/btrace</a><br>下载之后，解压到指定目录，还要配置系统的环境变量<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/home/hewentian/Downloads</span><br><span class="line"></span><br><span class="line">$ tar xf btrace-bin-1.3.11.tar.gz </span><br><span class="line">$ mv btrace-bin-1.3.11 /usr/<span class="built_in">local</span>/btrace-bin-1.3.11/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改环境变量</span></span><br><span class="line">$ vi /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在/etc/profile中增加以下内容</span></span><br><span class="line"><span class="comment"># add btrace</span></span><br><span class="line"><span class="built_in">export</span> BTRACE_HOME=/usr/<span class="built_in">local</span>/btrace-bin-1.3.11</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$BTRACE_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>下面用一个例子，演示如何使用：<br>示例1：获取方法参数以及返回值<br>将下面的代码保存为BTraceTest.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hewentian;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;BTtraceTest.java&lt;/b&gt; 是</span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2018-04-19 3:57:22 PM</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BTraceTest</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">whoAreYou</span><span class="params">(String name, <span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> <span class="string">"I'm "</span> + name + <span class="string">", "</span> + age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">			String sayYou = whoAreYou(<span class="string">"Lily"</span>, <span class="number">23</span>);</span><br><span class="line">			System.out.println(sayYou);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>下面的是测试代码，同样是JAVA代码，将其保存为Btrace.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;Btrace.java&lt;/b&gt; 是 </span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2018-04-19 4:02:37 PM</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.sun.btrace.BTraceUtils.*;</span><br><span class="line"><span class="keyword">import</span> com.sun.btrace.annotations.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@BTrace</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Btrace</span> </span>&#123;</span><br><span class="line">	<span class="meta">@OnMethod</span>(clazz = <span class="string">"com.hewentian.BTraceTest"</span>, method = <span class="string">"whoAreYou"</span>, location = <span class="meta">@Location</span>(Kind.RETURN))</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">whoAreYou</span><span class="params">(String name, <span class="keyword">int</span> age, @Return String result)</span> </span>&#123;</span><br><span class="line">		println(<span class="string">"name: "</span> + name);</span><br><span class="line">		println(<span class="string">"age: "</span> + age);</span><br><span class="line">		println(result);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>下面开始测试：<br>在一个console中执行如下命令，将程序启动<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ javac -d . BTraceTest.java	<span class="comment"># 编译</span></span><br><span class="line">$ java com.hewentian.BTraceTest <span class="comment"># 运行</span></span><br><span class="line"></span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br><span class="line"><span class="string">I'</span>m Lily, 23</span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br><span class="line"><span class="string">I'</span>m Lily, 23</span><br><span class="line">btrace WARNING: Invalid <span class="string">'libs'</span> configuration [null]. Path <span class="string">'/usr/local/btrace-bin-1.3.11/build/btrace-libs'</span> does not exist.</span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br><span class="line"><span class="string">I'</span>m Lily, 23</span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br><span class="line"><span class="string">I'</span>m Lily, 23</span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br><span class="line"><span class="string">I'</span>m Lily, 23</span><br></pre></td></tr></table></figure></p>
-<p>在另一个console中执行如下命令，查询上面的程序的PID，以便用于监控<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ jps -v</span><br><span class="line">4498 BTraceTest</span><br><span class="line">4516 Jps -Denv.class.path=.:/usr/<span class="built_in">local</span>/java/jdk1.8.0_102/lib:/usr/<span class="built_in">local</span>/java/jdk1.8.0_102/jre/lib: -Dapplication.home=/usr/<span class="built_in">local</span>/java/jdk1.8.0_102 -Xms8m</span><br><span class="line">2614 org.eclipse.equinox.launcher_1.4.0.v20161219-1356.jar -Dosgi.requiredJavaVersion=1.8 -Xms40m -Dosgi.module.lock.timeout=10 -Xverify:none -Xmx1200m</span><br></pre></td></tr></table></figure></p>
-<p>可以看到，我们的程序BTraceTest的PID为4498，执行下面的程序，开启btrace<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ btrace 4498 Btrace.java</span><br><span class="line"></span><br><span class="line">name: Lily</span><br><span class="line">age: 23</span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br><span class="line"><span class="string">name: Lily</span></span><br><span class="line"><span class="string">age: 23</span></span><br><span class="line"><span class="string">I'</span>m Lily, 23</span><br><span class="line">name: Lily</span><br><span class="line">age: 23</span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br><span class="line"><span class="string">name: Lily</span></span><br><span class="line"><span class="string">age: 23</span></span><br><span class="line"><span class="string">I'</span>m Lily, 23</span><br><span class="line">name: Lily</span><br><span class="line">age: 23</span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br></pre></td></tr></table></figure></p>
-<p>示例2：计算方法运行消耗的时间，这在实际中非常有用<br>将下面的代码保存为BtraceDuration.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;BtraceDuration.java&lt;/b&gt; 是 </span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2018-04-19 4:46:50 PM</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.sun.btrace.BTraceUtils.*;</span><br><span class="line"><span class="keyword">import</span> com.sun.btrace.annotations.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@BTrace</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BtraceDuration</span> </span>&#123;</span><br><span class="line">	<span class="meta">@OnMethod</span>(clazz = <span class="string">"com.hewentian.BTraceTest"</span>, method = <span class="string">"whoAreYou"</span>, location = <span class="meta">@Location</span>(Kind.RETURN))</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">whoAreYou</span><span class="params">(@Duration <span class="keyword">long</span> duration)</span> </span>&#123;</span><br><span class="line">		println(strcat(<span class="string">"duration(ms): "</span>, str(duration / <span class="number">1000000</span>))); <span class="comment">// duration的单位是纳秒，要除以 1,000,000 才是毫秒</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>同样是按示例1的流程执行即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ jps</span><br><span class="line"><span class="number">2614</span> org.eclipse.equinox.launcher_1.4.0.v20161219-<span class="number">1356</span>.jar</span><br><span class="line"><span class="number">5258</span> Jps</span><br><span class="line"><span class="number">5243</span> BTraceTest</span><br><span class="line"></span><br><span class="line">$ btrace <span class="number">5243</span> BtraceDuration.java </span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br></pre></td></tr></table></figure></p>
-<p>btrace的介绍就到这里，这只是入门。更多内容，参考了：<a href="http://calvin1978.blogcn.com/articles/btrace1.html。这篇文章写得非常好。" target="_blank" rel="noopener">http://calvin1978.blogcn.com/articles/btrace1.html。这篇文章写得非常好。</a></p>
-<p>在我们对一个对象的方法加锁的时候，需要考虑业务的整体性，即为getter/setter方法同时加锁synchronized同步关键字，保证业务的原子性。以免出现脏读。</p>
-<p>关键字synchronized拥有重入锁的功能，也就是说在使用synchronized时，当一个线程得到了一个对象的锁后，再次请求此对象时是可以再次得到该对象的锁。</p>
-<p>同步方法直接在方法上加synchronized实现加锁，同步代码块则在方法内部加锁，很明显，同步方法锁的范围比较大，而同步代码块范围要小点，一般同步的范围越大，性能就越差，一般需要加锁进行同步的时候，肯定是范围越小越好，这样性能更好</p>
-<p>ReentrantLock可重入锁的意思是，一个线程可以对已被加锁的ReentrantLock锁再次加锁，ReentrantLock对象会维持一个计数器来追踪lock()方法的嵌套调用，线程在每次调用lock()加锁后，必须显式调用unlock()来释放锁，所以一段被锁保护的代码可以调用另一个被相同锁保护的方法。</p>
-<p>所以我们在用synchronized关键字的时候，能缩小代码段的范围就尽量缩小，能在代码段上加同步就不要再整个方法上加同步。这叫减小锁的粒度，使代码更大程度的并发。</p>
-<p>wait notfiy 方法，wait释放锁，notfiy不释放锁。用这种方式会有不实时的坏处。因为虽然A线程发出了notify，但是它不释放锁，这样B线程还需要wait直到A执行完它的时间片。可以使用CountDownLatch来实现实时。</p>
-<p>Object类的方法有：</p>
-<ol>
-<li>public: notify(), notifyAll();</li>
-<li>public: wait(), wait(long),wait(long, int);</li>
-<li>public: toString(), equals(Object), hashCode(), getClass();</li>
-<li>protected: clone(), finalize();</li>
-<li>private: registerNatives().</li>
-</ol>
-<p>动态类型语言的关键特征是它的类型检查的主体过程是在运行期而不是在编译期。</p>
-<p>java性能测试工具jmeter：<a href="http://jmeter.apache.org/" target="_blank" rel="noopener">http://jmeter.apache.org/</a><br>和它的好搭档badboy：<a href="http://www.badboy.com.au/" target="_blank" rel="noopener">http://www.badboy.com.au/</a><br>jvisualvm</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="cjqwfywud0016py3ky0ifus1r" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-
     </footer>
   </div>
   
@@ -940,9 +930,9 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -952,7 +942,7 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -960,9 +950,13 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
+          </li>
         
           <li>
             <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
@@ -978,10 +972,6 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
         
           <li>
             <a href="/2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/12/kafka-intro/">kafka 介绍</a>
           </li>
         
       </ul>
@@ -1007,7 +997,7 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
