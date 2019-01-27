@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -147,21 +147,41 @@ slave3:
 <p><img src="/img/hbase-5.png" alt="" title="HBase集群在HDFS中的目录"></p>
 <p>至此，集群搭建成功。</p>
 <h3 id="Hbase初体验"><a href="#Hbase初体验" class="headerlink" title="Hbase初体验"></a>Hbase初体验</h3><p>首先我们通过SHELL的方式简单体验一下Hbase：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6/</span><br><span class="line">$ ./bin/hbase shell</span><br><span class="line">2019-01-23 19:16:36,118 WARN  [main] util.NativeCodeLoader: Unable to load native-hadoop library <span class="keyword">for</span> your platform... using <span class="built_in">builtin</span>-java classes <span class="built_in">where</span> applicable</span><br><span class="line">HBase Shell; enter <span class="string">'help&lt;RETURN&gt;'</span> <span class="keyword">for</span> list of supported commands.</span><br><span class="line">Type <span class="string">"exit&lt;RETURN&gt;"</span> to leave the HBase Shell</span><br><span class="line">Version 1.2.6, rUnknown, Mon May 29 02:25:32 CDT 2017</span><br><span class="line"></span><br><span class="line">hbase(main):001:0&gt; list</span><br><span class="line">TABLE</span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.6030 seconds</span><br><span class="line"></span><br><span class="line">=&gt; []</span><br></pre></td></tr></table></figure></p>
-<p>由上述结果可知，Hbase中现在没有一张表。我们尝试创建一张表<code>t_student</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):002:0&gt; create <span class="string">'t_student'</span>, <span class="string">'cf1'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 2.4700 seconds</span><br><span class="line"></span><br><span class="line">=&gt; Hbase::Table - t_student</span><br><span class="line">hbase(main):003:0&gt; list</span><br><span class="line">TABLE</span><br><span class="line">t_student</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.0250 seconds</span><br><span class="line"></span><br><span class="line">=&gt; [<span class="string">"t_student"</span>]</span><br><span class="line">hbase(main):004:0&gt; desc <span class="string">'t_student'</span></span><br><span class="line">Table t_student is ENABLED</span><br><span class="line">t_student</span><br><span class="line">COLUMN FAMILIES DESCRIPTION</span><br><span class="line">&#123;NAME =&gt; <span class="string">'cf1'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>, VERSIONS =&gt; <span class="string">'1'</span>, IN_MEMORY =&gt; <span class="string">'false'</span>, KEEP_DELETED_CELLS =&gt; <span class="string">'FALSE'</span>, DATA_BLOCK_ENCODING =&gt; <span class="string">'NONE'</span>, TTL =&gt; <span class="string">'FOREVER'</span>, COMPRESSION =&gt; <span class="string">'NONE'</span>, MIN_VERSIONS =&gt; <span class="string">'0'</span>, BLO</span><br><span class="line">CKCACHE =&gt; <span class="string">'true'</span>, BLOCKSIZE =&gt; <span class="string">'65536'</span>, REPLICATION_SCOPE =&gt; <span class="string">'0'</span>&#125;</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.2010 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):005:0&gt;</span><br></pre></td></tr></table></figure></p>
-<p>往表中插入一条数据：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):005:0&gt; put <span class="string">'t_student'</span>, <span class="string">'01'</span>, <span class="string">'cf1:name'</span>, <span class="string">'tim'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.1840 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):006:0&gt; scan <span class="string">'t_student'</span></span><br><span class="line">ROW                                                  COLUMN+CELL</span><br><span class="line"> 01                                                  column=cf1:name, timestamp=1548242390794, value=tim</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.1460 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):007:0&gt;</span><br></pre></td></tr></table></figure></p>
-<p>插入数据之后，可能在HDFS中还不能立刻看到，因为数据还在内存中，但可以通过以下命令将数据立刻写到HDFS中：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):008:0&gt; flush <span class="string">'t_student'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.7290 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):009:0&gt;</span><br></pre></td></tr></table></figure></p>
+<p>由上述结果可知，Hbase中现在没有一张表。我们尝试创建一张表<code>t_student</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):002:0&gt; create <span class="string">'t_student'</span>, <span class="string">'cf1'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 2.4700 seconds</span><br><span class="line"></span><br><span class="line">=&gt; Hbase::Table - t_student</span><br><span class="line">hbase(main):003:0&gt; list</span><br><span class="line">TABLE</span><br><span class="line">t_student</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.0250 seconds</span><br><span class="line"></span><br><span class="line">=&gt; [<span class="string">"t_student"</span>]</span><br><span class="line">hbase(main):004:0&gt; desc <span class="string">'t_student'</span></span><br><span class="line">Table t_student is ENABLED</span><br><span class="line">t_student</span><br><span class="line">COLUMN FAMILIES DESCRIPTION</span><br><span class="line">&#123;NAME =&gt; <span class="string">'cf1'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>, VERSIONS =&gt; <span class="string">'1'</span>, IN_MEMORY =&gt; <span class="string">'false'</span>, KEEP_DELETED_CELLS =&gt; <span class="string">'FALSE'</span>, DATA_BLOCK_ENCODING =&gt; <span class="string">'NONE'</span>, TTL =&gt; <span class="string">'FOREVER'</span>, COMPRESSION =&gt; <span class="string">'NONE'</span>, MIN_VERSIONS =&gt; <span class="string">'0'</span>, BLO</span><br><span class="line">CKCACHE =&gt; <span class="string">'true'</span>, BLOCKSIZE =&gt; <span class="string">'65536'</span>, REPLICATION_SCOPE =&gt; <span class="string">'0'</span>&#125;</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.2010 seconds</span><br></pre></td></tr></table></figure></p>
+<p>往表中插入2条数据：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):005:0&gt; put <span class="string">'t_student'</span>, <span class="string">'01'</span>, <span class="string">'cf1:name'</span>, <span class="string">'tim'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.1840 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):006:0&gt; put <span class="string">'t_student'</span>, <span class="string">'02'</span>, <span class="string">'cf1:name'</span>, <span class="string">'timho'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.3630 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):007:0&gt; scan <span class="string">'t_student'</span></span><br><span class="line">ROW                                                  COLUMN+CELL</span><br><span class="line"> 01                                                  column=cf1:name, timestamp=1548242390794, value=tim</span><br><span class="line"> 02                                                  column=cf1:name, timestamp=1548246522887, value=timho</span><br><span class="line">2 row(s) <span class="keyword">in</span> 0.1240 seconds</span><br></pre></td></tr></table></figure></p>
+<p>插入数据之后，可能在HDFS中还不能立刻看到，因为数据还在内存中，但可以通过以下命令将数据立刻写到HDFS中：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):008:0&gt; flush <span class="string">'t_student'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.7290 seconds</span><br></pre></td></tr></table></figure></p>
 <p>然后我们可以在HDFS、Hbase的管理界面分别看到表信息：</p>
 <p><img src="/img/hbase-6.png" alt="" title="HBase的数据在HDFS中"></p>
 <p><img src="/img/hbase-7.png" alt="" title="HBase集群管理界面 用户表信息"></p>
 <p>当我们在HDFS中看到表中的某个块的数据，如下：</p>
 <p><img src="/img/hbase-8.png" alt="" title="HBase的数据在HDFS中"></p>
 <p>我们可以通过Hbase中的命令来查看数据的真实内容：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hbase-1.2.6</span><br><span class="line">$ ./bin/hbase hfile -p -f /hbase/data/default/t_student/b76cccf6c6a7926bf8f40b4eafc6991e/cf1/2ed0a233411447778982edce04e96fe3</span><br><span class="line">2019-01-23 19:45:33,200 WARN  [main] util.NativeCodeLoader: Unable to load native-hadoop library <span class="keyword">for</span> your platform... using <span class="built_in">builtin</span>-java classes <span class="built_in">where</span> applicable</span><br><span class="line">2019-01-23 19:45:34,046 INFO  [main] hfile.CacheConfig: Created cacheConfig: CacheConfig:disabled</span><br><span class="line">K: 01/cf1:name/1548242390794/Put/vlen=3/seqid=4 V: tim</span><br><span class="line">Scanned kv count -&gt; 1</span><br></pre></td></tr></table></figure></p>
+<p>查看集群状态和节点数量<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):009:0&gt; status</span><br><span class="line">1 active master, 1 backup masters, 3 servers, 0 dead, 1.0000 average load</span><br></pre></td></tr></table></figure></p>
+<p>根据条件查询数据<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):010:0&gt; get <span class="string">'t_student'</span>, <span class="string">'01'</span></span><br><span class="line">COLUMN                                               CELL</span><br><span class="line"> cf1:name                                            timestamp=1548242390794, value=tim</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.0590 seconds</span><br></pre></td></tr></table></figure></p>
+<p>表失效、表生效、删除表：</p>
+<ol>
+<li>使用<code>disable</code>命令可将某张表失效，失效后该表将不能使用；</li>
+<li>使用<code>enable</code>命令可使表重新生效，表生效后，即可对表进行操作；</li>
+<li>使用<code>drop</code>命令可对表进行删除，但只有表在失效的情况下，才能进行删除。</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):011:0&gt; desc <span class="string">'t_student'</span></span><br><span class="line">Table t_student is ENABLED</span><br><span class="line">t_student</span><br><span class="line">COLUMN FAMILIES DESCRIPTION</span><br><span class="line">&#123;NAME =&gt; <span class="string">'cf1'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>, VERSIONS =&gt; <span class="string">'1'</span>, IN_MEMORY =&gt; <span class="string">'false'</span>, KEEP_DELETED_CELLS =&gt; <span class="string">'FALSE'</span>, DATA_BLOCK_ENCODING =&gt; <span class="string">'NONE'</span>, TTL =&gt; <span class="string">'FOREVER'</span>, COMPRESSION =&gt; <span class="string">'NONE'</span>, MIN_VERSIONS =&gt; <span class="string">'0'</span>, BLO</span><br><span class="line">CKCACHE =&gt; <span class="string">'true'</span>, BLOCKSIZE =&gt; <span class="string">'65536'</span>, REPLICATION_SCOPE =&gt; <span class="string">'0'</span>&#125;</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.0480 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):012:0&gt; <span class="built_in">disable</span> <span class="string">'t_student'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 2.4070 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):013:0&gt; desc <span class="string">'t_student'</span></span><br><span class="line">Table t_student is DISABLED</span><br><span class="line">t_student</span><br><span class="line">COLUMN FAMILIES DESCRIPTION</span><br><span class="line">&#123;NAME =&gt; <span class="string">'cf1'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>, VERSIONS =&gt; <span class="string">'1'</span>, IN_MEMORY =&gt; <span class="string">'false'</span>, KEEP_DELETED_CELLS =&gt; <span class="string">'FALSE'</span>, DATA_BLOCK_ENCODING =&gt; <span class="string">'NONE'</span>, TTL =&gt; <span class="string">'FOREVER'</span>, COMPRESSION =&gt; <span class="string">'NONE'</span>, MIN_VERSIONS =&gt; <span class="string">'0'</span>, BLO</span><br><span class="line">CKCACHE =&gt; <span class="string">'true'</span>, BLOCKSIZE =&gt; <span class="string">'65536'</span>, REPLICATION_SCOPE =&gt; <span class="string">'0'</span>&#125;</span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.0320 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):014:0&gt; <span class="built_in">enable</span> <span class="string">'t_student'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 1.3260 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):015:0&gt; <span class="built_in">disable</span> <span class="string">'t_student'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 2.2550 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):016:0&gt; drop <span class="string">'t_student'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 1.3540 seconds</span><br><span class="line"></span><br><span class="line">hbase(main):017:0&gt; list</span><br><span class="line">TABLE</span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.0060 seconds</span><br><span class="line"></span><br><span class="line">=&gt; []</span><br></pre></td></tr></table></figure>
+<p>退出 hbase shell<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):018:0&gt; quit</span><br></pre></td></tr></table></figure></p>
+<h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><ol>
+<li><p>有时候我们重启了hadoop集群后，发现hbase无法使用，有可能是我们在hbase-site.xml中配置的hadoop master节点已经不是active了，解决办法是在hadoop中手动将其设为active状态；</p>
+</li>
+<li><p>主从节点时间没有同步时，极有可能出现如下错误，同步时间后可以正常启动：</p>
+<pre><code>master.ServerManager: Waiting for region servers count to settle; currently checked in 0, slept for 855041 ms, expecting minimum of 1, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+
+[HBase] ERROR:org.apache.hadoop.hbase.PleaseHoldException: Master is initializing
+</code></pre></li>
+</ol>
+<h3 id="java操作Hbase"><a href="#java操作Hbase" class="headerlink" title="java操作Hbase"></a>java操作Hbase</h3><p>java操作Hbase的例子见这里：<a href="https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/HbaseUtil.java">HbaseUtil.java</a>、<a href="https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/hbase/HbaseDemo.java">HbaseDemo.java</a></p>
 <p>未完，待续……</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/20/hbase-cluster/" data-id="cjr9xt1qv000k1f3kldl04z98" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2019/01/20/hbase-cluster/" data-id="cjrezy6ae000m4m3knbz26v45" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hbase/">hbase</a></li></ul>
@@ -276,7 +296,7 @@ Caused by: java.net.URISyntaxException: Relative path in absolute URI: ${system:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="cjr9xt1r100131f3k8xj0dkei" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="cjrezy6al00184m3k9eqkrhcq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li></ul>
@@ -401,11 +421,12 @@ slave3:
 </code></pre><p>我们只需将两个namenode中的<code>jsch-0.1.42.jar</code>升级到<code>jsch-0.1.54.jar</code>即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ find ./ -name <span class="string">"*jsch*"</span></span><br><span class="line">$ </span><br><span class="line">./share/hadoop/httpfs/tomcat/webapps/webhdfs/WEB-INF/lib/jsch-0.1.42.jar</span><br><span class="line">./share/hadoop/common/lib/jsch-0.1.42.jar</span><br><span class="line">./share/hadoop/tools/lib/jsch-0.1.42.jar</span><br><span class="line">./share/hadoop/kms/tomcat/webapps/kms/WEB-INF/lib/jsch-0.1.42.jar</span><br></pre></td></tr></table></figure></p>
 <p>从查询结果看，只有4个JAR包需要升级，我们只要将两个namenode节点中的JAR包替换即可。重启集群，再次验证<code>failover</code>，我们可以看到两个namenode已经可以自动切换。大功告成。</p>
 <h3 id="启动YARN"><a href="#启动YARN" class="headerlink" title="启动YARN"></a>启动YARN</h3><p>YARN的启动步骤和<a href="../../../../2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>一样，这里不再赘述。</p>
+<h3 id="active和standby之间的手动切换"><a href="#active和standby之间的手动切换" class="headerlink" title="active和standby之间的手动切换"></a>active和standby之间的手动切换</h3><p>有时候，我们需要手动将某个namenode设置为active，可以通过<code>haadmin</code>命令，相关用法如下（<strong>我一般的做法是将原来active的namenode断网，从而让standby的节点成为active，然后再将之前断网的机器连回网络</strong>）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3</span><br><span class="line">$ ./bin/hdfs haadmin --<span class="built_in">help</span></span><br><span class="line">-<span class="built_in">help</span>: Unknown <span class="built_in">command</span></span><br><span class="line">Usage: haadmin</span><br><span class="line">    [-transitionToActive [--forceactive] &lt;serviceId&gt;]</span><br><span class="line">    [-transitionToStandby &lt;serviceId&gt;]</span><br><span class="line">    [-failover [--forcefence] [--forceactive] &lt;serviceId&gt; &lt;serviceId&gt;]</span><br><span class="line">    [-getServiceState &lt;serviceId&gt;]</span><br><span class="line">    [-checkHealth &lt;serviceId&gt;]</span><br><span class="line">    [-<span class="built_in">help</span> &lt;<span class="built_in">command</span>&gt;]</span><br><span class="line"></span><br><span class="line">Generic options supported are</span><br><span class="line">-conf &lt;configuration file&gt;     specify an application configuration file</span><br><span class="line">-D &lt;property=value&gt;            use value <span class="keyword">for</span> given property</span><br><span class="line">-fs &lt;<span class="built_in">local</span>|namenode:port&gt;      specify a namenode</span><br><span class="line">-jt &lt;<span class="built_in">local</span>|resourcemanager:port&gt;    specify a ResourceManager</span><br><span class="line">-files &lt;comma separated list of files&gt;    specify comma separated files to be copied to the map reduce cluster</span><br><span class="line">-libjars &lt;comma separated list of jars&gt;    specify comma separated jar files to include <span class="keyword">in</span> the classpath.</span><br><span class="line">-archives &lt;comma separated list of archives&gt;    specify comma separated archives to be unarchived on the compute machines.</span><br><span class="line"></span><br><span class="line">The general <span class="built_in">command</span> line syntax is</span><br><span class="line">bin/hadoop <span class="built_in">command</span> [genericOptions] [commandOptions]</span><br><span class="line"></span><br><span class="line">$ ./bin/hdfs haadmin -getServiceState nn1</span><br><span class="line">standby</span><br><span class="line">$ ./bin/hdfs haadmin -getServiceState nn2</span><br><span class="line">active</span><br><span class="line">$ ./bin/hdfs haadmin -transitionToActive --forcemanual nn1</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjr9xt1qx000r1f3ke6zzvxpe" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjrezy6a400084m3kqsjqwtip" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -499,7 +520,7 @@ by mortbay.org.
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjr9xt1qy000u1f3kp6vxbs50" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjrezy6ah000y4m3kobmpjych" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -629,7 +650,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjr9xt1qw000n1f3k08xqlbxd" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjrezy6af000q4m3k863v9gsv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -753,7 +774,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjr9xt1r7001q1f3kdnx71jhk" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjrezy6aq001o4m3kvnon6ohr" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -865,7 +886,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjr9xt1r4001g1f3kugpkloez" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjrezy6ao001h4m3ks786wk88" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -934,7 +955,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjr9xt1ri002q1f3k0nwwijj3" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjrezy6as001t4m3kkyt0bea2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -1104,7 +1125,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjr9xt1r5001j1f3kvl082usg" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjrezy6ap001k4m3kihrmql18" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -1183,7 +1204,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjr9xt1qh00011f3k1onrrjbl" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjrezy6a500094m3k57qthwwa" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1206,7 +1227,7 @@ Configuration OK
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
@@ -1226,7 +1247,7 @@ Configuration OK
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
         
@@ -1273,7 +1294,7 @@ Configuration OK
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
