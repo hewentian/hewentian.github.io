@@ -477,7 +477,40 @@ $
 YARN的启动步骤和[hadoop 集群的搭建][link_id_hadoop-cluster]一样，这里不再赘述。
 
 
+### active和standby之间的手动切换
+有时候，我们需要手动将某个namenode设置为active，可以通过`haadmin`命令，相关用法如下（**我一般的做法是将原来active的namenode断网，从而让standby的节点成为active，然后再将之前断网的机器连回网络**）：
+``` bash
+$ cd /home/hadoop/hadoop-2.7.3
+$ ./bin/hdfs haadmin --help
+-help: Unknown command
+Usage: haadmin
+    [-transitionToActive [--forceactive] <serviceId>]
+    [-transitionToStandby <serviceId>]
+    [-failover [--forcefence] [--forceactive] <serviceId> <serviceId>]
+    [-getServiceState <serviceId>]
+    [-checkHealth <serviceId>]
+    [-help <command>]
+
+Generic options supported are
+-conf <configuration file>     specify an application configuration file
+-D <property=value>            use value for given property
+-fs <local|namenode:port>      specify a namenode
+-jt <local|resourcemanager:port>    specify a ResourceManager
+-files <comma separated list of files>    specify comma separated files to be copied to the map reduce cluster
+-libjars <comma separated list of jars>    specify comma separated jar files to include in the classpath.
+-archives <comma separated list of archives>    specify comma separated archives to be unarchived on the compute machines.
+
+The general command line syntax is
+bin/hadoop command [genericOptions] [commandOptions]
+
+$ ./bin/hdfs haadmin -getServiceState nn1
+standby
+$ ./bin/hdfs haadmin -getServiceState nn2
+active
+$ ./bin/hdfs haadmin -transitionToActive --forcemanual nn1
+```
+
+
 [link_id_hadoop-cluster]: ../../../../2018/12/04/hadoop-cluster/
 [link_id_install-jdk]: ../../../../2017/12/08/install-jdk/
 [link_id_zookeeper-install-cluster]: ../../../../2017/12/06/zookeeper-install-cluster/
-
