@@ -190,5 +190,14 @@ db.getCollection("userInfo").find({}).forEach(function(doc) {
 }
 ```
 
+### mongodb日期查询
+日期的类型不同，查询的方式也不同：
+``` java
+如果日期的类型为String：
+db.getCollection('userInfo').find({"insertTime":{$regex:"2019-01-07 *"}}) // *号前有个空格
+db.getCollection('userInfo').find({"insertTime":{$gte:"2019-02-01 00:00:00",$lte:"2019-02-11 23:59:59"}})
 
+如果日期的类型为ISODate：
+db.getCollection('userInfo').find({"insertTime":{$gte:ISODate("2019-01-01T00:00:00Z"),$lte:ISODate("2019-02-11T23:59:59Z")}})
+```
 

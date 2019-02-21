@@ -4,6 +4,7 @@ date: 2017-12-06 16:33:35
 tags: zookeeper
 categories: bigdata
 ---
+
 ### 计划在一台`Ubuntu Linux`服务器上部署3台`zookeeper`服务器，分别为`server1`, `server2`, `server3`
 因为三台`zookeeper`服务器的配置都差不多，所以我们先设置好一台`server1`的配置，再将其复制成`server2`, `server3`并修改其中的配置即可。
 
@@ -131,7 +132,46 @@ $ ls /
 ```
 都会看到节点zk_test_cluster
 
+
+### 12. 查看运行状态
+``` bash
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server2/zookeeper-3.4.6/
+$ ./bin/zkServer.sh status
+JMX enabled by default
+Using config: /home/hewentian/ProjectD/zookeeperCluster/server2/zookeeper-3.4.6/bin/../conf/zoo.cfg
+Mode: leader
+
+$ cd /home/hewentian/ProjectD/zookeeperCluster/server3/zookeeper-3.4.6/
+$ ./bin/zkServer.sh status
+JMX enabled by default
+Using config: /home/hewentian/ProjectD/zookeeperCluster/server3/zookeeper-3.4.6/bin/../conf/zoo.cfg
+Mode: follower
+```
+
+可以看到server2是leader，其他两台是follower。
+
 集群部署结束。
+
+
+### zookeeper三种角式
+leader：负责进行投票的发起和决议，更新系统状态；
+follower：负责接受客户端的请求并向客户端返回结果，在选主过程中参与投票；
+observer：接受客户端的连接，将写请求转发给leader，但不参与投票，只同步leader的状态，observer的目的是为了扩展系统，提高读取速度。follower和observer统称为leaner。
+client：客户端，请求发起方。
+
+配置observer比较简单，只要在`zoo.cfg`中将要配置成为observer的机器加个后缀即可，如下：
+
+    server.3=127.0.0.1:2890:3890:observer
+
+### zookeeper的节点类型
+zookeeper有4种节点类型：
+1. PERSISTENT                持久化节点
+2. PERSISTENT_SEQUENTIAL     顺序自动编号持久化节点，这种节点会根据当前已存在的节点数自动加 1
+3. EPHEMERAL                 临时节点， 客户端session超时这类节点就会被自动删除
+4. EPHEMERAL_SEQUENTIAL      临时自动编号节点
+
+** 注意：EPHEMERAL类型的节点不能有子节点 **
+
 
 ### 参数说明：
 1. tickTime：zookeeper中使用的基本时间单位，毫秒值；
