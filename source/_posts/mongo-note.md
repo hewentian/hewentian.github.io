@@ -4,6 +4,185 @@ date: 2018-03-07 14:39:42
 tags: mongo
 categories: db
 ---
+
+### 安装mongodb数据库
+首先，我们必须安装mongodb，这样才能使用。我们下载相应版本的mongodb，因为我的笔记本电脑是ubuntu，所以我下载mongodb的tgz版本，下载地址如下：
+
+    https://www.mongodb.com/download-center/community
+
+下载之后，得到如下两个文件：
+mongodb-linux-x86_64-ubuntu1804-4.0.6.tgz
+mongodb-linux-x86_64-ubuntu1804-4.0.6.tgz.md5
+
+mongodb依赖libcurl4、openssl，我们必须先安装这两个依赖包：
+``` bash
+如已安装，则可跳过，验证命令如下
+$ dpkg -s libcurl4
+$ dpkg -s openssl
+
+安装命令
+$ sudo apt-get install libcurl4 openssl
+```
+
+我们将压缩包下载到`/home/hewentian/ProjectD`目录，然后解压：
+``` bash
+$ cd /home/hewentian/ProjectD
+$ tar xf mongodb-linux-x86_64-ubuntu1804-4.0.6.tgz
+$
+$ ls mongodb-linux-x86_64-ubuntu1804-4.0.6/
+bin  LICENSE-Community.txt  MPL-2  README  THIRD-PARTY-NOTICES
+```
+
+创建data目录和log目录
+``` bash
+$ cd /home/hewentian/ProjectD
+$ mkdir -p db/mongodb/data
+$ mkdir -p db/mongodb/log
+```
+
+创建mongod.conf配置文件
+``` bash
+$ cd /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/
+$ vi mongod.conf
+```
+
+并在其中输入如下内容：
+``` bash
+# mongod.conf
+
+# for documentation of all options, see:
+#   http://docs.mongodb.org/manual/reference/configuration-options/
+
+# Where and how to store data.
+storage:
+  dbPath: /home/hewentian/ProjectD/db/mongodb/data
+  journal:
+    enabled: true
+#  engine:
+#  mmapv1:
+#  wiredTiger:
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /home/hewentian/ProjectD/db/mongodb/log/mongod.log
+
+# network interfaces
+net:
+  port: 27017
+  bindIp: 127.0.0.1
+#  bindIp: 0.0.0.0  
+
+
+# how the process runs
+processManagement:
+  fork: true  # fork and run in background
+  pidFilePath: /home/hewentian/ProjectD/db/mongodb/mongod.pid  # location of pidfile
+  timeZoneInfo: /usr/share/zoneinfo
+
+#security:
+#  authorization: enabled
+
+#operationProfiling:
+
+#replication:
+
+#sharding:
+
+## Enterprise-Only Options:
+
+#auditLog:
+
+#snmp:
+```
+
+
+### 启动mongodb
+``` bash
+$ cd /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/bin
+$ ./mongod -f ../mongod.conf
+
+about to fork child process, waiting until server is ready for connections.
+forked process: 24049
+child process started successfully, parent exiting
+```
+
+
+### 停止mongodb
+不要直接通过kill命令杀掉mongodb的进程，而应通过它官方提供的关闭脚本，如下：
+``` bash
+$ cd /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/bin
+$ ./mongod -f ../mongod.conf --shutdown
+
+killing process with pid: 24049
+```
+
+
+### 配置登录用户名和密码
+要开启密码登录，首先要将mongod.conf中的以下选项打开：
+
+    security:
+      authorization: enabled
+
+然后重启mongodb服务。
+
+1. 添加管理员
+使用mongo命令进入命令行交互模式，创建第一个用户admin，该用户需要有用户管理权限，其角色为root。
+``` bash
+$ cd /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/bin
+$ ./bin/mongo --host 127.0.0.1
+MongoDB shell version v4.0.6
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("cbd0445f-667b-4d2a-92a8-66f8ad1d07ef") }
+MongoDB server version: 4.0.6
+> use admin
+switched to db admin
+> db.createUser({user:"admin",pwd:"12345",roles:["root"]})
+Successfully added user: { "user" : "admin", "roles" : [ "root" ] }
+> 
+> show collections
+Warning: unable to run listCollections, attempting to approximate collection names by parsing connectionStatus
+> db.auth("admin","12345")
+1
+> show collections
+```
+
+2. 添加数据库用户
+为数据库添加用户，添加用户前需要切换到该数据库，这里简单设置其角色为dbOwner
+``` bash
+> use bfg
+switched to db bfg
+> db.createUser({user: "bfg", pwd: "bfg100", roles: [{ role: "dbOwner", db: "bfg" }]})
+Successfully added user: {
+	"user" : "bfg",
+	"roles" : [
+		{
+			"role" : "dbOwner",
+			"db" : "bfg"
+		}
+	]
+}
+```
+
+这样，bfg的用户就只能访问bfg这个库了，登录方式如下：
+``` bash
+$ ./bin/mongo --host 127.0.0.1
+MongoDB shell version v4.0.6
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("873114cf-fb7e-436a-b939-7e765dbecee9") }
+MongoDB server version: 4.0.6
+> use bfg
+switched to db bfg
+> db.auth("bfg","bfg100")
+1
+> show dbs
+bfg  0.000GB
+```
+
+至此，数据库安装完毕（此安装过程2019年初才补上）。
+
+
 ### mongodb查询数组大小
 mongodb查询数组大小使用`$size`，例如：我们有一个名为`person`的集合，其中有个字段为`childrenNames`，是数组类型，如果我们要查询`childrenNames`长度为2的数据，则查询语句为：
 

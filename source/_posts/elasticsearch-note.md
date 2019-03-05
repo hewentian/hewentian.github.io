@@ -420,6 +420,63 @@ GET people/user/_search
 }
 </pre>
 
+
+### 深度翻页问题
+ES默认的分页机制一个不足的地方是，比如有5010条数据，当你仅想取第5000到5010条数据的时候，ES也会将前5000条数据加载到内存当中。从价值观上来看，使用大量的CPU，内存和带宽，分类过程确实会变得非常重要。 为此，我们强烈建议不要进行深度分页。
+<pre>
+{
+	"query": {
+		"bool": {
+			"must": [],
+			"must_not": [],
+			"should": [{
+				"wildcard": {
+					"orgName": "*有限公司"
+				}
+			}, {
+				"wildcard": {
+					"orgName": "*株式会社"
+				}
+			}]
+		}
+	},
+	"from": 1000000,
+	"size": 100,
+	"sort": [],
+	"aggs": {}
+}
+</pre>
+
+    Result window is too large, from + size must be less than or equal to: [1000000] but was [1000100]. See the scroll api for a more efficient way to request large data sets. This limit can be set by changing the [index.max_result_window] index level setting.
+
+
+要解决这个问题，可以使用下面的方式来改变ES默认深度分页的`index.max_result_window`最大窗口值
+
+    curl -XPUT http://127.0.0.1:9200/my_index/_settings -d '{ "index" : { "max_result_window" : 500000}}'
+
+其中my_index为要修改的index名，500000为要调整的新的窗口数
+
+或者分页使用ES的scroll api实现：
+``` java
+import static org.elasticsearch.index.query.QueryBuilders.*;
+
+QueryBuilder qb = termQuery("multi", "test");
+
+SearchResponse scrollResp = client.prepareSearch(test)
+        .addSort(FieldSortBuilder.DOC_FIELD_NAME, SortOrder.ASC)
+        .setScroll(new TimeValue(60000))
+        .setQuery(qb)
+        .setSize(100).get(); //max of 100 hits will be returned for each scroll
+//Scroll until no hits are returned
+do {
+    for (SearchHit hit : scrollResp.getHits().getHits()) {
+        //Handle the hit...
+    }
+
+    scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(60000)).execute().actionGet();
+} while(scrollResp.getHits().getHits().length != 0); // Zero hits mark the end of the scroll and the while loop.
+```
+
 未完待续……
 
 [link_id_elasticsearch-install]: ../../../../2018/09/16/elasticsearch-install "elasticsearch 单节点安装"

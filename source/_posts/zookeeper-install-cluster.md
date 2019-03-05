@@ -181,3 +181,22 @@ zookeeper有4种节点类型：
 5. dataLogDir: log目录，同样可以是任意目录。如果没有设置该参数，将使用和dataDir相同的设置；
 6. clientPort: 监听client连接的端口号；
 7. server.X=A:B:C：其中X是一个数字，表示这是第几号server。A是该server所在的IP地址；B配置该server和集群中的leader交换消息所使用的端口；C配置选举leader时所使用的端口。由于配置的是伪集群模式，所以各个server的B，C参数必须不同。
+
+
+### zookeeper能帮我们做什么
+1. Hadoop使用zookeeper的事件处理确保整个集群只有一个NameNode存储配置信息等；
+2. HBase使用zookeeper的事件处理确保整个集群只有一个HMaster，察觉HRegionServer联机和宕机、存储访问控制列表等。
+
+
+### 一些要注意的
+1. 注册的Watcher消息只会通知一次；
+2. 节点需要奇数个的原因有二：（1）容错和偶数是一样的，所以没必要多台；（2）防止脑裂；
+3. zookeeper两种模式：恢复模式（选主）和广播模式（Zab原子广播更新数据）；
+4. zookeeper的4个特点：最终一致性、可靠性、原子性、顺序性（因为增删改都发给Leader）；
+5. zookeeper的数据存放在内存中，但是会定期flush到磁盘dataDir的目录中。
+
+
+通过java api使用zookeeper的例子可以参见这里： [ZookeeperUtil.java][link_id_ZookeeperUtil]、[zookeeper实现分布式锁、rmi高可用][link_id_zookeeper]
+
+[link_id_ZookeeperUtil]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/ZookeeperUtil.java
+[link_id_zookeeper]: https://github.com/hewentian/hadoop-demo/tree/master/src/main/java/com/hewentian/hadoop/zookeeper
