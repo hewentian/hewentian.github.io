@@ -17,7 +17,7 @@
 <meta property="og:image" content="https://github.com/img/filezilla.png">
 <meta property="og:image" content="https://github.com/img/indicator-stickynotes.png">
 <meta property="og:image" content="https://github.com/img/simpleScreenRecorder.png">
-<meta property="og:updated_time" content="2019-01-24T01:25:18.152Z">
+<meta property="og:updated_time" content="2019-03-05T03:05:00.474Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: EFI -&amp;gt; /boot -&amp;gt; swap -&amp;gt; /: EFI        primary     200M /boot    primary        512M swap    logic        内存2倍 /        primary        剩下的容量 例如在小米笔记本安装 ubuntu 18.04 的时候，必须关">
@@ -475,11 +475,17 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
 <p>之后重启systemd-logind<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo service systemd-logind restart</span><br></pre></td></tr></table></figure></p>
 <p>ok.</p>
 <h3 id="设置日期和时间"><a href="#设置日期和时间" class="headerlink" title="设置日期和时间"></a>设置日期和时间</h3><p>在ubuntu下可以通过以下命令设置时间日期，或者使用NTP进行时间同步<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ timedatectl <span class="built_in">set</span>-ntp no</span><br><span class="line">$ timedatectl <span class="built_in">set</span>-time <span class="string">'2019-01-23 16:01:23'</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="awk的使用"><a href="#awk的使用" class="headerlink" title="awk的使用"></a>awk的使用</h3><p>它可以将文件内容按指定的分隔符进行输出，例如有文件a.txt，其内容如下：</p>
+<pre><code>1###abc
+2###def
+3###ghi
+</code></pre><p>如果我要以<code>###</code>为分隔符提取数据，可以这样：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cat a.txt | awk -F<span class="string">'###'</span> <span class="string">'&#123;print $1,$2&#125;'</span></span><br><span class="line"></span><br><span class="line">1 abc</span><br><span class="line">2 def</span><br><span class="line">3 ghi</span><br></pre></td></tr></table></figure></p>
+<p>也可以单独提取某一列。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjseifsge002sn03kamhvzbnb" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjsv6z1zr0026ri3km8vvrxzx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>

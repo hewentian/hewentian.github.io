@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="计划在一台Ubuntu Linux服务器上部署3台zookeeper服务器，分别为server1, server2, server3因为三台zookeeper服务器的配置都差不多，所以我们先设置好一台server1的配置，再将其复制成server2, server3并修改其中的配置即可。 1.建目录，如下：12$ mkdir -p /home/hewentian/ProjectD/zookeepe">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2019-02-21T10:54:13.246Z">
+<meta property="og:updated_time" content="2019-03-05T03:05:19.342Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="zookeeper 集群版安装方法">
 <meta name="twitter:description" content="计划在一台Ubuntu Linux服务器上部署3台zookeeper服务器，分别为server1, server2, server3因为三台zookeeper服务器的配置都差不多，所以我们先设置好一台server1的配置，再将其复制成server2, server3并修改其中的配置即可。 1.建目录，如下：12$ mkdir -p /home/hewentian/ProjectD/zookeepe">
@@ -155,11 +155,23 @@ clientPort=2183                                                 # 这台服务�
 <li>clientPort: 监听client连接的端口号；</li>
 <li>server.X=A:B:C：其中X是一个数字，表示这是第几号server。A是该server所在的IP地址；B配置该server和集群中的leader交换消息所使用的端口；C配置选举leader时所使用的端口。由于配置的是伪集群模式，所以各个server的B，C参数必须不同。</li>
 </ol>
+<h3 id="zookeeper能帮我们做什么"><a href="#zookeeper能帮我们做什么" class="headerlink" title="zookeeper能帮我们做什么"></a>zookeeper能帮我们做什么</h3><ol>
+<li>Hadoop使用zookeeper的事件处理确保整个集群只有一个NameNode存储配置信息等；</li>
+<li>HBase使用zookeeper的事件处理确保整个集群只有一个HMaster，察觉HRegionServer联机和宕机、存储访问控制列表等。</li>
+</ol>
+<h3 id="一些要注意的"><a href="#一些要注意的" class="headerlink" title="一些要注意的"></a>一些要注意的</h3><ol>
+<li>注册的Watcher消息只会通知一次；</li>
+<li>节点需要奇数个的原因有二：（1）容错和偶数是一样的，所以没必要多台；（2）防止脑裂；</li>
+<li>zookeeper两种模式：恢复模式（选主）和广播模式（Zab原子广播更新数据）；</li>
+<li>zookeeper的4个特点：最终一致性、可靠性、原子性、顺序性（因为增删改都发给Leader）；</li>
+<li>zookeeper的数据存放在内存中，但是会定期flush到磁盘dataDir的目录中。</li>
+</ol>
+<p>通过java api使用zookeeper的例子可以参见这里： <a href="https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/ZookeeperUtil.java">ZookeeperUtil.java</a>、<a href="https://github.com/hewentian/hadoop-demo/tree/master/src/main/java/com/hewentian/hadoop/zookeeper">zookeeper实现分布式锁、rmi高可用</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjseifsgi0038n03k2ay9h6ao" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/06/zookeeper-install-cluster/" data-id="cjsv6z205003hri3kx2jvtz7z" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>

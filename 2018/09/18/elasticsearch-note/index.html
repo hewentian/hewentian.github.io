@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="参考资料：Elasticsearch 权威指南Elasticsearch Referencehttp://es.xiaoleilu.com/080_Structured_Search/20_contains.htmlhttps://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core 首先，你必须">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2018-11-14T09:21:11.000Z">
+<meta property="og:updated_time" content="2019-03-05T03:04:52.053Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="elasticsearch 学习笔记">
 <meta name="twitter:description" content="参考资料：Elasticsearch 权威指南Elasticsearch Referencehttp://es.xiaoleilu.com/080_Structured_Search/20_contains.htmlhttps://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core 首先，你必须">
@@ -452,12 +452,43 @@ GET people/user/_search
 }
 </pre>
 
+
+<h3 id="深度翻页问题"><a href="#深度翻页问题" class="headerlink" title="深度翻页问题"></a>深度翻页问题</h3><p>ES默认的分页机制一个不足的地方是，比如有5010条数据，当你仅想取第5000到5010条数据的时候，ES也会将前5000条数据加载到内存当中。从价值观上来看，使用大量的CPU，内存和带宽，分类过程确实会变得非常重要。 为此，我们强烈建议不要进行深度分页。</p>
+<pre>
+{
+    "query": {
+        "bool": {
+            "must": [],
+            "must_not": [],
+            "should": [{
+                "wildcard": {
+                    "orgName": "*有限公司"
+                }
+            }, {
+                "wildcard": {
+                    "orgName": "*株式会社"
+                }
+            }]
+        }
+    },
+    "from": 1000000,
+    "size": 100,
+    "sort": [],
+    "aggs": {}
+}
+</pre>
+
+<pre><code>Result window is too large, from + size must be less than or equal to: [1000000] but was [1000100]. See the scroll api for a more efficient way to request large data sets. This limit can be set by changing the [index.max_result_window] index level setting.
+</code></pre><p>要解决这个问题，可以使用下面的方式来改变ES默认深度分页的<code>index.max_result_window</code>最大窗口值</p>
+<pre><code>curl -XPUT http://127.0.0.1:9200/my_index/_settings -d &apos;{ &quot;index&quot; : { &quot;max_result_window&quot; : 500000}}&apos;
+</code></pre><p>其中my_index为要修改的index名，500000为要调整的新的窗口数</p>
+<p>或者分页使用ES的scroll api实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.elasticsearch.index.query.QueryBuilders.*;</span><br><span class="line"></span><br><span class="line">QueryBuilder qb = termQuery(<span class="string">"multi"</span>, <span class="string">"test"</span>);</span><br><span class="line"></span><br><span class="line">SearchResponse scrollResp = client.prepareSearch(test)</span><br><span class="line">        .addSort(FieldSortBuilder.DOC_FIELD_NAME, SortOrder.ASC)</span><br><span class="line">        .setScroll(<span class="keyword">new</span> TimeValue(<span class="number">60000</span>))</span><br><span class="line">        .setQuery(qb)</span><br><span class="line">        .setSize(<span class="number">100</span>).get(); <span class="comment">//max of 100 hits will be returned for each scroll</span></span><br><span class="line"><span class="comment">//Scroll until no hits are returned</span></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (SearchHit hit : scrollResp.getHits().getHits()) &#123;</span><br><span class="line">        <span class="comment">//Handle the hit...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(<span class="keyword">new</span> TimeValue(<span class="number">60000</span>)).execute().actionGet();</span><br><span class="line">&#125; <span class="keyword">while</span>(scrollResp.getHits().getHits().length != <span class="number">0</span>); <span class="comment">// Zero hits mark the end of the scroll and the while loop.</span></span><br></pre></td></tr></table></figure></p>
 <p>未完待续……</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjseifsfm000dn03kmkgbp7an" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjsv6z1z40009ri3k44nsgfrj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>

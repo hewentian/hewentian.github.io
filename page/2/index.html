@@ -452,12 +452,43 @@ GET people/user/_search
 }
 </pre>
 
+
+<h3 id="深度翻页问题"><a href="#深度翻页问题" class="headerlink" title="深度翻页问题"></a>深度翻页问题</h3><p>ES默认的分页机制一个不足的地方是，比如有5010条数据，当你仅想取第5000到5010条数据的时候，ES也会将前5000条数据加载到内存当中。从价值观上来看，使用大量的CPU，内存和带宽，分类过程确实会变得非常重要。 为此，我们强烈建议不要进行深度分页。</p>
+<pre>
+{
+    "query": {
+        "bool": {
+            "must": [],
+            "must_not": [],
+            "should": [{
+                "wildcard": {
+                    "orgName": "*有限公司"
+                }
+            }, {
+                "wildcard": {
+                    "orgName": "*株式会社"
+                }
+            }]
+        }
+    },
+    "from": 1000000,
+    "size": 100,
+    "sort": [],
+    "aggs": {}
+}
+</pre>
+
+<pre><code>Result window is too large, from + size must be less than or equal to: [1000000] but was [1000100]. See the scroll api for a more efficient way to request large data sets. This limit can be set by changing the [index.max_result_window] index level setting.
+</code></pre><p>要解决这个问题，可以使用下面的方式来改变ES默认深度分页的<code>index.max_result_window</code>最大窗口值</p>
+<pre><code>curl -XPUT http://127.0.0.1:9200/my_index/_settings -d &apos;{ &quot;index&quot; : { &quot;max_result_window&quot; : 500000}}&apos;
+</code></pre><p>其中my_index为要修改的index名，500000为要调整的新的窗口数</p>
+<p>或者分页使用ES的scroll api实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.elasticsearch.index.query.QueryBuilders.*;</span><br><span class="line"></span><br><span class="line">QueryBuilder qb = termQuery(<span class="string">"multi"</span>, <span class="string">"test"</span>);</span><br><span class="line"></span><br><span class="line">SearchResponse scrollResp = client.prepareSearch(test)</span><br><span class="line">        .addSort(FieldSortBuilder.DOC_FIELD_NAME, SortOrder.ASC)</span><br><span class="line">        .setScroll(<span class="keyword">new</span> TimeValue(<span class="number">60000</span>))</span><br><span class="line">        .setQuery(qb)</span><br><span class="line">        .setSize(<span class="number">100</span>).get(); <span class="comment">//max of 100 hits will be returned for each scroll</span></span><br><span class="line"><span class="comment">//Scroll until no hits are returned</span></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (SearchHit hit : scrollResp.getHits().getHits()) &#123;</span><br><span class="line">        <span class="comment">//Handle the hit...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(<span class="keyword">new</span> TimeValue(<span class="number">60000</span>)).execute().actionGet();</span><br><span class="line">&#125; <span class="keyword">while</span>(scrollResp.getHits().getHits().length != <span class="number">0</span>); <span class="comment">// Zero hits mark the end of the scroll and the while loop.</span></span><br></pre></td></tr></table></figure></p>
 <p>未完待续……</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjseifsfm000dn03kmkgbp7an" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjsv6z1z40009ri3k44nsgfrj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -653,7 +684,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjseifsfn000en03kpcpu9k10" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjsv6z1z20007ri3kyod4zl80" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -977,7 +1008,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjseifsfg0006n03kzmvxqbuy" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjsv6z1z30008ri3kuhyyrbzi" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1213,7 +1244,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjseifsgm003jn03kzbsrgail" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjsv6z1zy002uri3ku4r07ods" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1286,7 +1317,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjseifsgb002jn03ka6d4jigh" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjsv6z1zx002rri3k91q0cfkh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1384,7 +1415,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjseifsgc002nn03k1phuh2t5" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjsv6z1zw002mri3klas6qnq9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1551,7 +1582,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjseifsg1001kn03knlac9uc1" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjsv6z1zl001jri3kqzw7j6hx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
@@ -1589,7 +1620,31 @@ OK
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="mongodb查询数组大小"><a href="#mongodb查询数组大小" class="headerlink" title="mongodb查询数组大小"></a>mongodb查询数组大小</h3><p>mongodb查询数组大小使用<code>$size</code>，例如：我们有一个名为<code>person</code>的集合，其中有个字段为<code>childrenNames</code>，是数组类型，如果我们要查询<code>childrenNames</code>长度为2的数据，则查询语句为：</p>
+        <h3 id="安装mongodb数据库"><a href="#安装mongodb数据库" class="headerlink" title="安装mongodb数据库"></a>安装mongodb数据库</h3><p>首先，我们必须安装mongodb，这样才能使用。我们下载相应版本的mongodb，因为我的笔记本电脑是ubuntu，所以我下载mongodb的tgz版本，下载地址如下：</p>
+<pre><code>https://www.mongodb.com/download-center/community
+</code></pre><p>下载之后，得到如下两个文件：<br>mongodb-linux-x86_64-ubuntu1804-4.0.6.tgz<br>mongodb-linux-x86_64-ubuntu1804-4.0.6.tgz.md5</p>
+<p>mongodb依赖libcurl4、openssl，我们必须先安装这两个依赖包：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">如已安装，则可跳过，验证命令如下</span><br><span class="line">$ dpkg -s libcurl4</span><br><span class="line">$ dpkg -s openssl</span><br><span class="line"></span><br><span class="line">安装命令</span><br><span class="line">$ sudo apt-get install libcurl4 openssl</span><br></pre></td></tr></table></figure></p>
+<p>我们将压缩包下载到<code>/home/hewentian/ProjectD</code>目录，然后解压：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ tar xf mongodb-linux-x86_64-ubuntu1804-4.0.6.tgz</span><br><span class="line">$</span><br><span class="line">$ ls mongodb-linux-x86_64-ubuntu1804-4.0.6/</span><br><span class="line">bin  LICENSE-Community.txt  MPL-2  README  THIRD-PARTY-NOTICES</span><br></pre></td></tr></table></figure></p>
+<p>创建data目录和log目录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mkdir -p db/mongodb/data</span><br><span class="line">$ mkdir -p db/mongodb/<span class="built_in">log</span></span><br></pre></td></tr></table></figure></p>
+<p>创建mongod.conf配置文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/</span><br><span class="line">$ vi mongod.conf</span><br></pre></td></tr></table></figure></p>
+<p>并在其中输入如下内容：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mongod.conf</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># for documentation of all options, see:</span></span><br><span class="line"><span class="comment">#   http://docs.mongodb.org/manual/reference/configuration-options/</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Where and how to store data.</span></span><br><span class="line">storage:</span><br><span class="line">  dbPath: /home/hewentian/ProjectD/db/mongodb/data</span><br><span class="line">  journal:</span><br><span class="line">    enabled: <span class="literal">true</span></span><br><span class="line"><span class="comment">#  engine:</span></span><br><span class="line"><span class="comment">#  mmapv1:</span></span><br><span class="line"><span class="comment">#  wiredTiger:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># where to write logging data.</span></span><br><span class="line">systemLog:</span><br><span class="line">  destination: file</span><br><span class="line">  logAppend: <span class="literal">true</span></span><br><span class="line">  path: /home/hewentian/ProjectD/db/mongodb/<span class="built_in">log</span>/mongod.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># network interfaces</span></span><br><span class="line">net:</span><br><span class="line">  port: 27017</span><br><span class="line">  bindIp: 127.0.0.1</span><br><span class="line"><span class="comment">#  bindIp: 0.0.0.0  </span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># how the process runs</span></span><br><span class="line">processManagement:</span><br><span class="line">  fork: <span class="literal">true</span>  <span class="comment"># fork and run in background</span></span><br><span class="line">  pidFilePath: /home/hewentian/ProjectD/db/mongodb/mongod.pid  <span class="comment"># location of pidfile</span></span><br><span class="line">  timeZoneInfo: /usr/share/zoneinfo</span><br><span class="line"></span><br><span class="line"><span class="comment">#security:</span></span><br><span class="line"><span class="comment">#  authorization: enabled</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#operationProfiling:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#replication:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#sharding:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## Enterprise-Only Options:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#auditLog:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#snmp:</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="启动mongodb"><a href="#启动mongodb" class="headerlink" title="启动mongodb"></a>启动mongodb</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/bin</span><br><span class="line">$ ./mongod -f ../mongod.conf</span><br><span class="line"></span><br><span class="line">about to fork child process, waiting until server is ready <span class="keyword">for</span> connections.</span><br><span class="line">forked process: 24049</span><br><span class="line">child process started successfully, parent exiting</span><br></pre></td></tr></table></figure>
+<h3 id="停止mongodb"><a href="#停止mongodb" class="headerlink" title="停止mongodb"></a>停止mongodb</h3><p>不要直接通过kill命令杀掉mongodb的进程，而应通过它官方提供的关闭脚本，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/bin</span><br><span class="line">$ ./mongod -f ../mongod.conf --shutdown</span><br><span class="line"></span><br><span class="line">killing process with pid: 24049</span><br></pre></td></tr></table></figure></p>
+<h3 id="配置登录用户名和密码"><a href="#配置登录用户名和密码" class="headerlink" title="配置登录用户名和密码"></a>配置登录用户名和密码</h3><p>要开启密码登录，首先要将mongod.conf中的以下选项打开：</p>
+<pre><code>security:
+  authorization: enabled
+</code></pre><p>然后重启mongodb服务。</p>
+<ol>
+<li><p>添加管理员<br>使用mongo命令进入命令行交互模式，创建第一个用户admin，该用户需要有用户管理权限，其角色为root。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/bin</span><br><span class="line">$ ./bin/mongo --host 127.0.0.1</span><br><span class="line">MongoDB shell version v4.0.6</span><br><span class="line">connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb</span><br><span class="line">Implicit session: session &#123; <span class="string">"id"</span> : UUID(<span class="string">"cbd0445f-667b-4d2a-92a8-66f8ad1d07ef"</span>) &#125;</span><br><span class="line">MongoDB server version: 4.0.6</span><br><span class="line">&gt; use admin</span><br><span class="line">switched to db admin</span><br><span class="line">&gt; db.createUser(&#123;user:<span class="string">"admin"</span>,<span class="built_in">pwd</span>:<span class="string">"12345"</span>,roles:[<span class="string">"root"</span>]&#125;)</span><br><span class="line">Successfully added user: &#123; <span class="string">"user"</span> : <span class="string">"admin"</span>, <span class="string">"roles"</span> : [ <span class="string">"root"</span> ] &#125;</span><br><span class="line">&gt; </span><br><span class="line">&gt; show collections</span><br><span class="line">Warning: unable to run listCollections, attempting to approximate collection names by parsing connectionStatus</span><br><span class="line">&gt; db.auth(<span class="string">"admin"</span>,<span class="string">"12345"</span>)</span><br><span class="line">1</span><br><span class="line">&gt; show collections</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加数据库用户<br>为数据库添加用户，添加用户前需要切换到该数据库，这里简单设置其角色为dbOwner</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; use bfg</span><br><span class="line">switched to db bfg</span><br><span class="line">&gt; db.createUser(&#123;user: <span class="string">"bfg"</span>, <span class="built_in">pwd</span>: <span class="string">"bfg100"</span>, roles: [&#123; role: <span class="string">"dbOwner"</span>, db: <span class="string">"bfg"</span> &#125;]&#125;)</span><br><span class="line">Successfully added user: &#123;</span><br><span class="line">	<span class="string">"user"</span> : <span class="string">"bfg"</span>,</span><br><span class="line">	<span class="string">"roles"</span> : [</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="string">"role"</span> : <span class="string">"dbOwner"</span>,</span><br><span class="line">			<span class="string">"db"</span> : <span class="string">"bfg"</span></span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这样，bfg的用户就只能访问bfg这个库了，登录方式如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/mongo --host 127.0.0.1</span><br><span class="line">MongoDB shell version v4.0.6</span><br><span class="line">connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb</span><br><span class="line">Implicit session: session &#123; <span class="string">"id"</span> : UUID(<span class="string">"873114cf-fb7e-436a-b939-7e765dbecee9"</span>) &#125;</span><br><span class="line">MongoDB server version: 4.0.6</span><br><span class="line">&gt; use bfg</span><br><span class="line">switched to db bfg</span><br><span class="line">&gt; db.auth(<span class="string">"bfg"</span>,<span class="string">"bfg100"</span>)</span><br><span class="line">1</span><br><span class="line">&gt; show dbs</span><br><span class="line">bfg  0.000GB</span><br></pre></td></tr></table></figure></p>
+<p>至此，数据库安装完毕（此安装过程2019年初才补上）。</p>
+<h3 id="mongodb查询数组大小"><a href="#mongodb查询数组大小" class="headerlink" title="mongodb查询数组大小"></a>mongodb查询数组大小</h3><p>mongodb查询数组大小使用<code>$size</code>，例如：我们有一个名为<code>person</code>的集合，其中有个字段为<code>childrenNames</code>，是数组类型，如果我们要查询<code>childrenNames</code>长度为2的数据，则查询语句为：</p>
 <pre><code>db.getCollection(&apos;person&apos;).find({&apos;childrenNames&apos;:{&apos;$size&apos;:2}})
 </code></pre><p>但是它不能限定数组的大小范围，只能查询指定的长度。要查询数组范围，我们使用<code>$exists</code>，例如：查询数组长度大于等于3的语句如下（检查数组第3个元素是否存了）</p>
 <pre><code>db.getCollection(&apos;person&apos;).find({&apos;childrenNames.2&apos;:{&apos;$exists&apos;:1}})
@@ -1611,7 +1666,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjseifsg6001zn03krw3h8rig" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjsv6z1zr0022ri3kdsgppni1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>
@@ -1693,7 +1748,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjseifsgg002zn03kgrkvf9jz" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjsv6z1zz002xri3kqs5uieb7" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -1802,7 +1857,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjseifsg70026n03k5zbl972s" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjsv6z1zt002cri3kv7n8axv3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/neo4j/">neo4j</a></li></ul>
