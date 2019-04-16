@@ -563,6 +563,12 @@ LD_PRELOAD是Linux下的一个环境变量，动态链接器在载入一个程�
 	-R 查找所有文件包含子目录
 	-i 忽略大小写
 
+还可以使用正则表达式：
+    grep -E '[0-9]+ms' mongod.log
+
+这个命令查询`mongod.log`日志中包含毫秒时间ms的所有日志。
+
+
 ### linux下面md5sum的使用
 ``` bash
 对一个文件计算MD5值
@@ -692,13 +698,29 @@ $ touch config
 并在其中输入如下内容
 Host jump_server
 User hewentian
-Hostname 192.168.30.30
+Hostname 192.168.1.100
 Port 12022
 PreferredAuthentications publickey
 IdentityFile ~/.ssh/hewentian.pem
 ```
 这样，在使命行中输入: `ssh jump_server`就可以跳到跳板机了
 
+如果你有两台跳板机：开发环境、生产环境，你可以在`config`文件中同时配置两个：
+``` bash
+Host jump_dev
+  User hewentian
+  Hostname 192.168.1.100
+  Port 12022
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/hewentian.pem
+
+Host jump_prod
+  User hewentian
+  Hostname 111.112.113.114
+  Port 12022
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/hewentian-prod.pem
+```
 
 ### ubuntu 下 zssh 的使用
 首先，ubuntu下需要安装下面两个包，如果还未安装的话：
@@ -1521,4 +1543,24 @@ $ cat a.txt | awk -F'###' '{print $1,$2}'
 ```
 也可以单独提取某一列。
 
+### 测试网速的工具
+可以使用`speedtest-cli`这个工具来测试，如果还未安装，可使用如下命令安装：
+``` bash
+$ sudo apt install python-pip
+$ sudo pip install speedtest-cli
+```
 
+使用也好简单：
+``` bash
+$ speedtest-cli 
+
+Retrieving speedtest.net configuration...
+Testing from China Unicom Guangdong province (58.249.3.236)...
+Retrieving speedtest.net server list...
+Selecting best server based on ping...
+Hosted by ChinaTelecom-GZ (Guangzhou) [2.51 km]: 20.736 ms
+Testing download speed................................................................................
+Download: 8.25 Mbit/s
+Testing upload speed................................................................................................
+Upload: 9.03 Mbit/s
+```

@@ -200,6 +200,28 @@ https://github.com/mobz/elasticsearch-head
 ES一次查询，最多返回10条，但hits会显示total一共有多少条，要使用from, size指定。
 在ES里面删除数据的时候要非常小心，如果全部都清空了，可能整个库的MAPPING都会有问题。这时，一些原先可以执行的语句可能会无法执行
 
+### 清空数据
+注意是清空，不是删除，示例：
+在kibana下命令：
+``` bash
+POST /my_index/my_type/_delete_by_query?refresh&slices=3&pretty
+{
+  "query": {
+    "match_all": {}
+  }
+}
+```
+
+在curl下命令：
+<pre>
+curl -XPOST 'http://127.0.0.1:9200/my_index/my_type/_delete_by_query?refresh&slices=3&pretty' -H 'Content-Type: application/json' -d '
+{
+  "query": {
+    "match_all": {}
+  }
+}'
+</pre>
+
 
 #### 以下是一些常查询：
 <pre>
