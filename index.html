@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -181,7 +181,7 @@ slave3:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/20/hbase-cluster/" data-id="cjsv6z1zd000uri3k4jf6k4wp" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/20/hbase-cluster/" data-id="cjujlvic9000urh3k6cfvffd5" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hbase/">hbase</a></li></ul>
@@ -296,7 +296,7 @@ Caused by: java.net.URISyntaxException: Relative path in absolute URI: ${system:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="cjsv6z1zf0011ri3kdp6japfd" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="cjujlvicf001arh3ke2rzocbn" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li></ul>
@@ -426,7 +426,7 @@ slave3:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjsv6z1za000kri3kw17tv4bo" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjujlvic5000krh3khc44pnot" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -520,7 +520,7 @@ by mortbay.org.
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjsv6z1zc000rri3kgimg1ip6" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjujlvic6000nrh3knajm5gy5" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -650,7 +650,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjsv6z1zb000nri3kk2fenprj" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjujlvic3000frh3kv4le0jrl" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -722,7 +722,7 @@ slave2:
 <p>每一个分区中的消息都是按顺序存储的，持续往该分区中存放的数据的顺序都是不可改变的，结构化存储。分区中的每一条消息都会被分配一个有序的ID号，被称为偏移量，用于唯一标示该分区中的每一条消息。</p>
 <p>kafka集群会持久化发布到它的每一条消息，无论它们是否已经被消费过，可以通过配置文件配置该消息存放多久。例如，如果保存策略被设置为2天，那么当一条消息发布2天之内，它都是可以被消费的，只是一旦被消费之后，它就会被删掉以释放空间。kafka是持续高性能的，这与存储于它的数据大小关系不大，因此长期保存数据，都是没问题的。</p>
 <p><img src="/img/kafka-3.png" alt="" title="来源：http://kafka.apache.org/20/images/log_consumer.png"></p>
-<p>实际上，唯一存储于每一个消费者中的元数据是偏移量或者该消费者在这个分区中访问存储数据的位置。偏移量由消费者控制：通常，消费者中保存的偏移量随着它消费消息，将呈线性增长。但是，实际上，由于这个偏移量是由消费者控制的，所以它可以指定它消费的任何位置上的消息。例如：一个消费者可以重置到一个旧的偏移量来处理旧的数据或者跳过大部分记录，然后从当前位置开始消费消息。</p>
+<p>实际上，唯一存储于每一个消费者中的元数据是偏移量或者该消费者在这个分区中访问存储数据的位置。偏移量由消费者控制：通常，消费者中保存的偏移量随着它消费消息，将呈线性增长。但是，实际上，由于这个偏移量是由消费者控制的，所以它可以指定它消费的任何位置上的消息。例如：一个消费者可以重置到一个旧的偏移量来处理旧的数据或者跳过大部分记录，然后从当前位置开始消费消息。每个消费者的偏移量在kafka服务器中也是有存储的。</p>
 <p>这个组合功能意味着kafka消费者是轻量级的，它们的连接和断开对集群和其他消费者影响极小。例如，你可以使用我们的命令行工具去不停地显示最新添加到某个主题的内容，而这，不会对任何订阅这个主题的消费者产生影响。</p>
 <p>分区在存储中扮演着不同的目的：首先，它允许存储的数据量超过单台服务器允许的规模。每个单独的分区能储存的数据量取决于它所在的服务器磁盘的大小等因素，但是一个主题可以有多个分区，因此它能储存任意数量的数据。其次，分区充当并行处理的单元–同时能处理的并发数。</p>
 <h3 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h3><p>一个主题的分区分布于kafka集群中的多台服务器中，每一台服务器都可以处理数据和向共享分区发送请求。为了容错，每一个分区都可以配置一定的副本数。</p>
@@ -770,11 +770,13 @@ slave2:
 <p>通过组合存储和低延迟订阅，流应用程序可以以相同的方式处理过去和未来的数据。也就是说，单个应用程序也可以处理历史存储的数据，而不是在它处理到达最后一条记录时结束，它可以在未来数据到达时继续处理。这就是流处理包含批处理以及消息驱动应用程序的一般概念。</p>
 <p>同样，对于流数据管道，通过组合订阅实时事件，可以将kafka用作极低延迟的管道; 另外，能够可靠地存储数据，也使得可以将其用于必须保证安全的核心数据的传输，或者与仅定期加载数据的离线系统或可能长时间停机以进行扩展和维护集成。它的流处理能力使它可以实时的转换数据。</p>
 <p>更多关于kafka提供的保证、API和功能的信息，请参阅其余的<a href="http://kafka.apache.org/documentation.html" target="_blank" rel="noopener">文档</a>。</p>
+<p>这里介绍一个很好用的kafka可视化工具kafkatool，下载地址：<br><a href="http://www.kafkatool.com/" target="_blank" rel="noopener">http://www.kafkatool.com/</a></p>
+<p>kafkatool连接kafka服务器后，记得要将kafkatool中topic的Message类型设置为String，否则将看到字节码。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjsv6z1zn001qri3kvk2yuaci" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjujlvicf001drh3k36azyoy5" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -886,7 +888,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjsv6z1zm001nri3km1k821zz" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjujlvici001krh3kc5bwt8nv" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -955,7 +957,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjsv6z1zo001uri3k8rd4k0j1" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjujlvicj001mrh3k2372vwcl" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -1125,7 +1127,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjsv6z1zk001gri3k57q3fwhl" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjujlvich001hrh3kvkn1jgrj" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -1204,7 +1206,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjsv6z1yv0001ri3kh8hb0pmc" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjujlvibm0000rh3koyzd85w6" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1227,7 +1229,7 @@ Configuration OK
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
@@ -1247,7 +1249,7 @@ Configuration OK
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
         
@@ -1294,7 +1296,7 @@ Configuration OK
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

@@ -17,7 +17,7 @@
 <meta property="og:image" content="https://github.com/img/filezilla.png">
 <meta property="og:image" content="https://github.com/img/indicator-stickynotes.png">
 <meta property="og:image" content="https://github.com/img/simpleScreenRecorder.png">
-<meta property="og:updated_time" content="2019-03-05T03:05:00.474Z">
+<meta property="og:updated_time" content="2019-04-16T09:48:41.710Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: EFI -&amp;gt; /boot -&amp;gt; swap -&amp;gt; /: EFI        primary     200M /boot    primary        512M swap    logic        内存2倍 /        primary        剩下的容量 例如在小米笔记本安装 ubuntu 18.04 的时候，必须关">
@@ -67,7 +67,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -264,7 +264,9 @@ swap    logic        内存2倍
 -n 是显示行号
 -R 查找所有文件包含子目录
 -i 忽略大小写
-</code></pre><h3 id="linux下面md5sum的使用"><a href="#linux下面md5sum的使用" class="headerlink" title="linux下面md5sum的使用"></a>linux下面md5sum的使用</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">对一个文件计算MD5值</span><br><span class="line">$ md5sum apache-tomcat-8.0.47.tar.gz</span><br><span class="line">0fd249576c33fa71947bc7d296d5b0a9  apache-tomcat-8.0.47.tar.gz</span><br><span class="line"></span><br><span class="line">对一个文件计算MD5值，并保存到文件中</span><br><span class="line">$ md5sum apache-tomcat-8.0.47.tar.gz &gt; apache-tomcat-8.0.47.tar.gz.md5</span><br><span class="line"></span><br><span class="line">用MD5文件校验原来的文件是否被修改过</span><br><span class="line">$ md5sum -c apache-tomcat-8.0.47.tar.gz.md5</span><br><span class="line">apache-tomcat-8.0.47.tar.gz: OK</span><br></pre></td></tr></table></figure>
+</code></pre><p>还可以使用正则表达式：<br>    grep -E ‘[0-9]+ms’ mongod.log</p>
+<p>这个命令查询<code>mongod.log</code>日志中包含毫秒时间ms的所有日志。</p>
+<h3 id="linux下面md5sum的使用"><a href="#linux下面md5sum的使用" class="headerlink" title="linux下面md5sum的使用"></a>linux下面md5sum的使用</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">对一个文件计算MD5值</span><br><span class="line">$ md5sum apache-tomcat-8.0.47.tar.gz</span><br><span class="line">0fd249576c33fa71947bc7d296d5b0a9  apache-tomcat-8.0.47.tar.gz</span><br><span class="line"></span><br><span class="line">对一个文件计算MD5值，并保存到文件中</span><br><span class="line">$ md5sum apache-tomcat-8.0.47.tar.gz &gt; apache-tomcat-8.0.47.tar.gz.md5</span><br><span class="line"></span><br><span class="line">用MD5文件校验原来的文件是否被修改过</span><br><span class="line">$ md5sum -c apache-tomcat-8.0.47.tar.gz.md5</span><br><span class="line">apache-tomcat-8.0.47.tar.gz: OK</span><br></pre></td></tr></table></figure>
 <h3 id="端口的分类："><a href="#端口的分类：" class="headerlink" title="端口的分类："></a>端口的分类：</h3><p>端口在报头中占两个字节，也就是16位。端口号用来表示和区别网络中的不同应用程序。端口分为三大类： </p>
 <ol>
 <li><p>公认端口（Well Known Ports）：0-1023之间的端口号，在LINUX中这些端口你不能随便使用。这些端口由 IANA 分配管理。IANA 把这些端口分配给最重要的一些应用程序，让所有的用户都知道，当一种新的应用程序出现后，IANA必须为它指派一个公认端口。 常用的公认端口有：</p>
@@ -310,8 +312,9 @@ User Name:
 Password: 
 </code></pre><p>这样就可以连接了。</p>
 <h3 id="修改SSH的默认22端口"><a href="#修改SSH的默认22端口" class="headerlink" title="修改SSH的默认22端口"></a>修改SSH的默认22端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">首先查看是否有使用22端口</span><br><span class="line">$ lsof -i:22</span><br><span class="line">COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">sshd     934 root    3u  IPv4   8688      0t0  TCP *:ssh (LISTEN)</span><br><span class="line">sshd    2305 root    3r  IPv4  25836      0t0  TCP 123.57.238.142:ssh-&gt;66.133.135.219.broad.gz.gd.dynamic.163data.com.cn:60064 (ESTABLISHED)</span><br><span class="line"></span><br><span class="line">查看防火墙的情况，看下是否会允许你要修改的端口通过</span><br><span class="line">$ iptables -nL</span><br><span class="line"></span><br><span class="line">$ vim /etc/ssh/sshd_config</span><br><span class="line">找到Port这一行，修改为你想要的端口，这里设置为：12022，前提是该端口还没被其他程序使用</span><br><span class="line"></span><br><span class="line">重启SSH</span><br><span class="line">$ /etc/init.d/sshd restart</span><br><span class="line">Stopping sshd:                                             [  OK  ]</span><br><span class="line">Starting sshd:                                             [  OK  ]</span><br><span class="line"></span><br><span class="line">$ lsof -i:12022</span><br><span class="line">COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">sshd    2382 root    3u  IPv4  28005      0t0  TCP *:12022 (LISTEN)</span><br><span class="line">sshd    2388 root    3r  IPv4  28216      0t0  TCP 123.57.238.142:12022-&gt;66.133.135.219.broad.gz.gd.dynamic.163data.com.cn:41068 (ESTABLISHED)</span><br><span class="line"></span><br><span class="line">可以看到端口已经修改过来了，再使用之前的命令就无法登录了</span><br><span class="line">$ ssh -p 22 root@123.57.238.142</span><br><span class="line">ssh: connect to host 123.57.238.142 port 22: Connection refused</span><br></pre></td></tr></table></figure>
-<h3 id="ubuntu-连接到跳板机"><a href="#ubuntu-连接到跳板机" class="headerlink" title="ubuntu 连接到跳板机"></a>ubuntu 连接到跳板机</h3><p>先将密钥文件<code>hewentian.pem</code>放到用户SSH目录下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/.ssh</span><br><span class="line">$ cp ~/Downloads/hewentian.pem ./</span><br><span class="line"></span><br><span class="line">修改权限 </span><br><span class="line">$ chmod 600 hewentian.pem</span><br><span class="line"></span><br><span class="line">创建一个配置文件，如果没有的话</span><br><span class="line">$ touch config</span><br><span class="line"></span><br><span class="line">并在其中输入如下内容</span><br><span class="line">Host jump_server</span><br><span class="line">User hewentian</span><br><span class="line">Hostname 192.168.30.30</span><br><span class="line">Port 12022</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/hewentian.pem</span><br></pre></td></tr></table></figure></p>
+<h3 id="ubuntu-连接到跳板机"><a href="#ubuntu-连接到跳板机" class="headerlink" title="ubuntu 连接到跳板机"></a>ubuntu 连接到跳板机</h3><p>先将密钥文件<code>hewentian.pem</code>放到用户SSH目录下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/.ssh</span><br><span class="line">$ cp ~/Downloads/hewentian.pem ./</span><br><span class="line"></span><br><span class="line">修改权限 </span><br><span class="line">$ chmod 600 hewentian.pem</span><br><span class="line"></span><br><span class="line">创建一个配置文件，如果没有的话</span><br><span class="line">$ touch config</span><br><span class="line"></span><br><span class="line">并在其中输入如下内容</span><br><span class="line">Host jump_server</span><br><span class="line">User hewentian</span><br><span class="line">Hostname 192.168.1.100</span><br><span class="line">Port 12022</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/hewentian.pem</span><br></pre></td></tr></table></figure></p>
 <p>这样，在使命行中输入: <code>ssh jump_server</code>就可以跳到跳板机了</p>
+<p>如果你有两台跳板机：开发环境、生产环境，你可以在<code>config</code>文件中同时配置两个：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Host jump_dev</span><br><span class="line">  User hewentian</span><br><span class="line">  Hostname 192.168.1.100</span><br><span class="line">  Port 12022</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line">  IdentityFile ~/.ssh/hewentian.pem</span><br><span class="line"></span><br><span class="line">Host jump_prod</span><br><span class="line">  User hewentian</span><br><span class="line">  Hostname 111.112.113.114</span><br><span class="line">  Port 12022</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line">  IdentityFile ~/.ssh/hewentian-prod.pem</span><br></pre></td></tr></table></figure></p>
 <h3 id="ubuntu-下-zssh-的使用"><a href="#ubuntu-下-zssh-的使用" class="headerlink" title="ubuntu 下 zssh 的使用"></a>ubuntu 下 zssh 的使用</h3><p>首先，ubuntu下需要安装下面两个包，如果还未安装的话：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install lszrz</span><br><span class="line">$ sudo apt install zssh</span><br></pre></td></tr></table></figure></p>
 <ol>
 <li><p>使用 zssh 替代 ssh 连接到目标系统，并登入：</p>
@@ -481,11 +484,13 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
 3###ghi
 </code></pre><p>如果我要以<code>###</code>为分隔符提取数据，可以这样：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cat a.txt | awk -F<span class="string">'###'</span> <span class="string">'&#123;print $1,$2&#125;'</span></span><br><span class="line"></span><br><span class="line">1 abc</span><br><span class="line">2 def</span><br><span class="line">3 ghi</span><br></pre></td></tr></table></figure></p>
 <p>也可以单独提取某一列。</p>
+<h3 id="测试网速的工具"><a href="#测试网速的工具" class="headerlink" title="测试网速的工具"></a>测试网速的工具</h3><p>可以使用<code>speedtest-cli</code>这个工具来测试，如果还未安装，可使用如下命令安装：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install python-pip</span><br><span class="line">$ sudo pip install speedtest-cli</span><br></pre></td></tr></table></figure></p>
+<p>使用也好简单：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ speedtest-cli </span><br><span class="line"></span><br><span class="line">Retrieving speedtest.net configuration...</span><br><span class="line">Testing from China Unicom Guangdong province (58.249.3.236)...</span><br><span class="line">Retrieving speedtest.net server list...</span><br><span class="line">Selecting best server based on ping...</span><br><span class="line">Hosted by ChinaTelecom-GZ (Guangzhou) [2.51 km]: 20.736 ms</span><br><span class="line">Testing download speed................................................................................</span><br><span class="line">Download: 8.25 Mbit/s</span><br><span class="line">Testing upload speed................................................................................................</span><br><span class="line">Upload: 9.03 Mbit/s</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjsv6z1zr0026ri3km8vvrxzx" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjujlvicx002urh3kaeglo5e7" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -497,7 +502,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
 <nav id="article-nav">
   
     <a href="/2017/09/27/markdown-learn-note/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">Récent</strong>
       <div class="article-nav-title">
         
           markdown 学习笔记
@@ -507,7 +512,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   
   
     <a href="/2017/09/12/online-implementing/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">Ancien</strong>
       <div class="article-nav-title">系统上线注意事项</div>
     </a>
   
@@ -522,7 +527,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
     </div>
@@ -542,7 +547,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
         
@@ -589,7 +594,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
