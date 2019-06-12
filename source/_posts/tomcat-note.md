@@ -2,7 +2,7 @@
 title: tomcat 学习笔记
 date: 2017-09-11 10:21:02
 tags: tomcat
-categories: java
+categories: web server
 ---
 
 ### tomcat 登录用户名 与 密码设置

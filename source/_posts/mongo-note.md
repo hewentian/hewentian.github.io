@@ -369,6 +369,26 @@ db.getCollection("userInfo").find({}).forEach(function(doc) {
 }
 ```
 
+如果要将集合中已有文档的`ISODate`类型转换成`String`类型的日期，例如：将`updateTime`由`ISODate("2019-04-04T07:12:37.295Z")`转换为`2019-04-04 07:12:37`类型：
+``` javascript
+db.getCollection('userInfo').find({"updateTime":{"$type":9}}).forEach(function(doc) {
+    var mydate = doc.updateTime;
+    if (mydate) {
+        mydate = mydate.toJSON();
+        if (mydate.length > 19) {
+            mydate = mydate.substr(0, 19)
+            mydate = mydate.replace('T',' ');
+         }
+    }
+
+   db.getCollection('userInfo').update({"_id":doc._id}, {"$set":{"updateTime":mydate}})
+})
+
+
+验证结果：
+db.getCollection('userInfo').find({"_id":ObjectId("5abc7ffc00a32c2b045e598c")})
+```
+
 ### mongodb日期查询
 日期的类型不同，查询的方式也不同：
 ``` java

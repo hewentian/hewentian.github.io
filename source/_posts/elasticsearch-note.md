@@ -416,6 +416,33 @@ GET /people/user/_search
   },
   "size":0
 }
+
+
+GET /people/user/_search
+{
+  "aggs": {
+    "NAME": {
+      "terms": {
+        "field": "username",
+        "size": 100
+      }
+    }
+  },
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "wildcard": {
+            "username": {
+              "value": "*文*"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "size":100
+}
 </pre>
 
 ### 查询返回某些指定的字段
@@ -498,6 +525,15 @@ do {
     scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(60000)).execute().actionGet();
 } while(scrollResp.getHits().getHits().length != 0); // Zero hits mark the end of the scroll and the while loop.
 ```
+
+统计指定索引下的文档数：
+``` bash
+$ curl -X GET "127.0.0.1:9200/_cat/count/my_index?v"
+
+epoch      timestamp count
+1559718460 15:07:40  123
+```
+
 
 未完待续……
 

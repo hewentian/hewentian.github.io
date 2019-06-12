@@ -1564,3 +1564,121 @@ Download: 8.25 Mbit/s
 Testing upload speed................................................................................................
 Upload: 9.03 Mbit/s
 ```
+
+
+### 通过shadowsocks访问Google
+首先你得在海外有一台机器（假设IP为 111.112.113.114），在该机器上面安装`shadowsocks`服务端：
+``` bash
+$ yum -y install epel-release
+$ yum install -y yum-utils
+$ yum-config-manager --enable epel
+$ yum install -y python-pip
+$ pip install --upgrade pip
+$ pip install shadowsocks
+ ```
+
+配置服务端:
+``` bash
+$ vi shadowsocks.json 
+{
+    "server":"111.112.113.114",
+    "server_port":10086,
+    "local_address": "127.0.0.1",
+    "local_port":1080,
+    "password":"myPassword",
+    "timeout":300,
+    "method":"aes-256-cfb",
+    "fast_open": false
+}
+```
+
+在后台启动：
+``` bash
+$ ssserver -c shadowsocks.json -d start
+```
+
+然后在客户端（用户本机）安装shadowsocks
+``` bash
+$ sudo apt install shadowsocks
+```
+
+配置shadowsocks要连接的海外主机：
+``` bash
+$ cd /home/hewentian/ProjectD/
+$ touch shadowsocks.json
+$ vi shadowsocks.json
+
+{
+    "server":"111.112.113.114",
+    "server_port":10086,
+    "local_address": "127.0.0.1",
+    "local_port":1080,
+    "password":"myPassword",
+    "timeout":300,
+    "method":"aes-256-cfb"
+}
+```
+
+然后，启动本地的服务shadowsocks：
+``` bash
+$ sslocal -c shadowsocks.json
+
+INFO: loading config from shadowsocks.json
+2019-05-10 09:31:46 INFO     loading libcrypto from libcrypto.so.1.1
+2019-05-10 09:31:46 INFO     starting local at 127.0.0.1:1080
+```
+
+最后，还要在电脑中配置代理，如下图：
+
+![](/img/shadowsocks.png "")
+
+这样，就可以正常访问Google了。
+
+
+### 修改ubuntu 18.04的sources.list源为阿里
+有时候，我们安装软件，会遇到找不到可用的安装包的情况，如下所示：
+``` bash
+$ cc
+
+Command 'cc' not found, but can be installed with:
+
+sudo apt install gcc            
+sudo apt install clang          
+sudo apt install pentium-builder
+sudo apt install tcc            
+
+$ sudo apt install gcc
+
+E: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libmpx2_8.2.0-1ubuntu2~18.04_amd64.deb  404  Not Found [IP: 91.189.91.23 80]
+E: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libquadmath0_8.2.0-1ubuntu2~18.04_amd64.deb  404  Not Found [IP: 91.189.91.23 80]
+E: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libgcc-7-dev_7.3.0-27ubuntu1~18.04_amd64.deb  404  Not Found [IP: 91.189.91.23 80]
+E: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/gcc-7_7.3.0-27ubuntu1~18.04_amd64.deb  404  Not Found [IP: 91.189.91.23 80]
+E: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/pool/main/g/gcc-defaults/gcc_7.3.0-3ubuntu2.1_amd64.deb  404  Not Found [IP: 91.189.91.23 80]
+E: Failed to fetch http://security.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-39.42_amd64.deb  404  Not Found [IP: 91.189.91.23 80]
+E: Aborting install.
+```
+
+按提示进行安装，却报404。这时候，可以考虑将源修改为国内的，例如阿里的源：
+``` bash
+$ cd /etc/apt/
+$ sudo cp sources.list sources.list_bak
+$ sudo vi sources.list
+
+在文件的最后，加上下面的内容：
+# https://opsx.alibaba.com/mirror
+deb https://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse 
+deb https://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse 
+deb https://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse 
+deb https://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse 
+deb https://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+```
+
+最后，删除缓存，然后更新一下：
+``` bash
+$ sudo rm -rf /var/lib/apt/lists/
+
+$ sudo apt-get update
+$ sudo apt-get upgrade
+```
+
+
