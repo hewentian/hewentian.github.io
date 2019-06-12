@@ -17,7 +17,8 @@
 <meta property="og:image" content="https://github.com/img/filezilla.png">
 <meta property="og:image" content="https://github.com/img/indicator-stickynotes.png">
 <meta property="og:image" content="https://github.com/img/simpleScreenRecorder.png">
-<meta property="og:updated_time" content="2019-04-16T09:48:41.710Z">
+<meta property="og:image" content="https://github.com/img/shadowsocks.png">
+<meta property="og:updated_time" content="2019-06-12T09:50:11.918Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 学习笔记">
 <meta name="twitter:description" content="在安装ubuntu的过程中的分区顺序: EFI -&amp;gt; /boot -&amp;gt; swap -&amp;gt; /: EFI        primary     200M /boot    primary        512M swap    logic        内存2倍 /        primary        剩下的容量 例如在小米笔记本安装 ubuntu 18.04 的时候，必须关">
@@ -67,7 +68,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -486,11 +487,23 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
 <p>也可以单独提取某一列。</p>
 <h3 id="测试网速的工具"><a href="#测试网速的工具" class="headerlink" title="测试网速的工具"></a>测试网速的工具</h3><p>可以使用<code>speedtest-cli</code>这个工具来测试，如果还未安装，可使用如下命令安装：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install python-pip</span><br><span class="line">$ sudo pip install speedtest-cli</span><br></pre></td></tr></table></figure></p>
 <p>使用也好简单：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ speedtest-cli </span><br><span class="line"></span><br><span class="line">Retrieving speedtest.net configuration...</span><br><span class="line">Testing from China Unicom Guangdong province (58.249.3.236)...</span><br><span class="line">Retrieving speedtest.net server list...</span><br><span class="line">Selecting best server based on ping...</span><br><span class="line">Hosted by ChinaTelecom-GZ (Guangzhou) [2.51 km]: 20.736 ms</span><br><span class="line">Testing download speed................................................................................</span><br><span class="line">Download: 8.25 Mbit/s</span><br><span class="line">Testing upload speed................................................................................................</span><br><span class="line">Upload: 9.03 Mbit/s</span><br></pre></td></tr></table></figure></p>
+<h3 id="通过shadowsocks访问Google"><a href="#通过shadowsocks访问Google" class="headerlink" title="通过shadowsocks访问Google"></a>通过shadowsocks访问Google</h3><p>首先你得在海外有一台机器（假设IP为 111.112.113.114），在该机器上面安装<code>shadowsocks</code>服务端：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ yum -y install epel-release</span><br><span class="line">$ yum install -y yum-utils</span><br><span class="line">$ yum-config-manager --<span class="built_in">enable</span> epel</span><br><span class="line">$ yum install -y python-pip</span><br><span class="line">$ pip install --upgrade pip</span><br><span class="line">$ pip install shadowsocks</span><br></pre></td></tr></table></figure></p>
+<p>配置服务端:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ vi shadowsocks.json </span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"server"</span>:<span class="string">"111.112.113.114"</span>,</span><br><span class="line">    <span class="string">"server_port"</span>:10086,</span><br><span class="line">    <span class="string">"local_address"</span>: <span class="string">"127.0.0.1"</span>,</span><br><span class="line">    <span class="string">"local_port"</span>:1080,</span><br><span class="line">    <span class="string">"password"</span>:<span class="string">"myPassword"</span>,</span><br><span class="line">    <span class="string">"timeout"</span>:300,</span><br><span class="line">    <span class="string">"method"</span>:<span class="string">"aes-256-cfb"</span>,</span><br><span class="line">    <span class="string">"fast_open"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在后台启动：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssserver -c shadowsocks.json -d start</span><br></pre></td></tr></table></figure></p>
+<p>然后在客户端（用户本机）安装shadowsocks<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install shadowsocks</span><br></pre></td></tr></table></figure></p>
+<p>配置shadowsocks要连接的海外主机：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ touch shadowsocks.json</span><br><span class="line">$ vi shadowsocks.json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"server"</span>:<span class="string">"111.112.113.114"</span>,</span><br><span class="line">    <span class="string">"server_port"</span>:10086,</span><br><span class="line">    <span class="string">"local_address"</span>: <span class="string">"127.0.0.1"</span>,</span><br><span class="line">    <span class="string">"local_port"</span>:1080,</span><br><span class="line">    <span class="string">"password"</span>:<span class="string">"myPassword"</span>,</span><br><span class="line">    <span class="string">"timeout"</span>:300,</span><br><span class="line">    <span class="string">"method"</span>:<span class="string">"aes-256-cfb"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后，启动本地的服务shadowsocks：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sslocal -c shadowsocks.json</span><br><span class="line"></span><br><span class="line">INFO: loading config from shadowsocks.json</span><br><span class="line">2019-05-10 09:31:46 INFO     loading libcrypto from libcrypto.so.1.1</span><br><span class="line">2019-05-10 09:31:46 INFO     starting <span class="built_in">local</span> at 127.0.0.1:1080</span><br></pre></td></tr></table></figure></p>
+<p>最后，还要在电脑中配置代理，如下图：</p>
+<p><img src="/img/shadowsocks.png" alt=""></p>
+<p>这样，就可以正常访问Google了。</p>
+<h3 id="修改ubuntu-18-04的sources-list源为阿里"><a href="#修改ubuntu-18-04的sources-list源为阿里" class="headerlink" title="修改ubuntu 18.04的sources.list源为阿里"></a>修改ubuntu 18.04的sources.list源为阿里</h3><p>有时候，我们安装软件，会遇到找不到可用的安装包的情况，如下所示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ cc</span><br><span class="line"></span><br><span class="line">Command <span class="string">'cc'</span> not found, but can be installed with:</span><br><span class="line"></span><br><span class="line">sudo apt install gcc            </span><br><span class="line">sudo apt install clang          </span><br><span class="line">sudo apt install pentium-builder</span><br><span class="line">sudo apt install tcc            </span><br><span class="line"></span><br><span class="line">$ sudo apt install gcc</span><br><span class="line"></span><br><span class="line">E: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libmpx2_8.2.0-1ubuntu2~18.04_amd64.deb  404  Not Found [IP: 91.189.91.23 80]</span><br><span class="line">E: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libquadmath0_8.2.0-1ubuntu2~18.04_amd64.deb  404  Not Found [IP: 91.189.91.23 80]</span><br><span class="line">E: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libgcc-7-dev_7.3.0-27ubuntu1~18.04_amd64.deb  404  Not Found [IP: 91.189.91.23 80]</span><br><span class="line">E: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/gcc-7_7.3.0-27ubuntu1~18.04_amd64.deb  404  Not Found [IP: 91.189.91.23 80]</span><br><span class="line">E: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/pool/main/g/gcc-defaults/gcc_7.3.0-3ubuntu2.1_amd64.deb  404  Not Found [IP: 91.189.91.23 80]</span><br><span class="line">E: Failed to fetch http://security.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-39.42_amd64.deb  404  Not Found [IP: 91.189.91.23 80]</span><br><span class="line">E: Aborting install.</span><br></pre></td></tr></table></figure></p>
+<p>按提示进行安装，却报404。这时候，可以考虑将源修改为国内的，例如阿里的源：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /etc/apt/</span><br><span class="line">$ sudo cp sources.list sources.list_bak</span><br><span class="line">$ sudo vi sources.list</span><br><span class="line"></span><br><span class="line">在文件的最后，加上下面的内容：</span><br><span class="line"><span class="comment"># https://opsx.alibaba.com/mirror</span></span><br><span class="line">deb https://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse </span><br><span class="line">deb https://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse </span><br><span class="line">deb https://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse </span><br><span class="line">deb https://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse </span><br><span class="line">deb https://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br></pre></td></tr></table></figure></p>
+<p>最后，删除缓存，然后更新一下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo rm -rf /var/lib/apt/lists/</span><br><span class="line"></span><br><span class="line">$ sudo apt-get update</span><br><span class="line">$ sudo apt-get upgrade</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjujlvicx002urh3kaeglo5e7" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/09/12/linux-note/" data-id="cjwt22umz002r9d3ki2iba847" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
@@ -502,7 +515,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
 <nav id="article-nav">
   
     <a href="/2017/09/27/markdown-learn-note/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Récent</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           markdown 学习笔记
@@ -512,7 +525,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   
   
     <a href="/2017/09/12/online-implementing/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Ancien</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">系统上线注意事项</div>
     </a>
   
@@ -527,9 +540,9 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -539,7 +552,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -547,9 +560,13 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/06/10/nginx-note/">nginx 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
@@ -565,10 +582,6 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
         
           <li>
             <a href="/2018/12/19/hadoop-mapreduce/">hadoop mapreduce示例</a>
-          </li>
-        
-          <li>
-            <a href="/2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>
           </li>
         
       </ul>
@@ -594,7 +607,7 @@ sudo dpkg -i libgoocanvas3_1.0.0-1_amd64.deb
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

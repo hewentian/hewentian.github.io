@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>nginx 学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="今天一看，天哪，原来已经有4个月没有更新博客了，我在想，这4个月我都干嘛去了，内心立马慌起来了（你知道的，程序员是不能停止学习的）。但是细想，虽然没更新博客，但还是看了几本书：《从0到1》、《毛泽东选集》卷一、《MongoDB in Action》、《SpringBoot in Action》、《白帽子讲Web安全》，内心立马淡定了不少。好了，题外话不多说了，马上进入主题。 nginx是一个HTT">
+<meta name="keywords" content="nginx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx 学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2019/06/10/nginx-note/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="今天一看，天哪，原来已经有4个月没有更新博客了，我在想，这4个月我都干嘛去了，内心立马慌起来了（你知道的，程序员是不能停止学习的）。但是细想，虽然没更新博客，但还是看了几本书：《从0到1》、《毛泽东选集》卷一、《MongoDB in Action》、《SpringBoot in Action》、《白帽子讲Web安全》，内心立马淡定了不少。好了，题外话不多说了，马上进入主题。 nginx是一个HTT">
+<meta property="og:locale" content="en-US">
+<meta property="og:image" content="https://github.com/img/nginx-1.png">
+<meta property="og:image" content="https://github.com/img/nginx-2.png">
+<meta property="og:image" content="https://github.com/img/nginx-3.png">
+<meta property="og:image" content="https://github.com/img/nginx-4.png">
+<meta property="og:image" content="https://github.com/img/nginx-5.png">
+<meta property="og:image" content="https://github.com/img/nginx-6.png">
+<meta property="og:image" content="https://github.com/img/nginx-7.png">
+<meta property="og:updated_time" content="2019-06-12T09:47:27.821Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nginx 学习笔记">
+<meta name="twitter:description" content="今天一看，天哪，原来已经有4个月没有更新博客了，我在想，这4个月我都干嘛去了，内心立马慌起来了（你知道的，程序员是不能停止学习的）。但是细想，虽然没更新博客，但还是看了几本书：《从0到1》、《毛泽东选集》卷一、《MongoDB in Action》、《SpringBoot in Action》、《白帽子讲Web安全》，内心立马淡定了不少。好了，题外话不多说了，马上进入主题。 nginx是一个HTT">
+<meta name="twitter:image" content="https://github.com/img/nginx-1.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nginx-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/06/10/nginx-note/" class="article-date">
+  <time datetime="2019-06-10T11:20:16.000Z" itemprop="datePublished">2019-06-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/web-server/">web server</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      nginx 学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天一看，天哪，原来已经有4个月没有更新博客了，我在想，这4个月我都干嘛去了，内心立马慌起来了（你知道的，程序员是不能停止学习的）。但是细想，虽然没更新博客，但还是看了几本书：《从0到1》、《毛泽东选集》卷一、《MongoDB in Action》、《SpringBoot in Action》、《白帽子讲Web安全》，内心立马淡定了不少。好了，题外话不多说了，马上进入主题。</p>
+<p><code>nginx</code>是一个<code>HTTP</code>和反向代理服务器、邮件代理服务器和通用的<code>TCP/UDP</code>代理服务器，最初由俄罗斯程序员<code>Igor Sysoev</code>所开发。</p>
+<p>详细介绍可以参见：<br><a href="http://nginx.org/en/" target="_blank" rel="noopener">http://nginx.org/en/</a><br><a href="http://nginx.org/en/docs/" target="_blank" rel="noopener">http://nginx.org/en/docs/</a></p>
+<p>本文将说下<code>nginx</code>的简单安装使用，因为在项目中要使用到的。我在虚拟机VirtualBox中的机器中安装，系统为<code>Ubuntu Linux</code>，机器节点相关配置如下（之前安装过Hadoop集群的机器）：</p>
+<pre><code>master：
+    ip: 192.168.56.110
+    hostname: hadoop-host-master
+</code></pre><p>首先，我们要将<code>nginx</code>的安装包下载回来，截止本文写时，它的最新稳定版本为<code>1.16.0</code>，可以在它的<a href="http://nginx.org/download/nginx-1.16.0.tar.gz" target="_blank" rel="noopener">官网</a>下载。我先在我的物理机器下载回来。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/Downloads/</span><br><span class="line">$ wget http://nginx.org/download/nginx-1.16.0.tar.gz</span><br><span class="line">$ wget http://nginx.org/download/nginx-1.16.0.tar.gz.asc</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性，这里略</span><br></pre></td></tr></table></figure>
+<p>在物理机上将它传到要安装的机器<code>hadoop-host-master</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ scp nginx-1.16.0.tar.gz hadoop@hadoop-host-master:~/</span><br></pre></td></tr></table></figure></p>
+<p>接下来，我们进入<code>hadoop-host-master</code>中操作：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">$ ssh hadoop@hadoop-host-master</span><br><span class="line"></span><br><span class="line">$ tar xf nginx-1.16.0.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> nginx-1.16.0/</span><br><span class="line">$ ls</span><br><span class="line">auto  CHANGES  CHANGES.ru  conf  configure  contrib  html  LICENSE  man  README  src</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ sudo ./configure </span><br><span class="line">checking <span class="keyword">for</span> OS</span><br><span class="line"> + Linux 4.15.0-39-generic x86_64</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">中间省略部分</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Configuration summary</span><br><span class="line">  + using system PCRE library</span><br><span class="line">  + OpenSSL library is not used</span><br><span class="line">  + using system zlib library</span><br><span class="line"></span><br><span class="line">  nginx path prefix: <span class="string">"/usr/local/nginx"</span></span><br><span class="line">  nginx binary file: <span class="string">"/usr/local/nginx/sbin/nginx"</span></span><br><span class="line">  nginx modules path: <span class="string">"/usr/local/nginx/modules"</span></span><br><span class="line">  nginx configuration prefix: <span class="string">"/usr/local/nginx/conf"</span></span><br><span class="line">  nginx configuration file: <span class="string">"/usr/local/nginx/conf/nginx.conf"</span></span><br><span class="line">  nginx pid file: <span class="string">"/usr/local/nginx/logs/nginx.pid"</span></span><br><span class="line">  nginx error <span class="built_in">log</span> file: <span class="string">"/usr/local/nginx/logs/error.log"</span></span><br><span class="line">  nginx http access <span class="built_in">log</span> file: <span class="string">"/usr/local/nginx/logs/access.log"</span></span><br><span class="line">  nginx http client request body temporary files: <span class="string">"client_body_temp"</span></span><br><span class="line">  nginx http proxy temporary files: <span class="string">"proxy_temp"</span></span><br><span class="line">  nginx http fastcgi temporary files: <span class="string">"fastcgi_temp"</span></span><br><span class="line">  nginx http uwsgi temporary files: <span class="string">"uwsgi_temp"</span></span><br><span class="line">  nginx http scgi temporary files: <span class="string">"scgi_temp"</span></span><br></pre></td></tr></table></figure></p>
+<p>在<code>./configure</code>过程中会检查依赖的缺失情况，如果有缺失，则会在这里提示。我们根据提示安装即可。</p>
+<p>一般来说，nginx编译会依赖：zlib、zlib-devel、openssl、openssl-devel、pcre、pcre-devel、gcc、g++</p>
+<p>在CentOS上可以通过以下方式进行安装：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum -y install zlib zlib-devel openssl openssl-devel pcre pcre-devel</span><br></pre></td></tr></table></figure></p>
+<p>而在Ubuntu上面则可以通过下面的方式进行安装：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install build-essential    这会同时安装 gcc、g++</span><br><span class="line">$ sudo apt-get install zlib1g</span><br><span class="line">$ sudo apt-get install openssl libssl-dev</span><br><span class="line">$ sudo apt-get install libpcre3 libpcre3-dev</span><br><span class="line">$ sudo apt-get install zlib1g-dev</span><br></pre></td></tr></table></figure></p>
+<p>接下来进行编译安装：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ sudo make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line">objs/ngx_modules.o \</span><br><span class="line">-ldl -lpthread -lcrypt -lpcre -lz \</span><br><span class="line">-Wl,-E</span><br><span class="line">sed -e <span class="string">"s|%%PREFIX%%|/usr/local/nginx|"</span> \</span><br><span class="line">	-e <span class="string">"s|%%PID_PATH%%|/usr/local/nginx/logs/nginx.pid|"</span> \</span><br><span class="line">	-e <span class="string">"s|%%CONF_PATH%%|/usr/local/nginx/conf/nginx.conf|"</span> \</span><br><span class="line">	-e <span class="string">"s|%%ERROR_LOG_PATH%%|/usr/local/nginx/logs/error.log|"</span> \</span><br><span class="line">	&lt; man/nginx.8 &gt; objs/nginx.8</span><br><span class="line">make[1]: Leaving directory <span class="string">'/home/hadoop/nginx-1.16.0'</span></span><br></pre></td></tr></table></figure></p>
+<p>它默认会安装到<code>/usr/local/nginx/</code>目录下。</p>
+<p>启动命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /usr/<span class="built_in">local</span>/nginx/sbin/nginx -c /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure></p>
+<p>修改配置文件后，检查配置文件是否正确的命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /usr/<span class="built_in">local</span>/nginx/sbin/nginx -t -c /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">nginx: the configuration file /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf syntax is ok</span><br><span class="line">nginx: configuration file /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf <span class="built_in">test</span> is successful</span><br></pre></td></tr></table></figure></p>
+<p>可以打开 <a href="http://192.168.56.110/" target="_blank" rel="noopener">http://192.168.56.110/</a> 来看看是否已启动。</p>
+<p><img src="/img/nginx-1.png" alt="" title="nginx 初始启动界面"></p>
+<p>另外，使用 <a href="http://hadoop-host-master/" target="_blank" rel="noopener">http://hadoop-host-master/</a> 也是一样的。</p>
+<p><img src="/img/nginx-2.png" alt="" title="nginx 初始启动界面"></p>
+<p>当你看到上面的界面后，nginx的安装到这里就成功了。</p>
+<p>接下来，我们作一些简单的配置示例。但是在开始之前，在执行访问的机器上面（在这里是我的物理机器），配置一下HOST，<strong>增加</strong>下面这3行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/hosts</span><br><span class="line"></span><br><span class="line">192.168.56.110 www.hewentian.com</span><br><span class="line">192.168.56.110 img.hewentian.com</span><br><span class="line">192.168.56.110 api.hewentian.com</span><br></pre></td></tr></table></figure></p>
+<h3 id="示例一：将某目录下的图片，让其他机器可以通过WEB访问"><a href="#示例一：将某目录下的图片，让其他机器可以通过WEB访问" class="headerlink" title="示例一：将某目录下的图片，让其他机器可以通过WEB访问"></a>示例一：将某目录下的图片，让其他机器可以通过WEB访问</h3><p>在安装了nginx的机器<code>hadoop-host-master</code>上有个目录<code>/home/hadoop/Pictures</code>，这个目录下放有图片（我的机器里有一张：my_computer.png）。现在想通过web，让其他机器的用户访问这个目录下的图片。</p>
+<p>修改<code>nginx.conf</code>配置，添加如下代码即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  img.hewentian.com;                 <span class="comment"># 修改 1/3： WEB访问的位置</span></span><br><span class="line">        access_log  logs/img.access.log  main;          <span class="comment"># 修改 2/3： 日志存放位置。记得将此配置文件中的 log_format  main 前面的注释打开</span></span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            root   /home/hadoop/Pictures/;              <span class="comment"># 修改 3/3： 图片存放位置</span></span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        error_page   500 502 503 504  /50x.html;</span><br><span class="line">        location = /50x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>保存文件后，退出。<br>检查配置文件是否正确：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /usr/<span class="built_in">local</span>/nginx/sbin/nginx -t -c /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure></p>
+<p>然后重启nginx，首先找出nginx进程号：</p>
+<pre><code>ps -ef | grep nginx
+</code></pre><p>然后杀死nginx的主进程：</p>
+<pre><code>sudo kill -9 [nginx进程号]
+</code></pre><p>重启nginx</p>
+<pre><code>sudo /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+</code></pre><p>在物理机器上面打开浏览器，试着访问： <a href="http://img.hewentian.com/my_computer.png" target="_blank" rel="noopener">http://img.hewentian.com/my_computer.png</a></p>
+<p><img src="/img/nginx-3.png" alt="" title="nginx 作为图片服务器"></p>
+<p>查看nginx访问日志：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ tail /usr/<span class="built_in">local</span>/nginx/logs/img.access.log</span><br><span class="line"></span><br><span class="line">192.168.56.1 - - [11/Jun/2019:22:46:33 +0800] <span class="string">"GET / HTTP/1.1"</span> 403 555 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [11/Jun/2019:22:46:50 +0800] <span class="string">"GET /my_computer.png HTTP/1.1"</span> 200 59332 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [11/Jun/2019:22:47:21 +0800] <span class="string">"GET /my_computer.png HTTP/1.1"</span> 304 0 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:00:51:04 +0800] <span class="string">"GET /my_computer.png HTTP/1.1"</span> 304 0 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:00:51:04 +0800] <span class="string">"GET /my_computer.png HTTP/1.1"</span> 304 0 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:00:51:04 +0800] <span class="string">"GET /my_computer.png HTTP/1.1"</span> 304 0 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:00:51:05 +0800] <span class="string">"GET /my_computer.png HTTP/1.1"</span> 304 0 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:01:02:06 +0800] <span class="string">"GET /my_computer.png HTTP/1.1"</span> 304 0 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="示例二：实现简单的负载匀衡"><a href="#示例二：实现简单的负载匀衡" class="headerlink" title="示例二：实现简单的负载匀衡"></a>示例二：实现简单的负载匀衡</h3><p>有个应用，它有个接口<code>/hello</code>，是返回当前服务器的IP地址。我是使用SpringBoot来简单开发的，代码只有几行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hewentian.web.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.log4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.net.InetAddress;</span><br><span class="line"><span class="keyword">import</span> java.net.UnknownHostException;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;HelloController&lt;/b&gt; 是 返回当前服务器IP地址的Controller</span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019-06-12 14:52:49</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span> </span>&#123;</span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">static</span> Logger log = Logger.getLogger(HelloController.class);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">index</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String address = <span class="string">""</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            InetAddress inetAddress = InetAddress.getLocalHost();</span><br><span class="line">            address = inetAddress.getHostAddress();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (UnknownHostException e) &#123;</span><br><span class="line">            log.error(e.getMessage(), e);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> address + <span class="string">" is serving for you: Hello World"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>部署在下面的2台服务器上，都是监听8080端口。</p>
+<pre><code>slave1:
+    ip: 192.168.56.111
+    hostname: hadoop-host-slave-1
+slave2:
+    ip: 192.168.56.112
+    hostname: hadoop-host-slave-2
+</code></pre><p>现在想在网页上访问：<a href="http://192.168.56.110" target="_blank" rel="noopener">http://192.168.56.110</a> 或 <a href="http://api.hewentian.com" target="_blank" rel="noopener">http://api.hewentian.com</a> 的时候，就会访问到上面这2台机器，实现负载均衡。</p>
+<p>修改<code>nginx.conf</code>配置，添加如下代码即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">upstream api_worker &#123;</span><br><span class="line">    server 192.168.56.111:8080 weight=3000;</span><br><span class="line">    server 192.168.56.112:8080 weight=3000;</span><br><span class="line">    keepalive 2000;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen      80;</span><br><span class="line">    server_name 192.168.56.110  api.hewentian.com;</span><br><span class="line">    access_log  logs/api.access.log  main;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass http://api_worker/;</span><br><span class="line">        proxy_redirect off;</span><br><span class="line">        proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">        proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        proxy_http_version 1.1;</span><br><span class="line">        proxy_set_header Connection <span class="string">""</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>重启nginx。正常情况下，流量会匀衡地分到2台服务器，如下图所示。<br><img src="/img/nginx-4.png" alt="" title="nginx 作为负载匀衡服务器"><br><img src="/img/nginx-5.png" alt="" title="nginx 作为负载匀衡服务器"></p>
+<p>如果两台机器中的某一台挂掉了，流量会自动分到另外一台，这样也实现了简单的高可用。</p>
+<p>查看nginx访问日志：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ tail /usr/<span class="built_in">local</span>/nginx/logs/api.access.log </span><br><span class="line"></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:02:46:52 +0800] <span class="string">"GET /hello HTTP/1.1"</span> 200 46 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:02:46:52 +0800] <span class="string">"GET /favicon.ico HTTP/1.1"</span> 200 946 <span class="string">"http://api.hewentian.com/hello"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:02:46:52 +0800] <span class="string">"GET /hello HTTP/1.1"</span> 200 46 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:02:46:52 +0800] <span class="string">"GET /favicon.ico HTTP/1.1"</span> 200 946 <span class="string">"http://api.hewentian.com/hello"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:02:46:52 +0800] <span class="string">"GET /hello HTTP/1.1"</span> 200 46 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:02:46:52 +0800] <span class="string">"GET /favicon.ico HTTP/1.1"</span> 200 946 <span class="string">"http://api.hewentian.com/hello"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:02:46:52 +0800] <span class="string">"GET /hello HTTP/1.1"</span> 200 46 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:02:46:52 +0800] <span class="string">"GET /favicon.ico HTTP/1.1"</span> 200 946 <span class="string">"http://api.hewentian.com/hello"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:02:46:52 +0800] <span class="string">"GET /hello HTTP/1.1"</span> 200 46 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line">192.168.56.1 - - [12/Jun/2019:02:46:52 +0800] <span class="string">"GET /favicon.ico HTTP/1.1"</span> 200 946 <span class="string">"http://api.hewentian.com/hello"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="示例三：实现同一个域名下的两个服务"><a href="#示例三：实现同一个域名下的两个服务" class="headerlink" title="示例三：实现同一个域名下的两个服务"></a>示例三：实现同一个域名下的两个服务</h3><p>有两个服务：<br>一个是一个WEB服务，是指向另一台机器的，其中<code>/hello</code>是一个接口：<br><a href="http://www.hewentian.com/api/hello" target="_blank" rel="noopener">http://www.hewentian.com/api/hello</a></p>
+<p>另一个是用来看某个目录下的图片的：<br><a href="http://www.hewentian.com/img/my_computer.png" target="_blank" rel="noopener">http://www.hewentian.com/img/my_computer.png</a></p>
+<p>修改<code>nginx.conf</code>配置，添加如下代码即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">upstream api_worker &#123;</span><br><span class="line">    server 192.168.56.111:8080 weight=3000;</span><br><span class="line">    keepalive 2000;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen      80;</span><br><span class="line">    server_name www.hewentian.com;</span><br><span class="line">  </span><br><span class="line">    location / &#123;</span><br><span class="line">        root   html;</span><br><span class="line">        index  index.html;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    location /api/ &#123;</span><br><span class="line">        proxy_pass http://api_worker/;</span><br><span class="line">        <span class="comment">#proxy_redirect off;</span></span><br><span class="line">        proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">        proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="comment">#proxy_http_version 1.1;</span></span><br><span class="line">        <span class="comment">#proxy_set_header Connection "";</span></span><br><span class="line">        access_log  logs/api.access.log  main;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location /img/ &#123;</span><br><span class="line">        <span class="built_in">alias</span> /home/hadoop/Pictures/;</span><br><span class="line">        access_log  logs/img.access.log  main;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>重启nginx。访问上述地址，将得到如下图效果：</p>
+<p><img src="/img/nginx-6.png" alt="" title="nginx 实现同一个域名下的两个服务"></p>
+<p><img src="/img/nginx-7.png" alt="" title="nginx 实现同一个域名下的两个服务"></p>
+<p>查看nginx访问日志：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ tail -n1 /usr/<span class="built_in">local</span>/nginx/logs/api.access.log /usr/<span class="built_in">local</span>/nginx/logs/img.access.log </span><br><span class="line"></span><br><span class="line">==&gt; /usr/<span class="built_in">local</span>/nginx/logs/api.access.log &lt;==</span><br><span class="line">192.168.56.1 - - [12/Jun/2019:04:09:55 +0800] <span class="string">"GET /api/hello HTTP/1.1"</span> 200 46 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line"></span><br><span class="line">==&gt; /usr/<span class="built_in">local</span>/nginx/logs/img.access.log &lt;==</span><br><span class="line">192.168.56.1 - - [12/Jun/2019:04:08:04 +0800] <span class="string">"GET /img/my_computer.png HTTP/1.1"</span> 200 59332 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2019/06/10/nginx-note/" data-id="cjwt22umw002f9d3kqmy0njcq" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/01/20/hbase-cluster/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">hbase 集群的搭建</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/06/10/nginx-note/">nginx 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
+          </li>
+        
+          <li>
+            <a href="/2018/12/19/hadoop-mapreduce/">hadoop mapreduce示例</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> -->
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

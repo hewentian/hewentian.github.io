@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="参考资料：Elasticsearch 权威指南Elasticsearch Referencehttp://es.xiaoleilu.com/080_Structured_Search/20_contains.htmlhttps://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core 首先，你必须">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2019-04-16T09:48:21.534Z">
+<meta property="og:updated_time" content="2019-06-12T09:50:02.897Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="elasticsearch 学习笔记">
 <meta name="twitter:description" content="参考资料：Elasticsearch 权威指南Elasticsearch Referencehttp://es.xiaoleilu.com/080_Structured_Search/20_contains.htmlhttps://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core 首先，你必须">
@@ -62,7 +62,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -439,6 +439,33 @@ GET /people/user/_search
   },
   "size":0
 }
+
+
+GET /people/user/_search
+{
+  "aggs": {
+    "NAME": {
+      "terms": {
+        "field": "username",
+        "size": 100
+      }
+    }
+  },
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "wildcard": {
+            "username": {
+              "value": "*文*"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "size":100
+}
 </pre>
 
 <h3 id="查询返回某些指定的字段"><a href="#查询返回某些指定的字段" class="headerlink" title="查询返回某些指定的字段"></a>查询返回某些指定的字段</h3><p>如果查询的结果字段很多，而我们仅需要其中的某些字段的时候，我们可能通过<code>_source</code>来指定，比如我们只要userName, address：</p>
@@ -495,12 +522,13 @@ GET people/user/_search
 <pre><code>curl -XPUT http://127.0.0.1:9200/my_index/_settings -d &apos;{ &quot;index&quot; : { &quot;max_result_window&quot; : 500000}}&apos;
 </code></pre><p>其中my_index为要修改的index名，500000为要调整的新的窗口数</p>
 <p>或者分页使用ES的scroll api实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.elasticsearch.index.query.QueryBuilders.*;</span><br><span class="line"></span><br><span class="line">QueryBuilder qb = termQuery(<span class="string">"multi"</span>, <span class="string">"test"</span>);</span><br><span class="line"></span><br><span class="line">SearchResponse scrollResp = client.prepareSearch(test)</span><br><span class="line">        .addSort(FieldSortBuilder.DOC_FIELD_NAME, SortOrder.ASC)</span><br><span class="line">        .setScroll(<span class="keyword">new</span> TimeValue(<span class="number">60000</span>))</span><br><span class="line">        .setQuery(qb)</span><br><span class="line">        .setSize(<span class="number">100</span>).get(); <span class="comment">//max of 100 hits will be returned for each scroll</span></span><br><span class="line"><span class="comment">//Scroll until no hits are returned</span></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (SearchHit hit : scrollResp.getHits().getHits()) &#123;</span><br><span class="line">        <span class="comment">//Handle the hit...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(<span class="keyword">new</span> TimeValue(<span class="number">60000</span>)).execute().actionGet();</span><br><span class="line">&#125; <span class="keyword">while</span>(scrollResp.getHits().getHits().length != <span class="number">0</span>); <span class="comment">// Zero hits mark the end of the scroll and the while loop.</span></span><br></pre></td></tr></table></figure></p>
+<p>统计指定索引下的文档数：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X GET <span class="string">"127.0.0.1:9200/_cat/count/my_index?v"</span></span><br><span class="line"></span><br><span class="line">epoch      timestamp count</span><br><span class="line">1559718460 15:07:40  123</span><br></pre></td></tr></table></figure></p>
 <p>未完待续……</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjujlvibr0002rh3ka2mg3syb" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjwt22uma000f9d3k5aewcuj7" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -512,7 +540,7 @@ GET people/user/_search
 <nav id="article-nav">
   
     <a href="/2018/10/02/ELK-install/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Récent</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           ELK 日志系统的搭建
@@ -522,7 +550,7 @@ GET people/user/_search
   
   
     <a href="/2018/09/17/elasticsearch-cluster/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Ancien</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">elasticsearch 集群的搭建</div>
     </a>
   
@@ -537,9 +565,9 @@ GET people/user/_search
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -549,7 +577,7 @@ GET people/user/_search
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -557,9 +585,13 @@ GET people/user/_search
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/06/10/nginx-note/">nginx 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
@@ -575,10 +607,6 @@ GET people/user/_search
         
           <li>
             <a href="/2018/12/19/hadoop-mapreduce/">hadoop mapreduce示例</a>
-          </li>
-        
-          <li>
-            <a href="/2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>
           </li>
         
       </ul>
@@ -604,7 +632,7 @@ GET people/user/_search
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

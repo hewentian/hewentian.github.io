@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -70,6 +70,85 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-ELK-install" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/02/ELK-install/" class="article-date">
+  <time datetime="2018-10-02T03:09:56.000Z" itemprop="datePublished">2018-10-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇将介绍 ELK 日志系统的搭建，我们将在一台机器上面搭建，系统配置如下：<br><img src="/img/system-property.png" alt="" title="系统配置"></p>
+<p><code>logstash</code>的整体结构图如下：<br><img src="/img/elk-structure.png" alt="" title="来源：https://www.elastic.co/guide/en/logstash/current/static/images/basic_logstash_pipeline.png"></p>
+<p>我们将使用<code>redis</code>作为上图中的<code>INPUTS</code>，而<code>elasticsearch</code>作为上图中的<code>OUTPUTS</code>，这也是<code>logstash</code>官方的推荐。而它们的安装可以参考以下例子：<br><code>redis</code>的安装请参考：<a href="../../../../2018/08/07/redis-install/">redis 的安装使用</a><br><code>elasticsearch</code>的安装请参考：<a href="../../../../2018/09/16/elasticsearch-install/">elasticsearch 单节点安装</a></p>
+<p><strong> 注意：elasticsearch、logstash、kibana它们的版本最好保持一致，这里都是使用6.4.0版本。 </strong></p>
+<h3 id="kibana的安装将在本篇的稍后介绍，下面先介绍下logstash的安装"><a href="#kibana的安装将在本篇的稍后介绍，下面先介绍下logstash的安装" class="headerlink" title="kibana的安装将在本篇的稍后介绍，下面先介绍下logstash的安装"></a><code>kibana</code>的安装将在本篇的稍后介绍，下面先介绍下<code>logstash</code>的安装</h3><p>首先，我们要将<code>logstash</code>安装包下载回来，可以在它的<a href="https://artifacts.elastic.co/downloads/logstash/logstash-6.4.0.tar.gz" target="_blank" rel="noopener">官网</a>下载，当然，我们也可以从这里下载 <a href="https://pan.baidu.com/s/10p4YqzwSk1ixLqvSuv2sAA" title="百度网盘" target="_blank" rel="noopener">logstash-6.4.0.tar.gz</a>，推荐从<code>logstash</code>官网下载对应版本。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/logstash/logstash-6.4.0.tar.gz</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/logstash/logstash-6.4.0.tar.gz.sha512</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性，在下载的时候要将 SHA512 文件也下载回来</span><br><span class="line">$ sha512sum -c logstash-6.4.0.tar.gz.sha512 </span><br><span class="line">logstash-6.4.0.tar.gz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf logstash-6.4.0.tar.gz</span><br></pre></td></tr></table></figure>
+<p>解压后，得到目录<code>logstash-6.4.0</code>，可以查看下它包含有哪些文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/logstash-6.4.0</span><br><span class="line">$ ls</span><br><span class="line"></span><br><span class="line">bin           data          lib          logstash-core             NOTICE.TXT  x-pack</span><br><span class="line">config        Gemfile       LICENSE.txt  logstash-core-plugin-api  tools</span><br><span class="line">CONTRIBUTORS  Gemfile.lock  logs         modules                   vendor</span><br></pre></td></tr></table></figure></p>
+<h4 id="测试安装是否成功：以标准输入、标准输出作为input-output"><a href="#测试安装是否成功：以标准输入、标准输出作为input-output" class="headerlink" title="测试安装是否成功：以标准输入、标准输出作为input, output"></a>测试安装是否成功：以标准输入、标准输出作为input, output</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/logstash-6.4.0/bin</span><br><span class="line">$ ./logstash -e <span class="string">'input &#123; stdin &#123; &#125; &#125; output &#123; stdout &#123; &#125; &#125;'</span></span><br><span class="line"></span><br><span class="line">Sending Logstash logs to /home/hewentian/ProjectD/logstash-6.4.0/logs <span class="built_in">which</span> is now configured via log4j2.properties</span><br><span class="line">[2018-10-02T14:25:37,017][WARN ][logstash.config.source.multilocal] Ignoring the <span class="string">'pipelines.yml'</span> file because modules or <span class="built_in">command</span> line options are specified</span><br><span class="line">[2018-10-02T14:25:38,201][INFO ][logstash.runner          ] Starting Logstash &#123;<span class="string">"logstash.version"</span>=&gt;<span class="string">"6.4.0"</span>&#125;</span><br><span class="line">[2018-10-02T14:25:41,748][INFO ][logstash.pipeline        ] Starting pipeline &#123;:pipeline_id=&gt;<span class="string">"main"</span>, <span class="string">"pipeline.workers"</span>=&gt;4, <span class="string">"pipeline.batch.size"</span>=&gt;125, <span class="string">"pipeline.batch.delay"</span>=&gt;50&#125;</span><br><span class="line">[2018-10-02T14:25:41,919][INFO ][logstash.pipeline        ] Pipeline started successfully &#123;:pipeline_id=&gt;<span class="string">"main"</span>, :thread=&gt;<span class="string">"#&lt;Thread:0x4c1685e4 run&gt;"</span>&#125;</span><br><span class="line">The stdin plugin is now waiting <span class="keyword">for</span> input:</span><br><span class="line">[2018-10-02T14:25:41,990][INFO ][logstash.agent           ] Pipelines running &#123;:count=&gt;1, :running_pipelines=&gt;[:main], :non_running_pipelines=&gt;[]&#125;</span><br><span class="line">[2018-10-02T14:25:42,396][INFO ][logstash.agent           ] Successfully started Logstash API endpoint &#123;:port=&gt;9600&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#此时窗口在等待输入</span></span><br><span class="line"></span><br><span class="line">hello world</span><br><span class="line"></span><br><span class="line"><span class="comment">#下面是logstash的输出结果</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">      <span class="string">"@version"</span> =&gt; <span class="string">"1"</span>,</span><br><span class="line">    <span class="string">"@timestamp"</span> =&gt; 2018-10-02T06:25:59.608Z,</span><br><span class="line">       <span class="string">"message"</span> =&gt; <span class="string">"hello world"</span>,</span><br><span class="line">          <span class="string">"host"</span> =&gt; <span class="string">"hewentian-Lenovo-IdeaPad-Y470"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的测试结果可知，软件安装正确，下面开始我们的定制配置。</p>
+<p>配置文件放在config目录下，此目录下已经有一个示例配置，因为我们要将redis作为我们的INPUTS，所以我们要建立它的配置文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/logstash-6.4.0/config</span><br><span class="line">$ cp logstash-sample.conf logstash-redis.conf</span><br><span class="line">$ </span><br><span class="line">$ vi logstash-redis.conf</span><br></pre></td></tr></table></figure></p>
+<p>在<code>logstash-redis.conf</code>中配置如下，这里暂未配置FILTERS（后面会讲到如何配置）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Sample Logstash configuration for creating a simple</span></span><br><span class="line"><span class="comment"># Redis -&gt; Logstash -&gt; Elasticsearch pipeline.</span></span><br><span class="line"></span><br><span class="line">input &#123;</span><br><span class="line">  redis &#123;</span><br><span class="line">    <span class="built_in">type</span> =&gt; <span class="string">"systemlog"</span></span><br><span class="line">    host =&gt; <span class="string">"127.0.0.1"</span></span><br><span class="line">    port =&gt; 6379</span><br><span class="line">    password =&gt; <span class="string">"abc123"</span></span><br><span class="line">    db =&gt; 0</span><br><span class="line">    data_type =&gt; <span class="string">"list"</span></span><br><span class="line">    key =&gt; <span class="string">"systemlog"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">output &#123;</span><br><span class="line">  <span class="keyword">if</span> [<span class="built_in">type</span>] == <span class="string">"systemlog"</span> &#123;</span><br><span class="line">    elasticsearch &#123;</span><br><span class="line">      hosts =&gt; [<span class="string">"http://127.0.0.1:9200"</span>]</span><br><span class="line">      index =&gt; <span class="string">"redis-systemlog-%&#123;+YYYY.MM.dd&#125;"</span></span><br><span class="line">      <span class="comment">#user =&gt; "elastic"</span></span><br><span class="line">      <span class="comment">#password =&gt; "changeme"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在启动<code>logstash</code>前，验证一下配置文件是否正确，这是一个好习惯：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/logstash-6.4.0/bin</span><br><span class="line">$ ./logstash -f ../config/logstash-redis.conf -t</span><br></pre></td></tr></table></figure></p>
+<p>如果你见到如下输出，则配置正确：</p>
+<pre><code>Sending Logstash logs to /home/hewentian/ProjectD/logstash-6.4.0/logs which is now configured via log4j2.properties
+[2018-09-30T16:32:45,043][INFO ][logstash.setting.writabledirectory] Creating directory {:setting=&gt;&quot;path.queue&quot;, :path=&gt;&quot;/home/hewentian/ProjectD/logstash-6.4.0/data/queue&quot;}
+[2018-09-30T16:32:45,064][INFO ][logstash.setting.writabledirectory] Creating directory {:setting=&gt;&quot;path.dead_letter_queue&quot;, :path=&gt;&quot;/home/hewentian/ProjectD/logstash-6.4.0/data/dead_letter_queue&quot;}
+[2018-09-30T16:32:46,030][WARN ][logstash.config.source.multilocal] Ignoring the &apos;pipelines.yml&apos; file because modules or command line options are specified
+Configuration OK
+[2018-09-30T16:32:50,630][INFO ][logstash.runner          ] Using config.test_and_exit mode. Config Validation Result: OK. Exiting Logstash
+</code></pre><p>接下来，就可以启动logstash了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/logstash-6.4.0/bin</span><br><span class="line">$ ./logstash -f ../config/logstash-redis.conf</span><br></pre></td></tr></table></figure></p>
+<p>如果见到如下输出，则启动成功：</p>
+<pre><code>[2018-09-30T16:34:44,175][INFO ][logstash.agent           ] Successfully started Logstash API endpoint {:port=&gt;9600}
+</code></pre><h4 id="下面进行简单的测试"><a href="#下面进行简单的测试" class="headerlink" title="下面进行简单的测试"></a>下面进行简单的测试</h4><p>我们首先，往redis中推入3条记录：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/redis-4.0.11_master/src</span><br><span class="line">$ ./redis-cli -h 127.0.0.1</span><br><span class="line">127.0.0.1:6379&gt; AUTH abc123</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; lpush systemlog hello world</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">127.0.0.1:6379&gt; lpush systemlog <span class="string">'&#123;"name":"Tim Ho","age":23,"student":true&#125;'</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure></p>
+<p>启动elastchsearch-head可以看到数据已经进入到es中了：<br><img src="/img/elk-head-1.png" alt="" title="elk-head-1"></p>
+<p>你会发现上面推到<code>systemlog</code>中的信息如果是JSON格式，则在elasticsearch中会自动解析到相应的field中，否则会放到默认的field：<code>message</code>中。</p>
+<h3 id="kibana的安装"><a href="#kibana的安装" class="headerlink" title="kibana的安装"></a>kibana的安装</h3><p><code>kibana</code>的安装很简单，将<code>kibana</code>安装包下载回来，可以在它的<a href="https://artifacts.elastic.co/downloads/kibana/kibana-6.4.0-linux-x86_64.tar.gz" target="_blank" rel="noopener">官网</a>下载，当然，我们也可以从这里下载 <a href="https://pan.baidu.com/s/1-h0z7DR2uhuwhCn0_vNc4w" title="百度网盘" target="_blank" rel="noopener">kibana-6.4.0-linux-x86_64.tar.gz</a>，推荐从<code>kibana</code>官网下载对应版本。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/kibana/kibana-6.4.0-linux-x86_64.tar.gz</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/kibana/kibana-6.4.0-linux-x86_64.tar.gz.sha512</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性，在下载的时候要将 SHA512 文件也下载回来</span><br><span class="line">$ sha512sum -c kibana-6.4.0-linux-x86_64.tar.gz.sha512 </span><br><span class="line">kibana-6.4.0-linux-x86_64.tar.gz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf kibana-6.4.0-linux-x86_64.tar.gz</span><br></pre></td></tr></table></figure>
+<p>对<code>kibana</code>配置要查看的<code>elasticsearch</code>，只需修改如下配置项即可，如果是在本机安装<code>elasticsearch</code>，并且使用默认的9200端口，则无需配置。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kibana-6.4.0-linux-x86_64/config</span><br><span class="line">$ vi kibana.yml</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改如下配置项，如果使用默认的，则无需修改</span></span><br><span class="line"><span class="comment">#server.port: 5601</span></span><br><span class="line"><span class="comment">#elasticsearch.url: "http://localhost:9200"</span></span><br><span class="line"><span class="comment">#elasticsearch.username: "user"</span></span><br><span class="line"><span class="comment">#elasticsearch.password: "pass"</span></span><br></pre></td></tr></table></figure></p>
+<p>接着启动<code>kibana</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kibana-6.4.0-linux-x86_64/bin</span><br><span class="line">$ ./kibana <span class="comment"># 或者以后台方式运行 nohup ./kibana &amp;</span></span><br></pre></td></tr></table></figure></p>
+<p>打开浏览器，并输入下面的地址：<br><a href="http://localhost:5601" target="_blank" rel="noopener">http://localhost:5601</a></p>
+<p>你将看到如下界面：<br><img src="/img/elk-kibana-1.png" alt="" title="kibana初始界面"></p>
+<p>点击上图中的<code>[Management]-&gt;[Index Patterns]-&gt;[Create index pattern]</code>，输入<code>index name：redis-systemlog-*</code>，如下图<br><img src="/img/elk-kibana-2.png" alt="" title="kibana配置index name界面"></p>
+<p>点击<code>[Next step]</code>按钮，并在接下来的界面中的<code>Time Filter field name</code>中选择<code>I don&#39;t want to user the Time Filter</code>，最后点击<code>Create index pattern</code>完成创建。接着点击左则的<code>[Discover]</code>并在左则的界面中选择中<code>redis-systemlog-*</code>，你将看到如下结果：<br><img src="/img/elk-kibana-3.png" alt="" title="kibana查询界面"></p>
+<p>至此，简单的 ELK 基本搭建完毕。下面展示一个简单的配置示例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Sample Logstash configuration for creating a simple</span></span><br><span class="line"><span class="comment"># Redis -&gt; Logstash -&gt; Elasticsearch pipeline.</span></span><br><span class="line"></span><br><span class="line">input &#123;</span><br><span class="line">  <span class="comment"># system log</span></span><br><span class="line">  redis &#123;</span><br><span class="line">    <span class="built_in">type</span> =&gt; <span class="string">"systemlog"</span></span><br><span class="line">    host =&gt; <span class="string">"127.0.0.1"</span></span><br><span class="line">    port =&gt; 6379</span><br><span class="line">    password =&gt; <span class="string">"abc123"</span></span><br><span class="line">    db =&gt; 0</span><br><span class="line">    data_type =&gt; <span class="string">"list"</span></span><br><span class="line">    key =&gt; <span class="string">"systemlog"</span></span><br><span class="line">    codec  =&gt; <span class="string">"json"</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment"># user log</span></span><br><span class="line">  redis &#123;</span><br><span class="line">    <span class="built_in">type</span> =&gt; <span class="string">"userlog"</span></span><br><span class="line">    host =&gt; <span class="string">"127.0.0.1"</span></span><br><span class="line">    port =&gt; 6379</span><br><span class="line">    password =&gt; <span class="string">"abc123"</span></span><br><span class="line">    db =&gt; 0</span><br><span class="line">    data_type =&gt; <span class="string">"list"</span></span><br><span class="line">    key =&gt; <span class="string">"userlog"</span></span><br><span class="line">    codec  =&gt; <span class="string">"json"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">output &#123;</span><br><span class="line">  elasticsearch &#123;</span><br><span class="line">    hosts =&gt; [<span class="string">"http://127.0.0.1:9200"</span>]</span><br><span class="line">    index =&gt; <span class="string">"%&#123;type&#125;-%&#123;+YYYY.MM&#125;"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="下面我们将继续探索它的高级功能。"><a href="#下面我们将继续探索它的高级功能。" class="headerlink" title="下面我们将继续探索它的高级功能。"></a>下面我们将继续探索它的高级功能。</h3><p>很多时候，对于<code>systemlog</code>中的某条信息（不一定是JSON格式），如果我们只需要某些信息，那我们又怎样做呢？这里就需要使用FILTERS了。</p>
+<p>在FILTERS中使用grok正则表达式，关于grok，可以参见这里的说明：<br><a href="https://www.elastic.co/guide/en/logstash/current/plugins-filters-grok.html" target="_blank" rel="noopener">https://www.elastic.co/guide/en/logstash/current/plugins-filters-grok.html</a></p>
+<p>未完，待续……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="cjwt22ulv00009d3kf2ai9svg" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-elasticsearch-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -439,6 +518,33 @@ GET /people/user/_search
   },
   "size":0
 }
+
+
+GET /people/user/_search
+{
+  "aggs": {
+    "NAME": {
+      "terms": {
+        "field": "username",
+        "size": 100
+      }
+    }
+  },
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "wildcard": {
+            "username": {
+              "value": "*文*"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "size":100
+}
 </pre>
 
 <h3 id="查询返回某些指定的字段"><a href="#查询返回某些指定的字段" class="headerlink" title="查询返回某些指定的字段"></a>查询返回某些指定的字段</h3><p>如果查询的结果字段很多，而我们仅需要其中的某些字段的时候，我们可能通过<code>_source</code>来指定，比如我们只要userName, address：</p>
@@ -495,12 +601,13 @@ GET people/user/_search
 <pre><code>curl -XPUT http://127.0.0.1:9200/my_index/_settings -d &apos;{ &quot;index&quot; : { &quot;max_result_window&quot; : 500000}}&apos;
 </code></pre><p>其中my_index为要修改的index名，500000为要调整的新的窗口数</p>
 <p>或者分页使用ES的scroll api实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.elasticsearch.index.query.QueryBuilders.*;</span><br><span class="line"></span><br><span class="line">QueryBuilder qb = termQuery(<span class="string">"multi"</span>, <span class="string">"test"</span>);</span><br><span class="line"></span><br><span class="line">SearchResponse scrollResp = client.prepareSearch(test)</span><br><span class="line">        .addSort(FieldSortBuilder.DOC_FIELD_NAME, SortOrder.ASC)</span><br><span class="line">        .setScroll(<span class="keyword">new</span> TimeValue(<span class="number">60000</span>))</span><br><span class="line">        .setQuery(qb)</span><br><span class="line">        .setSize(<span class="number">100</span>).get(); <span class="comment">//max of 100 hits will be returned for each scroll</span></span><br><span class="line"><span class="comment">//Scroll until no hits are returned</span></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (SearchHit hit : scrollResp.getHits().getHits()) &#123;</span><br><span class="line">        <span class="comment">//Handle the hit...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(<span class="keyword">new</span> TimeValue(<span class="number">60000</span>)).execute().actionGet();</span><br><span class="line">&#125; <span class="keyword">while</span>(scrollResp.getHits().getHits().length != <span class="number">0</span>); <span class="comment">// Zero hits mark the end of the scroll and the while loop.</span></span><br></pre></td></tr></table></figure></p>
+<p>统计指定索引下的文档数：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X GET <span class="string">"127.0.0.1:9200/_cat/count/my_index?v"</span></span><br><span class="line"></span><br><span class="line">epoch      timestamp count</span><br><span class="line">1559718460 15:07:40  123</span><br></pre></td></tr></table></figure></p>
 <p>未完待续……</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjujlvibr0002rh3ka2mg3syb" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="cjwt22uma000f9d3k5aewcuj7" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -696,7 +803,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjujlvibw0008rh3k64wwnm9x" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="cjwt22um200069d3kas5k52h6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1020,7 +1127,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjujlvibx0009rh3kbul72qhx" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="cjwt22um400089d3kocrdpx70" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1256,7 +1363,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjujlvid20039rh3kvv8nn11x" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="cjwt22un500389d3kba7q0yfx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1329,7 +1436,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjujlvics002frh3kl5fdrd1r" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="cjwt22un1002u9d3kqm92q4kr" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1427,7 +1534,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjujlvicp0025rh3kl1n4jbcz" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="cjwt22umx002k9d3kjemh35op" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1594,7 +1701,7 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjujlvick001qrh3kmj905sg6" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="cjwt22umn001n9d3kzlh2blfo" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
@@ -1673,13 +1780,14 @@ OK
 <h4 id="我们使用mongodump来导出指定的database"><a href="#我们使用mongodump来导出指定的database" class="headerlink" title="我们使用mongodump来导出指定的database"></a>我们使用<code>mongodump</code>来导出指定的<code>database</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把一个<code>database</code>导出成指定目录下的JSON、BSON的文件集<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongodump -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; -o &#123;DUMP_FILE_PATH&#125;</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	-o: 输出的文件路径，要事先创建该目录，在该目录下会自动创建要导出的数据库作为子目录</span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongodump -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -o /home/hewentian/ProjectD/db/</span><br></pre></td></tr></table></figure></p>
 <h4 id="我们使用mongorestore来恢复指定的database"><a href="#我们使用mongorestore来恢复指定的database" class="headerlink" title="我们使用mongorestore来恢复指定的database"></a>我们使用<code>mongorestore</code>来恢复指定的<code>database</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把指定目录下的JSON、BSON的文件集恢复成<code>database</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongorestore -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; --dir &#123;RESTORE_FILE_PATH&#125;</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	--dir: 要恢复的数据库的位置，注意与上面备份的 -o 不同，这里要指定到数据库的目录</span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongorestore -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg --dir /home/hewentian/ProjectD/db/bfg/</span><br></pre></td></tr></table></figure></p>
 <h3 id="mongodb类型转换"><a href="#mongodb类型转换" class="headerlink" title="mongodb类型转换"></a>mongodb类型转换</h3><p>如下所示，将字符串类型的数据转换为int, double, date类型：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">先插入一条数据，都是字符串类型：</span><br><span class="line">db.getCollection(<span class="string">"userInfo"</span>).insert(&#123;<span class="string">"age"</span>:<span class="string">"20"</span>, <span class="string">"salary"</span>:<span class="string">"30"</span>, <span class="string">"birthday"</span>:<span class="string">"2018-12-21"</span>&#125;)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5c45b7099a14ab9807edaa75"</span>),</span><br><span class="line">    <span class="string">"age"</span> : <span class="string">"20"</span>,</span><br><span class="line">    <span class="string">"salary"</span> : <span class="string">"30"</span>,</span><br><span class="line">    <span class="string">"birthday"</span> : <span class="string">"2018-12-21"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">改变字段类型：</span><br><span class="line">db.getCollection(<span class="string">"userInfo"</span>).find(&#123;&#125;).forEach(function(doc) &#123;</span><br><span class="line">    db.getCollection(<span class="string">'userInfo'</span>).updateOne(&#123;_id: doc._id&#125;, &#123;$set: &#123;<span class="string">"age"</span>: NumberInt(doc.age), <span class="string">"salary"</span>: parseInt(doc.salary), <span class="string">"birthday"</span>: <span class="keyword">new</span> ISODate(doc.birthday)&#125;&#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5c45b7099a14ab9807edaa75"</span>),</span><br><span class="line">    <span class="string">"age"</span> : <span class="number">20</span>,</span><br><span class="line">    <span class="string">"salary"</span> : <span class="number">30.0</span>,</span><br><span class="line">    <span class="string">"birthday"</span> : ISODate(<span class="string">"2018-12-21T00:00:00.000Z"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果要将集合中已有文档的<code>ISODate</code>类型转换成<code>String</code>类型的日期，例如：将<code>updateTime</code>由<code>ISODate(&quot;2019-04-04T07:12:37.295Z&quot;)</code>转换为<code>2019-04-04 07:12:37</code>类型：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"updateTime"</span>:&#123;<span class="string">"$type"</span>:<span class="number">9</span>&#125;&#125;).forEach(<span class="function"><span class="keyword">function</span>(<span class="params">doc</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> mydate = doc.updateTime;</span><br><span class="line">    <span class="keyword">if</span> (mydate) &#123;</span><br><span class="line">        mydate = mydate.toJSON();</span><br><span class="line">        <span class="keyword">if</span> (mydate.length &gt; <span class="number">19</span>) &#123;</span><br><span class="line">            mydate = mydate.substr(<span class="number">0</span>, <span class="number">19</span>)</span><br><span class="line">            mydate = mydate.replace(<span class="string">'T'</span>,<span class="string">' '</span>);</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">   db.getCollection(<span class="string">'userInfo'</span>).update(&#123;<span class="string">"_id"</span>:doc._id&#125;, &#123;<span class="string">"$set"</span>:&#123;<span class="string">"updateTime"</span>:mydate&#125;&#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">验证结果：</span><br><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"_id"</span>:ObjectId(<span class="string">"5abc7ffc00a32c2b045e598c"</span>)&#125;)</span><br></pre></td></tr></table></figure></p>
 <h3 id="mongodb日期查询"><a href="#mongodb日期查询" class="headerlink" title="mongodb日期查询"></a>mongodb日期查询</h3><p>日期的类型不同，查询的方式也不同：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">如果日期的类型为String：</span><br><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"insertTime"</span>:&#123;$regex:<span class="string">"2019-01-07 *"</span>&#125;&#125;) <span class="comment">// *号前有个空格</span></span><br><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"insertTime"</span>:&#123;$gte:<span class="string">"2019-02-01 00:00:00"</span>,$lte:<span class="string">"2019-02-11 23:59:59"</span>&#125;&#125;)</span><br><span class="line"></span><br><span class="line">如果日期的类型为ISODate：</span><br><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"insertTime"</span>:&#123;$gte:ISODate(<span class="string">"2019-01-01T00:00:00Z"</span>),$lte:ISODate(<span class="string">"2019-02-11T23:59:59Z"</span>)&#125;&#125;)</span><br></pre></td></tr></table></figure></p>
 <h3 id="复制集合"><a href="#复制集合" class="headerlink" title="复制集合"></a>复制集合</h3><p>在复制集合的时候，修改某些值，可以使用javascript实现（建议在mongo shell下执行，这样不容易超时），示例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">var count=<span class="number">0</span>;</span><br><span class="line">var totalCount = db.getCollection(<span class="string">'user'</span>).count(&#123;&#125;);</span><br><span class="line">var lastId=<span class="string">''</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(count &lt; totalCount) &#123;</span><br><span class="line">    db.getCollection(<span class="string">'user'</span>).find(&#123;<span class="string">"_id"</span>:&#123;<span class="string">"$gt"</span>:lastId&#125;&#125;).sort(&#123;<span class="string">"_id"</span>:<span class="number">1</span>&#125;).limit(<span class="number">100</span>).forEach((doc)=&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (++count % <span class="number">1000</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            print(<span class="string">'handling: '</span> + count + <span class="string">' / '</span> + totalCount)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        lastId = doc._id;</span><br><span class="line">        doc._id=doc.regId;</span><br><span class="line">       db.getCollection(<span class="string">'user_new'</span>).save(doc);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjujlvicm001vrh3kzc0xeozh" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="cjwt22ums00229d3kem540his" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>
@@ -1761,119 +1869,10 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjujlvicv002orh3k60ehd926" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="cjwt22un2002y9d3k191dnv42" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-neo4j-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/02/17/neo4j-note/" class="article-date">
-  <time datetime="2018-02-17T01:59:18.000Z" itemprop="datePublished">2018-02-17</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/db/">db</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/17/neo4j-note/">neo4j学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="一些基本概念，从官网copy过来的，如下："><a href="#一些基本概念，从官网copy过来的，如下：" class="headerlink" title="一些基本概念，从官网copy过来的，如下："></a>一些基本概念，从官网copy过来的，如下：</h2><h3 id="Graph-Fundamentals"><a href="#Graph-Fundamentals" class="headerlink" title="Graph Fundamentals"></a>Graph Fundamentals</h3><p>Basic concepts to get you going.</p>
-<p>A graph database can store any kind of data using a few simple concepts:</p>
-<ol>
-<li>Nodes - graph data records</li>
-<li>Relationships - connect nodes</li>
-<li>Properties - named data values</li>
-</ol>
-<h3 id="A-Graph-Database"><a href="#A-Graph-Database" class="headerlink" title="A Graph Database"></a>A Graph Database</h3><p>Neo4j stores data in a Graph, with records called Nodes.</p>
-<p>The simplest graph has just a single node with some named values called Properties. Let’s draw a social graph of our friends on the Neo4j team:</p>
-<ol>
-<li>Start by drawing a circle for the node</li>
-<li>Add the name Emil</li>
-<li>Note that he is from Sweden</li>
-</ol>
-<ul>
-<li>Nodes are the name for data records in a graph</li>
-<li>Data is stored as Properties</li>
-<li>Properties are simple name/value pairs</li>
-</ul>
-<h3 id="Labels"><a href="#Labels" class="headerlink" title="Labels"></a>Labels</h3><p>Associate a set of nodes.</p>
-<p>Nodes can be grouped together by applying a Label to each member. In our social graph, we’ll label each node that represents a Person.</p>
-<ol>
-<li>Apply the label “Person” to the node we created for Emil</li>
-<li>Color “Person” nodes red</li>
-</ol>
-<ul>
-<li>A node can have zero or more labels</li>
-<li>Labels do not have any properties</li>
-</ul>
-<h3 id="More-Nodes"><a href="#More-Nodes" class="headerlink" title="More Nodes"></a>More Nodes</h3><p>Schema-free, nodes can have a mix of common and unique properties.</p>
-<p>Like any database, storing data in Neo4j can be as simple as adding more records. We’ll add a few more nodes:</p>
-<ol>
-<li>Emil has a klout score of 99</li>
-<li>Johan, from Sweden, who is learning to surf</li>
-<li>Ian, from England, who is an author</li>
-<li>Rik, from Belgium, has a cat named Orval</li>
-<li>Allison, from California, who surfs</li>
-</ol>
-<ul>
-<li>Similar nodes can have different properties</li>
-<li>Properties can be strings, numbers, or booleans</li>
-<li>Neo4j can store billions of nodes</li>
-</ul>
-<h3 id="Consider-Relationships"><a href="#Consider-Relationships" class="headerlink" title="Consider Relationships"></a>Consider Relationships</h3><p>Connect nodes in the graph</p>
-<p>The real power of Neo4j is in connected data. To associate any two nodes, add a Relationship which describes how the records are related.</p>
-<p>In our social graph, we simply say who KNOWS whom:</p>
-<ol>
-<li>Emil KNOWS Johan and Ian</li>
-<li>Johan KNOWS Ian and Rik</li>
-<li>Rik and Ian KNOWS Allison</li>
-</ol>
-<ul>
-<li>Relationships always have direction</li>
-<li>Relationships always have a type</li>
-<li>Relationships form patterns of data</li>
-</ul>
-<h3 id="Relationship-properties"><a href="#Relationship-properties" class="headerlink" title="Relationship properties"></a>Relationship properties</h3><p>Store information shared by two nodes.</p>
-<p>In a property graph, relationships are data records that can also contain properties. Looking more closely at Emil’s relationships, note that:</p>
-<ul>
-<li>Emil has known Johan since 2001</li>
-<li>Emil rates Ian 5 (out of 5)</li>
-<li>Everyone else can have similar relationship properties</li>
-</ul>
-<p>可以使用这种方式访问neo4j数据库：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:7474/browser/</span><br></pre></td></tr></table></figure></p>
-<h3 id="清空neo4j数据库"><a href="#清空neo4j数据库" class="headerlink" title="清空neo4j数据库"></a>清空neo4j数据库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">match(n)</span><br><span class="line">optional match(n)-[r]-()</span><br><span class="line">delete n,r</span><br></pre></td></tr></table></figure>
-<p>执行上面的命令后，会删除节点及与该节点相关的关系，但是property keys删不干净</p>
-<p>未完，待续……</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/02/17/neo4j-note/" data-id="cjujlvicr002brh3koddk1b0o" class="article-share-link">Partager</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/neo4j/">neo4j</a></li></ul>
 
     </footer>
   </div>
@@ -1893,9 +1892,9 @@ OK
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -1905,7 +1904,7 @@ OK
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1913,9 +1912,13 @@ OK
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/06/10/nginx-note/">nginx 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
@@ -1931,10 +1934,6 @@ OK
         
           <li>
             <a href="/2018/12/19/hadoop-mapreduce/">hadoop mapreduce示例</a>
-          </li>
-        
-          <li>
-            <a href="/2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>
           </li>
         
       </ul>
@@ -1960,7 +1959,7 @@ OK
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
