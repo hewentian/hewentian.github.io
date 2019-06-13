@@ -113,6 +113,8 @@ make[1]: Leaving directory '/home/hadoop/nginx-1.16.0'
 $ sudo /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
 ```
 
+**注意：使用`-c`参数指定配置文件一定要使用绝对路径，否则可能会报错。**
+
 修改配置文件后，检查配置文件是否正确的命令如下：
 ``` bash
 $ sudo /usr/local/nginx/sbin/nginx -t -c /usr/local/nginx/conf/nginx.conf
@@ -132,13 +134,47 @@ nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful
 当你看到上面的界面后，nginx的安装到这里就成功了。
 
 
+### 一些常用操作命令
+进入nginx的安装目录，这里进入默认安装目录，然后查看帮助信息：
+``` bash
+$ cd /usr/local/nginx/sbin
+$ ./nginx -h
+
+nginx version: nginx/1.16.0
+Usage: nginx [-?hvVtTq] [-s signal] [-c filename] [-p prefix] [-g directives]
+
+Options:
+  -?,-h         : this help
+  -v            : show version and exit
+  -V            : show version and configure options then exit
+  -t            : test configuration and exit
+  -T            : test configuration, dump it and exit
+  -q            : suppress non-error messages during configuration testing
+  -s signal     : send signal to a master process: stop, quit, reopen, reload
+  -p prefix     : set prefix path (default: /usr/local/nginx/)
+  -c filename   : set configuration file (default: conf/nginx.conf)
+  -g directives : set global directives out of configuration file
+```
+
+说明如下：
+1. 启动命令： `./nginx`；
+2. 关闭命令： `./nginx -s stop`，快速停止nginx，可能并不保存相关信息；
+3. 退出命令： `./nginx -s quit`，完整有序的停止nginx，会保存相关信息，建议使用此命令；
+4. 动态加载配置文件： `./nginx -s reload`可以不关闭nginx的情况下更新配置文件；
+5. 重新打开日志文件：`./nginx -s reopen`；
+6. 查看Nginx版本： `./nginx -v`；
+7. 检查配置文件是否正确： `./nginx -t`或者检查指定配置文件`./nginx -t -c /usr/local/nginx/conf/nginx.conf`。
+
+
 接下来，我们作一些简单的配置示例。但是在开始之前，在执行访问的机器上面（在这里是我的物理机器），配置一下HOST，**增加**下面这3行：
 ``` bash
 $ sudo vi /etc/hosts
 
 192.168.56.110 www.hewentian.com
+192.168.56.110 admin.hewentian.com
 192.168.56.110 img.hewentian.com
 192.168.56.110 api.hewentian.com
+192.168.56.110 so.hewentian.com
 ```
 
 ### 示例一：将某目录下的图片，让其他机器可以通过WEB访问
@@ -366,7 +402,140 @@ $ tail -n1 /usr/local/nginx/logs/api.access.log /usr/local/nginx/logs/img.access
 ```
 
 
+### 示例四：静态HTML项目、WEB接口项目并存和Tomcat项目
+有三个服务：
+1. 第一个是一个WEB服务，是指向另一台机器的，其中`/hello`是一个接口，另外此WEB项目包含静态HTML代码：
+http://www.hewentian.com/index.html  **最后的 /index.html不能少**
+http://www.hewentian.com/hello
+
+2. 第二个也是一个WEB服务，是指向另一台机器的，其中`/hello`是一个接口，另外此WEB项目包含静态HTML代码：
+http://admin.hewentian.com/index.html  **最后的 /index.html不能少**
+http://admin.hewentian.com/hello
+
+3. 第三个是Tomcat中的一个WEB项目：
+http://so.hewentian.com
+
+修改`nginx.conf`配置，添加如下代码即可：
+``` bash
+$ sudo vi /usr/local/nginx/conf/nginx.conf
+
+server {
+    listen 80;
+    server_name  www.hewentian.com;
+    access_log  logs/www.access.log  main;
+
+    location ~* (.html|.js|.css|.png|.jpg|.gif|.ico|.woff|.ttf|.woff2)$ {
+        root	/home/hadoop/www-hewentian;
+        index	main.html index.html index.htm;
+    }
+
+    location / {
+        proxy_pass   http://192.168.56.111:8080;
+        proxy_redirect off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+server {
+    listen       80;
+    server_name  admin.hewentian.com;
+    access_log  logs/admin.access.log  main;
+
+    location ~* (.html|.js|.css|.png|.jpg|.gif|.ico|.woff|.ttf|.woff2)$ {
+        root 	/home/hadoop/admin-hewentian;
+        index  	main.html index.html index.htm;
+    }
+
+    location / {
+        proxy_pass   http://192.168.56.112:8080;
+        proxy_redirect off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+server {
+    listen 80;
+    server_name  so.hewentian.com;
+    access_log  logs/so.access.log  main;
+
+    location / {
+        proxy_pass   http://192.168.56.111:8082/so/; # 注意：最后的/不能少，具体位置： /home/hadoop/apache-tomcat-8.0.47/webapps/so
+        proxy_redirect off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+
+
+### 示例五：同一个Tomcat下的两个项目
+有三个服务：
+1. 第一个是一个WEB服务：
+http://www.hewentian.com/so/
+
+2. 第二个也是一个WEB服务，和第一个项目在同一个Tomcat中：
+http://www.hewentian.com/smswzl/
+
+3. 第三个是统计nginx状态的功能，需要安装`./configure --with-http_stub_status_module`模块，并重新编译安装nginx：
+http://www.hewentian.com/nginxstatus
+
+
+修改`nginx.conf`配置，添加如下代码即可：
+``` bash
+$ sudo vi /usr/local/nginx/conf/nginx.conf
+
+gzip  on;
+gzip_min_length  1k;
+gzip_buffers     4 16k;
+gzip_http_version 1.0;
+gzip_comp_level 2;
+gzip_types       text/plain application/x-javascript text/css application/xml;
+gzip_vary on;
+
+upstream tomcatServer {
+    server 192.168.56.111:8082;
+}
+
+server {
+    listen       80;
+    server_name  www.hewentian.com;
+    charset utf-8;
+
+    root	/home/hadoop/www-hewentian;
+    index	main.html index.html index.htm;
+
+    access_log logs/www.access.log  combined;
+
+    #expires
+    location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ {
+        expires 30d;
+    }
+
+    location ~ .*\.(js|css)?$ {
+        expires 24h;
+    }
+
+    location /nginxstatus {
+        stub_status on;
+        access_log off;
+    }
+
+    location /so {
+        index index.html;
+        proxy_pass http://tomcatServer/so;
+    }
+
+    location /smswzl {
+        index index.html;
+        proxy_pass http://tomcatServer/smswzl;
+    }
+}
+```
 
 [link_id_nginx-1.16.0.tar.gz]: http://nginx.org/download/nginx-1.16.0.tar.gz
-
 
