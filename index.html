@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -115,13 +115,25 @@
 <p>接下来进行编译安装：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ sudo make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line">objs/ngx_modules.o \</span><br><span class="line">-ldl -lpthread -lcrypt -lpcre -lz \</span><br><span class="line">-Wl,-E</span><br><span class="line">sed -e <span class="string">"s|%%PREFIX%%|/usr/local/nginx|"</span> \</span><br><span class="line">	-e <span class="string">"s|%%PID_PATH%%|/usr/local/nginx/logs/nginx.pid|"</span> \</span><br><span class="line">	-e <span class="string">"s|%%CONF_PATH%%|/usr/local/nginx/conf/nginx.conf|"</span> \</span><br><span class="line">	-e <span class="string">"s|%%ERROR_LOG_PATH%%|/usr/local/nginx/logs/error.log|"</span> \</span><br><span class="line">	&lt; man/nginx.8 &gt; objs/nginx.8</span><br><span class="line">make[1]: Leaving directory <span class="string">'/home/hadoop/nginx-1.16.0'</span></span><br></pre></td></tr></table></figure></p>
 <p>它默认会安装到<code>/usr/local/nginx/</code>目录下。</p>
 <p>启动命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /usr/<span class="built_in">local</span>/nginx/sbin/nginx -c /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意：使用<code>-c</code>参数指定配置文件一定要使用绝对路径，否则可能会报错。</strong></p>
 <p>修改配置文件后，检查配置文件是否正确的命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /usr/<span class="built_in">local</span>/nginx/sbin/nginx -t -c /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">nginx: the configuration file /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf syntax is ok</span><br><span class="line">nginx: configuration file /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf <span class="built_in">test</span> is successful</span><br></pre></td></tr></table></figure></p>
 <p>可以打开 <a href="http://192.168.56.110/" target="_blank" rel="noopener">http://192.168.56.110/</a> 来看看是否已启动。</p>
 <p><img src="/img/nginx-1.png" alt="" title="nginx 初始启动界面"></p>
 <p>另外，使用 <a href="http://hadoop-host-master/" target="_blank" rel="noopener">http://hadoop-host-master/</a> 也是一样的。</p>
 <p><img src="/img/nginx-2.png" alt="" title="nginx 初始启动界面"></p>
 <p>当你看到上面的界面后，nginx的安装到这里就成功了。</p>
-<p>接下来，我们作一些简单的配置示例。但是在开始之前，在执行访问的机器上面（在这里是我的物理机器），配置一下HOST，<strong>增加</strong>下面这3行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/hosts</span><br><span class="line"></span><br><span class="line">192.168.56.110 www.hewentian.com</span><br><span class="line">192.168.56.110 img.hewentian.com</span><br><span class="line">192.168.56.110 api.hewentian.com</span><br></pre></td></tr></table></figure></p>
+<h3 id="一些常用操作命令"><a href="#一些常用操作命令" class="headerlink" title="一些常用操作命令"></a>一些常用操作命令</h3><p>进入nginx的安装目录，这里进入默认安装目录，然后查看帮助信息：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/nginx/sbin</span><br><span class="line">$ ./nginx -h</span><br><span class="line"></span><br><span class="line">nginx version: nginx/1.16.0</span><br><span class="line">Usage: nginx [-?hvVtTq] [-s signal] [-c filename] [-p prefix] [-g directives]</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -?,-h         : this <span class="built_in">help</span></span><br><span class="line">  -v            : show version and <span class="built_in">exit</span></span><br><span class="line">  -V            : show version and configure options <span class="keyword">then</span> <span class="built_in">exit</span></span><br><span class="line">  -t            : <span class="built_in">test</span> configuration and <span class="built_in">exit</span></span><br><span class="line">  -T            : <span class="built_in">test</span> configuration, dump it and <span class="built_in">exit</span></span><br><span class="line">  -q            : suppress non-error messages during configuration testing</span><br><span class="line">  -s signal     : send signal to a master process: stop, quit, reopen, reload</span><br><span class="line">  -p prefix     : <span class="built_in">set</span> prefix path (default: /usr/<span class="built_in">local</span>/nginx/)</span><br><span class="line">  -c filename   : <span class="built_in">set</span> configuration file (default: conf/nginx.conf)</span><br><span class="line">  -g directives : <span class="built_in">set</span> global directives out of configuration file</span><br></pre></td></tr></table></figure></p>
+<p>说明如下：</p>
+<ol>
+<li>启动命令： <code>./nginx</code>；</li>
+<li>关闭命令： <code>./nginx -s stop</code>，快速停止nginx，可能并不保存相关信息；</li>
+<li>退出命令： <code>./nginx -s quit</code>，完整有序的停止nginx，会保存相关信息，建议使用此命令；</li>
+<li>动态加载配置文件： <code>./nginx -s reload</code>可以不关闭nginx的情况下更新配置文件；</li>
+<li>重新打开日志文件：<code>./nginx -s reopen</code>；</li>
+<li>查看Nginx版本： <code>./nginx -v</code>；</li>
+<li>检查配置文件是否正确： <code>./nginx -t</code>或者检查指定配置文件<code>./nginx -t -c /usr/local/nginx/conf/nginx.conf</code>。</li>
+</ol>
+<p>接下来，我们作一些简单的配置示例。但是在开始之前，在执行访问的机器上面（在这里是我的物理机器），配置一下HOST，<strong>增加</strong>下面这3行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/hosts</span><br><span class="line"></span><br><span class="line">192.168.56.110 www.hewentian.com</span><br><span class="line">192.168.56.110 admin.hewentian.com</span><br><span class="line">192.168.56.110 img.hewentian.com</span><br><span class="line">192.168.56.110 api.hewentian.com</span><br><span class="line">192.168.56.110 so.hewentian.com</span><br></pre></td></tr></table></figure></p>
 <h3 id="示例一：将某目录下的图片，让其他机器可以通过WEB访问"><a href="#示例一：将某目录下的图片，让其他机器可以通过WEB访问" class="headerlink" title="示例一：将某目录下的图片，让其他机器可以通过WEB访问"></a>示例一：将某目录下的图片，让其他机器可以通过WEB访问</h3><p>在安装了nginx的机器<code>hadoop-host-master</code>上有个目录<code>/home/hadoop/Pictures</code>，这个目录下放有图片（我的机器里有一张：my_computer.png）。现在想通过web，让其他机器的用户访问这个目录下的图片。</p>
 <p>修改<code>nginx.conf</code>配置，添加如下代码即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  img.hewentian.com;                 <span class="comment"># 修改 1/3： WEB访问的位置</span></span><br><span class="line">        access_log  logs/img.access.log  main;          <span class="comment"># 修改 2/3： 日志存放位置。记得将此配置文件中的 log_format  main 前面的注释打开</span></span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            root   /home/hadoop/Pictures/;              <span class="comment"># 修改 3/3： 图片存放位置</span></span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        error_page   500 502 503 504  /50x.html;</span><br><span class="line">        location = /50x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
 <p>保存文件后，退出。<br>检查配置文件是否正确：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /usr/<span class="built_in">local</span>/nginx/sbin/nginx -t -c /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure></p>
@@ -155,11 +167,31 @@ slave2:
 <p><img src="/img/nginx-6.png" alt="" title="nginx 实现同一个域名下的两个服务"></p>
 <p><img src="/img/nginx-7.png" alt="" title="nginx 实现同一个域名下的两个服务"></p>
 <p>查看nginx访问日志：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ tail -n1 /usr/<span class="built_in">local</span>/nginx/logs/api.access.log /usr/<span class="built_in">local</span>/nginx/logs/img.access.log </span><br><span class="line"></span><br><span class="line">==&gt; /usr/<span class="built_in">local</span>/nginx/logs/api.access.log &lt;==</span><br><span class="line">192.168.56.1 - - [12/Jun/2019:04:09:55 +0800] <span class="string">"GET /api/hello HTTP/1.1"</span> 200 46 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br><span class="line"></span><br><span class="line">==&gt; /usr/<span class="built_in">local</span>/nginx/logs/img.access.log &lt;==</span><br><span class="line">192.168.56.1 - - [12/Jun/2019:04:08:04 +0800] <span class="string">"GET /img/my_computer.png HTTP/1.1"</span> 200 59332 <span class="string">"-"</span> <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36"</span> <span class="string">"-"</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="示例四：静态HTML项目、WEB接口项目并存和Tomcat项目"><a href="#示例四：静态HTML项目、WEB接口项目并存和Tomcat项目" class="headerlink" title="示例四：静态HTML项目、WEB接口项目并存和Tomcat项目"></a>示例四：静态HTML项目、WEB接口项目并存和Tomcat项目</h3><p>有三个服务：</p>
+<ol>
+<li><p>第一个是一个WEB服务，是指向另一台机器的，其中<code>/hello</code>是一个接口，另外此WEB项目包含静态HTML代码：<br><a href="http://www.hewentian.com/index.html" target="_blank" rel="noopener">http://www.hewentian.com/index.html</a>  <strong>最后的 /index.html不能少</strong><br><a href="http://www.hewentian.com/hello" target="_blank" rel="noopener">http://www.hewentian.com/hello</a></p>
+</li>
+<li><p>第二个也是一个WEB服务，是指向另一台机器的，其中<code>/hello</code>是一个接口，另外此WEB项目包含静态HTML代码：<br><a href="http://admin.hewentian.com/index.html" target="_blank" rel="noopener">http://admin.hewentian.com/index.html</a>  <strong>最后的 /index.html不能少</strong><br><a href="http://admin.hewentian.com/hello" target="_blank" rel="noopener">http://admin.hewentian.com/hello</a></p>
+</li>
+<li><p>第三个是Tomcat中的一个WEB项目：<br><a href="http://so.hewentian.com" target="_blank" rel="noopener">http://so.hewentian.com</a></p>
+</li>
+</ol>
+<p>修改<code>nginx.conf</code>配置，添加如下代码即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name  www.hewentian.com;</span><br><span class="line">    access_log  logs/www.access.log  main;</span><br><span class="line"></span><br><span class="line">    location ~* (.html|.js|.css|.png|.jpg|.gif|.ico|.woff|.ttf|.woff2)$ &#123;</span><br><span class="line">        root	/home/hadoop/www-hewentian;</span><br><span class="line">        index	main.html index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://192.168.56.111:8080;</span><br><span class="line">        proxy_redirect off;</span><br><span class="line">        proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">        proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  admin.hewentian.com;</span><br><span class="line">    access_log  logs/admin.access.log  main;</span><br><span class="line"></span><br><span class="line">    location ~* (.html|.js|.css|.png|.jpg|.gif|.ico|.woff|.ttf|.woff2)$ &#123;</span><br><span class="line">        root 	/home/hadoop/admin-hewentian;</span><br><span class="line">        index  	main.html index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://192.168.56.112:8080;</span><br><span class="line">        proxy_redirect off;</span><br><span class="line">        proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">        proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name  so.hewentian.com;</span><br><span class="line">    access_log  logs/so.access.log  main;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://192.168.56.111:8082/so/; <span class="comment"># 注意：最后的/不能少，具体位置： /home/hadoop/apache-tomcat-8.0.47/webapps/so</span></span><br><span class="line">        proxy_redirect off;</span><br><span class="line">        proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">        proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="示例五：同一个Tomcat下的两个项目"><a href="#示例五：同一个Tomcat下的两个项目" class="headerlink" title="示例五：同一个Tomcat下的两个项目"></a>示例五：同一个Tomcat下的两个项目</h3><p>有三个服务：</p>
+<ol>
+<li><p>第一个是一个WEB服务：<br><a href="http://www.hewentian.com/so/" target="_blank" rel="noopener">http://www.hewentian.com/so/</a></p>
+</li>
+<li><p>第二个也是一个WEB服务，和第一个项目在同一个Tomcat中：<br><a href="http://www.hewentian.com/smswzl/" target="_blank" rel="noopener">http://www.hewentian.com/smswzl/</a></p>
+</li>
+<li><p>第三个是统计nginx状态的功能，需要安装<code>./configure --with-http_stub_status_module</code>模块，并重新编译安装nginx：<br><a href="http://www.hewentian.com/nginxstatus" target="_blank" rel="noopener">http://www.hewentian.com/nginxstatus</a></p>
+</li>
+</ol>
+<p>修改<code>nginx.conf</code>配置，添加如下代码即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span><br><span class="line"></span><br><span class="line">gzip  on;</span><br><span class="line">gzip_min_length  1k;</span><br><span class="line">gzip_buffers     4 16k;</span><br><span class="line">gzip_http_version 1.0;</span><br><span class="line">gzip_comp_level 2;</span><br><span class="line">gzip_types       text/plain application/x-javascript text/css application/xml;</span><br><span class="line">gzip_vary on;</span><br><span class="line"></span><br><span class="line">upstream tomcatServer &#123;</span><br><span class="line">    server 192.168.56.111:8082;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  www.hewentian.com;</span><br><span class="line">    charset utf-8;</span><br><span class="line"></span><br><span class="line">    root	/home/hadoop/www-hewentian;</span><br><span class="line">    index	main.html index.html index.htm;</span><br><span class="line"></span><br><span class="line">    access_log logs/www.access.log  combined;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#expires</span></span><br><span class="line">    location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ &#123;</span><br><span class="line">        expires 30d;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location ~ .*\.(js|css)?$ &#123;</span><br><span class="line">        expires 24h;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location /nginxstatus &#123;</span><br><span class="line">        stub_status on;</span><br><span class="line">        access_log off;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location /so &#123;</span><br><span class="line">        index index.html;</span><br><span class="line">        proxy_pass http://tomcatServer/so;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location /smswzl &#123;</span><br><span class="line">        index index.html;</span><br><span class="line">        proxy_pass http://tomcatServer/smswzl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/06/10/nginx-note/" data-id="cjwt22umw002f9d3kqmy0njcq" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/06/10/nginx-note/" data-id="cjwunpsxx0028r63kcvohi94m" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -281,7 +313,7 @@ slave3:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/20/hbase-cluster/" data-id="cjwt22ume000u9d3k5qa7ybdo" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/20/hbase-cluster/" data-id="cjwunpsxi000rr63knkkb3rmh" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hbase/">hbase</a></li></ul>
@@ -396,7 +428,7 @@ Caused by: java.net.URISyntaxException: Relative path in absolute URI: ${system:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="cjwt22umh00119d3kibucdnmg" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="cjwunpsxn0019r63ky98ncgze" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li></ul>
@@ -526,7 +558,7 @@ slave3:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjwt22umb000j9d3k6ois33hf" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjwunpsxh000or63kn0ik9fm8" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -620,7 +652,7 @@ by mortbay.org.
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjwt22umd000r9d3k31h1x2j1" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjwunpsxl0013r63k5o1cv06y" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -750,7 +782,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjwt22umc000m9d3kl07lexxg" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjwunpsxd000dr63k3fhrtkl4" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -876,7 +908,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjwt22umq001u9d3k3qbzh2nc" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjwunpsxr001or63k4xhh7mst" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -988,7 +1020,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjwt22umm001j9d3k7fzuficc" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjwunpsxo001dr63klqlh58r8" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -1057,7 +1089,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjwt22umo001q9d3kj4gpkgeo" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjwunpsxs001rr63kmgjoil2s" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -1227,7 +1259,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjwt22uml001g9d3k0yvp474c" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="cjwunpsxr001mr63ksrbao5kh" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -1250,7 +1282,7 @@ src/main/webapp/index.jsp
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
@@ -1270,7 +1302,7 @@ src/main/webapp/index.jsp
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
         
@@ -1317,7 +1349,7 @@ src/main/webapp/index.jsp
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
