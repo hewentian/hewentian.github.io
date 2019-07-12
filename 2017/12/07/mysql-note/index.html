@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos;, last_name) AS user_name, COUNT(*) AS c FROM user_ta">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2019-01-12T09:37:49.384Z">
+<meta property="og:updated_time" content="2019-07-12T07:15:50.498Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql 学习笔记">
 <meta name="twitter:description" content="mysql 查询重复数据1SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c &amp;gt; 1; 当查询几个列的组合的时候，可以这样1234SELECT CONCAT(first_name, &apos;_&apos;, last_name) AS user_name, COUNT(*) AS c FROM user_ta">
@@ -62,7 +62,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -206,7 +206,7 @@
 <h3 id="mysql-按字段分组，取最小生日记录"><a href="#mysql-按字段分组，取最小生日记录" class="headerlink" title="mysql 按字段分组，取最小生日记录"></a>mysql 按字段分组，取最小生日记录</h3><p>有用户表如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sql&gt; select * from user;</span><br><span class="line"></span><br><span class="line">id	name	birthday</span><br><span class="line">1	a	2018-01-25 09:30:05</span><br><span class="line">2	a	2018-01-25 09:30:14</span><br><span class="line">3	a	2018-01-25 09:30:10</span><br><span class="line">4	b	2018-01-25 09:30:29</span><br><span class="line">5	b	2018-01-25 09:30:24</span><br></pre></td></tr></table></figure></p>
 <p><strong>要求：</strong>以name分组，取出生日最小的记录，即id为2、4的记录<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sql&gt; select * from (select * from user order by birthday desc) t group by t.name;</span><br><span class="line"></span><br><span class="line">id	name	birthday</span><br><span class="line">2	a	2018-01-25 09:30:14</span><br><span class="line">4	b	2018-01-25 09:30:29</span><br></pre></td></tr></table></figure></p>
 <h3 id="mysql-仅保留-1000-条记录而删除其他记录"><a href="#mysql-仅保留-1000-条记录而删除其他记录" class="headerlink" title="mysql 仅保留 1000 条记录而删除其他记录"></a>mysql 仅保留 1000 条记录而删除其他记录</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">求取总记录数</span><br><span class="line"><span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> tb_name;</span><br><span class="line"></span><br><span class="line">删除部分记录</span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> tb_name <span class="keyword">limit</span> 总记录数<span class="number">-1000</span></span><br><span class="line"></span><br><span class="line">例如，比如一个表有 <span class="number">10000</span> 条记录，现想保留 <span class="number">1000</span> 条数据</span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> tb_name <span class="keyword">limit</span> <span class="number">9000</span></span><br></pre></td></tr></table></figure>
-<h3 id="MySQL数据库备份和还原常用的命令"><a href="#MySQL数据库备份和还原常用的命令" class="headerlink" title="MySQL数据库备份和还原常用的命令"></a>MySQL数据库备份和还原常用的命令</h3><h4 id="一、备份命令"><a href="#一、备份命令" class="headerlink" title="一、备份命令"></a>一、备份命令</h4><p>如果只需要导出表的结构,可以使用mysqldump的<code>-d</code>选项<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">1、备份MySQL数据库的命令，备份指定的整个库</span><br><span class="line">mysqldump -hhostname -uusername -ppassword databasename &gt; ~/backupfile.sql</span><br><span class="line"></span><br><span class="line">2、备份MySQL数据库为带删除表的格式，能够让该备份覆盖已有数据库而不需要手动删除原有数据库</span><br><span class="line">mysqldump <span class="comment">--add-drop-table -hhostname -uusername -ppassword databasename &gt; ~/backupfile.sql</span></span><br><span class="line"></span><br><span class="line">3、直接将MySQL数据库压缩备份</span><br><span class="line">mysqldump -hhostname -uusername -ppassword databasename | gzip &gt; ~/backupfile.sql.gz</span><br><span class="line"></span><br><span class="line">4、备份MySQL数据库某个(些)表</span><br><span class="line">mysqldump -hhostname -uusername -ppassword databasename specific_table1 [specific_table2] &gt; ~/backupfile.sql</span><br><span class="line"></span><br><span class="line">5、同时备份多个MySQL数据库</span><br><span class="line">mysqldump -hhostname -uusername -ppassword -databases databasename1 databasename2 databasename3 &gt; ~/multibackupfile.sql</span><br><span class="line"></span><br><span class="line">6、仅仅备份数据库结构</span><br><span class="line">mysqldump -no-data -databases databasename1 databasename2 databasename3 &gt; ~/structurebackupfile.sql</span><br><span class="line"></span><br><span class="line">7、备份服务器上所有数据库</span><br><span class="line">mysqldump -all-databases &gt; ~/allbackupfile.sql</span><br></pre></td></tr></table></figure></p>
+<h3 id="MySQL数据库备份和还原常用的命令"><a href="#MySQL数据库备份和还原常用的命令" class="headerlink" title="MySQL数据库备份和还原常用的命令"></a>MySQL数据库备份和还原常用的命令</h3><h4 id="一、备份命令"><a href="#一、备份命令" class="headerlink" title="一、备份命令"></a>一、备份命令</h4><p>如果只需要导出表的结构,可以使用mysqldump的<code>-d</code>选项<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">1、备份MySQL数据库的命令，备份指定的整个库</span><br><span class="line">mysqldump -hhostname -uusername -ppassword databasename &gt; ~/backupfile.sql</span><br><span class="line"></span><br><span class="line">2、备份MySQL数据库为带删除表的格式，能够让该备份覆盖已有数据库而不需要手动删除原有数据库</span><br><span class="line">mysqldump <span class="comment">--add-drop-table -hhostname -uusername -ppassword databasename &gt; ~/backupfile.sql</span></span><br><span class="line"></span><br><span class="line">3、直接将MySQL数据库压缩备份</span><br><span class="line">mysqldump -hhostname -uusername -ppassword databasename | gzip &gt; ~/backupfile.sql.gz</span><br><span class="line"></span><br><span class="line">4、备份MySQL数据库某个(些)表</span><br><span class="line">mysqldump -hhostname -uusername -ppassword databasename specific_table1 [specific_table2] &gt; ~/backupfile.sql</span><br><span class="line"></span><br><span class="line">5、同时备份多个MySQL数据库</span><br><span class="line">mysqldump -hhostname -uusername -ppassword -databases databasename1 databasename2 databasename3 &gt; ~/multibackupfile.sql</span><br><span class="line"></span><br><span class="line">6、仅仅备份数据库结构</span><br><span class="line">mysqldump -no-data -databases databasename1 databasename2 databasename3 &gt; ~/structurebackupfile.sql</span><br><span class="line"></span><br><span class="line">7、备份服务器上所有数据库</span><br><span class="line">mysqldump -all-databases &gt; ~/allbackupfile.sql</span><br><span class="line"></span><br><span class="line">8、备份MySQL数据库某个表中指定条件的数据</span><br><span class="line">mysqldump -hhostname -uusername -ppassword databasename specific_table1 <span class="comment">--where='age &gt; 10' &gt; ~/backupfile.sql</span></span><br></pre></td></tr></table></figure></p>
 <h4 id="二、还原命令"><a href="#二、还原命令" class="headerlink" title="二、还原命令"></a>二、还原命令</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1、还原MySQL数据库的命令</span><br><span class="line">mysql -hhostname -uusername -ppassword databasename &lt; ~/backupfile.sql</span><br><span class="line"></span><br><span class="line">2、还原压缩的MySQL数据库</span><br><span class="line">gunzip &lt; ~/backupfile.sql.gz | mysql -uusername -ppassword databasename</span><br><span class="line"></span><br><span class="line">3、将数据库转移到新服务器</span><br><span class="line">mysqldump -uusername -ppassword databasename | mysql -host=*.*.*.* -C databasename</span><br></pre></td></tr></table></figure>
 <h3 id="select-into"><a href="#select-into" class="headerlink" title="select into"></a>select into</h3><p>除此之外，你还可以使用<code>select into</code>命令来导出数据，它与mysqldump的区别是：</p>
 <ol>
@@ -232,7 +232,7 @@
 <p>以下这句才是完美的！代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table WHERE id BETWEEN 1000000 AND 1000010;</span><br></pre></td></tr></table></figure></p>
 <p>比上面那句，还要再快5至10倍 </p>
 <p>另外，如果需要查询 id 不是连续的一段，最佳的方法就是先找出 id ，然后用 in 查询，代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table WHERE id IN(10000, 100000, 1000000...);</span><br></pre></td></tr></table></figure></p>
-<p>再分享一点<br>查询字段一较长字符串的时候，表设计时要为该字段多加一个字段,如，存储网址的字段，查询的时候，不要直接查询字符串，效率低下，应该查诡该字串的crc32或md5 </p>
+<p>再分享一点<br>查询字段一较长字符串的时候，表设计时要为该字段多加一个字段,如，存储网址的字段，查询的时候，不要直接查询字符串，效率低下，应该查询该字串的crc32或md5 </p>
 <h3 id="mysql-查询一个字符串字段-最长的一条记录"><a href="#mysql-查询一个字符串字段-最长的一条记录" class="headerlink" title="mysql 查询一个字符串字段 最长的一条记录"></a>mysql 查询一个字符串字段 最长的一条记录</h3><p>参考：<a href="http://stackoverflow.com/questions/2357620/maxlengthfield-in-mysql" target="_blank" rel="noopener">http://stackoverflow.com/questions/2357620/maxlengthfield-in-mysql</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select name, length( name )</span><br><span class="line">from my_table</span><br><span class="line">where length( name ) = ( select max( length( name ) ) from my_table );</span><br></pre></td></tr></table></figure></p>
 <h3 id="skip-grant-tables-参数的使用"><a href="#skip-grant-tables-参数的使用" class="headerlink" title="skip-grant-tables 参数的使用"></a>skip-grant-tables 参数的使用</h3><p>这是个非常有用的mysql启动参数</p>
 <p>在my.cnf文件中增加一行：</p>
@@ -246,11 +246,57 @@ update user set password=password(&apos;root&apos;) where user=&apos;root&apos;;
 flush privileges;
 exit;
 </code></pre><p>重启mysql</p>
+<h3 id="VARCHAR类型的说明"><a href="#VARCHAR类型的说明" class="headerlink" title="VARCHAR类型的说明"></a>VARCHAR类型的说明</h3><p>在官方手册中，VARCHAR类型最大支持65535，单位是字节，但实际上。在创建表的时候VARCHAR(N)中的N，指的是字符的长度。但是，如果表的字符集不同，能支持的最大长度也不同。</p>
+<ol>
+<li>表的CHARSET=latin1时，能使用VARCHAR(65532)；</li>
+<li>表的CHARSET=GBK时，能使用VARCHAR(32767)；</li>
+<li>表的CHARSET=UTF8，能使用VARCHAR(21845)；</li>
+<li>如果表的SQL_MODE为非严格模式，则表的CHARSET=latin1时，或者能使用VARCHAR(65535)成功创建表，但是可能会有warning。warning可能是数据将那列自动转换为TEXT类型了；</li>
+<li>还有一个需要注意的地方是，65535长度是指表中所有VARCHAR列的长度总和。如果列的长度总和超出这个限制，依然无法创建表。</li>
+</ol>
+<h3 id="CHAR类型的说明"><a href="#CHAR类型的说明" class="headerlink" title="CHAR类型的说明"></a>CHAR类型的说明</h3><p>CHAR(N)中的N指的是字符，对于多字节字符编码的CHAR数据类型，在InnoDB存储引擎中，会将其视为变长类型。对于未能占满长度的字符，还是填充<code>0X20</code>，也即是空格。</p>
+<p>在多字节字符集的情况下，CHAR和VARCHAR的实际行存储基本是没有区别的。</p>
+<h3 id="NOT-NULL约束的说明"><a href="#NOT-NULL约束的说明" class="headerlink" title="NOT NULL约束的说明"></a>NOT NULL约束的说明</h3><p>如果我们向NOT NULL的字段插入一下NULL值，MySQL数据库会将其更改为0再进行插入。我们可以通过设置SQL_MODE来严格审核输入参数。</p>
+<h3 id="强制使用索引"><a href="#强制使用索引" class="headerlink" title="强制使用索引"></a>强制使用索引</h3><p>在查询的过程中可以使用<code>FORCE INDEX</code>来强制查询优化器使用指定的索引，例如表<code>t_user</code>有索引<code>idx_name</code>，则我们可以这样查询：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM t_user FORCE INDEX(idx_name) WHERE name=&apos;Tim&apos; and age=22;</span><br></pre></td></tr></table></figure></p>
+<h3 id="索引提示"><a href="#索引提示" class="headerlink" title="索引提示"></a>索引提示</h3><p>在查询的过程中可以使用<code>USE INDEX</code>来显式地告诉查询优化器使用哪个索引，例如表<code>t_user</code>有索引<code>idx_name</code>，则我们可以这样查询：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM t_user USE INDEX(idx_name) WHERE name=&apos;Tim&apos; and age=22;</span><br></pre></td></tr></table></figure></p>
+<p>主要在以下2种情况下要使用索引提示：</p>
+<ol>
+<li>MYSQL数据库的优化器错误地选择了某个索引，导致SQL语句运行得很慢；</li>
+<li>某SQL语句可以选择的索引非常多，优化器选择执行计划时间的开销大于SQL语句本身。</li>
+</ol>
+<p><code>USE INDEX</code>只是告诉优化器可以选择该索引，但实际上优化器可能还是会再根据自已的判断进行选择，除非使用<code>FORCE INDEX</code>。</p>
+<p>对数据库执行了一个删除操作，实际上并不会删除索引中的数据，相反还会在对应的DELETED表中插入记录，因此随着应用程序的运行，索引会变得非常大。即使索引中的有些数据已经被删除，查询也不会选择这类记录。InnoDb存储引擎，可以在必要时手动将已经删除的记录在索引中删除，命令是 OPTIMIZE TABLE。它还会对Cardinality进行统计，因此可以关闭它的统计。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET GLOBAL innodb_optimize_fulltext_only=1;</span><br><span class="line">mysql&gt; OPTIMIZE TABLE table_name;</span><br></pre></td></tr></table></figure></p>
+<h3 id="锁问题"><a href="#锁问题" class="headerlink" title="锁问题"></a>锁问题</h3><p>锁问题有三个：</p>
+<ol>
+<li><p>脏读：首先了解一下脏数据，脏数据是指事务对缓冲池中行记录的修改，并且还没有被提交。如果读到了脏数据，即一个事务可以读到另外一个事务中未提交的数据，这显然违反了数据库的隔离性。而对脏页的读取，是非常正常的。脏页是因为数据库实例内存和磁盘的异步造成的，这并不影响数据的一致性，因为内存中的数据最终是要刷新回磁盘的。</p>
+</li>
+<li><p>不可重复读：在同一个事务中多次读取同一个表，在多次读取之间，还有另外一个事务对该表进行了DML，从而导致多次读取到的数据可能不一致。与脏读的区别是：脏读读取到的是未提交的数据，而不可重复读读到的是已经提交的数据。这违反了数据库事务的一致性。</p>
+</li>
+<li><p>丢失更新：就是一个事务的更新操作，会被另一个事务的更新操作所覆盖，从而导致数据的不一致。可以将事务的处理模式变成串行的，这样来避免。在更新数据的时候，特别是敏感数据的时候，一定要先加一个排他X锁，这样也方便对帐户余额进行先检查，再更新。而不是仅仅学会了简单的SELECT、UPDATE操作就开始处理数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT cash FROM account WHERE user=&apos;user_name&apos; FOR UPDATE;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="事务的特性"><a href="#事务的特性" class="headerlink" title="事务的特性"></a>事务的特性</h3><p>对于InnoDB存储引擎而言，它默认的事务隔离级别为READ REPEATABLE，完全遵循和满足事务的ACID特性。</p>
+<p>TRUNCATE TABLE 属于DDL，它虽然和对整张表执行DELETE操作产生的效果差不多，但是它是不能ROLLBACK的。</p>
+<h3 id="事务的隔离级别"><a href="#事务的隔离级别" class="headerlink" title="事务的隔离级别"></a>事务的隔离级别</h3><p>SQL标准定义了4个隔离级别：<br>READ UNCOMMITTED<br>READ COMMITTED<br>REPEATABLE READ<br>SERIALIZABLE</p>
+<p>可以在数据库启动的时候设置它的默认隔离级别：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">transaction-isolation=READ-COMMITTED</span><br></pre></td></tr></table></figure></p>
+<p>查看当前会话的事务隔离级别：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT @@tx_isolation;</span><br></pre></td></tr></table></figure></p>
+<h3 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h3><p>InnoDB存储引擎提供了对XA事务的支持，并通过XA事务来支持分布式事务的实现。分布式事务指的是允许多个独立的事务资源参与到一个全局的事务中。事务资源通常是关系型数据库系统，但也可以是其他类型的资源。全局事务要求在其中的所有参与事务要么都提交，要么都ROLLBACK，这对于事务原有的ACID要求又有了提高。另外，在使用分布式事务时，InnoDB存储引擎的事务隔离级别必须设置为SERIALIZABLE。<br>XA事务允许不同数据库之间的分布式事务，如一台服务器是MySQL数据库，另一台是Oracle数据库，只要参与在全局事务中的每个节点都支持XA事务。分布式事务可能在银行系统的转帐中比较常见。可以通过变量查看数据库是否启用了XA事务支持（默认为ON）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW VARIABLES LIKE &apos;innodb_support_xa&apos;;</span><br></pre></td></tr></table></figure></p>
+<p>MySQL数据库是自动提交的。当用户显式的使用命令<code>START TRANSACTION</code>或<code>BEGIN</code>来开启一个事务时，MySQL会自动地执行<code>SET AUTOCOMMIT=0</code>命令，并在<code>COMMIT</code>或<code>ROLLBACK</code>结束一个事务后，再执行<code>SET AUTOCOMMIT=1</code>。</p>
+<p>对长事务的处理，是将长事务分解为多个小事务来分批处理。在应用程序中，最好是将事务的START TRANSACTION、COMMIT、ROLLBACK操作交给程序端来控制，而不是在存储过程中。</p>
+<h3 id="备份与恢复"><a href="#备份与恢复" class="headerlink" title="备份与恢复"></a>备份与恢复</h3><p>Hot Backup 热备： 在数据库运行中直接备份，对运行中的数据库操作没有任何的影响；<br>Cold Backup 冷备： 在数据库停机状态下进行备份，一般备份数据库的物理文件；<br>Warm Backup 温备：也是在数据库运行中进行备份，但是会对当前的数据库操作有所影响，例如它会加一个全局读锁以保证备份数据的一致性。</p>
+<p>对于mysqldump备份工具来说，可以通过添加<code>--single-transaction</code>选项获得InnoDB存储引擎的一致性备份，此时的备份是在一个执行时间很长的事务中完成的。请务必加上此选项。</p>
+<p>mysqldump不能导出视图。免费好用的开源热备份工具有XtraBackup。</p>
+<h3 id="不登录MYSQL来执行查询"><a href="#不登录MYSQL来执行查询" class="headerlink" title="不登录MYSQL来执行查询"></a>不登录MYSQL来执行查询</h3><p>可以在操作系统命令行下通过<code>-e</code>参数实现，例如查询test库下的表t_user：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># mysql -h192.168.1.100 -uscoot -ptiger test -e &quot;select * from t_user&quot;</span><br><span class="line"></span><br><span class="line">+----+-------+------+</span><br><span class="line">| id | name  | age  |</span><br><span class="line">+----+-------+------+</span><br><span class="line">|  1 | zhang |   21 |</span><br><span class="line">|  2 | zhang |   23 |</span><br><span class="line">|  4 | zhang |   21 |</span><br><span class="line">|  5 | zhang |   21 |</span><br><span class="line">+----+-------+------+</span><br></pre></td></tr></table></figure></p>
+<p>说明：</p>
+<pre><code>-e, --execute=name  Execute command and quit. (Disables --force and history file.)
+</code></pre><h3 id="对MySQL数据库性能的测试工具"><a href="#对MySQL数据库性能的测试工具" class="headerlink" title="对MySQL数据库性能的测试工具"></a>对MySQL数据库性能的测试工具</h3><p>这里有2款比较好的工具：sysbench和mysql-tpcc</p>
+<p>主要测试：<br>CPU性能<br>磁盘IO性能<br>调度程序性能<br>内存分配及传输速度<br>POSIX线程性能<br>数据库OLTP基准测试</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjwunpsy1002lr63k7nkqqqv1" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/12/07/mysql-note/" data-id="cjxzrqcf4002fsu3k7cnnnrvu" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
@@ -262,7 +308,7 @@ exit;
 <nav id="article-nav">
   
     <a href="/2017/12/08/install-jdk/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Récent</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           安装 JDK
@@ -272,7 +318,7 @@ exit;
   
   
     <a href="/2017/12/06/zookeeper-install-cluster/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Ancien</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">zookeeper 集群版安装方法</div>
     </a>
   
@@ -287,7 +333,7 @@ exit;
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
@@ -307,7 +353,7 @@ exit;
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
         
@@ -354,7 +400,7 @@ exit;
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2019 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
