@@ -568,6 +568,9 @@ LD_PRELOAD是Linux下的一个环境变量，动态链接器在载入一个程�
 
 这个命令查询`mongod.log`日志中包含毫秒时间ms的所有日志。
 
+如果我想查询`hello`或`world`：
+    grep -E 'hello|world' mongod.log
+
 
 ### linux下面md5sum的使用
 ``` bash

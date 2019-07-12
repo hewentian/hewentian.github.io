@@ -419,3 +419,13 @@ while(count < totalCount) {
     });
 }
 ```
+
+
+### 正则表达式的使用
+查询用户名`name`前后有空格的记录：
+``` java
+db.getCollection('userInfo').find({"name":/^\s+|\s+$/})
+db.getCollection('userInfo').find({"$or":[{"name":/^\s+|\s+$/}, {"postCode":/^\s+|\s+$/}]})
+
+```
+

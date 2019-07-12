@@ -366,6 +366,9 @@ mysqldump -no-data -databases databasename1 databasename2 databasename3 > ~/stru
 
 7、备份服务器上所有数据库
 mysqldump -all-databases > ~/allbackupfile.sql
+
+8、备份MySQL数据库某个表中指定条件的数据
+mysqldump -hhostname -uusername -ppassword databasename specific_table1 --where='age > 10' > ~/backupfile.sql
 ```
 
 #### 二、还原命令
@@ -485,7 +488,7 @@ SELECT * FROM table WHERE id IN(10000, 100000, 1000000...);
 ```
 
 再分享一点 
-查询字段一较长字符串的时候，表设计时要为该字段多加一个字段,如，存储网址的字段，查询的时候，不要直接查询字符串，效率低下，应该查诡该字串的crc32或md5 
+查询字段一较长字符串的时候，表设计时要为该字段多加一个字段,如，存储网址的字段，查询的时候，不要直接查询字符串，效率低下，应该查询该字串的crc32或md5 
 
 
 ### mysql 查询一个字符串字段 最长的一条记录
@@ -518,3 +521,140 @@ where length( name ) = ( select max( length( name ) ) from my_table );
 
 重启mysql
 
+
+### VARCHAR类型的说明
+在官方手册中，VARCHAR类型最大支持65535，单位是字节，但实际上。在创建表的时候VARCHAR(N)中的N，指的是字符的长度。但是，如果表的字符集不同，能支持的最大长度也不同。
+
+1. 表的CHARSET=latin1时，能使用VARCHAR(65532)；
+2. 表的CHARSET=GBK时，能使用VARCHAR(32767)；
+3. 表的CHARSET=UTF8，能使用VARCHAR(21845)；
+4. 如果表的SQL_MODE为非严格模式，则表的CHARSET=latin1时，或者能使用VARCHAR(65535)成功创建表，但是可能会有warning。warning可能是数据将那列自动转换为TEXT类型了；
+5. 还有一个需要注意的地方是，65535长度是指表中所有VARCHAR列的长度总和。如果列的长度总和超出这个限制，依然无法创建表。
+
+
+### CHAR类型的说明
+CHAR(N)中的N指的是字符，对于多字节字符编码的CHAR数据类型，在InnoDB存储引擎中，会将其视为变长类型。对于未能占满长度的字符，还是填充`0X20`，也即是空格。
+
+在多字节字符集的情况下，CHAR和VARCHAR的实际行存储基本是没有区别的。
+
+
+### NOT NULL约束的说明
+如果我们向NOT NULL的字段插入一下NULL值，MySQL数据库会将其更改为0再进行插入。我们可以通过设置SQL_MODE来严格审核输入参数。
+
+
+### 强制使用索引
+在查询的过程中可以使用`FORCE INDEX`来强制查询优化器使用指定的索引，例如表`t_user`有索引`idx_name`，则我们可以这样查询：
+``` mysql
+SELECT * FROM t_user FORCE INDEX(idx_name) WHERE name='Tim' and age=22;
+```
+
+
+### 索引提示
+在查询的过程中可以使用`USE INDEX`来显式地告诉查询优化器使用哪个索引，例如表`t_user`有索引`idx_name`，则我们可以这样查询：
+``` mysql
+SELECT * FROM t_user USE INDEX(idx_name) WHERE name='Tim' and age=22;
+```
+
+主要在以下2种情况下要使用索引提示：
+1. MYSQL数据库的优化器错误地选择了某个索引，导致SQL语句运行得很慢；
+2. 某SQL语句可以选择的索引非常多，优化器选择执行计划时间的开销大于SQL语句本身。
+
+`USE INDEX`只是告诉优化器可以选择该索引，但实际上优化器可能还是会再根据自已的判断进行选择，除非使用`FORCE INDEX`。
+
+
+对数据库执行了一个删除操作，实际上并不会删除索引中的数据，相反还会在对应的DELETED表中插入记录，因此随着应用程序的运行，索引会变得非常大。即使索引中的有些数据已经被删除，查询也不会选择这类记录。InnoDb存储引擎，可以在必要时手动将已经删除的记录在索引中删除，命令是 OPTIMIZE TABLE。它还会对Cardinality进行统计，因此可以关闭它的统计。
+``` mysql
+mysql> SET GLOBAL innodb_optimize_fulltext_only=1;
+mysql> OPTIMIZE TABLE table_name;
+```
+
+### 锁问题
+锁问题有三个：
+1. 脏读：首先了解一下脏数据，脏数据是指事务对缓冲池中行记录的修改，并且还没有被提交。如果读到了脏数据，即一个事务可以读到另外一个事务中未提交的数据，这显然违反了数据库的隔离性。而对脏页的读取，是非常正常的。脏页是因为数据库实例内存和磁盘的异步造成的，这并不影响数据的一致性，因为内存中的数据最终是要刷新回磁盘的。
+
+2. 不可重复读：在同一个事务中多次读取同一个表，在多次读取之间，还有另外一个事务对该表进行了DML，从而导致多次读取到的数据可能不一致。与脏读的区别是：脏读读取到的是未提交的数据，而不可重复读读到的是已经提交的数据。这违反了数据库事务的一致性。
+
+3. 丢失更新：就是一个事务的更新操作，会被另一个事务的更新操作所覆盖，从而导致数据的不一致。可以将事务的处理模式变成串行的，这样来避免。在更新数据的时候，特别是敏感数据的时候，一定要先加一个排他X锁，这样也方便对帐户余额进行先检查，再更新。而不是仅仅学会了简单的SELECT、UPDATE操作就开始处理数据。
+``` mysql
+SELECT cash FROM account WHERE user='user_name' FOR UPDATE;
+```
+
+
+### 事务的特性
+对于InnoDB存储引擎而言，它默认的事务隔离级别为READ REPEATABLE，完全遵循和满足事务的ACID特性。
+
+TRUNCATE TABLE 属于DDL，它虽然和对整张表执行DELETE操作产生的效果差不多，但是它是不能ROLLBACK的。
+
+
+### 事务的隔离级别
+SQL标准定义了4个隔离级别：
+READ UNCOMMITTED
+READ COMMITTED
+REPEATABLE READ
+SERIALIZABLE
+
+可以在数据库启动的时候设置它的默认隔离级别：
+``` mysql
+[mysqld]
+transaction-isolation=READ-COMMITTED
+```
+
+查看当前会话的事务隔离级别：
+``` mysql
+mysql> SELECT @@tx_isolation;
+```
+
+
+### 分布式事务
+InnoDB存储引擎提供了对XA事务的支持，并通过XA事务来支持分布式事务的实现。分布式事务指的是允许多个独立的事务资源参与到一个全局的事务中。事务资源通常是关系型数据库系统，但也可以是其他类型的资源。全局事务要求在其中的所有参与事务要么都提交，要么都ROLLBACK，这对于事务原有的ACID要求又有了提高。另外，在使用分布式事务时，InnoDB存储引擎的事务隔离级别必须设置为SERIALIZABLE。
+XA事务允许不同数据库之间的分布式事务，如一台服务器是MySQL数据库，另一台是Oracle数据库，只要参与在全局事务中的每个节点都支持XA事务。分布式事务可能在银行系统的转帐中比较常见。可以通过变量查看数据库是否启用了XA事务支持（默认为ON）：
+``` mysql
+mysql> SHOW VARIABLES LIKE 'innodb_support_xa';
+```
+
+MySQL数据库是自动提交的。当用户显式的使用命令`START TRANSACTION`或`BEGIN`来开启一个事务时，MySQL会自动地执行`SET AUTOCOMMIT=0`命令，并在`COMMIT`或`ROLLBACK`结束一个事务后，再执行`SET AUTOCOMMIT=1`。
+
+
+对长事务的处理，是将长事务分解为多个小事务来分批处理。在应用程序中，最好是将事务的START TRANSACTION、COMMIT、ROLLBACK操作交给程序端来控制，而不是在存储过程中。
+
+
+### 备份与恢复
+Hot Backup 热备： 在数据库运行中直接备份，对运行中的数据库操作没有任何的影响；
+Cold Backup 冷备： 在数据库停机状态下进行备份，一般备份数据库的物理文件；
+Warm Backup 温备：也是在数据库运行中进行备份，但是会对当前的数据库操作有所影响，例如它会加一个全局读锁以保证备份数据的一致性。
+
+对于mysqldump备份工具来说，可以通过添加`--single-transaction`选项获得InnoDB存储引擎的一致性备份，此时的备份是在一个执行时间很长的事务中完成的。请务必加上此选项。
+
+mysqldump不能导出视图。免费好用的开源热备份工具有XtraBackup。
+
+
+### 不登录MYSQL来执行查询
+可以在操作系统命令行下通过`-e`参数实现，例如查询test库下的表t_user：
+``` mysql
+# mysql -h192.168.1.100 -uscoot -ptiger test -e "select * from t_user"
+
++----+-------+------+
+| id | name  | age  |
++----+-------+------+
+|  1 | zhang |   21 |
+|  2 | zhang |   23 |
+|  4 | zhang |   21 |
+|  5 | zhang |   21 |
++----+-------+------+
+```
+
+说明：
+
+    -e, --execute=name  Execute command and quit. (Disables --force and history file.)
+
+
+### 对MySQL数据库性能的测试工具
+这里有2款比较好的工具：sysbench和mysql-tpcc
+
+主要测试：
+CPU性能
+磁盘IO性能
+调度程序性能
+内存分配及传输速度
+POSIX线程性能
+数据库OLTP基准测试
