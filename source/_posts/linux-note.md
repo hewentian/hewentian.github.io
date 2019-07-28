@@ -443,6 +443,49 @@ $ crontab -e
 */1 * * * * /bin/date >> /home/hewentian/Documents/a.txt
 ```
 
+### 一个crontab备份数据的示例
+``` bash
+############################################################
+# desc: backup important data. every saturday 23:50 run, and the cron is:
+#       50 23 * * 6 /bin/sh /home/hewentian/backupData.sh >> /home/hewentian/backupData.log
+# author: Tim Ho
+# mail: wentian.he@qq.com
+# created time: 2019-07-24 10:22:28 AM
+############################################################
+
+#!/bin/sh
+
+# create the base backup dir, if not exists
+backupBaseDir=/home/hewentian/backupData/
+if [ ! -d "$backupBaseDir" ]; then
+  mkdir -p "$backupBaseDir"
+fi
+
+# create current backup dir, if not exists
+backupDir=$backupBaseDir`date +%Y%m%d`"/"
+if [ ! -d "$backupDir" ]; then
+  mkdir "$backupDir"
+fi
+
+# begin to backup data
+echo "-------------------- begin to backup data $(date) --------------------"
+
+echo "start to backup userInfo, about 0.30G"
+mongoexport -h 192.168.1.100 --port 27017 -u mongo_account -p mongo_account --authenticationDatabase mongo_account -d mongo_account -c userInfo -o "$backupDir"userInfo.json
+echo -e "end to backup userInfo $(date)\n"
+
+echo "start to backup carInfo, about 0.18G"
+mongoexport -h 192.168.1.100 --port 27017 -u mongo_account -p mongo_account --authenticationDatabase mongo_account -d mongo_account -c carInfo -o "$backupDir"carInfo.json
+echo -e "end to backup carInfo $(date)\n"
+
+# at last, delete the files backup 7 days ago
+find "$backupBaseDir" -type d -mtime +7 -exec rm -rf {} \;
+#find "$backupBaseDir" -mtime +7 -name '*.json' -exec rm -rf {} \;
+
+echo "-------------------- end to backup data $(date) --------------------"
+```
+
+
 ### Ubuntu中访问共享文件夹和FTP
 1. 访问共享文件夹：在资源浏览器`[Connect to Server]`窗口输入：smb://需要访问的机器IP，等同于Windows下输入：\\IP
 2. 访问FTP机器：在资源浏览器`[Connect to Server]`窗口输入：ftp://192.168.1.128/

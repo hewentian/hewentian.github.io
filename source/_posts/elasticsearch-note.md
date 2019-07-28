@@ -443,6 +443,72 @@ GET /people/user/_search
   },
   "size":100
 }
+
+
+GET /people/user/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "city": "深圳市"
+          }
+        },
+        {
+          "bool": {
+            "should": [
+              {
+                "match": {
+                  "industry": "制造业"
+                }
+              },
+              {
+                "match": {
+                  "industry": "通用设备制造业"
+                }
+              },
+              {
+                "match": {
+                  "industry": "专用设备制造业"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "range": {
+            "patentCount": {
+              "gte": 5
+            }
+          }
+        },
+        {
+          "range": {
+            "regCapital": {
+               "gte": 200,
+              "lte": 5000
+            }
+          }
+        },
+        {
+          "match": {
+            "isGaoXin": 0
+          }
+        },
+        {
+          "range": {
+            "regYear": {
+              "gte": 2015,
+              "lte": 2017
+            }
+          }
+        }
+      ]
+    }
+  },
+  "size": 20
+}
 </pre>
 
 ### 查询返回某些指定的字段

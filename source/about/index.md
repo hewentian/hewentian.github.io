@@ -10,7 +10,7 @@ comments: false
 
 编程语言: C/C++, Java, Python, JavaScript
 
-研究方向: Java, Linux，BigData
+研究方向: Java, Linux, BigData, Docker
 
 E-mail: wentian.he@qq.com
 

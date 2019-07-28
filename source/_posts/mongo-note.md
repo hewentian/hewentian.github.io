@@ -389,6 +389,22 @@ db.getCollection('userInfo').find({"updateTime":{"$type":9}}).forEach(function(d
 db.getCollection('userInfo').find({"_id":ObjectId("5abc7ffc00a32c2b045e598c")})
 ```
 
+
+### mongodb默认插入类型
+插入的int32整数会默认转为Double类型，若需插入为整数，需指定NumberInt：
+``` javascript
+db.getCollection("userInfo").insert({"age":20, "salary":NumberInt(30), "birthday":"2018-12-21"})
+
+db.getCollection("userInfo").find({})
+{
+    "_id" : ObjectId("5d3815a2a7de52e9fed7bbcf"),
+    "age" : 20.0,
+    "salary" : 30,
+    "birthday" : "2018-12-21"
+}
+```
+
+
 ### mongodb日期查询
 日期的类型不同，查询的方式也不同：
 ``` java
