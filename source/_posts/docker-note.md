@@ -112,5 +112,457 @@ $ sudo rm -rf /var/lib/docker
 ```
 
 
+### docker的一些操作命令
+一个简单的示例：
+``` bash
+$ sudo docker run ubuntu:18.04 /bin/echo "Hello world"
+```
+
+或者交互式：
+``` bash
+$ sudo docker run -i -t ubuntu:18.04 /bin/bash
+```
+
+以后台模式启动容器：
+``` bash
+$ sudo docker run -d ubuntu:18.04 /bin/sh -c "while true; do echo hello world; sleep 1; done"
+
+d7c1549c2a495499270eb31819ce5e9ea9748ab8126f025f33b06612491fd447
+```
+输出的那一长长的字符串，是容器ID。
+
+查看容器内的标准输出：
+
+    sudo docker logs -f {CONTAINER ID}|{NAMES}
+
+示例如下：
+``` bash
+$ sudo docker logs d7c1549c2a495499270eb31819ce5e9ea9748ab8126f025f33b06612491fd447
+hello world
+hello world
+hello world
+hello world
+hello world
+```
+
+### 查看正在运行中的容器
+``` bash
+$ sudo docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+d7c1549c2a49        ubuntu:18.04        "/bin/sh -c 'while t…"   4 minutes ago       Up 4 minutes                            friendly_minsky
+```
+
+### 停止容器，可以使用容器ID或者容器名
+``` bash
+$ sudo docker stop {CONTAINER ID}|{NAMES}
+```
+
+### docker的帮助命令
+在命令行中直接输入docker即可看到它的提示，如下：
+``` bash
+$ docker
+
+Usage:	docker [OPTIONS] COMMAND
+
+A self-sufficient runtime for containers
+
+Options:
+      --config string      Location of client config files (default "/home/hewentian/.docker")
+  -c, --context string     Name of the context to use to connect to the daemon (overrides DOCKER_HOST env var and default context set with "docker context use")
+  -D, --debug              Enable debug mode
+  -H, --host list          Daemon socket(s) to connect to
+  -l, --log-level string   Set the logging level ("debug"|"info"|"warn"|"error"|"fatal") (default "info")
+      --tls                Use TLS; implied by --tlsverify
+      --tlscacert string   Trust certs signed only by this CA (default "/home/hewentian/.docker/ca.pem")
+      --tlscert string     Path to TLS certificate file (default "/home/hewentian/.docker/cert.pem")
+      --tlskey string      Path to TLS key file (default "/home/hewentian/.docker/key.pem")
+      --tlsverify          Use TLS and verify the remote
+  -v, --version            Print version information and quit
+
+Management Commands:
+  builder     Manage builds
+  config      Manage Docker configs
+  container   Manage containers
+  context     Manage contexts
+  engine      Manage the docker engine
+  image       Manage images
+  network     Manage networks
+  node        Manage Swarm nodes
+  plugin      Manage plugins
+  secret      Manage Docker secrets
+  service     Manage services
+  stack       Manage Docker stacks
+  swarm       Manage Swarm
+  system      Manage Docker
+  trust       Manage trust on Docker images
+  volume      Manage volumes
+
+Commands:
+  attach      Attach local standard input, output, and error streams to a running container
+  build       Build an image from a Dockerfile
+  commit      Create a new image from a container's changes
+  cp          Copy files/folders between a container and the local filesystem
+  create      Create a new container
+  deploy      Deploy a new stack or update an existing stack
+  diff        Inspect changes to files or directories on a container's filesystem
+  events      Get real time events from the server
+  exec        Run a command in a running container
+  export      Export a container's filesystem as a tar archive
+  history     Show the history of an image
+  images      List images
+  import      Import the contents from a tarball to create a filesystem image
+  info        Display system-wide information
+  inspect     Return low-level information on Docker objects
+  kill        Kill one or more running containers
+  load        Load an image from a tar archive or STDIN
+  login       Log in to a Docker registry
+  logout      Log out from a Docker registry
+  logs        Fetch the logs of a container
+  pause       Pause all processes within one or more containers
+  port        List port mappings or a specific mapping for the container
+  ps          List containers
+  pull        Pull an image or a repository from a registry
+  push        Push an image or a repository to a registry
+  rename      Rename a container
+  restart     Restart one or more containers
+  rm          Remove one or more containers
+  rmi         Remove one or more images
+  run         Run a command in a new container
+  save        Save one or more images to a tar archive (streamed to STDOUT by default)
+  search      Search the Docker Hub for images
+  start       Start one or more stopped containers
+  stats       Display a live stream of container(s) resource usage statistics
+  stop        Stop one or more running containers
+  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+  top         Display the running processes of a container
+  unpause     Unpause all processes within one or more containers
+  update      Update configuration of one or more containers
+  version     Show the Docker version information
+  wait        Block until one or more containers stop, then print their exit codes
+
+Run 'docker COMMAND --help' for more information on a command.
+```
+
+### 查找镜像
+默认从 https://hub.docker.com/ 查找我们需要的镜像，例如，搜索`httpd`
+``` bash
+$ sudo docker search httpd
+NAME                                 DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED
+httpd                                The Apache HTTP Server Project                  2567                [OK]                
+centos/httpd                                                                         23                                      [OK]
+centos/httpd-24-centos7              Platform for running Apache httpd 2.4 or bui…   22                                      
+armhf/httpd                          The Apache HTTP Server Project                  8                                       
+polinux/httpd-php                    Apache with PHP in Docker (Supervisor, CentO…   3                                       [OK]
+```
+
+### 下载并运行容器
+我们可以在 https://hub.docker.com/ 上面查询所有可用的镜像，找到需要的镜像后，可以下载，例如`training/webapp`：
+``` bash
+$ sudo docker pull training/webapp
+$ sudo docker run -d -P training/webapp python app.py
+
+a2d42ce3df7d0dc34b93095fe3cd526de22f75f2f49a7762e395c32cecae82e5
+```
+
+我们也可以通过`-p`参数来设置不一样的端口，（格式为 本机端口:容器端口）：
+``` bash
+$ sudo docker run -d -p 5001:5000 training/webapp python app.py
+
+2f8c4e68d8fbb3130fb51197218b9024bed5de1c4614cd7cca198a68807b57a9
+
+$ sudo docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                     NAMES
+2f8c4e68d8fb        training/webapp     "python app.py"     27 seconds ago      Up 26 seconds       0.0.0.0:5001->5000/tcp    infallible_greider
+a2d42ce3df7d        training/webapp     "python app.py"     41 seconds ago      Up 40 seconds       0.0.0.0:32769->5000/tcp   epic_pasteur
+```
+
+这样在本机的浏览器上面通过如下2种方式，都能访问到应用：
+http://localhost:32769/
+http://localhost:5001/
+
+
+### 查看容器内的进程状况
+``` bash
+$ sudo docker top infallible_greider
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                28721               28694               0                   14:49               ?                   00:00:00            python app.py
+```
+
+### 查看指定容器的配置和状态信息
+``` bash
+$ sudo docker inspect infallible_greider
+[
+    {
+        "Id": "2f8c4e68d8fbb3130fb51197218b9024bed5de1c4614cd7cca198a68807b57a9",
+        "Created": "2019-07-29T06:49:41.334728611Z",
+        "Path": "python",
+        "Args": [
+            "app.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 28721,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2019-07-29T06:49:42.075479437Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:6fae60ef344644649a39240b94d73b8ba9c67f898ede85cf8e947a887b3e6557",
+        "ResolvConfPath": "/var/lib/docker/containers/2f8c4e68d8fbb3130fb51197218b9024bed5de1c4614cd7cca198a68807b57a9/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/2f8c4e68d8fbb3130fb51197218b9024bed5de1c4614cd7cca198a68807b57a9/hostname",
+        "HostsPath": "/var/lib/docker/containers/2f8c4e68d8fbb3130fb51197218b9024bed5de1c4614cd7cca198a68807b57a9/hosts",
+        "LogPath": "/var/lib/docker/containers/2f8c4e68d8fbb3130fb51197218b9024bed5de1c4614cd7cca198a68807b57a9/2f8c4e68d8fbb3130fb51197218b9024bed5de1c4614cd7cca198a68807b57a9-json.log",
+        "Name": "/infallible_greider",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+...
+```
+
+### 容器可以停止、重新启动和移除
+``` bash
+$ sudo docker start infallible_greider
+$ sudo docker stop infallible_greider
+$ sudo docker rm infallible_greider
+```
+
+### 列出本机上的所有镜像
+``` bash
+$ sudo docker images
+
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              18.04               3556258649b2        5 days ago          64.2MB
+hello-world         latest              fce289e99eb9        6 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+```
+
+### 列出本机上所有已创建的容器
+``` bash
+$ sudo docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                        PORTS               NAMES
+ee4b72860ab3        ubuntu:18.04        "/bin/sh -c 'while t…"   8 minutes ago       Up 8 minutes                                      brave_edison
+3063341debf2        ubuntu:18.04        "/bin/bash"              9 minutes ago       Exited (0) 9 minutes ago                          friendly_poitras
+6623f20692a4        ubuntu:18.04        "/bin/echo 'Hello wo…"   9 minutes ago       Exited (0) 9 minutes ago                          intelligent_roentgen
+a2d42ce3df7d        training/webapp     "python app.py"          2 hours ago         Exited (137) 48 minutes ago                       epic_pasteur
+1058cf5fafad        training/webapp     "python app.py"          2 hours ago         Exited (137) 2 hours ago                          goofy_lewin
+2c113cc40c51        training/webapp     "python app.py"          2 hours ago         Exited (137) 2 hours ago                          confident_gagarin
+c9102f1d9541        training/webapp     "python app.py"          3 hours ago         Exited (137) 2 hours ago                          crazy_borg
+a4e84d331fbd        hello-world         "/hello"                 6 hours ago         Exited (0) 6 hours ago                            epic_fermi
+b03a6f03bd39        hello-world         "/hello"                 2 days ago          Exited (0) 2 days ago                             competent_cartwright
+b7c3f4699549        hello-world         "/hello"                 2 days ago          Exited (0) 2 days ago                             crazy_brattain
+bb7eb9e197b4        hello-world         "/hello"                 2 days ago          Exited (0) 2 days ago                             pensive_lalande
+```
+
+### 修改镜像
+我们以已存在的ubuntu镜像为原始版本，创建新的镜像
+``` bash
+$ sudo docker run -t -i ubuntu:18.04 /bin/bash
+root@d23dc5d88f11:/# apt-get update
+root@d23dc5d88f11:/# exit
+```
+
+查看最后创建的容器
+``` bash
+$ sudo docker ps -l
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                          PORTS               NAMES
+d23dc5d88f11        ubuntu:18.04        "/bin/bash"         2 minutes ago       Exited (0) About a minute ago                       amazing_vaughan
+```
+
+可以看到ID为`d23dc5d88f11`的容器为我们刚才创建的容器，提交这个容器：
+``` bash
+$ sudo docker commit -m="exec apt-get update" -a="hewentian" d23dc5d88f11 hewentian/ubuntu:v2
+
+sha256:2bdf86d10fbc18204e04fe5a30dee06dfeb30683247c41e85e8cfe6d66d5d9d6
+```
+
+查看我们刚刚创建的镜像
+``` bash
+$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+hewentian/ubuntu    v2                  2bdf86d10fbc        6 seconds ago       91MB
+ubuntu              18.04               3556258649b2        5 days ago          64.2MB
+hello-world         latest              fce289e99eb9        6 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+```
+
+然后，我们就可以使用我们新建的镜像创建容器了
+``` bash
+$ sudo docker run -it hewentian/ubuntu:v2 /bin/bash
+root@10adcace776b:/# cat /proc/version
+Linux version 4.15.0-47-generic (buildd@lgw01-amd64-001) (gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #50-Ubuntu SMP Wed Mar 13 10:44:52 UTC 2019
+root@10adcace776b:/# whoami
+root
+root@10adcace776b:/# exit
+exit
+```
+
+### 创建镜像
+从零开始创建一个镜像，我们需要一个Dockerfile文件，示例如下：
+``` bash
+$ cat /home/hewentian/Documents/docker/ubuntu/Dockerfile
+
+FROM    ubuntu:18.04
+MAINTAINER    hewentian "wentian.he@qq.com"
+
+ENV    AUTHOR="hewentian"
+WORKDIR    /tmp/
+RUN    /usr/bin/touch he.txt
+RUN    /bin/echo "The author is $AUTHOR, created at " >> /tmp/he.txt
+RUN    /bin/date >> /tmp/he.txt
+```
+
+开始创建镜像
+``` bash
+$ sudo docker build -t hewentian/ubuntu:v2.1 -f /home/hewentian/Documents/docker/ubuntu/Dockerfile .
+
+Sending build context to Docker daemon   2.56kB
+Step 1/7 : FROM    ubuntu:18.04
+ ---> 3556258649b2
+Step 2/7 : MAINTAINER    hewentian "wentian.he@qq.com"
+ ---> Running in 9684fd7dab36
+Removing intermediate container 9684fd7dab36
+ ---> 87f25ba61a99
+Step 3/7 : ENV    AUTHOR="hewentian"
+ ---> Running in 22e933129053
+Removing intermediate container 22e933129053
+ ---> 23c5a574b01c
+Step 4/7 : WORKDIR    /tmp/
+ ---> Running in a4341dbc2164
+Removing intermediate container a4341dbc2164
+ ---> 94663075f2b0
+Step 5/7 : RUN    /usr/bin/touch he.txt
+ ---> Running in e54479ffd964
+Removing intermediate container e54479ffd964
+ ---> a196207c63e9
+Step 6/7 : RUN    /bin/echo "The author is $AUTHOR, created at " >> /tmp/he.txt
+ ---> Running in 89d010bd1b78
+Removing intermediate container 89d010bd1b78
+ ---> 11aa9b6d3605
+Step 7/7 : RUN    /bin/date >> /tmp/he.txt
+ ---> Running in 66627425d24c
+Removing intermediate container 66627425d24c
+ ---> c6cd98aa1461
+Successfully built c6cd98aa1461
+Successfully tagged hewentian/ubuntu:v2.1
+```
+
+查看生成的镜像
+``` bash
+$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+hewentian/ubuntu    v2.1                c6cd98aa1461        43 seconds ago      64.2MB
+hewentian/ubuntu    v2                  2bdf86d10fbc        18 hours ago        91MB
+ubuntu              18.04               3556258649b2        6 days ago          64.2MB
+hello-world         latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+```
+
+用我们新建的镜像创建容器
+``` bash
+$ sudo docker run -it hewentian/ubuntu:v2.1 /bin/bash
+
+root@335d56425694:/tmp# ls /tmp/
+he.txt
+root@335d56425694:/tmp# more /tmp/he.txt 
+The author is hewentian, created at 
+Tue Jul 30 03:10:50 UTC 2019
+root@335d56425694:/tmp# exit
+exit
+```
+
+可见，镜像包含我们自已创建的文件。
+
+### docker安装nginx
+首先拉取镜像
+``` bash
+$ sudo docker search nginx
+$ sudo docker pull nginx
+
+$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+hewentian/ubuntu    v2.1                c6cd98aa1461        4 hours ago         64.2MB
+hewentian/ubuntu    v2                  2bdf86d10fbc        22 hours ago        91MB
+nginx               latest              e445ab08b2be        6 days ago          126MB
+ubuntu              18.04               3556258649b2        6 days ago          64.2MB
+hello-world         latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+```
+
+使用nginx的默认配置来启动一个容器：
+``` bash
+$ sudo docker run --name nginx-test -p 8081:80 -d nginx
+
+838ebabcc937cf9a8e13946f92d104b2eb153cc61f21cb47e7661d6bbe205253
+```
+
+如果启动成功，则可以在浏览器中访问：
+http://localhost:8081/
+
+然后，开始部署我们想要的nginx，首先在本机上创建nginx相关文件目录
+``` bash
+$ cd /home/hewentian/Documents/docker
+$ mkdir -p nginx/www nginx/logs nginx/conf
+```
+
+将刚才启动的nginx容器内的配置文件，复制到本机中：
+``` bash
+$ sudo docker cp 838ebabcc937:/etc/nginx/nginx.conf /home/hewentian/Documents/docker/nginx/conf
+```
+
+创建nginx欢迎页面`/home/hewentian/Documents/docker/nginx/www/index.html`：
+``` html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to docker nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+
+启动nginx：
+``` bash
+$ sudo docker run --name nginx-test2 -p 8082:80 -d -v /home/hewentian/Documents/docker/nginx/www:/usr/share/nginx/html -v /home/hewentian/Documents/docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf -v /home/hewentian/Documents/docker/nginx/logs:/var/log/nginx nginx
+```
+
+参数说明：
+
+    -v /home/hewentian/Documents/docker/nginx/www:/usr/share/nginx/html：将在本机创建的目录，挂载到容器内的/usr/share/nginx/html目录
+
+如果启动成功，则可以在浏览器中访问：
+http://localhost:8082/
+
+
+参考文献：
+https://docs.docker.com/
+https://blog.docker.com/
+https://www.runoob.com/docker/docker-image-usage.html
+
 未完待续……
 
