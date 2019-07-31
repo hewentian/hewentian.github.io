@@ -517,6 +517,8 @@ $ mkdir -p nginx/www nginx/logs nginx/conf
 $ sudo docker cp 838ebabcc937:/etc/nginx/nginx.conf /home/hewentian/Documents/docker/nginx/conf
 ```
 
+**docker cp: 用于本地主机与容器之间的数据复制**
+
 创建nginx欢迎页面`/home/hewentian/Documents/docker/nginx/www/index.html`：
 ``` html
 <!DOCTYPE html>
@@ -557,6 +559,207 @@ $ sudo docker run --name nginx-test2 -p 8082:80 -d -v /home/hewentian/Documents/
 
 如果启动成功，则可以在浏览器中访问：
 http://localhost:8082/
+
+
+### 进入指定的容器
+若启动容器的时候不是以交互模式，之后又想进入容器，则可以使用如下命令：
+``` bash
+先启动一个之前停止了的容器
+$ sudo docker start 3063341debf2
+3063341debf2
+
+直接运行容器内的脚本
+$ sudo docker exec -it 3063341debf2 /bin/bash /a.sh
+Wed Jul 31 01:40:20 UTC 2019
+
+以交互模式进入容器
+$ sudo docker exec -it 3063341debf2 /bin/bash
+root@3063341debf2:/# ls
+a.sh  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@3063341debf2:/# sh a.sh 
+Wed Jul 31 01:44:34 UTC 2019
+root@3063341debf2:/# exit
+exit
+
+退出后，容器并不会停止
+$ sudo docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+3063341debf2        ubuntu:18.04        "/bin/bash"         41 hours ago        Up 18 seconds                           friendly_poitras
+```
+
+另外，使用`attach`命令也能进入容器，但是当退出后，容器会停止
+``` bash
+$ sudo docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+3063341debf2        ubuntu:18.04        "/bin/bash"         41 hours ago        Up 18 seconds                           friendly_poitras
+
+$ sudo docker attach --sig-proxy=false 3063341debf2
+root@3063341debf2:/# ls
+a.sh  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@3063341debf2:/# sh a.sh 
+Wed Jul 31 02:02:50 UTC 2019
+root@3063341debf2:/# exit
+exit
+
+$ sudo docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+```
+
+### 将镜像导出/导入
+导出镜像语法：
+``` bash
+$ sudo docker save --help
+
+Usage:	docker save [OPTIONS] IMAGE [IMAGE...]
+
+Save one or more images to a tar archive (streamed to STDOUT by default)
+
+Options:
+  -o, --output string   Write to a file, instead of STDOUT
+```
+
+导入镜像语法：
+``` bash
+$ sudo docker load --help
+
+Usage:	docker load [OPTIONS]
+
+Load an image from a tar archive or STDIN
+
+Options:
+  -i, --input string   Read from tar archive file, instead of STDIN
+  -q, --quiet          Suppress the load output
+```
+
+示例：先将镜像导出，然后删除镜像，最后再将导出的镜像重新导入：
+``` bash
+$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+<none>              <none>              c6cd98aa1461        27 hours ago        64.2MB
+hewentian/ubuntu    v2                  2bdf86d10fbc        45 hours ago        91MB
+nginx               latest              e445ab08b2be        7 days ago          126MB
+ubuntu              18.04               3556258649b2        7 days ago          64.2MB
+hello-world         latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+
+$ sudo docker save -o hu.tar hewentian/ubuntu:v2
+
+$ ls
+hu.tar
+
+$ sudo docker rmi 2bdf86d10fbc
+Untagged: hewentian/ubuntu:v2
+Deleted: sha256:2bdf86d10fbc18204e04fe5a30dee06dfeb30683247c41e85e8cfe6d66d5d9d6
+Deleted: sha256:c4a9226f13fa8f48ef07e27e0954c43f38275b6aa1d24e361ed016dfff056069
+
+$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+<none>              <none>              c6cd98aa1461        27 hours ago        64.2MB
+nginx               latest              e445ab08b2be        7 days ago          126MB
+ubuntu              18.04               3556258649b2        7 days ago          64.2MB
+hello-world         latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+
+$ sudo docker load -i hu.tar 
+ed4797628ae8: Loading layer [==================================================>]  26.85MB/26.85MB
+Loaded image: hewentian/ubuntu:v2
+
+$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+<none>              <none>              c6cd98aa1461        27 hours ago        64.2MB
+hewentian/ubuntu    v2                  2bdf86d10fbc        45 hours ago        91MB
+nginx               latest              e445ab08b2be        7 days ago          126MB
+ubuntu              18.04               3556258649b2        7 days ago          64.2MB
+hello-world         latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+```
+
+**注意：导出镜像的时候，要使用`REPOSITORY:TAG`，而不是`IMAGE ID`，否则在重新导入的时候会没有`REPOSITORY:TAG`，显示为none**
+
+
+### 使用import创建镜像
+也可以从导出的tar文件中创建一个新的镜像，语法如下：
+``` bash
+$ sudo docker import --help
+
+Usage:	docker import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]
+
+Import the contents from a tarball to create a filesystem image
+
+Options:
+  -c, --change list      Apply Dockerfile instruction to the created image
+  -m, --message string   Set commit message for imported image
+```
+
+示例：
+``` bash
+$ sudo docker import hu.tar hewentian/ubuntu:v2.1
+sha256:c389673d68c576b08ad8e3c2337de4ee3b4ed7e622fa986771323797edd2d595
+
+$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+hewentian/ubuntu    v2.1                c389673d68c5        5 seconds ago       66.6MB
+hewentian/ubuntu    v2                  2bdf86d10fbc        45 hours ago        91MB
+nginx               latest              e445ab08b2be        7 days ago          126MB
+ubuntu              18.04               3556258649b2        7 days ago          64.2MB
+hello-world         latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+```
+**我试过使用import进去的镜像来创建容器，但是失败了，留待以后再解决**
+
+
+### 登录/登出镜像仓库
+默认登录/登出官方仓库 https://hub.docker.com/ ，不过，也可以登录到指定的私有仓库。
+
+登录语法：
+``` bash
+$ sudo docker login --help
+
+Usage:	docker login [OPTIONS] [SERVER]
+
+Log in to a Docker registry.
+If no server is specified, the default is defined by the daemon.
+
+Options:
+  -p, --password string   Password
+      --password-stdin    Take the password from stdin
+  -u, --username string   Username
+```
+
+登出语法：
+``` bash
+$ sudo docker logout --help
+
+Usage:	docker logout [SERVER]
+
+Log out from a Docker registry.
+If no server is specified, the default is defined by the daemon.
+```
+
+登录/登出示例：
+``` bash
+$ sudo docker login -u hewentian
+Password: 
+WARNING! Your password will be stored unencrypted in /home/hewentian/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+
+
+$ sudo docker logout 
+Removing login credentials for https://index.docker.io/v1/
+```
+
+### 将本地镜像上传到镜像仓库
+默认上传到用户登录的仓库
+
+``` bash
+$ sudo docker push hewentian/ubuntu:v2.1
+The push refers to repository [docker.io/hewentian/ubuntu]
+8c29bfccf50c: Pushed 
+v2.1: digest: sha256:992cc4e008449d8285387fe80aff3c9b0574360fc3ad21b04bccc5b6a4229923 size: 528
+```
 
 
 参考文献：
