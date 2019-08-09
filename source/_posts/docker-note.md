@@ -70,6 +70,11 @@ $ sudo apt-get install docker-ce docker-ce-cli containerd.io
 $ sudo service docker start
 ```
 
+可选命令有：
+
+    service docker {start|stop|restart|status}
+
+
 第三步：验证安装是否正确无误，通过运行一个测试用例：
 ``` bash
 $ sudo docker run hello-world
@@ -752,8 +757,7 @@ Removing login credentials for https://index.docker.io/v1/
 ```
 
 ### 将本地镜像上传到镜像仓库
-默认上传到用户登录的仓库
-
+默认上传到docker官方仓库docker.io，上传到私有仓库的例子，后面会介绍。
 ``` bash
 $ sudo docker push hewentian/ubuntu:v2.1
 The push refers to repository [docker.io/hewentian/ubuntu]
@@ -762,9 +766,423 @@ v2.1: digest: sha256:992cc4e008449d8285387fe80aff3c9b0574360fc3ad21b04bccc5b6a42
 ```
 
 
+### harbor的安装
+我们将在机器`192.168.56.113`上面安装harbor，安装过程参考这里：
+https://github.com/goharbor/harbor
+
+harbor依赖`docker 17.06.0-ce+`、`docker-compose 1.18.0+`，其中`dock-ce`的安装参照上文。
+
+安装`docker-compose`，参考： https://docs.docker.com/compose/install/#install-compose
+``` bash
+$ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+$ sudo chmod +x /usr/local/bin/docker-compose
+
+$ docker-compose -version
+docker-compose version 1.24.1, build 4667896b
+```
+
+开始安装harbor，安装之前需要启动docker，参考： https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md
+下载离线安装包，在 https://github.com/goharbor/harbor/releases 下载最新版本
+``` bash
+$ cd /home/hadoop
+$ wget https://storage.googleapis.com/harbor-releases/release-1.8.0/harbor-offline-installer-v1.8.2-rc1.tgz
+$ tar xf harbor-offline-installer-v1.8.2-rc1.tgz
+$ cd harbor
+$ ls 
+harbor.v1.8.2.tar.gz  harbor.yml  install.sh  LICENSE  prepare
+```
+
+安装前的配置，配置文件`harbor.yml`中`hostname`可以配置成IP地址或域名，主要是用于给客户端登录使用：
+首先查看本机的`hostname`和IP地址
+``` bash
+$ hostname
+hadoop-host-slave-3
+
+$ ifconfig
+enp0s3: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.56.113  netmask 255.255.255.0  broadcast 192.168.56.255
+        inet6 fe80::90f2:2a79:288c:984e  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:9f:8e:7e  txqueuelen 1000  (Ethernet)
+        RX packets 4726  bytes 448939 (448.9 KB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 7637  bytes 9739346 (9.7 MB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+可以看到`hostname`是`hadoop-host-slave-3`，而IP地址是`192.168.56.113`。这里我们将`hostname`配置成`hadoop-host-slave-3`，如下：
+``` bash
+$ cd /home/hadoop/harbor
+$ vi harbor.yml
+
+hostname: hadoop-host-slave-3
+```
+
+开始安装，执行一个安装脚本即可：
+``` bash
+$ cd /home/hadoop/harbor
+$ sudo ./install.sh
+```
+
+如无意外，你会看到如下的安装日志：
+``` bash
+[sudo] password for hadoop: 
+
+[Step 0]: checking installation environment ...
+
+Note: docker version: 19.03.1
+
+Note: docker-compose version: 1.24.1
+
+[Step 1]: loading Harbor images ...
+39b2d676308e: Loading layer [==================================================>]  33.47MB/33.47MB
+f3583ea30104: Loading layer [==================================================>]  3.552MB/3.552MB
+8290f582ffa5: Loading layer [==================================================>]   6.59MB/6.59MB
+19913bc5e52b: Loading layer [==================================================>]  161.3kB/161.3kB
+ae8b73743d1b: Loading layer [==================================================>]    215kB/215kB
+5c811d1fe61a: Loading layer [==================================================>]  3.584kB/3.584kB
+Loaded image: goharbor/harbor-portal:v1.8.2
+f27812f7a2da: Loading layer [==================================================>]  8.971MB/8.971MB
+c74d2b18a2d1: Loading layer [==================================================>]  38.82MB/38.82MB
+c416e128ff4c: Loading layer [==================================================>]  38.82MB/38.82MB
+Loaded image: goharbor/harbor-jobservice:v1.8.2
+e97909585a09: Loading layer [==================================================>]  8.972MB/8.972MB
+23b18d08698d: Loading layer [==================================================>]  3.072kB/3.072kB
+9c1d8c03df3e: Loading layer [==================================================>]   20.1MB/20.1MB
+9666a22cf141: Loading layer [==================================================>]  3.072kB/3.072kB
+95783fa51b82: Loading layer [==================================================>]  7.465MB/7.465MB
+285e05bca91e: Loading layer [==================================================>]  27.56MB/27.56MB
+Loaded image: goharbor/harbor-registryctl:v1.8.2
+6543a3ba9bd9: Loading layer [==================================================>]    338MB/338MB
+43f486f0ed18: Loading layer [==================================================>]    107kB/107kB
+Loaded image: goharbor/harbor-migrator:v1.8.2
+6710d86773e1: Loading layer [==================================================>]  50.51MB/50.51MB
+dba91d68db46: Loading layer [==================================================>]  3.584kB/3.584kB
+4b6a61fc3477: Loading layer [==================================================>]  3.072kB/3.072kB
+efd64eeb5c31: Loading layer [==================================================>]   2.56kB/2.56kB
+25d50c6108dd: Loading layer [==================================================>]  3.072kB/3.072kB
+6c22404ddaf0: Loading layer [==================================================>]  3.584kB/3.584kB
+135fef0d64a7: Loading layer [==================================================>]  12.29kB/12.29kB
+Loaded image: goharbor/harbor-log:v1.8.2
+f080cac48a5f: Loading layer [==================================================>]  3.552MB/3.552MB
+Loaded image: goharbor/nginx-photon:v1.8.2
+9562b05e7bd1: Loading layer [==================================================>]  8.971MB/8.971MB
+2ff1ba9952dc: Loading layer [==================================================>]  5.143MB/5.143MB
+463651a0baca: Loading layer [==================================================>]  15.13MB/15.13MB
+feceecff30a6: Loading layer [==================================================>]  26.47MB/26.47MB
+a2d1a1b1eaaa: Loading layer [==================================================>]  22.02kB/22.02kB
+2c8463eca215: Loading layer [==================================================>]  3.072kB/3.072kB
+7e91f466c852: Loading layer [==================================================>]  46.74MB/46.74MB
+Loaded image: goharbor/notary-server-photon:v0.6.1-v1.8.2
+628aac791456: Loading layer [==================================================>]    113MB/113MB
+32e13bd19d15: Loading layer [==================================================>]  10.94MB/10.94MB
+17d6a3366a31: Loading layer [==================================================>]  2.048kB/2.048kB
+9c3d274d3072: Loading layer [==================================================>]  48.13kB/48.13kB
+a3e8bc524efe: Loading layer [==================================================>]  3.072kB/3.072kB
+6edf120ab0a5: Loading layer [==================================================>]  10.99MB/10.99MB
+Loaded image: goharbor/clair-photon:v2.0.8-v1.8.2
+fa7f8bd666e1: Loading layer [==================================================>]  8.972MB/8.972MB
+d23a3ac1da5c: Loading layer [==================================================>]  3.072kB/3.072kB
+25ece37b9b62: Loading layer [==================================================>]   2.56kB/2.56kB
+ceff80c4799d: Loading layer [==================================================>]   20.1MB/20.1MB
+4ddaf99a2326: Loading layer [==================================================>]   20.1MB/20.1MB
+Loaded image: goharbor/registry-photon:v2.7.1-patch-2819-v1.8.2
+86ef8960f9fa: Loading layer [==================================================>]  13.72MB/13.72MB
+4be07cab0847: Loading layer [==================================================>]  26.47MB/26.47MB
+b3f2bb8db417: Loading layer [==================================================>]  22.02kB/22.02kB
+4c68837d983b: Loading layer [==================================================>]  3.072kB/3.072kB
+f2526a5c0965: Loading layer [==================================================>]  45.33MB/45.33MB
+Loaded image: goharbor/notary-signer-photon:v0.6.1-v1.8.2
+9c6a2b28994d: Loading layer [==================================================>]   2.56kB/2.56kB
+49bb4e719955: Loading layer [==================================================>]  1.536kB/1.536kB
+47d1a63f5482: Loading layer [==================================================>]  69.81MB/69.81MB
+db449d60801c: Loading layer [==================================================>]  39.75MB/39.75MB
+f01c7fa07db7: Loading layer [==================================================>]  144.4kB/144.4kB
+5ff7a32e9f2c: Loading layer [==================================================>]  3.005MB/3.005MB
+Loaded image: goharbor/prepare:v1.8.2
+6602e119ecab: Loading layer [==================================================>]  8.971MB/8.971MB
+6b45eae45c58: Loading layer [==================================================>]  46.86MB/46.86MB
+e3d9614f88b3: Loading layer [==================================================>]  5.632kB/5.632kB
+f0b457c2a1b1: Loading layer [==================================================>]  28.67kB/28.67kB
+f4e712369f36: Loading layer [==================================================>]  46.86MB/46.86MB
+Loaded image: goharbor/harbor-core:v1.8.2
+c39fa71cb1b3: Loading layer [==================================================>]   63.4MB/63.4MB
+245ad05b59aa: Loading layer [==================================================>]  50.88MB/50.88MB
+6fc4b5ec5705: Loading layer [==================================================>]  6.656kB/6.656kB
+8a003956ed73: Loading layer [==================================================>]  2.048kB/2.048kB
+0b4d3b06d5d5: Loading layer [==================================================>]   7.68kB/7.68kB
+c045e2109691: Loading layer [==================================================>]   2.56kB/2.56kB
+eef5f9c09eb0: Loading layer [==================================================>]   2.56kB/2.56kB
+75776554d401: Loading layer [==================================================>]   2.56kB/2.56kB
+Loaded image: goharbor/harbor-db:v1.8.2
+0130cb61aaba: Loading layer [==================================================>]  74.58MB/74.58MB
+9f0973beb46c: Loading layer [==================================================>]  3.072kB/3.072kB
+74bd291b6f8b: Loading layer [==================================================>]   59.9kB/59.9kB
+3b11caba8d3e: Loading layer [==================================================>]  61.95kB/61.95kB
+Loaded image: goharbor/redis-photon:v1.8.2
+5b00b48e6ec3: Loading layer [==================================================>]  8.976MB/8.976MB
+7f5008b71ec6: Loading layer [==================================================>]  44.39MB/44.39MB
+02f96d3b6e35: Loading layer [==================================================>]  2.048kB/2.048kB
+da8354357ee3: Loading layer [==================================================>]  3.072kB/3.072kB
+1819913851a3: Loading layer [==================================================>]   44.4MB/44.4MB
+Loaded image: goharbor/chartmuseum-photon:v0.9.0-v1.8.2
+
+
+[Step 2]: preparing environment ...
+prepare base dir is set to /home/hadoop/harbor
+Generated configuration file: /config/log/logrotate.conf
+Generated configuration file: /config/nginx/nginx.conf
+Generated configuration file: /config/core/env
+Generated configuration file: /config/core/app.conf
+Generated configuration file: /config/registry/config.yml
+Generated configuration file: /config/registryctl/env
+Generated configuration file: /config/db/env
+Generated configuration file: /config/jobservice/env
+Generated configuration file: /config/jobservice/config.yml
+Generated and saved secret to file: /secret/keys/secretkey
+Generated certificate, key file: /secret/core/private_key.pem, cert file: /secret/registry/root.crt
+Generated configuration file: /compose_location/docker-compose.yml
+Clean up the input dir
+
+
+
+[Step 3]: starting Harbor ...
+Creating network "harbor_harbor" with the default driver
+Creating harbor-log ... done
+Creating redis       ... done
+Creating registryctl ... done
+Creating registry    ... done
+Creating harbor-db   ... done
+Creating harbor-core ... done
+Creating harbor-portal     ... done
+Creating harbor-jobservice ... done
+Creating nginx             ... done
+
+✔ ----Harbor has been installed and started successfully.----
+
+Now you should be able to visit the admin portal at http://hadoop-host-slave-3. 
+For more details, please visit https://github.com/goharbor/harbor .
+```
+
+按照上面的提示，我们在浏览器中访问
+http://hadoop-host-slave-3
+http://harbor.hewentian.com
+
+在访问之前，我们需要在本地机器中配置一下hosts，添加如下两行
+``` bash
+$ more /etc/hosts
+
+192.168.56.113	hadoop-host-slave-3
+192.168.56.113	harbor.hewentian.com
+```
+
+为方便docker将镜像上传到私有harbor，这里多配置一个域名。所以访问上面所列的两个站点，结果是一样的。后面的操作，我们使用`harbor.hewentian.com`这个域名。
+
+![](/img/harbor-admin-login.png "harbor 管理员登录")
+
+输入管理员的初始用户名/密码：`admin/Harbor12345`，登录之后，在页面上可以修改密码。登录之后，如下图：
+
+![](/img/harbor-logined.png "harbor logined")
+
+我们创建一个用户，用户名/密码：`hewentian/Harbor12345`，用于上传下载镜像：
+
+![](/img/harbor-new-user.png "harbor 创建用户")
+
+然后我们退出管理员帐号，用新创建的用户登录：
+
+![](/img/harbor-user-login.png "harbor 普通用户登录")
+
+创建一个project，名为hp，可见性为public：
+
+![](/img/harbor-create-project.png "harbor 普通用户登录")
+
+
+docker登录到harbor
+``` bash
+$ sudo docker login harbor.hewentian.com -u hewentian
+Password: 
+Error response from daemon: Get https://harbor.hewentian.com/v2/: dial tcp 192.168.56.113:443: connect: connection refused
+```
+
+有可能会报上面的错误，原因是docker与registry交互默认使用的是HTTPS，但是我们搭建的harbor默认使用的是HTTP服务。解决方法：
+``` bash
+$ sudo vi /etc/docker/daemon.json
+
+{
+    "insecure-registries": ["harbor.hewentian.com"]
+}
+```
+
+文件`/etc/docker/daemon.json`原先可能并不存在，它所有可能的配置，可以参考这里：
+https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
+
+重启docker，并尝试登录到harbor
+``` bash
+$ sudo service docker restart
+
+$ sudo docker login harbor.hewentian.com -u hewentian
+Password: 
+WARNING! Your password will be stored unencrypted in /home/hewentian/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+
+### 将本地镜像上传到私有镜像仓库harbor
+上传到私库的命令，和上传到官方仓库的命令差不多，命令如下：
+
+    docker push reg.yourdomain.com/myproject/myrepo:mytag
+
+先查看本地的所有镜像
+``` bash
+$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+hewentian/ubuntu    v2.1                3712fd008024        8 days ago          64.2MB
+hewentian/ubuntu    v2                  2bdf86d10fbc        10 days ago         91MB
+nginx               latest              e445ab08b2be        2 weeks ago         126MB
+ubuntu              18.04               3556258649b2        2 weeks ago         64.2MB
+hello-world         latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+```
+
+例如我们要将`ubuntu:18.04`上传到harbor
+``` bash
+$ sudo docker push harbor.hewentian.com/hp/ubuntu:18.04
+[sudo] password for hewentian: 
+The push refers to repository [harbor.hewentian.com/hp/ubuntu]
+An image does not exist locally with the tag: harbor.hewentian.com/hp/ubuntu
+```
+
+可以看到，不能直接上传，要先为待上传的镜像打tag
+``` bash
+$ sudo docker tag ubuntu:18.04 harbor.hewentian.com/hp/ubuntu:18.04
+
+$ sudo docker images
+REPOSITORY                       TAG                 IMAGE ID            CREATED             SIZE
+hewentian/ubuntu                 v2.1                3712fd008024        8 days ago          64.2MB
+hewentian/ubuntu                 v2                  2bdf86d10fbc        10 days ago         91MB
+nginx                            latest              e445ab08b2be        2 weeks ago         126MB
+harbor.hewentian.com/hp/ubuntu   18.04               3556258649b2        2 weeks ago         64.2MB
+ubuntu                           18.04               3556258649b2        2 weeks ago         64.2MB
+hello-world                      latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp                  latest              6fae60ef3446        4 years ago         349MB
+```
+
+从上面可以看到，打tag后的镜像只是原镜像的一个引用，它们的`IMAGE ID`是一样的。
+``` bash
+$ sudo docker push harbor.hewentian.com/hp/ubuntu:18.04
+The push refers to repository [harbor.hewentian.com/hp/ubuntu]
+b079b3fa8d1b: Pushed 
+a31dbd3063d7: Pushed 
+c56e09e1bd18: Pushed 
+543791078bdb: Pushed 
+18.04: digest: sha256:d91842ef309155b85a9e5c59566719308fab816b40d376809c39cf1cf4de3c6a size: 1152
+```
+
+上传成功。同样在浏览器上面，也可以看到，已经成功上传了。
+
+![](/img/harbor-push-image-1.png "harbor 查看镜像")
+
+![](/img/harbor-push-image-2.png "harbor 查看镜像")
+
+
+### 从harbor下载镜像
+先将本地的镜像删掉
+``` bash
+$ sudo docker rmi harbor.hewentian.com/hp/ubuntu:18.04
+Untagged: harbor.hewentian.com/hp/ubuntu:18.04
+Untagged: harbor.hewentian.com/hp/ubuntu@sha256:d91842ef309155b85a9e5c59566719308fab816b40d376809c39cf1cf4de3c6a
+
+$ sudo docker rmi ubuntu:18.04
+
+$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+hewentian/ubuntu    v2.1                3712fd008024        8 days ago          64.2MB
+hewentian/ubuntu    v2                  2bdf86d10fbc        10 days ago         91MB
+nginx               latest              e445ab08b2be        2 weeks ago         126MB
+hello-world         latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+```
+
+然后从harbor下载
+``` bash
+$ sudo docker pull harbor.hewentian.com/hp/ubuntu:18.04
+18.04: Pulling from hp/ubuntu
+7413c47ba209: Pull complete 
+0fe7e7cbb2e8: Pull complete 
+1d425c982345: Pull complete 
+344da5c95cec: Pull complete 
+Digest: sha256:d91842ef309155b85a9e5c59566719308fab816b40d376809c39cf1cf4de3c6a
+Status: Downloaded newer image for harbor.hewentian.com/hp/ubuntu:18.04
+harbor.hewentian.com/hp/ubuntu:18.04
+
+$ sudo docker images
+REPOSITORY                       TAG                 IMAGE ID            CREATED             SIZE
+hewentian/ubuntu                 v2.1                3712fd008024        8 days ago          64.2MB
+hewentian/ubuntu                 v2                  2bdf86d10fbc        10 days ago         91MB
+nginx                            latest              e445ab08b2be        2 weeks ago         126MB
+harbor.hewentian.com/hp/ubuntu   18.04               3556258649b2        2 weeks ago         64.2MB
+hello-world                      latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp                  latest              6fae60ef3446        4 years ago         349MB
+```
+
+
+### 查看harbor进程状态
+harbor的日志默认存放在`/var/log/harbor`，如果有下列哪个服务不是`Up`状态，可以查看相关日志
+``` bash
+$ sudo docker-compose ps
+[sudo] password for hadoop: 
+      Name                     Command                  State                 Ports          
+---------------------------------------------------------------------------------------------
+harbor-core         /harbor/start.sh                 Up (healthy)                            
+harbor-db           /entrypoint.sh postgres          Up (healthy)   5432/tcp                 
+harbor-jobservice   /harbor/start.sh                 Up                                      
+harbor-log          /bin/sh -c /usr/local/bin/ ...   Up (healthy)   127.0.0.1:1514->10514/tcp
+harbor-portal       nginx -g daemon off;             Up (healthy)   80/tcp                   
+nginx               nginx -g daemon off;             Up (healthy)   0.0.0.0:80->80/tcp       
+redis               docker-entrypoint.sh redis ...   Up             6379/tcp                 
+registry            /entrypoint.sh /etc/regist ...   Up (healthy)   5000/tcp                 
+registryctl         /harbor/start.sh                 Up (healthy)
+```
+
+
+### harbor生命周期管理
+可以使用`docker-compose`命令来启动、停止harbor
+停止harbor：
+``` bash
+$ sudo docker-compose stop
+
+Stopping nginx             ... done
+Stopping harbor-jobservice ... done
+Stopping harbor-portal     ... done
+Stopping harbor-core       ... done
+Stopping registry          ... done
+Stopping harbor-db         ... done
+Stopping registryctl       ... done
+Stopping redis             ... done
+Stopping harbor-log        ... done
+```
+
+启动harbor：
+``` bash
+$ sudo docker-compose start
+
+Starting log         ... done
+Starting registry    ... done
+Starting registryctl ... done
+Starting postgresql  ... done
+Starting core        ... done
+Starting portal      ... done
+Starting redis       ... done
+Starting jobservice  ... done
+Starting proxy       ... done
+```
+
+
 参考文献：
 https://docs.docker.com/
 https://blog.docker.com/
+https://github.com/goharbor/harbor
 https://www.runoob.com/docker/docker-image-usage.html
 
 未完待续……

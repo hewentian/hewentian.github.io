@@ -1181,6 +1181,77 @@ $ pip install --upgrade pip 或者 $ pip install pip==9.0.1
 $ pip install Pillow
 ```
 
+
+### linux拆分文件
+linux拆分文件可以使用split命令，既可以按行拆分，又可以按大小拆分。例如有一个文件，它有1000行，如下：
+``` bash
+$ cat mydata.txt 
+1 ----------------
+2 ----------------
+3 ----------------
+4 ----------------
+5 ----------------
+6 ----------------
+7 ----------------
+8 ----------------
+9 ----------------
+10 ----------------
+...
+...
+...
+991 ----------------
+992 ----------------
+993 ----------------
+994 ----------------
+995 ----------------
+996 ----------------
+997 ----------------
+998 ----------------
+999 ----------------
+1000 ----------------
+```
+
+我们将文件按行拆分，每100行一个文件，后缀有3位数字，以数字递增，后缀为mydata_
+``` bash
+$ ls
+mydata.txt
+
+$ split -l 100 mydata.txt -d -a 3 mydata_
+$ ls
+mydata_000  mydata_001  mydata_002  mydata_003  mydata_004  mydata_005  mydata_006  mydata_007  mydata_008  mydata_009  mydata.txt
+
+$ wc -l *
+  100 mydata_000
+  100 mydata_001
+  100 mydata_002
+  100 mydata_003
+  100 mydata_004
+  100 mydata_005
+  100 mydata_006
+  100 mydata_007
+  100 mydata_008
+  100 mydata_009
+ 1000 mydata.txt
+ 2000 total
+```
+
+我们将文件按大小拆分，每个文件5k，后缀有3位数字，以数字递增，后缀为mydata_
+``` bash
+$ ll mydata.txt 
+-rw-r--r-- 1 hewentian hewentian 20893 Aug  5 15:28 mydata.txt
+
+$ split -b 5k mydata.txt -d -a 3 mydata_
+
+$ ll mydata*
+-rw-r--r-- 1 hewentian hewentian  5120 Aug  5 17:39 mydata_000
+-rw-r--r-- 1 hewentian hewentian  5120 Aug  5 17:39 mydata_001
+-rw-r--r-- 1 hewentian hewentian  5120 Aug  5 17:39 mydata_002
+-rw-r--r-- 1 hewentian hewentian  5120 Aug  5 17:39 mydata_003
+-rw-r--r-- 1 hewentian hewentian   413 Aug  5 17:39 mydata_004
+-rw-r--r-- 1 hewentian hewentian 20893 Aug  5 15:28 mydata.txt
+```
+
+
 ### linux合并文件
 可以使用`cat`命令从文件中读入两个文件，然后将其重定向到一个新的文件。
 用法示例，将`file1.txt`和`file2.txt`合并到`file.txt`：
