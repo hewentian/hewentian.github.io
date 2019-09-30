@@ -442,6 +442,18 @@ while(count < totalCount) {
 ``` java
 db.getCollection('userInfo').find({"name":/^\s+|\s+$/})
 db.getCollection('userInfo').find({"$or":[{"name":/^\s+|\s+$/}, {"postCode":/^\s+|\s+$/}]})
-
 ```
+
+
+### 删除字段
+The following update() operation uses the `$unset` operator to remove the fields `quantity` and `instock` from the first document in the `products` collection where the field `sku` has a value of `unknown`.
+``` bash
+db.products.update(
+   { sku: "unknown" },
+   { $unset: { quantity: "", instock: "" } }
+)
+```
+
+if you want to update all matched, use `updateMany` instead.
+
 

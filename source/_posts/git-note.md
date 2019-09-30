@@ -180,3 +180,12 @@ URL: ssh://git@gitlab.hewentian.com:12022/hexo.git
 ```
 这样就删除了那些远程仓库不存在的分支
 
+
+### git status 显示中文和解决中文乱码
+在默认设置下，中文文件名在工作区状态输出，中文名不能正确显示，而是显示为八进制的字符编码。
+解决方案，在bash提示符下输入：
+``` bash
+$ git config --global core.quotepath false
+```
+core.quotepath设为false的话，就不会对0x80以上的字符进行quote，中文显示正常。
+

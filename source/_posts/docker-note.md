@@ -485,6 +485,63 @@ exit
 
 可见，镜像包含我们自已创建的文件。
 
+
+### 将JAR程序部署到容器中
+假设我们现在有一个springBoot的WEB项目，里面有一个接口`/hello`，已经打好了JAR包。我们要将它部署到容器中运行，目录结构如下：
+``` bash
+$ pwd
+/home/hewentian/Documents/docker/showIp
+
+$ ls
+Dockerfile  showIp-1.0.0.jar
+```
+
+我们创建一个镜像，因此需要一个Dockerfile文件，如下：
+``` bash
+$ cat /home/hewentian/Documents/docker/showIp/Dockerfile
+
+FROM    java:8
+MAINTAINER    hewentian "wentian.he@qq.com"
+
+ADD showIp-1.0.0.jar showIp.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","showIp.jar"]
+```
+
+开始创建镜像
+``` bash
+$ cd /home/hewentian/Documents/docker/showIp/
+$ sudo docker build -t hewentian/show-ip:v1.0.0 -f /home/hewentian/Documents/docker/showIp/Dockerfile .
+
+Sending build context to Docker daemon   13.4MB
+Step 1/5 : FROM    java:8
+ ---> d23bdf5b1b1b
+Step 2/5 : MAINTAINER    hewentian "wentian.he@qq.com"
+ ---> Using cache
+ ---> 8ef66d4bf19b
+Step 3/5 : ADD showIp-1.0.0.jar showIp.jar
+ ---> 74faf7fe0fdf
+Step 4/5 : EXPOSE 8080
+ ---> Running in 605f90040e44
+Removing intermediate container 605f90040e44
+ ---> 2de558b34abc
+Step 5/5 : ENTRYPOINT ["java","-jar","showIp.jar"]
+ ---> Running in e8436a5ea5e0
+Removing intermediate container e8436a5ea5e0
+ ---> 5f89e1fe5e7e
+Successfully built 5f89e1fe5e7e
+Successfully tagged hewentian/show-ip:v1.0.0
+```
+
+运行新创建的镜像：
+``` bash
+$ sudo docker run -p 8081:8080 -d hewentian/show-ip:v1.0.0
+```
+
+运行成功后，可以访问：
+http://localhost:8081/hello
+
+
 ### docker安装nginx
 首先拉取镜像
 ``` bash
