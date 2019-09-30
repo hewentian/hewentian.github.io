@@ -142,6 +142,11 @@
 <p>查看生成的镜像<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker images</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">hewentian/ubuntu    v2.1                c6cd98aa1461        43 seconds ago      64.2MB</span><br><span class="line">hewentian/ubuntu    v2                  2bdf86d10fbc        18 hours ago        91MB</span><br><span class="line">ubuntu              18.04               3556258649b2        6 days ago          64.2MB</span><br><span class="line">hello-world         latest              fce289e99eb9        7 months ago        1.84kB</span><br><span class="line">training/webapp     latest              6fae60ef3446        4 years ago         349MB</span><br></pre></td></tr></table></figure></p>
 <p>用我们新建的镜像创建容器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker run -it hewentian/ubuntu:v2.1 /bin/bash</span><br><span class="line"></span><br><span class="line">root@335d56425694:/tmp<span class="comment"># ls /tmp/</span></span><br><span class="line">he.txt</span><br><span class="line">root@335d56425694:/tmp<span class="comment"># more /tmp/he.txt </span></span><br><span class="line">The author is hewentian, created at </span><br><span class="line">Tue Jul 30 03:10:50 UTC 2019</span><br><span class="line">root@335d56425694:/tmp<span class="comment"># exit</span></span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure></p>
 <p>可见，镜像包含我们自已创建的文件。</p>
+<h3 id="将JAR程序部署到容器中"><a href="#将JAR程序部署到容器中" class="headerlink" title="将JAR程序部署到容器中"></a>将JAR程序部署到容器中</h3><p>假设我们现在有一个springBoot的WEB项目，里面有一个接口<code>/hello</code>，已经打好了JAR包。我们要将它部署到容器中运行，目录结构如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/home/hewentian/Documents/docker/showIp</span><br><span class="line"></span><br><span class="line">$ ls</span><br><span class="line">Dockerfile  showIp-1.0.0.jar</span><br></pre></td></tr></table></figure></p>
+<p>我们创建一个镜像，因此需要一个Dockerfile文件，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ cat /home/hewentian/Documents/docker/showIp/Dockerfile</span><br><span class="line"></span><br><span class="line">FROM    java:8</span><br><span class="line">MAINTAINER    hewentian <span class="string">"wentian.he@qq.com"</span></span><br><span class="line"></span><br><span class="line">ADD showIp-1.0.0.jar showIp.jar</span><br><span class="line">EXPOSE 8080</span><br><span class="line">ENTRYPOINT [<span class="string">"java"</span>,<span class="string">"-jar"</span>,<span class="string">"showIp.jar"</span>]</span><br></pre></td></tr></table></figure></p>
+<p>开始创建镜像<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/Documents/docker/showIp/</span><br><span class="line">$ sudo docker build -t hewentian/show-ip:v1.0.0 -f /home/hewentian/Documents/docker/showIp/Dockerfile .</span><br><span class="line"></span><br><span class="line">Sending build context to Docker daemon   13.4MB</span><br><span class="line">Step 1/5 : FROM    java:8</span><br><span class="line"> ---&gt; d23bdf5b1b1b</span><br><span class="line">Step 2/5 : MAINTAINER    hewentian <span class="string">"wentian.he@qq.com"</span></span><br><span class="line"> ---&gt; Using cache</span><br><span class="line"> ---&gt; 8ef66d4bf19b</span><br><span class="line">Step 3/5 : ADD showIp-1.0.0.jar showIp.jar</span><br><span class="line"> ---&gt; 74faf7fe0fdf</span><br><span class="line">Step 4/5 : EXPOSE 8080</span><br><span class="line"> ---&gt; Running <span class="keyword">in</span> 605f90040e44</span><br><span class="line">Removing intermediate container 605f90040e44</span><br><span class="line"> ---&gt; 2de558b34abc</span><br><span class="line">Step 5/5 : ENTRYPOINT [<span class="string">"java"</span>,<span class="string">"-jar"</span>,<span class="string">"showIp.jar"</span>]</span><br><span class="line"> ---&gt; Running <span class="keyword">in</span> e8436a5ea5e0</span><br><span class="line">Removing intermediate container e8436a5ea5e0</span><br><span class="line"> ---&gt; 5f89e1fe5e7e</span><br><span class="line">Successfully built 5f89e1fe5e7e</span><br><span class="line">Successfully tagged hewentian/show-ip:v1.0.0</span><br></pre></td></tr></table></figure></p>
+<p>运行新创建的镜像：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker run -p 8081:8080 -d hewentian/show-ip:v1.0.0</span><br></pre></td></tr></table></figure></p>
+<p>运行成功后，可以访问：<br><a href="http://localhost:8081/hello" target="_blank" rel="noopener">http://localhost:8081/hello</a></p>
 <h3 id="docker安装nginx"><a href="#docker安装nginx" class="headerlink" title="docker安装nginx"></a>docker安装nginx</h3><p>首先拉取镜像<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker search nginx</span><br><span class="line">$ sudo docker pull nginx</span><br><span class="line"></span><br><span class="line">$ sudo docker images</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">hewentian/ubuntu    v2.1                c6cd98aa1461        4 hours ago         64.2MB</span><br><span class="line">hewentian/ubuntu    v2                  2bdf86d10fbc        22 hours ago        91MB</span><br><span class="line">nginx               latest              e445ab08b2be        6 days ago          126MB</span><br><span class="line">ubuntu              18.04               3556258649b2        6 days ago          64.2MB</span><br><span class="line">hello-world         latest              fce289e99eb9        7 months ago        1.84kB</span><br><span class="line">training/webapp     latest              6fae60ef3446        4 years ago         349MB</span><br></pre></td></tr></table></figure></p>
 <p>使用nginx的默认配置来启动一个容器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker run --name nginx-test -p 8081:80 -d nginx</span><br><span class="line"></span><br><span class="line">838ebabcc937cf9a8e13946f92d104b2eb153cc61f21cb47e7661d6bbe205253</span><br></pre></td></tr></table></figure></p>
 <p>如果启动成功，则可以在浏览器中访问：<br><a href="http://localhost:8081/" target="_blank" rel="noopener">http://localhost:8081/</a></p>
@@ -211,7 +216,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/07/26/docker-note/" data-id="cjz3s88q9000dqc3k2aemjust" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/07/26/docker-note/" data-id="ck15upmnd0006kp3k380i86q9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
@@ -343,7 +348,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/06/10/nginx-note/" data-id="cjz3s88r3002rqc3kf5lwamne" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/06/10/nginx-note/" data-id="ck15upmo6002hkp3k57galkzy" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -465,7 +470,7 @@ slave3:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/20/hbase-cluster/" data-id="cjz3s88qh000xqc3kohjvrjnx" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/20/hbase-cluster/" data-id="ck15upmnp000xkp3knu41rf4s" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hbase/">hbase</a></li></ul>
@@ -580,7 +585,7 @@ Caused by: java.net.URISyntaxException: Relative path in absolute URI: ${system:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="cjz3s88qj0014qc3kb62ema2a" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/10/hive-note/" data-id="ck15upmnr0013kp3kz8cvra0b" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li></ul>
@@ -710,7 +715,7 @@ slave3:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="cjz3s88qd000lqc3kx6sppa2i" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2019/01/01/hadoop-cluster-ha/" data-id="ck15upmnl000mkp3kuyr2i8rt" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -804,7 +809,7 @@ by mortbay.org.
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="cjz3s88qg000tqc3kgrou5fap" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="ck15upmno000ukp3k03is0fyt" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -934,7 +939,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="cjz3s88qf000qqc3k3e3xjlsi" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/04/hadoop-cluster/" data-id="ck15upmnm000qkp3klssg1jt3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -1060,7 +1065,7 @@ slave2:
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="cjz3s88qt001yqc3kkr5e3aeo" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/11/12/kafka-intro/" data-id="ck15upmny001skp3kgbf2mu2w" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -1172,7 +1177,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="cjz3s88qp001nqc3ka3qxaie8" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="ck15upmnx001pkp3kdek4qa3n" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -1241,7 +1246,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="cjz3s88qs001tqc3kzv5y65jt" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="ck15upmo0001wkp3k54t9a3r2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>

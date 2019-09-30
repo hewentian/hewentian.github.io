@@ -3,19 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>html-css前端相关 | Tim Ho&#39;s Technology Blog</title>
+  <title>html-css 前端相关 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="将图片二进制流显示在html端的img控件中，在获取验证码的时候用得比较多，方法如下123&amp;lt;img src=&quot;data:image/jpeg;base64,fejwiqpofewqlfjewqjfewopfjef...&quot;&amp;gt;在 src 后面加上 data:image/jpeg;base64,二进制码.">
+  <meta name="description" content="将图片二进制流显示在html端的img控件中，在获取验证码的时候用得比较多，方法如下123&amp;lt;img src=&quot;data:image/jpeg;base64,fejwiqpofewqlfjewqjfewopfjef...&quot;&amp;gt;在 src 后面加上 data:image/jpeg;base64,二进制码. HTTPS网页调用HTTP服务有时候，我们可能会在HTTPS的站点内通过Javascr">
+<meta name="keywords" content="html">
 <meta property="og:type" content="article">
-<meta property="og:title" content="html-css前端相关">
+<meta property="og:title" content="html-css 前端相关">
 <meta property="og:url" content="https://github.com/hewentian/2017/11/10/html-css/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="将图片二进制流显示在html端的img控件中，在获取验证码的时候用得比较多，方法如下123&amp;lt;img src=&quot;data:image/jpeg;base64,fejwiqpofewqlfjewqjfewopfjef...&quot;&amp;gt;在 src 后面加上 data:image/jpeg;base64,二进制码.">
+<meta property="og:description" content="将图片二进制流显示在html端的img控件中，在获取验证码的时候用得比较多，方法如下123&amp;lt;img src=&quot;data:image/jpeg;base64,fejwiqpofewqlfjewqjfewopfjef...&quot;&amp;gt;在 src 后面加上 data:image/jpeg;base64,二进制码. HTTPS网页调用HTTP服务有时候，我们可能会在HTTPS的站点内通过Javascr">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2017-12-01T14:06:07.000Z">
+<meta property="og:updated_time" content="2019-09-30T03:22:28.274Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="html-css前端相关">
-<meta name="twitter:description" content="将图片二进制流显示在html端的img控件中，在获取验证码的时候用得比较多，方法如下123&amp;lt;img src=&quot;data:image/jpeg;base64,fejwiqpofewqlfjewqjfewopfjef...&quot;&amp;gt;在 src 后面加上 data:image/jpeg;base64,二进制码.">
+<meta name="twitter:title" content="html-css 前端相关">
+<meta name="twitter:description" content="将图片二进制流显示在html端的img控件中，在获取验证码的时候用得比较多，方法如下123&amp;lt;img src=&quot;data:image/jpeg;base64,fejwiqpofewqlfjewqjfewopfjef...&quot;&amp;gt;在 src 后面加上 data:image/jpeg;base64,二进制码. HTTPS网页调用HTTP服务有时候，我们可能会在HTTPS的站点内通过Javascr">
   
   
     <link rel="icon" href="/favicon.png">
@@ -88,7 +89,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      html-css前端相关
+      html-css 前端相关
     </h1>
   
 
@@ -97,13 +98,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>将图片二进制流显示在html端的img控件中，在获取验证码的时候用得比较多，方法如下<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"data:image/jpeg;base64,fejwiqpofewqlfjewqjfewopfjef..."</span>&gt;</span></span><br><span class="line"></span><br><span class="line">在 src 后面加上 data:image/jpeg;base64,二进制码.</span><br></pre></td></tr></table></figure></p>
+<h3 id="HTTPS网页调用HTTP服务"><a href="#HTTPS网页调用HTTP服务" class="headerlink" title="HTTPS网页调用HTTP服务"></a>HTTPS网页调用HTTP服务</h3><p>有时候，我们可能会在HTTPS的站点内通过Javascript脚本访问HTTP服务器，这时候，网页可能会报如下错误：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mixed Content: The page at 'https://www.a.com' was loaded over HTTPS, but requested an insecure XMLHttpRequest endpoint 'http://api.b.com/data/user/save'. This request has been blocked; the content must be served over HTTPS.</span><br></pre></td></tr></table></figure></p>
+<p>这个时候，只要在我们的<code>http://api.b.com</code>站点的服务端开放一个测试接口<code>testApi</code>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.b.entity.Result;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.StringUtils;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.PostMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"data/user"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(value = <span class="string">"save"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">save</span><span class="params">(String dataList, HttpServletResponse response)</span> </span>&#123;</span><br><span class="line">        allowOrigin(response);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (StringUtils.isBlank(dataList)) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.getFalseResult(<span class="string">"缺少必要的参数"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// save handler</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Result.getSuccResult(<span class="string">"保存成功"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 仅用作浏览器在https协议下自动调用一次接口，让浏览器弹出不安全提示</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> response</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"testApi"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">testApi</span><span class="params">(HttpServletResponse response)</span> </span>&#123;</span><br><span class="line">        allowOrigin(response);</span><br><span class="line">        <span class="keyword">return</span> Result.getSuccResult(<span class="string">"ok"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">allowOrigin</span><span class="params">(HttpServletResponse response)</span> </span>&#123;</span><br><span class="line">        response.setCharacterEncoding(<span class="string">"UTF-8"</span>);</span><br><span class="line">        response.setHeader(<span class="string">"Cache-Control"</span>, <span class="string">"no-cache, no-store, must-revalidate"</span>);</span><br><span class="line">        response.setHeader(<span class="string">"Pragma"</span>, <span class="string">"no-cache"</span>);</span><br><span class="line">        response.setHeader(<span class="string">"Access-Control-Allow-Origin"</span>, <span class="string">"*"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后在前端代码中添加如下脚本：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 仅用作浏览器在https协议下自动调用一次接口，让浏览器弹出不安全提示</span></span><br><span class="line">	$.post(<span class="string">"http://api.b.com/data/user/testApi"</span>, &#123;&#125;, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="comment">//</span></span><br><span class="line">	&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>确保在进入目标网页的时候会加载它，在加载它的时候在浏览器的地址栏中，我们点红色的叉会弹出一个对话框，有如下文字：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">This page is trying to load scripts from unauthenticated sources.</span><br><span class="line"></span><br><span class="line">Load unsafe scripts</span><br></pre></td></tr></table></figure></p>
+<p>我们点击<code>Load unsafe scripts</code>之后，再提原先的请求就可以了。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/10/html-css/" data-id="cjz3s88qk0017qc3kueagcv4u" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/11/10/html-css/" data-id="ck15upmns0015kp3k8wruboay" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/html/">html</a></li></ul>
+
     </footer>
   </div>
   
@@ -114,7 +122,7 @@
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          maven笔记
+          maven 学习笔记
         
       </div>
     </a>
