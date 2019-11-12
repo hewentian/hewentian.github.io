@@ -1415,6 +1415,17 @@ $ sort ent.txt | uniq -d
 ```
 
 
+### 找出两个文件中内容不同的部分并输出
+查找在b.txt文件中存在，在a.txt文件中不存在的内容，并输出到文件diff.txt。依次执行如下命令：
+``` bash
+$ sort -r a.txt -o a.txt
+$ sort -r b.txt -o b.txt
+$ script diff.txt
+$ grep -vFf a.txt b.txt
+$ exit
+```
+
+
 ### Ubuntu 中卸载软件的几种命令
 参考：https://blog.csdn.net/dzjian_/article/details/79768813
 

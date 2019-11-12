@@ -189,3 +189,21 @@ $ git config --global core.quotepath false
 ```
 core.quotepath设为false的话，就不会对0x80以上的字符进行quote，中文显示正常。
 
+
+### 修复生产问题的方法
+在某些情况下，本地可能提交了很多次代码，但此时发现生产有个严重BUG需马上修复，但本地的代码还不能推到生产。此时的解决方法是：
+1. 先找到生产上面最新的`commit id`，然后在本地以此`commit id`创建一个新分支；
+2. 在新分支修复，然后将此分支推到生产；
+3. 在生产构建该分支。
+
+相关操作如下：
+``` bash
+$ git pull origin master
+$ git log
+$ git checkout -b fix20191106 03b361719f93a74bb5a5cdc22fd4f621adc2822a
+$ git add {修改过的文件}
+$ git commit -m "修改原因说明"
+$ git push origin fix20191106
+```
+
+

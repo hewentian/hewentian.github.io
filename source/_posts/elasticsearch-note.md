@@ -67,6 +67,58 @@ curl -XPUT 'http://localhost:9200/user_index/_mapping/user' -H 'Content-Type: ap
 </pre>
 
 
+#### 修改索引的副本数
+Es在索引数据的时候，如果存在副本，那么主分片会将数据同时同步到副本。所以，如果当前插入大量数据，那么会对es集群造成一定的压力，所以我们最好把副本数设置为0；等数据建立完索引之后，在手动的将副本数更改到2，这样可以提高数据的索引效率。副本数量最好是1-2个。
+<pre>
+curl -XPUT 'http://localhost:9200/user_index/_settings' -H 'Content-Type: application/json' -d '
+{
+    "index" : {
+        "number_of_replicas" : 2
+    }
+}'
+</pre>
+
+
+#### ES别名
+别名的好处，就是更换索引的时候，系统业务代码无需修改。
+查询所有别名：
+<pre>
+curl -XGET 'http://localhost:9200/_alias?pretty=true' -H 'Content-Type: application/json'
+</pre>
+
+查询某个索引的别名：
+<pre>
+curl -XGET 'http://localhost:9200/user_index/_alias?pretty=true' -H 'Content-Type: application/json'
+</pre>
+
+添加别名：
+<pre>
+curl -XPOST 'http://localhost:9200/_aliases' -H 'Content-Type: application/json' -d '
+{
+    "actions" : [{"add" : {"index" : "user_index" , "alias" : "user"}}]
+}'
+</pre>
+
+删除别名：
+<pre>
+curl -XPOST 'http://localhost:9200/_aliases' -H 'Content-Type: application/json' -d '
+{
+    "actions" : [{"remove" : {"index" : "user_index" , "alias" : "user"}}]
+}'
+</pre>
+
+修改别名，ES没有修改别名的操作，只能先删除后添加：
+<pre>
+curl -XPOST 'http://localhost:9200/_aliases' -H 'Content-Type: application/json' -d '
+{
+    "actions" : [
+                {"remove" : {"index" : "user_index" , "alias" : "user"}},
+                {"add" : {"index" : "user_index" , "alias" : "user2"}}
+    ]
+}'
+</pre>
+
+
 #### ES中的一些概念
 **cluster**
 代表一个集群，集群中有多个节点，其中有一个为主节点，这个主节点是可以通过选举产生的，主从节点是对于集群内部来说的。es的一个概念就是去中心化，字面上理解就是无中心节点，这是对于集群外部来说的，因为从外部来看es集群，在逻辑上是个整体，你与任何一个节点的通信和与整个es集群通信是等价的。
@@ -605,5 +657,6 @@ epoch      timestamp count
 
 [link_id_elasticsearch-install]: ../../../../2018/09/16/elasticsearch-install "elasticsearch 单节点安装"
 [link_id_elasticsearch-cluster]: ../../../../2018/09/17/elasticsearch-cluster "elasticsearch 集群的搭建"
-[link_id_EsJestUtil]: https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/util/EsJestUtil.java
-[link_id_EsJestDemo]: https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/es/EsJestDemo.java
+[link_id_EsJestUtil]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/EsJestUtil.java
+[link_id_EsJestDemo]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/es/EsJestDemo.java
+

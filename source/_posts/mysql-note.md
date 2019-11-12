@@ -209,6 +209,50 @@ ALTER TABLE tb DROP PRIMARY KEY; //删除主建
 ```
 
 
+### 存储过程
+创建插入记录的存储过程：
+``` mysql
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `proc_insert_student`$$
+
+CREATE PROCEDURE `proc_insert_student`(_sname VARCHAR(20),_sex TINYINT(4),_age INT)
+BEGIN
+    INSERT INTO student(sname,sex,age) VALUES(_sname,_sex,_age);
+END$$
+
+DELIMITER ;
+```
+
+创建统计数据的存储过程：
+``` mysql
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `proc_count_student`$$
+
+CREATE PROCEDURE `proc_count_student`(OUT cs INT)
+BEGIN
+    # CALL proc_count_student(@cs)
+    SELECT COUNT(*) INTO cs FROM student;
+END$$
+
+DELIMITER ;
+```
+
+
+查看数据库中的存储过程
+``` sql
+mysql> SHOW PROCEDURE STATUS;
++--------+---------------------+-----------+------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
+| Db     | Name                | Type      | Definer    | Modified            | Created             | Security_type | Comment | character_set_client | collation_connection | Database Collation |
++--------+---------------------+-----------+------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
+| bfg_db | proc_count_student  | PROCEDURE | bfg_user@% | 2019-10-21 17:33:15 | 2019-10-21 17:33:15 | DEFINER       |         | utf8                 | utf8_general_ci      | utf8_general_ci    |
+| bfg_db | proc_insert_student | PROCEDURE | bfg_user@% | 2019-10-21 17:21:38 | 2019-10-21 17:21:38 | DEFINER       |         | utf8                 | utf8_general_ci      | utf8_general_ci    |
++--------+---------------------+-----------+------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
+2 rows in set (0.02 sec)
+```
+
+
 ### mysql查找删除重复数据并只保留一条
 有表数据如下：
 ``` sql
@@ -453,6 +497,24 @@ mysql> show variables like 'tmpdir';
 ### mysql 修改表名
 ``` mysql
 ALTER TABLE table_name RENAME TO new_table_name;
+```
+
+
+### MYSQL插入数据时忽略重复数据的方法
+使用`IGNORE`关键字，示例：
+``` mysql
+INSERT IGNORE INTO table(column_list)
+VALUES( value_list),
+      ( value_list),
+      ...
+```
+
+
+### 将一个数据库中的表导入到另一个数据库中的表
+将数据库A中的表a的数据导入到数据库B中的表b中。
+``` mysql
+INSERT [IGNORE] INTO 数据库B.`表名b` SELECT * FROM 数据库A.`表名a`;
+INSERT [IGNORE] INTO 数据库B.`表名b` SELECT col1, col2, col3 FROM 数据库A.`表名a`;
 ```
 
 

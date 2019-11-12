@@ -183,6 +183,18 @@ bfg  0.000GB
 至此，数据库安装完毕（此安装过程2019年初才补上）。
 
 
+### shell命令行方式连接到mongodb
+连接到单机：
+``` bash
+$ mongo --host 192.168.1.111:27017 --authenticationDatabase user_database -u user_name -p user_password
+```
+
+连接到副本集：
+``` bash
+$ mongo "192.168.1.111:27017,192.168.1.112:27017/user_database?replicaSet=mgset-9527&readPreference=secondaryPreferred" --authenticationDatabase user_database -u user_name -p user_password
+```
+
+
 ### mongodb查询数组大小
 mongodb查询数组大小使用`$size`，例如：我们有一个名为`person`的集合，其中有个字段为`childrenNames`，是数组类型，如果我们要查询`childrenNames`长度为2的数据，则查询语句为：
 
