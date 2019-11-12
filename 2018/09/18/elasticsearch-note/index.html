@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="参考资料：Elasticsearch 权威指南Elasticsearch Referencehttp://es.xiaoleilu.com/080_Structured_Search/20_contains.htmlhttps://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core 首先，你必须">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2019-07-28T01:12:44.797Z">
+<meta property="og:updated_time" content="2019-11-12T09:50:23.971Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="elasticsearch 学习笔记">
 <meta name="twitter:description" content="参考资料：Elasticsearch 权威指南Elasticsearch Referencehttp://es.xiaoleilu.com/080_Structured_Search/20_contains.htmlhttps://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core 首先，你必须">
@@ -99,7 +99,7 @@
       
         <p>参考资料：<br><a href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/index.html" title="Elasticsearch 权威指南" target="_blank" rel="noopener">Elasticsearch 权威指南</a><br><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html" title="Elasticsearch Reference" target="_blank" rel="noopener">Elasticsearch Reference</a><br><a href="http://es.xiaoleilu.com/080_Structured_Search/20_contains.html" target="_blank" rel="noopener">http://es.xiaoleilu.com/080_Structured_Search/20_contains.html</a><br><a href="https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core">https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core</a></p>
 <p>首先，你必须至少有一台<code>elasticsearch</code>服务器可以使用，如果还没安装，可以参考我的上两篇 <a href="../../../../2018/09/16/elasticsearch-install" title="elasticsearch 单节点安装">elasticsearch 单节点安装</a>、<a href="../../../../2018/09/17/elasticsearch-cluster" title="elasticsearch 集群的搭建">elasticsearch 集群的搭建</a></p>
-<p>使用JAVA API来操作<code>elasticsearch</code>的例子可以在这里找到：<a href="https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/util/EsJestUtil.java">EsJestUtil.java</a>、<a href="https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/es/EsJestDemo.java">EsJestDemo.java</a></p>
+<p>使用JAVA API来操作<code>elasticsearch</code>的例子可以在这里找到：<a href="https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/EsJestUtil.java">EsJestUtil.java</a>、<a href="https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/es/EsJestDemo.java">EsJestDemo.java</a></p>
 <h4 id="要单独创建一个索引"><a href="#要单独创建一个索引" class="headerlink" title="要单独创建一个索引"></a>要单独创建一个索引</h4><pre>
 curl -XPUT 'http://localhost:9200/user_index' -H 'Content-Type: application/json' -d '{
     "settings" : {
@@ -143,6 +143,55 @@ curl -XPUT 'http://localhost:9200/user_index/_mapping/user' -H 'Content-Type: ap
             "format": "strict_date_optional_time || epoch_millis || yyyy-MM-dd HH:mm:ss"
        }
    }
+}'
+</pre>
+
+
+<h4 id="修改索引的副本数"><a href="#修改索引的副本数" class="headerlink" title="修改索引的副本数"></a>修改索引的副本数</h4><p>Es在索引数据的时候，如果存在副本，那么主分片会将数据同时同步到副本。所以，如果当前插入大量数据，那么会对es集群造成一定的压力，所以我们最好把副本数设置为0；等数据建立完索引之后，在手动的将副本数更改到2，这样可以提高数据的索引效率。副本数量最好是1-2个。</p>
+<pre>
+curl -XPUT 'http://localhost:9200/user_index/_settings' -H 'Content-Type: application/json' -d '
+{
+    "index" : {
+        "number_of_replicas" : 2
+    }
+}'
+</pre>
+
+
+<h4 id="ES别名"><a href="#ES别名" class="headerlink" title="ES别名"></a>ES别名</h4><p>别名的好处，就是更换索引的时候，系统业务代码无需修改。<br>查询所有别名：</p>
+<pre>
+curl -XGET 'http://localhost:9200/_alias?pretty=true' -H 'Content-Type: application/json'
+</pre>
+
+<p>查询某个索引的别名：</p>
+<pre>
+curl -XGET 'http://localhost:9200/user_index/_alias?pretty=true' -H 'Content-Type: application/json'
+</pre>
+
+<p>添加别名：</p>
+<pre>
+curl -XPOST 'http://localhost:9200/_aliases' -H 'Content-Type: application/json' -d '
+{
+    "actions" : [{"add" : {"index" : "user_index" , "alias" : "user"}}]
+}'
+</pre>
+
+<p>删除别名：</p>
+<pre>
+curl -XPOST 'http://localhost:9200/_aliases' -H 'Content-Type: application/json' -d '
+{
+    "actions" : [{"remove" : {"index" : "user_index" , "alias" : "user"}}]
+}'
+</pre>
+
+<p>修改别名，ES没有修改别名的操作，只能先删除后添加：</p>
+<pre>
+curl -XPOST 'http://localhost:9200/_aliases' -H 'Content-Type: application/json' -d '
+{
+    "actions" : [
+                {"remove" : {"index" : "user_index" , "alias" : "user"}},
+                {"add" : {"index" : "user_index" , "alias" : "user2"}}
+    ]
 }'
 </pre>
 
@@ -594,7 +643,7 @@ GET people/user/_search
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="ck15upmnh000ckp3k4ludrh2p" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="ck2vog8pk000dxh3ka26az3ca" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>

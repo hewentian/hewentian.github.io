@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="安装mongodb数据库首先，我们必须安装mongodb，这样才能使用。我们下载相应版本的mongodb，因为我的笔记本电脑是ubuntu，所以我下载mongodb的tgz版本，下载地址如下： https://www.mongodb.com/download-center/community 下载之后，得到如下两个文件：mongodb-linux-x86_64-ubuntu1804-4.0.6.t">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2019-09-30T03:22:59.899Z">
+<meta property="og:updated_time" content="2019-11-12T09:51:10.607Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mongo 学习笔记">
 <meta name="twitter:description" content="安装mongodb数据库首先，我们必须安装mongodb，这样才能使用。我们下载相应版本的mongodb，因为我的笔记本电脑是ubuntu，所以我下载mongodb的tgz版本，下载地址如下： https://www.mongodb.com/download-center/community 下载之后，得到如下两个文件：mongodb-linux-x86_64-ubuntu1804-4.0.6.t">
@@ -121,6 +121,8 @@
 </ol>
 <p>这样，bfg的用户就只能访问bfg这个库了，登录方式如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/mongo --host 127.0.0.1</span><br><span class="line">MongoDB shell version v4.0.6</span><br><span class="line">connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb</span><br><span class="line">Implicit session: session &#123; <span class="string">"id"</span> : UUID(<span class="string">"873114cf-fb7e-436a-b939-7e765dbecee9"</span>) &#125;</span><br><span class="line">MongoDB server version: 4.0.6</span><br><span class="line">&gt; use bfg</span><br><span class="line">switched to db bfg</span><br><span class="line">&gt; db.auth(<span class="string">"bfg"</span>,<span class="string">"bfg100"</span>)</span><br><span class="line">1</span><br><span class="line">&gt; show dbs</span><br><span class="line">bfg  0.000GB</span><br></pre></td></tr></table></figure></p>
 <p>至此，数据库安装完毕（此安装过程2019年初才补上）。</p>
+<h3 id="shell命令行方式连接到mongodb"><a href="#shell命令行方式连接到mongodb" class="headerlink" title="shell命令行方式连接到mongodb"></a>shell命令行方式连接到mongodb</h3><p>连接到单机：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mongo --host 192.168.1.111:27017 --authenticationDatabase user_database -u user_name -p user_password</span><br></pre></td></tr></table></figure></p>
+<p>连接到副本集：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mongo <span class="string">"192.168.1.111:27017,192.168.1.112:27017/user_database?replicaSet=mgset-9527&amp;readPreference=secondaryPreferred"</span> --authenticationDatabase user_database -u user_name -p user_password</span><br></pre></td></tr></table></figure></p>
 <h3 id="mongodb查询数组大小"><a href="#mongodb查询数组大小" class="headerlink" title="mongodb查询数组大小"></a>mongodb查询数组大小</h3><p>mongodb查询数组大小使用<code>$size</code>，例如：我们有一个名为<code>person</code>的集合，其中有个字段为<code>childrenNames</code>，是数组类型，如果我们要查询<code>childrenNames</code>长度为2的数据，则查询语句为：</p>
 <pre><code>db.getCollection(&apos;person&apos;).find({&apos;childrenNames&apos;:{&apos;$size&apos;:2}})
 </code></pre><p>但是它不能限定数组的大小范围，只能查询指定的长度。要查询数组范围，我们使用<code>$exists</code>，例如：查询数组长度大于等于3的语句如下（检查数组第3个元素是否存了）</p>
@@ -149,7 +151,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="ck15upmo30028kp3km5k5fb8i" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="ck2vog8qc0029xh3kaf6g7ke1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>

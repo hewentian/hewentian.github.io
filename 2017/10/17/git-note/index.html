@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="下面记录一些经常会用到的命令：查看远程分支, 加上 -a 参数可以查看远程分支，远程分支会用红色表示出来（如果你开了颜色支持的话），不加 -a 则查看本地分支：123456$ git branch -a  dev* master  remotes/origin/HEAD -&amp;gt; origin/master  remotes/origin/master  remotes/origin/prod">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2019-09-30T03:22:16.849Z">
+<meta property="og:updated_time" content="2019-11-12T09:50:44.131Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git 学习笔记">
 <meta name="twitter:description" content="下面记录一些经常会用到的命令：查看远程分支, 加上 -a 参数可以查看远程分支，远程分支会用红色表示出来（如果你开了颜色支持的话），不加 -a 则查看本地分支：123456$ git branch -a  dev* master  remotes/origin/HEAD -&amp;gt; origin/master  remotes/origin/master  remotes/origin/prod">
@@ -131,11 +131,18 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
 <p>这样就删除了那些远程仓库不存在的分支</p>
 <h3 id="git-status-显示中文和解决中文乱码"><a href="#git-status-显示中文和解决中文乱码" class="headerlink" title="git status 显示中文和解决中文乱码"></a>git status 显示中文和解决中文乱码</h3><p>在默认设置下，中文文件名在工作区状态输出，中文名不能正确显示，而是显示为八进制的字符编码。<br>解决方案，在bash提示符下输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global core.quotepath <span class="literal">false</span></span><br></pre></td></tr></table></figure></p>
 <p>core.quotepath设为false的话，就不会对0x80以上的字符进行quote，中文显示正常。</p>
+<h3 id="修复生产问题的方法"><a href="#修复生产问题的方法" class="headerlink" title="修复生产问题的方法"></a>修复生产问题的方法</h3><p>在某些情况下，本地可能提交了很多次代码，但此时发现生产有个严重BUG需马上修复，但本地的代码还不能推到生产。此时的解决方法是：</p>
+<ol>
+<li>先找到生产上面最新的<code>commit id</code>，然后在本地以此<code>commit id</code>创建一个新分支；</li>
+<li>在新分支修复，然后将此分支推到生产；</li>
+<li>在生产构建该分支。</li>
+</ol>
+<p>相关操作如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git pull origin master</span><br><span class="line">$ git <span class="built_in">log</span></span><br><span class="line">$ git checkout -b fix20191106 03b361719f93a74bb5a5cdc22fd4f621adc2822a</span><br><span class="line">$ git add &#123;修改过的文件&#125;</span><br><span class="line">$ git commit -m <span class="string">"修改原因说明"</span></span><br><span class="line">$ git push origin fix20191106</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="ck15upmnj000ekp3kfjz4ppbf" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="ck2vog8pm000fxh3kzztx0975" class="article-share-link">Share</a>
       
       
     </footer>
