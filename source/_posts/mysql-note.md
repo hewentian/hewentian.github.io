@@ -4,6 +4,7 @@ date: 2017-12-07 10:26:13
 tags: mysql
 categories: db
 ---
+
 ### mysql 查询重复数据
 ``` sql
 SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c > 1;
@@ -22,19 +23,72 @@ SELECT IFNULL(null, 'expr2') FROM DUAL;		# expr2
 SELECT IFNULL('expr1', 'expr2') FROM DUAL;	# expr1
 ```
 
-### mysql 添加唯一约束
+
+### 索引
+显示索引信息：
+``` sql
+SHOW INDEX FROM tableName;
+```
+
+创建索引，语法一：
+``` sql
+ALTER TABLE tableName ADD INDEX indexName(columnName);
+
+eg: ALTER TABLE t_user ADD INDEX index_name(name);
+```
+
+创建索引，语法二：
+``` sql
+CREATE INDEX indexName ON tableName(columnName(length));
+
+eg: CREATE INDEX index_sex ON t_user(sex);
+```
+如果是CHAR，VARCHAR类型，length可以小于字段实际长度或者省略；如果是BLOB和TEXT类型，必须指定length。
+
+创建索引，语法三：
+创建表的时候直接指定
+``` sql
+CREATE TABLE tableName (
+ID INT NOT NULL,
+columnName VARCHAR(16) NOT NULL,
+INDEX [indexName] (columnName(length))
+);
+```
+
+删除索引：
+``` sql
+DROP INDEX [indexName] ON tableName;
+```
+
+
+### 唯一索引
+创建索引，语法一：
+``` sql
+ALTER TABLE tableName ADD UNIQUE [indexName] (columnName)
+
+eg: ALTER TABLE t_user ADD UNIQUE index_name (name);
+```
+
+创建索引，语法二：
+``` sql
+CREATE UNIQUE INDEX indexName ON tableName(columnName(length))
+
+eg: CREATE UNIQUE INDEX index_name ON t_user(name);
+```
+
+
 表`t_user`结构如下：
 ``` sql
-Field        Type          Collation        Null    Key     Default            Extra           Privileges                       Comment               
+Field        Type          Collation        Null    Key     Default            Extra           Privileges                       Comment
 -----------  ------------  ---------------  ------  ------  -----------------  --------------  -------------------------------  ----------------------
-id           int(11)       (NULL)           NO      PRI     (NULL)             auto_increment  select,insert,update,references  用户ID              
-login_name   varchar(100)  utf8_general_ci  NO              (NULL)                             select,insert,update,references  登录名             
-passwd       varchar(100)  utf8_general_ci  NO              (NULL)                             select,insert,update,references  登录密码          
-nick_name    varchar(100)  utf8_general_ci  YES             (NULL)                             select,insert,update,references  别名                
+id           int(11)       (NULL)           NO      PRI     (NULL)             auto_increment  select,insert,update,references  用户ID
+login_name   varchar(100)  utf8_general_ci  NO              (NULL)                             select,insert,update,references  登录名
+passwd       varchar(100)  utf8_general_ci  NO              (NULL)                             select,insert,update,references  登录密码
+nick_name    varchar(100)  utf8_general_ci  YES             (NULL)                             select,insert,update,references  别名
 gender       tinyint(4)    (NULL)           YES             1                                  select,insert,update,references  性别：1.男；2.女
-phone        varchar(20)   utf8_general_ci  YES             (NULL)                             select,insert,update,references  手机号码          
-address      varchar(255)  utf8_general_ci  YES             (NULL)                             select,insert,update,references  地址                
-create_time  timestamp     (NULL)           YES             CURRENT_TIMESTAMP                  select,insert,update,references  创建时间          
+phone        varchar(20)   utf8_general_ci  YES             (NULL)                             select,insert,update,references  手机号码
+address      varchar(255)  utf8_general_ci  YES             (NULL)                             select,insert,update,references  地址
+create_time  timestamp     (NULL)           YES             CURRENT_TIMESTAMP                  select,insert,update,references  创建时间
 update_time  timestamp     (NULL)           YES             (NULL)                             select,insert,update,references  修改时间
 ```
  
@@ -71,7 +125,21 @@ CREATE TABLE `t_user` (
 ``` sql
 ALTER TABLE t_user DROP INDEX uk_login_name_phone;
 ```
----
+
+
+### LIMIT 语句
+取得某一范围的记录集。如前5条、第5到第10条，数据分页等。LIMIT写在查询语句的最后位置上。
+
+    语法：
+    SELECT * FROM tableName LIMIT 长度;
+    SELECT * FROM tableName LIMIT 起始位置, 长度;
+
+``` sql
+SELECT * FROM t_user WHERE id > 2 LIMIT 5; // 前5条记录
+SELECT * FROM t_user WHERE id > 2 LIMIT 5, 10; // 第5条记录之后的前10条记录
+```
+
+
 ### MySQL中GROUP_CONCAT函数
 参考：http://hchmsguo.iteye.com/blog/555543
 完整的语法如下：
@@ -81,7 +149,7 @@ GROUP_CONCAT([DISTINCT] 要连接的字段 [Order BY ASC/DESC 排序字段] [Sep
 
 1. 基本查询
 ``` sql
-select * from aa;  
+select * from aa;
 
 +------+------+
 | id| name |
@@ -98,7 +166,7 @@ select * from aa;
 
 2. 以id分组，把name字段的值打印在一行，逗号分隔(默认)
 ``` sql
-select id,group_concat(name) from aa group by id;  
+select id,group_concat(name) from aa group by id;
 
 +------+--------------------+
 | id| group_concat(name) |
@@ -112,7 +180,7 @@ select id,group_concat(name) from aa group by id;
 
 3. 以id分组，把name字段的值打印在一行，分号分隔
 ``` sql
-select id,group_concat(name separator ';') from aa group by id;  
+select id,group_concat(name separator ';') from aa group by id;
 
 +------+----------------------------------+
 | id| group_concat(name separator ';') |
@@ -126,7 +194,7 @@ select id,group_concat(name separator ';') from aa group by id;
 
 4. 以id分组，把去冗余的name字段的值打印在一行，逗号分隔
 ``` sql
-select id,group_concat(distinct name) from aa group by id;  
+select id,group_concat(distinct name) from aa group by id;
 
 +------+-----------------------------+
 | id| group_concat(distinct name) |
@@ -140,7 +208,7 @@ select id,group_concat(distinct name) from aa group by id;
 
 5. 以id分组，把name字段的值打印在一行，逗号分隔，以name排倒序
 ``` sql
-select id,group_concat(name order by name desc) from aa group by id;  
+select id,group_concat(name order by name desc) from aa group by id;
 
 +------+---------------------------------------+
 | id| group_concat(name order by name desc) |
@@ -197,6 +265,34 @@ GRANT ALL ON bfg_db.* TO 'bfg_user'@'localhost' IDENTIFIED BY 'iE1zNB?A91*YbQ9hK
 FLUSH PRIVILEGES;
 ```
 
+
+### 数据库基本操作
+删除数据库
+``` sql
+DROP DATABASE databaseName;
+```
+
+显示所有数据库
+``` sql
+SHOW DATABASES;
+```
+
+进入某一个数据库
+``` sql
+USE databaseName;
+```
+
+显示所有表
+``` sql
+SHOW TABLES;
+```
+
+查看指定表的结构
+``` sql
+DESC tableName;
+```
+
+
 ### mysql添加、删除主键
 ``` sql
 添加自增长的主键id
@@ -250,6 +346,26 @@ mysql> SHOW PROCEDURE STATUS;
 | bfg_db | proc_insert_student | PROCEDURE | bfg_user@% | 2019-10-21 17:21:38 | 2019-10-21 17:21:38 | DEFINER       |         | utf8                 | utf8_general_ci      | utf8_general_ci    |
 +--------+---------------------+-----------+------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
 2 rows in set (0.02 sec)
+```
+
+
+### mysql 删除记录
+``` sql
+DELETE FROM t_user;
+DELETE FROM t_user WHERE id > 1;
+```
+
+
+### mysql 仅保留 1000 条记录而删除其他记录
+``` sql
+求取总记录数
+select count(*) from tb_name;
+
+删除部分记录
+delete from tb_name limit 总记录数-1000
+
+例如，比如一个表有 10000 条记录，现想保留 1000 条数据
+delete from tb_name limit 9000
 ```
 
 
@@ -334,7 +450,20 @@ VARCHAR，NVARCHAR，TEXT 不定长，空间小，速度慢，无需处理
 NCHAR、NVARCHAR、NTEXT处理Unicode码
 
 
-### mysql 修改字段长度
+### 复制表
+语法一，会复制完整的表结构（包括索引、主键等），但不包括数据：
+``` sql
+CREATE TABLE tableName_new LIKE tableName_old;
+```
+
+语法二，只会复制简单的表结构（不包括索引、主键等），但可以包括数据（根据FROM后的WHERE条件）：
+``` sql
+CREATE TABLE tableName_new AS SELECT * FROM tableName_old;
+```
+
+
+### mysql 修改字段定义
+下面的关键字`column`是可以省略的：
 ``` sql
 alter table [表名] modify column [字段名] [类型];
 
@@ -349,6 +478,29 @@ alter table [表名] add [列名] [列类型] [其他属性，如默认值];
 
 示例: sys_user表增加一个地址列，长度为200个字符，默认值为null
 alter table sys_user add address varchar(200) default null;
+alter table sys_user add address varchar(200) default null after age;
+
+可以一次增加多个列：
+ALTER TABLE sys_user ADD (
+  sex VARCHAR(2) DEFAULT '男',
+  tel VARCHAR(11)
+);
+
+如果新增加的列有默认值，则SQL执行后，该新增的列会自动获得该值。
+```
+
+
+### mysql 删除列（字段）
+语法： 
+``` sql
+ALTER TABLE tableName DROP columnName;
+```
+
+
+### mysql 删除表
+语法： 
+``` sql
+DROP TABLE tableName;
 ```
 
 
@@ -371,18 +523,6 @@ sql> select * from (select * from user order by birthday desc) t group by t.name
 id	name	birthday
 2	a	2018-01-25 09:30:14
 4	b	2018-01-25 09:30:29
-```
-
-### mysql 仅保留 1000 条记录而删除其他记录
-``` sql
-求取总记录数
-select count(*) from tb_name;
-
-删除部分记录
-delete from tb_name limit 总记录数-1000
-
-例如，比如一个表有 10000 条记录，现想保留 1000 条数据
-delete from tb_name limit 9000
 ```
 
 
@@ -500,6 +640,21 @@ ALTER TABLE table_name RENAME TO new_table_name;
 ```
 
 
+### INSERT INTO插入数据
+如果不指定插入的列名，则VALUES的值必须与表的所有列名一一对应
+``` sql
+CREATE TABLE t_user (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(20),
+  age INT
+);
+
+INSERT INTO t_user (name) VALUES ('Scott');
+INSERT INTO t_user VALUES (null, 'Scott', 20);
+INSERT INTO t_user VALUES (null, 'Scott', 20), (null, 'tiger', 21);
+```
+
+
 ### MYSQL插入数据时忽略重复数据的方法
 使用`IGNORE`关键字，示例：
 ``` mysql
@@ -515,6 +670,7 @@ VALUES( value_list),
 ``` mysql
 INSERT [IGNORE] INTO 数据库B.`表名b` SELECT * FROM 数据库A.`表名a`;
 INSERT [IGNORE] INTO 数据库B.`表名b` SELECT col1, col2, col3 FROM 数据库A.`表名a`;
+INSERT [IGNORE] INTO 数据库B.`表名b`(col1, col2, col3) SELECT col1, col2, col3 FROM 数据库A.`表名a`;
 ```
 
 
@@ -598,10 +754,6 @@ where length( name ) = ( select max( length( name ) ) from my_table );
 CHAR(N)中的N指的是字符，对于多字节字符编码的CHAR数据类型，在InnoDB存储引擎中，会将其视为变长类型。对于未能占满长度的字符，还是填充`0X20`，也即是空格。
 
 在多字节字符集的情况下，CHAR和VARCHAR的实际行存储基本是没有区别的。
-
-
-### NOT NULL约束的说明
-如果我们向NOT NULL的字段插入一下NULL值，MySQL数据库会将其更改为0再进行插入。我们可以通过设置SQL_MODE来严格审核输入参数。
 
 
 ### 强制使用索引
@@ -690,6 +842,14 @@ Warm Backup 温备：也是在数据库运行中进行备份，但是会对当�
 mysqldump不能导出视图。免费好用的开源热备份工具有XtraBackup。
 
 
+
+### 连接到mysql
+``` sql
+mysql -h192.168.1.100 -uscoot -p
+mysql -h192.168.1.100 -uscoot -ptiger
+```
+
+
 ### 不登录MYSQL来执行查询
 可以在操作系统命令行下通过`-e`参数实现，例如查询test库下的表t_user：
 ``` mysql
@@ -710,6 +870,97 @@ mysqldump不能导出视图。免费好用的开源热备份工具有XtraBackup�
     -e, --execute=name  Execute command and quit. (Disables --force and history file.)
 
 
+### 约束
+概述：
+1. 通过约束可以更好的保证数据表里数据的完整性；
+2. 约束是在表上强制执行的数据校验规则，约束主要保证数据的完整性；
+3. 当表中的数据存在相互依赖时，可以通过约束保护相关的数据不被删除。
+
+MYSQL中支持以下五类约束：
+1. NOT NULL：非空约束，指定某列不能为空；
+2. UNIQUE：唯一约束，指定某列或者几列组合不能重复，允许空；
+3. PRIMARY KEY：主键，指定该列的值可以唯一的表示每条记录；
+4. FOREIGN KEY：外键，指定该行记录从属于主表中的一条记录，主要用于保证参照完整性；
+5. CHECK：检查，指定一个布尔表达式，用于指定对应列的值必须满足该表达式。
+
+
+### NOT NULL约束
+如果我们向NOT NULL的字段插入一下NULL值，MySQL数据库会将其更改为0再进行插入。我们可以通过设置SQL_MODE来严格审核输入参数。
+所有数据类型值都可以为null，如：int ,float等。空字符串不等于null,0也不等于null。
+
+
+### UNIQUE约束
+UNIQUE约束用于保证指定列或指定列的组合不允许出现重复，但可以允许出现多个null值。同一张表内可以建多个UNIQUE约束。
+``` sql
+CREATE TABLE t_user (
+  id INT NOT NULL,
+  userName VARCHAR(20) UNIQUE
+);
+
+CREATE TABLE t_user (
+  id INT NOT NULL,
+  userName VARCHAR(20),
+  CONSTRAINT index_uk UNIQUE(id, userName)
+);
+```
+
+
+### PRIMARY KEY约束
+主键约束相当于唯一约束和非空约束，每个表中最多允许一个主键。
+``` sql
+CREATE TABLE t_user (
+  id INT PRIMARY KEY,
+  userName VARCHAR(20)
+);
+
+CREATE TABLE t_user (
+  id INT NOT NULL,
+  userName VARCHAR(20),
+  CONSTRAINT index_pk PRIMARY KEY(id)
+);
+```
+
+
+### FOREIGN KEY约束
+概述：
+1. 外键约束主要用于保证一个或两个数据表之间的参照完整性，外键构建于一个表的两个字段或者两个表的两个字段之间；
+2. 建立外键时mysql也会为该列建立索引；
+3. 子表外键列的值必须在主表被参照列值的范围之内，或者为空；
+4. 为了保证子表参照的主表存在，通常应先建主表；
+5. 使用列级约束语法建立外键约束直接使用`REFERENCES`关键字。指定该列参照的哪个主表，以及参照主表的哪一列。
+
+``` sql
+CREATE TABLE teacher (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(20)
+);
+
+CREATE TABLE student (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(20),
+  teacher_id INT,
+  FOREIGN KEY(teacher_id) REFERENCES teacher(id)
+);
+```
+
+
+### CHECK约束
+CHECK约束在建表的列定义后增加逻辑表达式即可。
+``` sql
+CREATE TABLE t_user (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  userName VARCHAR(20),
+  age INT,
+  CHECK(age > 0)
+);
+```
+
+目前所有MYSQL存储引擎并没有实现CHECK约束，也就是说，上面的建表语句正确，但约束无效。
+https://dev.mysql.com/doc/refman/5.7/en/create-table.html#create-table-indexes-keys
+
+    The CHECK clause is parsed but ignored by all storage engines.
+
+
 ### 对MySQL数据库性能的测试工具
 这里有2款比较好的工具：sysbench和mysql-tpcc
 
@@ -720,3 +971,4 @@ CPU性能
 内存分配及传输速度
 POSIX线程性能
 数据库OLTP基准测试
+
