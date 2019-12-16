@@ -189,6 +189,11 @@ bfg  0.000GB
 $ mongo --host 192.168.1.111:27017 --authenticationDatabase user_database -u user_name -p user_password
 ```
 
+连接到单机中的指定数据库：
+``` bash
+$ mongo "192.168.1.111:27017/user_database" --authenticationDatabase user_database -u user_name -p user_password
+```
+
 连接到副本集：
 ``` bash
 $ mongo "192.168.1.111:27017,192.168.1.112:27017/user_database?replicaSet=mgset-9527&readPreference=secondaryPreferred" --authenticationDatabase user_database -u user_name -p user_password
@@ -467,5 +472,51 @@ db.products.update(
 ```
 
 if you want to update all matched, use `updateMany` instead.
+
+
+### mongo执行一个js脚本文件
+例如有一个js脚本文件，位于`/home/hewentian/Documents/updateMongo.js`，内容如下：
+``` javascript
+/*
+* 处理字段中数据重复的方法：将字符串一分为二，如果前后两部分相同，则更新成其中一部分
+*/
+
+var handleCount = 0;
+var updateCount = 0;
+var totalCount = db.getCollection('userInfo').count({});
+var lastId = ObjectId('000000000000000000000000');
+
+while (handleCount < totalCount) {
+    db.getCollection('userInfo').find({"_id": {"$gt": lastId}}).sort({"_id": 1}).limit(5).forEach((doc) =>{
+        if (++handleCount % 10 == 0 || handleCount == totalCount) {
+            print('handling: ' + handleCount + ' / ' + totalCount + ", updateCount = " + updateCount + (handleCount == totalCount ? " end" : ""));
+        }
+
+        lastId = doc._id;
+
+        var userName = doc.userName;
+
+        if (userName) { // 这个字段必须要存在
+            var len = userName.length;
+
+            if (len % 2 == 0) { // 字符数必须为偶数倍
+                var middleIndex = len / 2;
+                var substrA = userName.substr(0, middleIndex);
+                var substrB = userName.substr(middleIndex);
+
+                if (substrA == substrB) { // 前后两半字符串相同时，才更新
+                    db.getCollection('userInfo').update({"_id": doc._id}, {"$set": {"userName": substrA}})
+                    updateCount++;
+                }
+            }
+        }
+    });
+}
+```
+
+我们这样执行这个脚本：
+``` bash
+$ mongo "192.168.1.111:27017/user_database" --authenticationDatabase user_database -u user_name -p user_password /home/hewentian/Documents/updateMongo.js
+```
 
 
