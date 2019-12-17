@@ -407,6 +407,31 @@ db.getCollection('userInfo').find({"_id":ObjectId("5abc7ffc00a32c2b045e598c")})
 ```
 
 
+### MongoDB的主键类型修改
+**主键类型的修改不能像其他字段一样直接修改**
+
+将String类型的主键修改为ObjectId类型，在Mongodb中String类型对应的int值为2，
+我们先增加一条主键为ObjectId记录，然后删除主键为String的记录。
+``` javascript
+db.getCollection('userInfo').find({"_id": {"$type": 2}}).forEach(function(doc) {
+    doc._id = ObjectId(doc._id);
+    db.getCollection('userInfo').save(doc);
+})
+
+db.getCollection('userInfo').remove({"_id": {"$type": 2}})
+```
+
+反之，将ObjectId类型的主键修改为String类型，在Mongodb中ObjectId类型对应的int值为7。
+``` javascript
+db.getCollection('userInfo').find({"_id": {"$type": 7}}).forEach(function(doc) {
+    doc._id = doc._id.toJSON().$oid;
+    db.getCollection('userInfo').save(doc);
+})
+
+db.getCollection('userInfo').remove({"_id": {"$type": 7}})
+```
+
+
 ### mongodb默认插入类型
 插入的int32整数会默认转为Double类型，若需插入为整数，需指定NumberInt：
 ``` javascript
@@ -489,7 +514,7 @@ var lastId = ObjectId('000000000000000000000000');
 while (handleCount < totalCount) {
     db.getCollection('userInfo').find({"_id": {"$gt": lastId}}).sort({"_id": 1}).limit(5).forEach((doc) =>{
         if (++handleCount % 10 == 0 || handleCount == totalCount) {
-            print('handling: ' + handleCount + ' / ' + totalCount + ", updateCount = " + updateCount + (handleCount == totalCount ? " end" : ""));
+            print('handling: ' + handleCount + ' / ' + totalCount + ", updateCount = " + updateCount + ", lastId = " + lastId.toJSON().$oid + (handleCount == totalCount ? " end" : ""));
         }
 
         lastId = doc._id;
