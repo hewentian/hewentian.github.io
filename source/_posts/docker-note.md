@@ -623,6 +623,45 @@ $ sudo docker run --name nginx-test2 -p 8082:80 -d -v /home/hewentian/Documents/
 http://localhost:8082/
 
 
+### docker安装mysql
+首先拉取镜像
+``` bash
+$ sudo docker search mysql
+$ sudo docker pull mysql:5.6.42
+
+$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+hewentian/ubuntu    v2.1                c6cd98aa1461        4 hours ago         64.2MB
+hewentian/ubuntu    v2                  2bdf86d10fbc        22 hours ago        91MB
+nginx               latest              e445ab08b2be        6 days ago          126MB
+ubuntu              18.04               3556258649b2        6 days ago          64.2MB
+hello-world         latest              fce289e99eb9        7 months ago        1.84kB
+training/webapp     latest              6fae60ef3446        4 years ago         349MB
+mysql               5.6.42              27e29668a08a        12 months ago       256MB
+```
+
+运行容器
+``` bash
+$ sudo docker run -itd --name mysql-hwt -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:5.6.42
+524097ed5349347eabda6537d52e69b92678dff7ef5c2038a644e8e1f7dada6e
+
+$ sudo docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                PORTS                       NAMES
+524097ed5349        mysql:5.6.42        "docker-entrypoint.s…"   3 minutes ago       Up 3 minutes          0.0.0.0:3306->3306/tcp      mysql-hwt
+```
+
+进入mysql，将root用户密码修改，并且禁用root远程登录
+``` bash
+$ sudo docker exec -it mysql-hwt mysql -uroot -p123456
+
+mysql> GRANT ALL ON *.* TO 'root'@'localhost' IDENTIFIED BY 'root';
+mysql> DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+mysql> FLUSH PRIVILEGES;
+```
+
+然后创建一个用于操作mysql的简单用户，参考之前的 [mysql 学习笔记](../../../../2017/12/07/mysql-note/)。
+
+
 ### 进入指定的容器
 若启动容器的时候不是以交互模式，之后又想进入容器，则可以使用如下命令：
 ``` bash
@@ -734,6 +773,12 @@ nginx               latest              e445ab08b2be        7 days ago          
 ubuntu              18.04               3556258649b2        7 days ago          64.2MB
 hello-world         latest              fce289e99eb9        7 months ago        1.84kB
 training/webapp     latest              6fae60ef3446        4 years ago         349MB
+```
+
+或者使用压缩方式导出导入
+``` bash
+$ sudo docker save mysql:5.6.42 | gzip > mysql-5.6.42.tar.gz
+$ sudo docker load < mysql-5.6.42.tar.gz
 ```
 
 **注意：导出镜像的时候，要使用`REPOSITORY:TAG`，而不是`IMAGE ID`，否则在重新导入的时候会没有`REPOSITORY:TAG`，显示为none**

@@ -545,3 +545,38 @@ $ mongo "192.168.1.111:27017/user_database" --authenticationDatabase user_databa
 ```
 
 
+### 使用typeof操作符
+有时候，我们在使用javascript操作Mongodb的过程中，可能要根据数据类型进行相关操作：
+``` javascript
+/*
+* 对集合进行清洗，保证字段 telephone 是字符串格式
+*/
+
+var handleCount = 0;
+var updateCount = 0;
+var totalCount = db.getCollection('userInfo').count({});
+var lastId = "000000000000000000000000";
+
+while (handleCount < totalCount) {
+    db.getCollection('userInfo').find({"_id": {"$gt": lastId}}).sort({"_id": 1}).limit(100).forEach((doc) =>{
+        if (++handleCount % 1000 == 0 || handleCount == totalCount) {
+            print('handling: ' + handleCount + ' / ' + totalCount + ", updateCount = " + updateCount + ", lastId = " + lastId + (handleCount == totalCount ? " end" : ""));
+        }
+
+        lastId = doc._id;
+
+        var telephone = doc.telephone;
+
+        if (telephone && typeof(telephone) == 'object') { // 这个字段必须要存在，并且是内嵌类型文档
+            var fixTelephone = telephone.phoneNumber;
+            if (fixTelephone && typeof(fixTelephone) == 'string') {
+                db.getCollection('userInfo').updateOne({"_id": doc._id}, {"$set": {"telephone": fixTelephone}});
+                updateCount++;
+            }
+        }
+    });
+}
+
+
+```
+

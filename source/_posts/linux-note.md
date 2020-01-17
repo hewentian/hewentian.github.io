@@ -204,6 +204,17 @@ unix  3      [ ]         STREAM     CONNECTED     2887619  22047/chrome --type
 ```
 其中最后一栏是PID/Program name 
 
+其他使用方法
+``` bash
+netstat -ntlp    // 查看当前所有tcp端口
+netstat -ntulp | grep 9012    // 查看所有9012端口使用情况
+
+lsof -i:8020    // 查看8020端口是否开启
+
+telnet localhost <port>    // On the server, try to see if the port is open there
+telnet <server> <port>    // On the client, try to see if the port is accessible remotely
+```
+
 ### ubuntu下安装notepadqq
 安装过程中参考了如下文章：
 https://www.linuxtechi.com/notepadqq-notepad-for-ubuntu-linux/

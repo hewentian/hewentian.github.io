@@ -253,6 +253,13 @@ SET GLOBAL group_concat_max_len=102400;
 如果用AGE， FAMLY_NUM来产生一个MD5值来唯一确定这一条记录，在它们之间一定要加分隔符，否则连接结果都是515
 
 
+### mysql禁用root远程登录
+``` bash
+mysql> DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+mysql> FLUSH PRIVILEGES;
+```
+
+
 ### 创建数据库
 在MYSQL中用`数据库管理员`用户创建了一个db，其他MYSQL用户是暂时看不到的，除非得到`数据库管理员`用户的授权
 ``` sql
