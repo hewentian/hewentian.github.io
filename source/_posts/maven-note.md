@@ -5,6 +5,17 @@ tags: maven
 categories: other
 ---
 
+编译，编译后会生成target目录
+        mvn compile
+
+清理，将编译生成的target目录删掉
+        mvn clean
+
+打包，将编译生成的target目录下的class文件打成jar包
+        mvn package
+
+一般组合使用这些使用，如`mvn clean compile`、`mvn clean package`
+
 在`eclipse`中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8
 
 原因：tools.jar包是JDK的，而tools.jar并未在仓库`maven repository`中
@@ -141,5 +152,12 @@ pom.xml配置如下：
     </plugins>
 </build>
 ```
+
+
+### 创建maven项目
+在IDEA中可以通过`File -> New -> Module`，打开`New Module`对话框，在左则选择Maven，并在右则勾选`Create from archetype`：
+1. 创建jar项目，则选择`org.apache.maven.archetypes:maven-archetype-quickstart`；
+2. 创建web项目，则选择`org.apache.maven.archetypes:maven-archetype-webapp`；
+
 
 

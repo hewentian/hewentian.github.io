@@ -43,13 +43,16 @@ $ vi hive-env.sh
 HADOOP_HOME=/home/hadoop/hadoop-2.7.3
 ```
 
-到这里，hive就配置好了，可以运行了。但，不妨看下下面的`配置hive元数据的存储位置`，因为生产环境可能会这样用。我们这次的安装将不会执行这个步骤。
+到这里，hive就配置好了，可以运行了。但，不妨看下下面的`配置hive元数据的存储位置`，因为生产环境一般是要配置的。
 
-配置hive元数据的存储位置（可选配置）
+### 配置hive元数据的存储位置（可选配置）
 hive默认将元数据存储在`derby`数据库中（hive安装包自带），当然我们也可以选择存储在其他数据库，如mysql中。下面演示一下：
 首先在MYSQL数据库中创建一个数据库，用于存储hive的元数据，我们就将库名创建为hive：
 ``` mysql
-mysql> create database hive; 
+mysql> CREATE DATABASE IF NOT EXISTS hive COLLATE = 'utf8_general_ci' CHARACTER SET = 'utf8';
+mysql> GRANT ALL ON hive.* TO 'hive'@'%' IDENTIFIED BY 'hive';
+mysql> GRANT ALL ON hive.* TO 'hive'@'localhost' IDENTIFIED BY 'hive';
+mysql> FLUSH PRIVILEGES;
 ```
 
 然后配置hive使用mysql存储元数据：
@@ -62,7 +65,7 @@ $ vi hive-site.xml
 ``` xml
 <property>
     <name>javax.jdo.option.ConnectionURL</name>
-    <value>jdbc:mysql://192.168.1.188:3306/hive</value>
+    <value>jdbc:mysql://mysql.hewentian.com:3306/hive</value>
     <description>
       JDBC connect string for a JDBC metastore.
       To use SSL to encrypt/authenticate the connection, provide database-specific SSL flag in the connection URL.
@@ -76,12 +79,12 @@ $ vi hive-site.xml
 </property>
 <property>
     <name>javax.jdo.option.ConnectionUserName</name>
-    <value>root</value>
+    <value>hive</value>
     <description>Username to use against metastore database</description>
 </property>
 <property>
     <name>javax.jdo.option.ConnectionPassword</name>
-    <value>root</value>
+    <value>hive</value>
     <description>password to use against metastore database</description>
 </property>
 ```
@@ -100,6 +103,20 @@ $ ./bin/hdfs dfs -mkdir -p /user/hive/warehouse
 $
 $ ./bin/hdfs dfs -chmod g+w /tmp
 $ ./bin/hdfs dfs -chmod g+w /user/hive/warehouse
+```
+
+初始化元数据存储相关信息，hive默认使用内置的`derby`数据库存储元数据。这里使用`mysql`，如果要使用默认的，则则将下面的`mysql`修改成`derby`即可。
+``` bash
+$ cd /home/hadoop/apache-hive-1.2.2-bin/bin
+$ ./schematool -dbType mysql -initSchema
+
+Metastore connection URL:	 jdbc:mysql://mysql.hewentian.com:3306/hive
+Metastore Connection Driver :	 com.mysql.jdbc.Driver
+Metastore connection User:	 hive
+Starting metastore schema initialization to 1.2.0
+Initialization script hive-schema-1.2.0.mysql.sql
+Initialization script completed
+schemaTool completed
 ```
 
 正式启动hive
@@ -364,13 +381,7 @@ HQL脚本通常有以下几种方式执行：
 2. hive -f "hql.file";
 3. hive jdbc code.
 
-本节主要讲讲如何通过java来操作hive，首先启动HiveServer2，首次启动的时候需执行如下脚本：
-``` bash
-$ cd /home/hadoop/apache-hive-1.2.2-bin/bin
-$ ./schematool -dbType derby -initSchema
-```
-
-启动hiveserver2，hiveserver2命令未来可用于替代hive命令
+本节主要讲讲如何通过java来操作hive，首先启动HiveServer2，hiveserver2命令未来可用于替代hive命令
 ``` bash
 $ cd /home/hadoop/apache-hive-1.2.2-bin/bin
 $ ./hiveserver2
@@ -420,12 +431,25 @@ No rows affected (0.08 seconds)
 
 java代码操作hive的例子在这里：[HiveUtil.java][link_id_HiveUtil]、[HiveDemo.java][link_id_HiveDemo]
 
+
+### 后台方式启动hive
+For versions 1.2 and above, `hive` is deprecated and the `hiveserver2` command should be used directly.
+
+So the correct way to start hiveserver2 in background is now:
+
+        cd /home/hadoop/apache-hive-1.2.2-bin/bin
+        nohup ./hiveserver2 &
+
+Or with output to a log file:
+
+        nohup ./hiveserver2 > hive.log &
+
 未完待续……
 
 [link_id_hive-home]: https://hive.apache.org/
 [link_id_hadoop-cluster-ha]: ../../../../2019/01/01/hadoop-cluster-ha/
 [link_id_hive-1-2-2]: http://archive.apache.org/dist/hive/hive-1.2.2/
 [link_id_mysql-connector-java]: http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.42/mysql-connector-java-5.1.42.jar
-[link_id_HiveUtil]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/HiveUtil.java
-[link_id_HiveDemo]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/hive/HiveDemo.java
+[link_id_HiveUtil]: https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/utils/HiveUtil.java
+[link_id_HiveDemo]: https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/hive/HiveDemo.java
 

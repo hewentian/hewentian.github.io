@@ -892,15 +892,30 @@ $ wc -l
 统计输出信息的行数，因为已经过滤得只剩一般文件了，所以统计结果就是一般文件信息的行数，又由于一行信息对应一个文件，所以也就是文件的个数。
 
 
-### 安装opevpn
+### 安装openvpn
 ``` bash
 首先安装openvpn
 $ sudo apt install openvpn
 
 然后启动，其中~/Downloads/hewentian是你的公司下发的你自已的登录帐号相关的文件
-$ sudo openvpn ~/Downloads/hewentian/hewentian.ovpn 
+$ sudo openvpn --config ~/Downloads/hewentian/hewentian.ovpn
 ```
 这样，你在家里也可以连回公司的网络
+
+如果要求帐号密码，又不想每次都输入，则可以建立一个文件，用于存放用户名和密码。第一行存放用户名，第二行存放密码。
+``` bash
+$ cd ~/Downloads/hewentian/
+$ touch auth-user-pass-File
+$ vi auth-user-pass-File
+
+userName
+password
+```
+
+这样连接的命令为
+``` bash
+$ sudo openvpn --config ~/Downloads/hewentian/hewentian.ovpn --auth-user-pass ~/Downloads/hewentian/auth-user-pass-File
+```
 
 
 ### linux 查询 CPU 信息
