@@ -9,7 +9,7 @@ categories: bigdata
 
 但是，如果你想在生产环境中使用，那么搭建一个集群可能更适合你。下面将说说kafka集群的安装使用，kafka同样是使用前面例子使用的`2.0.0`版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。
 
-首先，你得搭建 zookeeper 集群，因为高版本的kafka中内置了zookeeper组件，所以我们直接使用kafka中内置的zookeeper组件搭建zookeeper集群。但是，你也可以使用zookeeper独立的安装包来搭建zookeeper集群。两者的搭建方法都是一样的，可以参考 [zookeeper集群版安装方法][link_id_zookeeper-install-cluster]
+首先，你得搭建 zookeeper 集群，因为高版本的kafka中内置了zookeeper组件，所以我们直接使用kafka中内置的zookeeper组件搭建zookeeper集群。但是，你也可以使用zookeeper独立的安装包来搭建zookeeper集群。两者的搭建方法都是一样的，可以参考 [zookeeper集群版安装方法][link_id_zookeeper-cluster]
 
 ### 计划在一台`Ubuntu Linux`服务器上部署3台`kafka`服务器，分别为`kafka1`, `kafka2`, `kafka3`
 因为三台`kafka`服务器的配置都差不多，所以我们先设置好一台`kafka1`的配置，再将其复制成`kafka2`, `kafka3`并修改其中的配置即可。
@@ -315,4 +315,4 @@ Tim Ho
 
 
 [link_id_kafka-standalone]: ../../../../2018/10/24/kafka-standalone/
-[link_id_zookeeper-install-cluster]: ../../../../2017/12/06/zookeeper-install-cluster/
+[link_id_zookeeper-cluster]: ../../../../2017/12/06/zookeeper-cluster/

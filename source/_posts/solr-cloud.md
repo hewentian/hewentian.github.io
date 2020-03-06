@@ -7,7 +7,7 @@ categories: bigdata
 solr 集群，即 solrcloud 的创建
 下面说说solr集群的安装使用，同样是使用前面例子使用的 solr6.5.0 版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。
 
-首先，你得搭建 zookeeper 集群，可以参考 [zookeeper集群版安装方法][zookeeper-install-cluster]
+首先，你得搭建 zookeeper 集群，可以参考 [zookeeper集群版安装方法][zookeeper-cluster]
 
 ### 下面开始创建solr集群：
 创建一个目录用于存放集群使用到的所有实例和配置信息
@@ -32,7 +32,7 @@ $ pwd
 
 $ cp -r solr1/server/solr/configsets/data_driven_schema_configs/conf/ solr-configs/mysqlCore/
 ```
-将mysql-connector-java-5.1.25.jar放到`solr1/server/lib/ext`目录下面，并将上一个例子，[solr的安装使用][solr-install]的那三个文件: solrconfig.xml、db-data-config.xml、managed-schema复制到`solr-configs/mysqlCore/`下，override存在的。
+将mysql-connector-java-5.1.25.jar放到`solr1/server/lib/ext`目录下面，并将上一个例子，[solr的安装使用][solr-standalone]的那三个文件: solrconfig.xml、db-data-config.xml、managed-schema复制到`solr-configs/mysqlCore/`下，override存在的。
 
 接下来还有2个文件需要修改：
 修改文件一：solr.in.sh
@@ -263,5 +263,5 @@ CloudSolrClient cloudSolrClient = new CloudSolrClient.Builder()
 
 未完，待续……
 
-[zookeeper-install-cluster]: ../../../../2017/12/06/zookeeper-install-cluster/
-[solr-install]: ../../../../2017/10/28/solr-install/
+[zookeeper-cluster]: ../../../../2017/12/06/zookeeper-cluster/
+[solr-standalone]: ../../../../2017/10/28/solr-standalone/

@@ -12,7 +12,7 @@ http://es.xiaoleilu.com/080_Structured_Search/20_contains.html
 https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core
 
 
-首先，你必须至少有一台`elasticsearch`服务器可以使用，如果还没安装，可以参考我的上两篇 [elasticsearch 单节点安装][link_id_elasticsearch-install]、[elasticsearch 集群的搭建][link_id_elasticsearch-cluster]
+首先，你必须至少有一台`elasticsearch`服务器可以使用，如果还没安装，可以参考我的上两篇 [elasticsearch 单节点安装][link_id_elasticsearch-standalone]、[elasticsearch 集群的搭建][link_id_elasticsearch-cluster]
 
 使用JAVA API来操作`elasticsearch`的例子可以在这里找到：[EsJestUtil.java][link_id_EsJestUtil]、[EsJestDemo.java][link_id_EsJestDemo]
 
@@ -240,7 +240,7 @@ ES有很多插件，我们可以选择安装一些，例如，以安装head插�
 https://github.com/mobz/elasticsearch-head
 
 
-这里以在线安装为例，我之前在介绍[elasticsearch 单节点安装][link_id_elasticsearch-install]中使用的是本地安装，推荐使用本地安装。旧版本安装过程如下：
+这里以在线安装为例，我之前在介绍[elasticsearch 单节点安装][link_id_elasticsearch-standalone]中使用的是本地安装，推荐使用本地安装。旧版本安装过程如下：
 进入ES的HOME目录，执行plugin命令，如下，
 
 	cd ${ES_HOME}/bin
@@ -655,8 +655,8 @@ epoch      timestamp count
 
 未完待续……
 
-[link_id_elasticsearch-install]: ../../../../2018/09/16/elasticsearch-install "elasticsearch 单节点安装"
+[link_id_elasticsearch-standalone]: ../../../../2018/09/16/elasticsearch-standalone "elasticsearch 单节点安装"
 [link_id_elasticsearch-cluster]: ../../../../2018/09/17/elasticsearch-cluster "elasticsearch 集群的搭建"
-[link_id_EsJestUtil]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/EsJestUtil.java
-[link_id_EsJestDemo]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/es/EsJestDemo.java
+[link_id_EsJestUtil]: https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/utils/EsJestUtil.java
+[link_id_EsJestDemo]: https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/es/EsJestDemo.java
 

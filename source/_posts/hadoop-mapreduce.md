@@ -7,7 +7,7 @@ categories: bigdata
 
 关于hadoop集群的搭建，请参考我的上一篇 [hadoop 集群的搭建][link_id_hadoop-cluster]，这里将说说如何写一个简单的统计单词个数的`mapReduce`示例程序，并部署在`YARN`上面运行。
 
-代码托管在：https://github.com/hewentian/hadoop-demo
+代码托管在：https://github.com/hewentian/bigdata
 
 下面详细说明。
 

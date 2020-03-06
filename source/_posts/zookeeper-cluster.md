@@ -198,5 +198,6 @@ zookeeper有4种节点类型：
 
 通过java api使用zookeeper的例子可以参见这里： [ZookeeperUtil.java][link_id_ZookeeperUtil]、[zookeeper实现分布式锁、rmi高可用][link_id_zookeeper]
 
-[link_id_ZookeeperUtil]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/ZookeeperUtil.java
-[link_id_zookeeper]: https://github.com/hewentian/hadoop-demo/tree/master/src/main/java/com/hewentian/hadoop/zookeeper
+[link_id_ZookeeperUtil]: https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/utils/ZookeeperUtil.java
+[link_id_zookeeper]: https://github.com/hewentian/bigdata/tree/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/zookeeper
+

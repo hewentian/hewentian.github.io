@@ -5,7 +5,7 @@ tags: elasticsearch
 categories: bigdata
 ---
 
-下面说说elasticsearch集群的搭建，同样是使用前面例子[elasticsearch 单节点安装](../../../../2018/09/16/elasticsearch-install "elasticsearch 安装")使用的`elasticsearch-6.4.0.tar.gz`版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。
+下面说说elasticsearch集群的搭建，同样是使用前面例子[elasticsearch 单节点安装](../../../../2018/09/16/elasticsearch-standalone "elasticsearch 安装")使用的`elasticsearch-6.4.0.tar.gz`版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。
 
 ### 下面开始搭建elasticsearch集群
 创建一个目录用于存放集群使用到的所有实例信息

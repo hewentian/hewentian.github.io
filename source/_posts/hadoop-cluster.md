@@ -68,7 +68,7 @@ $ sudo apt-get install ssh openssh-server rsync
 $ sudo apt-get update
 ```
 
-JDK的安装请参考我之前的笔记：[安装 JDK][link_id_install-jdk]，这里不再赘述。安装到此目录`/usr/local/jdk1.8.0_102/`下，记住此路径，下面会用到。下在进行hadoop的安装。
+JDK的安装请参考我之前的笔记：[安装 JDK][link_id_jdk-install]，这里不再赘述。安装到此目录`/usr/local/jdk1.8.0_102/`下，记住此路径，下面会用到。下在进行hadoop的安装。
 
 ``` bash
 $ cd /home/hadoop/
@@ -438,5 +438,5 @@ $ ./bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar pi
 
 至此， 集群搭建完毕。
 
-[link_id_install-jdk]: ../../../../2017/12/08/install-jdk/
+[link_id_jdk-install]: ../../../../2017/12/08/jdk-install/
 [link_id_hadoop-2-7-3]: http://archive.apache.org/dist/hadoop/core/hadoop-2.7.3/

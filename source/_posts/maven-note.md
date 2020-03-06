@@ -5,6 +5,74 @@ tags: maven
 categories: other
 ---
 
+maven的学习有个好网站：https://howtodoinjava.com/maven/
+
+### Maven Dependency Scopes
+Maven dependency scope attribute is used to specify the visibility of a dependency, relative to the different lifecycle phases (build, test, runtime etc). Maven provides six scopes i.e. compile, provided, runtime, test, system, and import.
+1. Compile Scope
+2. Provided Scope
+3. Runtime Scope
+4. Test Scope
+5. System Scope
+6. Import Scope
+
+详情：https://howtodoinjava.com/maven/maven-dependency-scopes/
+
+
+### External Dependency
+Some times, you will have to refer jar files which are not in maven repository (neither local, central or remote repository). You can use these jars by placing them in project’s lib folder and configure the external dependency like this:
+``` xml
+<dependency>
+    <groupId>extDependency</groupId>
+    <artifactId>extDependency</artifactId>
+    <scope>system</scope>
+    <version>1.0</version>
+    <systemPath>${basedir}\war\WEB-INF\lib\extDependency.jar</systemPath>
+</dependency>
+```
+* The groupId and artifactId are both set to the name of the dependency.
+* The scope element value is set to system.
+* The systemPath element refer to the location of the JAR file.
+
+
+### Maven Dependency Tree
+Using maven’s dependency:tree command, you can view list of all dependencies into your project – transitively. Transitive dependency means that if A depends on B and B depends on C, then A depends on both B and C.
+
+Transitivity brings a very serious problem when different versions of the same artifacts are included by different dependencies. It may cause version mismatch issue in runtime. In this case, dependency:tree command is be very useful in dealing with conflicts of JARs.
+
+        $ mvn dependency:tree
+
+
+### Maven Dependency Exclusion
+Apart from version mismatch issue caused with transitive dependency, there can be version mismatch between project artifacts and artifacts from the platform of deployment, such as Tomcat or another server.
+
+To resolve such version mismatch issues, maven provides <exclusion> tag, in order to break the transitive dependency.
+
+For example, when you have JUnit 4.12 in classpath and including DBUnit dependency, then you will need to remove JUnit 3.8.2 dependency. It can be done with exclusion tag.
+``` xml
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>${junit.version}</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.dbunit</groupId>
+    <artifactId>dbunit</artifactId>
+    <version>${dbunit.version}</version>
+    <scope>test</scope>
+    <exclusions>
+        <!--Exclude transitive dependency to JUnit-3.8.2 -->
+        <exclusion>
+            <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
+         </exclusion>
+    </exclusions>
+</dependency>
+```
+
+
+### maven常用命令
 编译，编译后会生成target目录
         mvn compile
 
@@ -65,7 +133,7 @@ categories: other
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-shade-plugin</artifactId>
-    <version>1.4</version>
+    <version>3.2.2</version>
     <executions>
         <execution>
             <phase>package</phase>
@@ -105,10 +173,9 @@ categories: other
 
 2. `-Dmaven.test.skip=true`： 不编译测试用例类，也不执行测试用例；
 
-
 打包的时候跳过单元测试：
 
-    mvn package -Dmaven.test.skip=true
+        mvn package -Dmaven.test.skip=true
 
 
 ### maven打包并指定main方法
@@ -127,9 +194,9 @@ pom.xml配置如下：
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
-            <version>1.4</version>
+            <version>3.2.2</version>
             <configuration>
-                <createDependencyReducedPom>true</createDependencyReducedPom>
+                <createDependencyReducedPom>false</createDependencyReducedPom>
             </configuration>
             <executions>
                 <execution>
@@ -159,5 +226,41 @@ pom.xml配置如下：
 1. 创建jar项目，则选择`org.apache.maven.archetypes:maven-archetype-quickstart`；
 2. 创建web项目，则选择`org.apache.maven.archetypes:maven-archetype-webapp`；
 
+
+### maven-shade-plugin插件
+此插件的主要功能：
+1. 将依赖的jar包打包到当前jar包中，常规打包是不会将所依赖jar包打进来的；
+2. 指定jar包的默认运行方法：https://maven.apache.org/plugins/maven-shade-plugin/examples/executable-jar.html；
+3. 为jar包选择指定的内容：https://maven.apache.org/plugins/maven-shade-plugin/examples/includes-excludes.html
+
+详细介绍详见：http://maven.apache.org/plugins/maven-shade-plugin/plugin-info.html
+``` xml
+<project>
+  ...
+  <build>
+    <!-- To define the plugin version in your parent POM -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.2.2</version>
+        </plugin>
+        ...
+      </plugins>
+    </pluginManagement>
+    <!-- To use the plugin goals in your POM or parent POM -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.2</version>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>
+```
 
 

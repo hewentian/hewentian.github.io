@@ -12,7 +12,7 @@ categories: other
 
 在 markdown 中插入 `<br />`，只需在行尾添加 2 个空格，然后回车，即可
 
-要使 markdown 中的#，`>` 等，显示原义，只要在它们前置 4 个空格即可
+要使 markdown 中的    #，    >等，显示原义，只要在它们前置 4 个空格即可
 
 ### 1. 标题
 标题有1-6级，使用下面这种方式产生：
@@ -27,8 +27,7 @@ categories: other
 
 ------
 ### 2. blockquote
-blockquote 以 `>` 开头，一段当中每一行的开头都加上，你也可以偷懒，只在段落的第一行加上，并且它可以 nested 其他  
-markdown 标记，
+blockquote 以 `>` 开头，一段当中每一行的开头都加上，你也可以偷懒，只在段落的第一行加上，并且它可以 nested 其他 markdown 标记，
     > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
     > consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
     > Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
@@ -152,7 +151,7 @@ This is [an example](http://example.com/ "Title") inline link.
 
 If you’re referring to a local resource on the same server, you can use relative paths:
 
-    See my [About](/about/) page for details.   
+    See my [About](/about/) page for details.
 **Example as below:**
 See my [About](/about/) page for details.
 
@@ -186,7 +185,7 @@ In china, you can't use [Google][], hahaha...
 
 ------
 ### 7. EMPHASIS
-Markdown treats asterisks (*) and underscores (_) as indicators of emphasis. Text wrapped with one * or _ will be wrapped with an HTML <em> tag; double *’s or _’s will be wrapped with an HTML <strong> tag. E.g., this input:
+Markdown treats asterisks (\*) and underscores (\_) as indicators of emphasis. Text wrapped with one \* or \_ will be wrapped with an HTML`<em>`tag; double *’s or _’s will be wrapped with an HTML` <strong>`tag. E.g., this input:
 
     *single asterisks*
     _single underscores_
@@ -242,17 +241,18 @@ Other code format:
 
 **Example as below:**
 ``` java
-	public static void main(String[] args) {
-		System.out.println("hello world.");
-	}
+    public static void main(String[] args) {
+        System.out.println("hello world.");
+    }
 ```
-	
+
 ------
 ### 9. IMAGES
 Inline image syntax looks like this:
 
     ![Alt text](/path/to/img.jpg)
     ![Alt text](/path/to/img.jpg "Optional title")
+
 **Example as below:**
 ![Alt text](http://www.apache.org/img/asf_logo.png "Optional title")
 
@@ -281,31 +281,33 @@ Markdown allows you to use backslash escapes to generate literal characters whic
     \*literal asterisks\*
 Markdown provides backslash escapes for the following characters:
 
-    \   backslash
-    `   backtick
-    *   asterisk
-    _   underscore
-    {}  curly braces
-    []  square brackets
-    ()  parentheses
-    #   hash mark
-    +   plus sign
-    -   minus sign (hyphen)
-    .   dot
-    !   exclamation mark
+        \   backslash
+        `   backtick
+        *   asterisk
+        _   underscore
+        {}  curly braces
+        []  square brackets
+        ()  parentheses
+        #   hash mark
+        +   plus sign
+        -   minus sign (hyphen)
+        .   dot
+        !   exclamation mark
 
 
 创建表格语法如下：
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+
+        | Tables        | Are           | Cool  |
+        | ------------- |:-------------:| -----:|
+        | col 3 is      | right-aligned | $1600 |
+        | col 2 is      | centered      |   $12 |
+        | zebra stripes | are neat      |    $1 |
 
 Markdown 生成表格时，可以给一整列的单元格设置同样的对齐样式
-| 第一列 	| 第二列	| 第三列	|
-| -------:	| :------:	| :-------	|
-| 右对齐	| 居中		| 左对齐	|
+
+        | 第一列   | 第二列   | 第三列  |
+        | ------:  | :------: | :------ |
+        | 右对齐   | 居中     | 左对齐  |
 
 markdown 中特殊字符的显示方式：
 
@@ -321,3 +323,4 @@ markdown 中特殊字符的显示方式：
 | 2<sup>16</sup>	| `2<sup>16</sup>`	|
 
 end.
+

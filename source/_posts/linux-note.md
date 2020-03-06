@@ -1278,6 +1278,11 @@ $ ll mydata*
 -rw-r--r-- 1 hewentian hewentian 20893 Aug  5 15:28 mydata.txt
 ```
 
+将文件拆分成指定数目的小文件，使用`-n`参数
+``` bash
+$ split -n 5 mydata.txt -d -a 3 mydata_
+```
+
 
 ### linux合并文件
 可以使用`cat`命令从文件中读入两个文件，然后将其重定向到一个新的文件。

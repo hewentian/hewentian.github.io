@@ -83,7 +83,7 @@ $ sudo apt-get install ssh openssh-server rsync
 $ sudo apt-get update
 ```
 
-JDK的安装请参考我之前的笔记：[安装 JDK][link_id_install-jdk]，这里不再赘述。安装到此目录`/usr/local/jdk1.8.0_102/`下，记住此路径，下面会用到。下在进行hadoop的安装。
+JDK的安装请参考我之前的笔记：[安装 JDK][link_id_jdk-install]，这里不再赘述。安装到此目录`/usr/local/jdk1.8.0_102/`下，记住此路径，下面会用到。下在进行hadoop的安装。
 
 ``` bash
 $ cd /home/hadoop/
@@ -305,7 +305,7 @@ hadoop-host-slave-3
 当执行`start-dfs.sh`时，它会去slaves文件中找从节点。
 
 ### 安装zookeeper
-我们在master、slave1和slave2上面安装zookeeper集群，安装过程可以参考：[zookeeper 集群版安装方法][link_id_zookeeper-install-cluster]，这里不再赘述。
+我们在master、slave1和slave2上面安装zookeeper集群，安装过程可以参考：[zookeeper 集群版安装方法][link_id_zookeeper-cluster]，这里不再赘述。
 
 至此，集群配置完成，下面将启动集群。
 
@@ -512,5 +512,5 @@ $ ./bin/hdfs haadmin -transitionToActive --forcemanual nn1
 
 
 [link_id_hadoop-cluster]: ../../../../2018/12/04/hadoop-cluster/
-[link_id_install-jdk]: ../../../../2017/12/08/install-jdk/
-[link_id_zookeeper-install-cluster]: ../../../../2017/12/06/zookeeper-install-cluster/
+[link_id_jdk-install]: ../../../../2017/12/08/jdk-install/
+[link_id_zookeeper-cluster]: ../../../../2017/12/06/zookeeper-cluster/

@@ -46,10 +46,10 @@ Tomcat Manager是Tomcat自带的、用于对Tomcat自身以及部署在Tomcat上
 
 2、进入当前目录下的：context.xml 文件，并作如下修改（其实这一步，可以省略的）
 ``` xml
-<?xml version="1.0" encoding="UTF-8"?>  
-    <WatchedResource>WEB-INF/web.xml</WatchedResource>  
-    <Manager pathname="/manager" debug="0"  privileged="true" docBase="${TOMCAT_HOME}/webapps/manager" />      
-    <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" />    
+<?xml version="1.0" encoding="UTF-8"?>
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+    <Manager pathname="/manager" debug="0"  privileged="true" docBase="${TOMCAT_HOME}/webapps/manager" />
+    <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" />
 </Context> 
 ```
 
@@ -63,7 +63,7 @@ Tomcat Manager是Tomcat自带的、用于对Tomcat自身以及部署在Tomcat上
 ``` xml
 <Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">
 	<!-- path留空代表访问域名后面不需要带项目的名称 -->
-	<Context path="" docBase="/home/hewentian/ProjectD/brandSearch" reloadable="true" />  
+	<Context path="" docBase="/home/hewentian/ProjectD/brandSearch" reloadable="true" />
 </Host>
 
 说明：
@@ -83,4 +83,11 @@ docBase: 代表项目的绝对路径，也可以使用相对路径
 </Host>
 ```
 这样当你在浏览器中访问`http://localhost:8080/img/{指定图片名}`的时候就会访问到`/home/hewentian/Pictures`目录下面的图片
+
+
+### 上线注意事项
+今天下午准备上线，折腾了很久，不过，终于成功上线，期间发现了很多问题。所谓好记性，不如烂笔头，故记之。有时候，系统上线，如果发现还是旧的页面，可能会是缓存，这时候，要检查下下面的地方：
+1. 你浏览器的缓存是否已经清掉了；
+2. Tomcat 的缓存是否清掉了`${TOMCAT_HOME}/work`这个目录，放的就是 Tomcat 的缓存；
+3. 如果 IP + PORT 访问，没问题的话，有可能是 CDN 缓存了，这时候也要刷下 CDN；
 

@@ -353,5 +353,6 @@ java操作Hbase的例子见这里：[HbaseUtil.java][link_id_HbaseUtil]、[Hbase
 [link_id_hbase-home]: http://hbase.apache.org/book.html
 [link_id_hadoop-cluster-ha]: ../../../../2019/01/01/hadoop-cluster-ha/
 [link_id_hbase-1-2-6]: http://archive.apache.org/dist/hbase/1.2.6/
-[link_id_HbaseUtil]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/HbaseUtil.java
-[link_id_HbaseDemo]: https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/hbase/HbaseDemo.java
+[link_id_HbaseUtil]: https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/utils/HbaseUtil.java
+[link_id_HbaseDemo]: https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/hbase/HbaseDemo.java
+

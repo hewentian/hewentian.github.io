@@ -4,7 +4,7 @@ date: 2018-09-12 08:54:32
 tags: redis
 categories: bigdata
 ---
-首先，你必须有一台`redis`服务器可以使用，如果还没安装，可以参考我的上一篇 [redis 的安装使用][redis-install]
+首先，你必须有一台`redis`服务器可以使用，如果还没安装，可以参考我的上一篇 [redis 的安装使用][redis-standalone]
 
 使用JAVA API来操作Redis的例子可以在这里找到：[RedisUtil.java][link_id_RedisUtil]、[RedisDemo.java][link_id_RedisDemo]
 
@@ -215,6 +215,6 @@ $ ./redis-cli -h 127.0.0.1 --raw
 ```
 
 
-[redis-install]: ../../../../2018/08/07/redis-install/
+[redis-standalone]: ../../../../2018/08/07/redis-standalone/
 [link_id_RedisDemo]: https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/redis/RedisDemo.java
 [link_id_RedisUtil]: https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/util/RedisUtil.java

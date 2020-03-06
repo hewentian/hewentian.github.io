@@ -5,7 +5,7 @@ tags: redis
 categories: bigdata
 ---
 
-要配置主从，我们必须安装两台`redis`：主服务器为`master`，从服务器为`slave`。安装步骤请参考我的上一篇 [redis 的安装使用][redis-install]
+要配置主从，我们必须安装两台`redis`：主服务器为`master`，从服务器为`slave`。安装步骤请参考我的上一篇 [redis 的安装使用][redis-standalone]
 
 ### 我们在一台机器上面配置主从，多台的配置是一样的，只要修改下`IP`和`PORT`即可。以我们上一篇安装好的一台`redis`为基础，它的安装路径为：`/home/hewentian/ProjectD/redis-4.0.11`
 ``` bash
@@ -102,4 +102,4 @@ $ ./redis-cli -p 6380
 至此，主从配置完成。
 
 
-[redis-install]: ../../../../2018/08/07/redis-install/
+[redis-standalone]: ../../../../2018/08/07/redis-standalone/

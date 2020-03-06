@@ -14,8 +14,8 @@ categories: bigdata
 
 
 我们将使用`redis`作为上图中的`INPUTS`，而`elasticsearch`作为上图中的`OUTPUTS`，这也是`logstash`官方的推荐。而它们的安装可以参考以下例子：
-`redis`的安装请参考：[redis 的安装使用][link_id_redis-install]
-`elasticsearch`的安装请参考：[elasticsearch 单节点安装][link_id_elasticsearch-install]
+`redis`的安装请参考：[redis 的安装使用][link_id_redis-standalone]
+`elasticsearch`的安装请参考：[elasticsearch 单节点安装][link_id_elasticsearch-standalone]
 
 ** 注意：elasticsearch、logstash、kibana它们的版本最好保持一致，这里都是使用6.4.0版本。 **
 
@@ -249,7 +249,7 @@ https://www.elastic.co/guide/en/logstash/current/plugins-filters-grok.html
 
 未完，待续……
 
-[link_id_redis-install]: ../../../../2018/08/07/redis-install/
-[link_id_elasticsearch-install]: ../../../../2018/09/16/elasticsearch-install/
+[link_id_redis-standalone]: ../../../../2018/08/07/redis-standalone/
+[link_id_elasticsearch-standalone]: ../../../../2018/09/16/elasticsearch-standalone/
 [link_id_logstash-6.4.0.tar.gz]: https://artifacts.elastic.co/downloads/logstash/logstash-6.4.0.tar.gz
 [link_id_kibana-6.4.0-linux-x86_64.tar.gz]: https://artifacts.elastic.co/downloads/kibana/kibana-6.4.0-linux-x86_64.tar.gz
