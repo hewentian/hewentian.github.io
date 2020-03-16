@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>spark 学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="standalone模式为便于学习spark，这里安装standalone模式，在下面三台机器搭建一个简单的集群。我们将slave3作为spark的master节点，而slave1、slave2作为从节点。 slave1:     ip: 192.168.56.111     hostname: hadoop-host-slave-1 slave2:     ip: 192.168.56.112">
+<meta name="keywords" content="spark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spark 学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2020/01/14/spark-note/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="standalone模式为便于学习spark，这里安装standalone模式，在下面三台机器搭建一个简单的集群。我们将slave3作为spark的master节点，而slave1、slave2作为从节点。 slave1:     ip: 192.168.56.111     hostname: hadoop-host-slave-1 slave2:     ip: 192.168.56.112">
+<meta property="og:locale" content="en-US">
+<meta property="og:updated_time" content="2020-03-16T01:55:41.625Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="spark 学习笔记">
+<meta name="twitter:description" content="standalone模式为便于学习spark，这里安装standalone模式，在下面三台机器搭建一个简单的集群。我们将slave3作为spark的master节点，而slave1、slave2作为从节点。 slave1:     ip: 192.168.56.111     hostname: hadoop-host-slave-1 slave2:     ip: 192.168.56.112">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-spark-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/01/14/spark-note/" class="article-date">
+  <time datetime="2020-01-14T11:57:24.000Z" itemprop="datePublished">2020-01-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      spark 学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="standalone模式"><a href="#standalone模式" class="headerlink" title="standalone模式"></a>standalone模式</h3><p>为便于学习spark，这里安装standalone模式，在下面三台机器搭建一个简单的集群。我们将slave3作为spark的master节点，而slave1、slave2作为从节点。</p>
+<pre><code>slave1:
+    ip: 192.168.56.111
+    hostname: hadoop-host-slave-1
+slave2:
+    ip: 192.168.56.112
+    hostname: hadoop-host-slave-2
+slave3:
+    ip: 192.168.56.113
+    hostname: hadoop-host-slave-3
+</code></pre><p>安装过程参考官方文档：<br><a href="http://spark.apache.org/docs/latest/spark-standalone.html" target="_blank" rel="noopener">http://spark.apache.org/docs/latest/spark-standalone.html</a></p>
+<p>目前spark的稳定版本为2.4.4，可以在下面的地址找到然后下载。<br><a href="http://spark.apache.org/downloads.html" target="_blank" rel="noopener">http://spark.apache.org/downloads.html</a><br><a href="https://www.apache.org/dyn/closer.lua/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz" target="_blank" rel="noopener">https://www.apache.org/dyn/closer.lua/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz</a></p>
+<p>在slave3中启动spark作为master<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tar xf spark-2.4.4-bin-hadoop2.7.tgz</span><br><span class="line">$ <span class="built_in">cd</span> spark-2.4.4-bin-hadoop2.7/</span><br><span class="line">$ ./sbin/start-master.sh</span><br></pre></td></tr></table></figure></p>
+<p>启动后，在启动日志中可以看到部分输出，如下：</p>
+<pre><code>20/01/14 16:54:24 INFO Master: Starting Spark master at spark://hadoop-host-slave-3:7077
+20/01/14 16:54:24 INFO Master: Running Spark version 2.4.4
+20/01/14 16:54:25 INFO Utils: Successfully started service &apos;MasterUI&apos; on port 8080.
+20/01/14 16:54:25 INFO MasterWebUI: Bound MasterWebUI to 0.0.0.0, and started at http://hadoop-host-slave-3:8080
+20/01/14 16:54:25 INFO Master: I have been elected leader! New state: ALIVE
+</code></pre><p>接着分别在slave1、slave2中启动spark作为从节点<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tar xf spark-2.4.4-bin-hadoop2.7.tgz</span><br><span class="line">$ <span class="built_in">cd</span> spark-2.4.4-bin-hadoop2.7/</span><br><span class="line">$ ./sbin/start-slave.sh spark://hadoop-host-slave-3:7077</span><br></pre></td></tr></table></figure></p>
+<p>在浏览器中可以通过访问如下地址，看到整个集群的情况<br><a href="http://hadoop-host-slave-3:8080/" target="_blank" rel="noopener">http://hadoop-host-slave-3:8080/</a></p>
+<p>可以通过交互式命令连接到集群</p>
+<pre><code>./bin/spark-shell --master spark://IP:PORT
+</code></pre><p>也可以将程序打包成jar包，然后在主节点上面提交给集群，如下</p>
+<pre><code>./bin/spark-submit --class com.hewentian.spark.SparkPi --master spark://hadoop-host-slave-3:7077 /home/hadoop/spark-1.0-SNAPSHOT.jar
+</code></pre><p>我们可以通过配置，在一台机器一键启动所有节点的spark进程。分别在三个节点执行如下操作：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> spark-2.4.4-bin-hadoop2.7/conf</span><br><span class="line">$ cp slaves.template slaves</span><br><span class="line">$ vi slaves</span><br><span class="line"></span><br><span class="line">去掉文件中原来的localhost配置，并加入下面两行</span><br><span class="line">hadoop-host-slave-1</span><br><span class="line">hadoop-host-slave-2</span><br></pre></td></tr></table></figure></p>
+<p>这样在slave3节点上就可以通过如下命令，一次将master、slave进程启动<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> spark-2.4.4-bin-hadoop2.7/</span><br><span class="line">$ ./sbin/start-all.sh</span><br></pre></td></tr></table></figure></p>
+<h3 id="读取mysql数据"><a href="#读取mysql数据" class="headerlink" title="读取mysql数据"></a>读取mysql数据</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/spark-2.4.4-bin-hadoop2.7/</span><br><span class="line">$ ./bin/spark-shell --jars /home/hadoop/spark-2.4.4-bin-hadoop2.7/jars/mysql-connector-java-5.1.25.jar</span><br><span class="line"></span><br><span class="line">scala&gt; val sqlContext = spark.sqlContext</span><br><span class="line">scala&gt; val df = sqlContext.read.format(<span class="string">"jdbc"</span>).option(<span class="string">"url"</span>, <span class="string">"jdbc:mysql://mysql.hewentian.com:3306/bfg_db?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull"</span>).option(<span class="string">"driver"</span>, <span class="string">"com.mysql.jdbc.Driver"</span>).option(<span class="string">"user"</span>, <span class="string">"bfg_db"</span>).option(<span class="string">"password"</span>, <span class="string">"iE1zNB?A91*YbQ9hK"</span>).option(<span class="string">"dbtable"</span>, <span class="string">"student"</span>).load()</span><br></pre></td></tr></table></figure>
+<h3 id="yarn模式"><a href="#yarn模式" class="headerlink" title="yarn模式"></a>yarn模式</h3><p>Spark支持将作业提交到yarn上运行，此时不需要启动master节点，也不需要启动worker节点。</p>
+<p>同样需在slaves文件下配置worker节点的机器，像standalone模式那样。</p>
+<p>只需在spark中指定hadoop的配置文件目录即可，在所有spark节点中执行如下操作：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> spark-2.4.4-bin-hadoop2.7/conf</span><br><span class="line">$ cp spark-env.sh.template spark-env.sh</span><br><span class="line">$ vi spark-env.sh</span><br><span class="line"></span><br><span class="line">配置这行即可</span><br><span class="line">HADOOP_CONF_DIR=/home/hadoop/hadoop-2.7.3/etc/hadoop</span><br></pre></td></tr></table></figure></p>
+<p>要保证hdfs和yarn已经启动。</p>
+<p>以交互方式连接到yarn模式的spark<br>        ./bin/spark-shell –master yarn –deploy-mode client</p>
+<p>也可以将程序打包成jar包，然后在主节点上面提交给集群，如下<br>        ./bin/spark-submit –class path.to.your.Class –master yarn –deploy-mode cluster [options] <app jar=""> [app options]</app></p>
+<p>例如：<br>        ./bin/spark-submit \<br>        –class org.apache.spark.examples.SparkPi \<br>        –master yarn \<br>        –deploy-mode cluster \<br>        –driver-memory 4g \<br>        –executor-memory 2g \<br>        –executor-cores 1 \<br>        –queue thequeue \<br>        examples/jars/spark-examples*.jar \<br>        10</p>
+<p>如果还想将此yarn模式配置成基于zookeeper的高可用，如将主机<code>hadoop-host-slave-2</code>配置成备用的master。则需如下配置：<br>分别在所有spark节点中执行如下操作<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> spark-2.4.4-bin-hadoop2.7/conf</span><br><span class="line">$ vi spark-env.sh</span><br><span class="line"></span><br><span class="line">配置zookeeper地址</span><br><span class="line">SPARK_DAEMON_JAVA_OPTS=<span class="string">"-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url=hadoop-host-master:2181,hadoop-host-slave-1:2181,hadoop-host-slave-2:2181 -Dspark.deploy.zookeeper.dir=/spark"</span></span><br></pre></td></tr></table></figure></p>
+<p>启动顺序：</p>
+<ol>
+<li>启动的zookeeper集群；</li>
+<li>启动的hdfs和yarn；</li>
+<li>在主节点<code>hadoop-host-slave-3</code>执行如下脚本，启动所有服务<code>./sbin/start-all.sh</code>；</li>
+<li>在节点<code>hadoop-host-slave-2</code>执行如下脚本，启动它作为备份主节点<code>./sbin/start-master.sh</code>。</li>
+</ol>
+<p>通过浏览器，观看集群状态：<br><a href="http://hadoop-host-slave-2:8080/" target="_blank" rel="noopener">http://hadoop-host-slave-2:8080/</a><br><a href="http://hadoop-host-slave-3:8080/" target="_blank" rel="noopener">http://hadoop-host-slave-3:8080/</a></p>
+<p>未完待续……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2020/01/14/spark-note/" data-id="ck7ttggrp0039cq3kja8peghm" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spark/">spark</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/12/30/scala-note/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Ancien</strong>
+      <div class="article-nav-title">scala 学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Catégories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Articles récents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/01/14/spark-note/">spark 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/30/scala-note/">scala 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/26/docker-note/">docker 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/06/10/nginx-note/">nginx 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Tim Ho<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> -->
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

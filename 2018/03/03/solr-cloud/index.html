@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="solr 集群，即 solrcloud 的创建下面说说solr集群的安装使用，同样是使用前面例子使用的 solr6.5.0 版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。 首先，你得搭建 zookeeper 集群，可以参考 zookeeper集群版安装方法 下面开始创建solr集群：创建一个目录用于存放集群使用到的所有实例和配置信息123$">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2018-10-24T12:52:17.000Z">
+<meta property="og:updated_time" content="2020-03-16T01:55:41.625Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="solr 集群的创建">
 <meta name="twitter:description" content="solr 集群，即 solrcloud 的创建下面说说solr集群的安装使用，同样是使用前面例子使用的 solr6.5.0 版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。 首先，你得搭建 zookeeper 集群，可以参考 zookeeper集群版安装方法 下面开始创建solr集群：创建一个目录用于存放集群使用到的所有实例和配置信息123$">
@@ -62,7 +62,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -98,11 +98,11 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>solr 集群，即 solrcloud 的创建<br>下面说说solr集群的安装使用，同样是使用前面例子使用的 solr6.5.0 版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。</p>
-<p>首先，你得搭建 zookeeper 集群，可以参考 <a href="../../../../2017/12/06/zookeeper-install-cluster/">zookeeper集群版安装方法</a></p>
+<p>首先，你得搭建 zookeeper 集群，可以参考 <a href="../../../../2017/12/06/zookeeper-cluster/">zookeeper集群版安装方法</a></p>
 <h3 id="下面开始创建solr集群："><a href="#下面开始创建solr集群：" class="headerlink" title="下面开始创建solr集群："></a>下面开始创建solr集群：</h3><p>创建一个目录用于存放集群使用到的所有实例和配置信息<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mkdir solrCloud		<span class="comment"># 存放集群的所有文件，包括：三个solr实例、和实例共享的配置文件solr-configs</span></span><br><span class="line">$ mkdir solrCloud/solr-configs	<span class="comment"># 用于存放集群的core的配置信息，会被上传到zookeeper</span></span><br></pre></td></tr></table></figure></p>
 <p>将一个SOLR压缩包放到这个目录，我之前已在Downloads目录下载好了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cp /home/hewentian/Downloads/solr-6.5.0.tgz ./</span><br><span class="line">$ tar xzvf solr-6.5.0.tgz</span><br><span class="line">$ mv solr-6.5.0 solr1	<span class="comment"># 为方便起见，这里将其重命名为solr1，先将solr1配置好，后面会将其复制为solr2, solr3</span></span><br><span class="line"></span><br><span class="line">$ ls</span><br><span class="line">solr1  solr-6.5.0.tgz  solr-configs</span><br></pre></td></tr></table></figure></p>
 <p>我们仍然使用之前的例子，演示使用DIH方式将数据导入到SOLR，只不过，这次是集群的方式，所以需要将<code>data_driven_schema_configs/conf</code>的配置信息复制到<code>solr-configs</code>中，并将其命名为<code>mysqlCore</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/home/hewentian/ProjectD/solrCloud</span><br><span class="line"></span><br><span class="line">$ cp -r solr1/server/solr/configsets/data_driven_schema_configs/conf/ solr-configs/mysqlCore/</span><br></pre></td></tr></table></figure></p>
-<p>将mysql-connector-java-5.1.25.jar放到<code>solr1/server/lib/ext</code>目录下面，并将上一个例子，<a href="../../../../2017/10/28/solr-install/">solr的安装使用</a>的那三个文件: solrconfig.xml、db-data-config.xml、managed-schema复制到<code>solr-configs/mysqlCore/</code>下，override存在的。</p>
+<p>将mysql-connector-java-5.1.25.jar放到<code>solr1/server/lib/ext</code>目录下面，并将上一个例子，<a href="../../../../2017/10/28/solr-standalone/">solr的安装使用</a>的那三个文件: solrconfig.xml、db-data-config.xml、managed-schema复制到<code>solr-configs/mysqlCore/</code>下，override存在的。</p>
 <p>接下来还有2个文件需要修改：<br>修改文件一：solr.in.sh<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ vi solr1/bin/solr.in.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改以下内容即可</span></span><br><span class="line">ZK_HOST=<span class="string">"127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183"</span></span><br><span class="line">ZK_CLIENT_TIMEOUT=<span class="string">"15000"</span></span><br><span class="line">SOLR_PORT=8983</span><br></pre></td></tr></table></figure></p>
 <p>修改文件二：solr.xml<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ vi solr1/server/solr/solr.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改下面的内容即可</span></span><br><span class="line">&lt;str name=<span class="string">"host"</span>&gt;<span class="variable">$&#123;host:127.0.0.1&#125;</span>&lt;/str&gt;   	<span class="comment"># 当修改为真集群的时候，只修改这个IP地址即可</span></span><br><span class="line">&lt;int name=<span class="string">"hostPort"</span>&gt;<span class="variable">$&#123;jetty.port:8983&#125;</span>&lt;/int&gt;	<span class="comment"># 这里端口为 8983</span></span><br></pre></td></tr></table></figure></p>
 <p>这样一个实例就配置好了，将其复制为solr2, solr3<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cp -r solr1 solr2</span><br><span class="line">$ cp -r solr1 solr3</span><br></pre></td></tr></table></figure></p>
@@ -141,7 +141,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="ck2vog8qm002zxh3kcae8auiv" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/03/03/solr-cloud/" data-id="ck7ttggrk002tcq3k1dpq9m6j" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/solr/">solr</a></li></ul>
@@ -153,7 +153,7 @@
 <nav id="article-nav">
   
     <a href="/2018/03/07/mongo-note/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">Récent</strong>
       <div class="article-nav-title">
         
           mongo 学习笔记
@@ -163,7 +163,7 @@
   
   
     <a href="/2018/02/17/neo4j-note/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">Ancien</strong>
       <div class="article-nav-title">neo4j学习笔记</div>
     </a>
   
@@ -178,9 +178,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -190,7 +190,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -198,9 +198,17 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/01/14/spark-note/">spark 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/30/scala-note/">scala 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/07/26/docker-note/">docker 学习笔记</a>
@@ -212,14 +220,6 @@
         
           <li>
             <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
           </li>
         
       </ul>
@@ -244,8 +244,8 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      &copy; 2020 Tim Ho<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

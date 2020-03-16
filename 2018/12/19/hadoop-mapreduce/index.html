@@ -5,21 +5,21 @@
   
   <title>hadoop mapreduce示例 | Tim Ho&#39;s Technology Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="关于hadoop集群的搭建，请参考我的上一篇 hadoop 集群的搭建，这里将说说如何写一个简单的统计单词个数的mapReduce示例程序，并部署在YARN上面运行。 代码托管在：https://github.com/hewentian/hadoop-demo 下面详细说明。 第一步：将要统计单词个数的文件放到HDFS中例如我们将hadoop安装目录下的README.txt文件放到HDFS中的/目">
+  <meta name="description" content="关于hadoop集群的搭建，请参考我的上一篇 hadoop 集群的搭建，这里将说说如何写一个简单的统计单词个数的mapReduce示例程序，并部署在YARN上面运行。 代码托管在：https://github.com/hewentian/bigdata 下面详细说明。 第一步：将要统计单词个数的文件放到HDFS中例如我们将hadoop安装目录下的README.txt文件放到HDFS中的/目录下，在">
 <meta name="keywords" content="hadoop">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hadoop mapreduce示例">
 <meta property="og:url" content="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/index.html">
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
-<meta property="og:description" content="关于hadoop集群的搭建，请参考我的上一篇 hadoop 集群的搭建，这里将说说如何写一个简单的统计单词个数的mapReduce示例程序，并部署在YARN上面运行。 代码托管在：https://github.com/hewentian/hadoop-demo 下面详细说明。 第一步：将要统计单词个数的文件放到HDFS中例如我们将hadoop安装目录下的README.txt文件放到HDFS中的/目">
+<meta property="og:description" content="关于hadoop集群的搭建，请参考我的上一篇 hadoop 集群的搭建，这里将说说如何写一个简单的统计单词个数的mapReduce示例程序，并部署在YARN上面运行。 代码托管在：https://github.com/hewentian/bigdata 下面详细说明。 第一步：将要统计单词个数的文件放到HDFS中例如我们将hadoop安装目录下的README.txt文件放到HDFS中的/目录下，在">
 <meta property="og:locale" content="en-US">
 <meta property="og:image" content="https://github.com/img/hadoop-mapreduce-1.png">
 <meta property="og:image" content="https://github.com/img/hadoop-mapreduce-2.png">
 <meta property="og:image" content="https://github.com/img/hadoop-mapreduce-3.png">
-<meta property="og:updated_time" content="2018-12-19T13:34:06.191Z">
+<meta property="og:updated_time" content="2020-03-16T01:55:41.613Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hadoop mapreduce示例">
-<meta name="twitter:description" content="关于hadoop集群的搭建，请参考我的上一篇 hadoop 集群的搭建，这里将说说如何写一个简单的统计单词个数的mapReduce示例程序，并部署在YARN上面运行。 代码托管在：https://github.com/hewentian/hadoop-demo 下面详细说明。 第一步：将要统计单词个数的文件放到HDFS中例如我们将hadoop安装目录下的README.txt文件放到HDFS中的/目">
+<meta name="twitter:description" content="关于hadoop集群的搭建，请参考我的上一篇 hadoop 集群的搭建，这里将说说如何写一个简单的统计单词个数的mapReduce示例程序，并部署在YARN上面运行。 代码托管在：https://github.com/hewentian/bigdata 下面详细说明。 第一步：将要统计单词个数的文件放到HDFS中例如我们将hadoop安装目录下的README.txt文件放到HDFS中的/目录下，在">
 <meta name="twitter:image" content="https://github.com/img/hadoop-mapreduce-1.png">
   
   
@@ -66,7 +66,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -102,7 +102,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>关于hadoop集群的搭建，请参考我的上一篇 <a href="../../../../2018/12/04/hadoop-cluster/">hadoop 集群的搭建</a>，这里将说说如何写一个简单的统计单词个数的<code>mapReduce</code>示例程序，并部署在<code>YARN</code>上面运行。</p>
-<p>代码托管在：<a href="https://github.com/hewentian/hadoop-demo">https://github.com/hewentian/hadoop-demo</a></p>
+<p>代码托管在：<a href="https://github.com/hewentian/bigdata">https://github.com/hewentian/bigdata</a></p>
 <p>下面详细说明。</p>
 <h3 id="第一步：将要统计单词个数的文件放到HDFS中"><a href="#第一步：将要统计单词个数的文件放到HDFS中" class="headerlink" title="第一步：将要统计单词个数的文件放到HDFS中"></a>第一步：将要统计单词个数的文件放到HDFS中</h3><p>例如我们将hadoop安装目录下的<code>README.txt</code>文件放到HDFS中的<code>/</code>目录下，在<code>master</code>节点上面执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hadoop/hadoop-2.7.3/</span><br><span class="line">$ ./bin/hdfs dfs -put /home/hadoop/hadoop-2.7.3/README.txt /</span><br></pre></td></tr></table></figure></p>
 <p><code>README.txt</code>文件的内容如下：</p>
@@ -157,7 +157,7 @@ by mortbay.org.
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="ck2vog8pr000vxh3k6nu2py0e" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/12/19/hadoop-mapreduce/" data-id="ck7ttggqx000scq3kcecqwxt0" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
@@ -169,7 +169,7 @@ by mortbay.org.
 <nav id="article-nav">
   
     <a href="/2019/01/01/hadoop-cluster-ha/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">Récent</strong>
       <div class="article-nav-title">
         
           hadoop 集群的搭建HA
@@ -179,7 +179,7 @@ by mortbay.org.
   
   
     <a href="/2018/12/04/hadoop-cluster/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">Ancien</strong>
       <div class="article-nav-title">hadoop 集群的搭建</div>
     </a>
   
@@ -194,9 +194,9 @@ by mortbay.org.
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -206,7 +206,7 @@ by mortbay.org.
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -214,9 +214,17 @@ by mortbay.org.
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/01/14/spark-note/">spark 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/30/scala-note/">scala 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/07/26/docker-note/">docker 学习笔记</a>
@@ -228,14 +236,6 @@ by mortbay.org.
         
           <li>
             <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
           </li>
         
       </ul>
@@ -260,8 +260,8 @@ by mortbay.org.
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      &copy; 2020 Tim Ho<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

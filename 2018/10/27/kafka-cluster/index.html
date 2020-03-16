@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="本篇将说说kafka集群的搭建，如果你只是想简单体验一下kafka，可以直接使用我在上一篇介绍的 kafka 单节点安装 即可。 但是，如果你想在生产环境中使用，那么搭建一个集群可能更适合你。下面将说说kafka集群的安装使用，kafka同样是使用前面例子使用的2.0.0版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。 首先，你得搭建 zook">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2018-10-27T09:46:35.000Z">
+<meta property="og:updated_time" content="2020-03-16T01:55:41.617Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kafka 集群的搭建">
 <meta name="twitter:description" content="本篇将说说kafka集群的搭建，如果你只是想简单体验一下kafka，可以直接使用我在上一篇介绍的 kafka 单节点安装 即可。 但是，如果你想在生产环境中使用，那么搭建一个集群可能更适合你。下面将说说kafka集群的安装使用，kafka同样是使用前面例子使用的2.0.0版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。 首先，你得搭建 zook">
@@ -62,7 +62,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -99,7 +99,7 @@
       
         <p>本篇将说说kafka集群的搭建，如果你只是想简单体验一下kafka，可以直接使用我在上一篇介绍的 <a href="../../../../2018/10/24/kafka-standalone/">kafka 单节点安装</a> 即可。</p>
 <p>但是，如果你想在生产环境中使用，那么搭建一个集群可能更适合你。下面将说说kafka集群的安装使用，kafka同样是使用前面例子使用的<code>2.0.0</code>版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。</p>
-<p>首先，你得搭建 zookeeper 集群，因为高版本的kafka中内置了zookeeper组件，所以我们直接使用kafka中内置的zookeeper组件搭建zookeeper集群。但是，你也可以使用zookeeper独立的安装包来搭建zookeeper集群。两者的搭建方法都是一样的，可以参考 <a href="../../../../2017/12/06/zookeeper-install-cluster/">zookeeper集群版安装方法</a></p>
+<p>首先，你得搭建 zookeeper 集群，因为高版本的kafka中内置了zookeeper组件，所以我们直接使用kafka中内置的zookeeper组件搭建zookeeper集群。但是，你也可以使用zookeeper独立的安装包来搭建zookeeper集群。两者的搭建方法都是一样的，可以参考 <a href="../../../../2017/12/06/zookeeper-cluster/">zookeeper集群版安装方法</a></p>
 <h3 id="计划在一台Ubuntu-Linux服务器上部署3台kafka服务器，分别为kafka1-kafka2-kafka3"><a href="#计划在一台Ubuntu-Linux服务器上部署3台kafka服务器，分别为kafka1-kafka2-kafka3" class="headerlink" title="计划在一台Ubuntu Linux服务器上部署3台kafka服务器，分别为kafka1, kafka2, kafka3"></a>计划在一台<code>Ubuntu Linux</code>服务器上部署3台<code>kafka</code>服务器，分别为<code>kafka1</code>, <code>kafka2</code>, <code>kafka3</code></h3><p>因为三台<code>kafka</code>服务器的配置都差不多，所以我们先设置好一台<code>kafka1</code>的配置，再将其复制成<code>kafka2</code>, <code>kafka3</code>并修改其中的配置即可。</p>
 <p>下面使用kafka内置的zookeeper组件搭建zookeeper集群，我们将kafka的所有服务器都放在同一个目录下：</p>
 <h3 id="1-建目录，如下："><a href="#1-建目录，如下：" class="headerlink" title="1.建目录，如下："></a>1.建目录，如下：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mkdir kafkaCluster</span><br></pre></td></tr></table></figure>
@@ -171,7 +171,7 @@ clientPort=2183                                               # 这台服务器�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="ck2vog8q4001qxh3kakandxjd" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="ck7ttggr7001mcq3kdx8lrspq" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
@@ -183,7 +183,7 @@ clientPort=2183                                               # 这台服务器�
 <nav id="article-nav">
   
     <a href="/2018/11/12/kafka-intro/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">Récent</strong>
       <div class="article-nav-title">
         
           kafka 介绍
@@ -193,7 +193,7 @@ clientPort=2183                                               # 这台服务器�
   
   
     <a href="/2018/10/24/kafka-standalone/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">Ancien</strong>
       <div class="article-nav-title">kafka 单节点安装</div>
     </a>
   
@@ -208,9 +208,9 @@ clientPort=2183                                               # 这台服务器�
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -220,7 +220,7 @@ clientPort=2183                                               # 这台服务器�
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -228,9 +228,17 @@ clientPort=2183                                               # 这台服务器�
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/01/14/spark-note/">spark 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/30/scala-note/">scala 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/07/26/docker-note/">docker 学习笔记</a>
@@ -242,14 +250,6 @@ clientPort=2183                                               # 这台服务器�
         
           <li>
             <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
           </li>
         
       </ul>
@@ -274,8 +274,8 @@ clientPort=2183                                               # 这台服务器�
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      &copy; 2020 Tim Ho<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

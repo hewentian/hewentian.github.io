@@ -60,7 +60,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -71,9 +71,190 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-jenkins-install" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-kafka-cluster" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/10/05/jenkins-install/" class="article-date">
+    <a href="/2018/10/27/kafka-cluster/" class="article-date">
+  <time datetime="2018-10-27T05:11:43.000Z" itemprop="datePublished">2018-10-27</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/27/kafka-cluster/">kafka 集群的搭建</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇将说说kafka集群的搭建，如果你只是想简单体验一下kafka，可以直接使用我在上一篇介绍的 <a href="../../../../2018/10/24/kafka-standalone/">kafka 单节点安装</a> 即可。</p>
+<p>但是，如果你想在生产环境中使用，那么搭建一个集群可能更适合你。下面将说说kafka集群的安装使用，kafka同样是使用前面例子使用的<code>2.0.0</code>版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。</p>
+<p>首先，你得搭建 zookeeper 集群，因为高版本的kafka中内置了zookeeper组件，所以我们直接使用kafka中内置的zookeeper组件搭建zookeeper集群。但是，你也可以使用zookeeper独立的安装包来搭建zookeeper集群。两者的搭建方法都是一样的，可以参考 <a href="../../../../2017/12/06/zookeeper-cluster/">zookeeper集群版安装方法</a></p>
+<h3 id="计划在一台Ubuntu-Linux服务器上部署3台kafka服务器，分别为kafka1-kafka2-kafka3"><a href="#计划在一台Ubuntu-Linux服务器上部署3台kafka服务器，分别为kafka1-kafka2-kafka3" class="headerlink" title="计划在一台Ubuntu Linux服务器上部署3台kafka服务器，分别为kafka1, kafka2, kafka3"></a>计划在一台<code>Ubuntu Linux</code>服务器上部署3台<code>kafka</code>服务器，分别为<code>kafka1</code>, <code>kafka2</code>, <code>kafka3</code></h3><p>因为三台<code>kafka</code>服务器的配置都差不多，所以我们先设置好一台<code>kafka1</code>的配置，再将其复制成<code>kafka2</code>, <code>kafka3</code>并修改其中的配置即可。</p>
+<p>下面使用kafka内置的zookeeper组件搭建zookeeper集群，我们将kafka的所有服务器都放在同一个目录下：</p>
+<h3 id="1-建目录，如下："><a href="#1-建目录，如下：" class="headerlink" title="1.建目录，如下："></a>1.建目录，如下：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mkdir kafkaCluster</span><br></pre></td></tr></table></figure>
+<h3 id="2-将kafka-2-12-2-0-0-tgz放到-home-hewentian-ProjectD-kafkaCluster目录下，并执行如下脚本解压"><a href="#2-将kafka-2-12-2-0-0-tgz放到-home-hewentian-ProjectD-kafkaCluster目录下，并执行如下脚本解压" class="headerlink" title="2.将kafka_2.12-2.0.0.tgz放到/home/hewentian/ProjectD/kafkaCluster目录下，并执行如下脚本解压"></a>2.将<code>kafka_2.12-2.0.0.tgz</code>放到<code>/home/hewentian/ProjectD/kafkaCluster</code>目录下，并执行如下脚本解压</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster</span><br><span class="line">$ tar xzvf kafka_2.12-2.0.0.tgz</span><br><span class="line"></span><br><span class="line">$ ls</span><br><span class="line">kafka_2.12-2.0.0  kafka_2.12-2.0.0.tgz</span><br><span class="line"></span><br><span class="line">$ rm kafka_2.12-2.0.0.tgz</span><br><span class="line">$ mv kafka_2.12-2.0.0/ kafka1  <span class="comment"># 为方便起见，将其命名为 kafka1</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cd</span> kafka1/</span><br><span class="line">$ mkdir -p data/zk     <span class="comment"># 存放zookeeper数据的目录</span></span><br><span class="line">$ mkdir -p data/kafka  <span class="comment"># 存放kafka数据的目录</span></span><br><span class="line">$ mkdir logs           <span class="comment"># 新解压的 kafka 没有此目录，需手动创建。因为重定向的日志logs/zookeeper.log需要此目录</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-修改-home-hewentian-ProjectD-kafkaCluster-kafka1-config-zookeeper-properties并在其中修改如下内容："><a href="#3-修改-home-hewentian-ProjectD-kafkaCluster-kafka1-config-zookeeper-properties并在其中修改如下内容：" class="headerlink" title="3.修改/home/hewentian/ProjectD/kafkaCluster/kafka1/config/zookeeper.properties并在其中修改如下内容："></a>3.修改<code>/home/hewentian/ProjectD/kafkaCluster/kafka1/config/zookeeper.properties</code>并在其中修改如下内容：</h3><pre><code>tickTime=2000
+initLimit=10
+syncLimit=5
+dataDir=/home/hewentian/ProjectD/kafkaCluster/kafka1/data/zk  # 这里必须为绝对路径，否则有可能无法启动
+clientPort=2181                                               # 这台服务器的端口为2181这里为默认值
+server.1=127.0.0.1:2888:3888
+server.2=127.0.0.1:2889:3889
+server.3=127.0.0.1:2890:3890
+</code></pre><h3 id="4-在-home-hewentian-ProjectD-kafkaCluster-kafka1-data-zk目录下建myid文件并在其中输入1，只输入1，代表server-1"><a href="#4-在-home-hewentian-ProjectD-kafkaCluster-kafka1-data-zk目录下建myid文件并在其中输入1，只输入1，代表server-1" class="headerlink" title="4.在/home/hewentian/ProjectD/kafkaCluster/kafka1/data/zk目录下建myid文件并在其中输入1，只输入1，代表server.1"></a>4.在<code>/home/hewentian/ProjectD/kafkaCluster/kafka1/data/zk</code>目录下建<code>myid</code>文件并在其中输入1，只输入1，代表server.1</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1/data/zk</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure>
+<p>这样第一台服务器已经配置完毕。</p>
+<h3 id="5-接下来我们将kafka1复制为kafka2-kafka3"><a href="#5-接下来我们将kafka1复制为kafka2-kafka3" class="headerlink" title="5.接下来我们将kafka1复制为kafka2, kafka3"></a>5.接下来我们将<code>kafka1</code>复制为<code>kafka2</code>, <code>kafka3</code></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster</span><br><span class="line">$ cp -r kafka1 kafka2</span><br><span class="line">$ cp -r kafka1 kafka3</span><br></pre></td></tr></table></figure>
+<h3 id="6-将kafka2-data-zk目录下的myid的内容修改为2"><a href="#6-将kafka2-data-zk目录下的myid的内容修改为2" class="headerlink" title="6.将kafka2/data/zk目录下的myid的内容修改为2"></a>6.将<code>kafka2/data/zk</code>目录下的<code>myid</code>的内容修改为2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2/data/zk</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure>
+<p>同理，将将<code>kafka3/data/zk</code>目录下的<code>myid</code>的内容修改为3<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3/data/zk</span><br><span class="line">$ vi myid</span><br></pre></td></tr></table></figure></p>
+<h3 id="7-修改kafka2的配置文件"><a href="#7-修改kafka2的配置文件" class="headerlink" title="7.修改kafka2的配置文件"></a>7.修改<code>kafka2</code>的配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2/config</span><br><span class="line">$ vi zookeeper.properties</span><br></pre></td></tr></table></figure>
+<p>仅修改两处地方即可，要修改的地方如下：</p>
+<pre><code>dataDir=/home/hewentian/ProjectD/kafkaCluster/kafka2/data/zk  # 这里是数据保存的位置
+clientPort=2182                                               # 这台服务器的端口为2182
+</code></pre><p>同理，修改<code>kafka3</code>的配置文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3/config</span><br><span class="line">$ vi zookeeper.properties</span><br></pre></td></tr></table></figure></p>
+<p>仅修改两处地方即可，要修改的地方如下：</p>
+<pre><code>dataDir=/home/hewentian/ProjectD/kafkaCluster/kafka3/data/zk  # 这里是数据保存的位置
+clientPort=2183                                               # 这台服务器的端口为2183
+</code></pre><h3 id="8-到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动"><a href="#8-到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动" class="headerlink" title="8.到目前为此，我们已经将3台zookeeper服务器都配置好了。接下来，我们要将他们都启动"></a>8.到目前为此，我们已经将3台<code>zookeeper</code>服务器都配置好了。接下来，我们要将他们都启动</h3><p>启动kafka1的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ nohup ./bin/zookeeper-server-start.sh config/zookeeper.properties &gt; logs/zookeeper.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure></p>
+<p>启动kafka2的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ mkdir logs</span><br><span class="line">$ nohup ./bin/zookeeper-server-start.sh config/zookeeper.properties &gt; logs/zookeeper.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure></p>
+<p>启动kafka3的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ mkdir logs</span><br><span class="line">$ nohup ./bin/zookeeper-server-start.sh config/zookeeper.properties &gt; logs/zookeeper.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure></p>
+<h3 id="9-当三台服务器都启动好了，我们分别连到三台zookeeper服务器："><a href="#9-当三台服务器都启动好了，我们分别连到三台zookeeper服务器：" class="headerlink" title="9.当三台服务器都启动好了，我们分别连到三台zookeeper服务器："></a>9.当三台服务器都启动好了，我们分别连到三台zookeeper服务器：</h3><p>连接到kafka1的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ ./bin/zookeeper-shell.sh 127.0.0.1:2181</span><br></pre></td></tr></table></figure></p>
+<p>连接到kafka2的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ ./bin/zookeeper-shell.sh 127.0.0.1:2182</span><br></pre></td></tr></table></figure></p>
+<p>连接到kafka3的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ./bin/zookeeper-shell.sh 127.0.0.1:2183</span><br></pre></td></tr></table></figure></p>
+<p>可以通过查看<code>logs/zookeeper.log</code>文件，如果没有报错就说明zookeeper集群启动成功。</p>
+<p>这样你在<code>kafka1</code>中的<code>zookeeper</code>所作的修改，都会同步到<code>kafka2</code>, <code>kafka3</code>。<br>例如你在kafka1的zookeeper服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ create /zk_test_cluster my_data_cluster</span><br></pre></td></tr></table></figure></p>
+<p>你在kafka2, kafka3的zookeeper客户端用<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls /</span><br></pre></td></tr></table></figure></p>
+<p>都会看到节点zk_test_cluster</p>
+<p>至此，zookeeper集群部署结束。</p>
+<h3 id="10-搭建kafka集群"><a href="#10-搭建kafka集群" class="headerlink" title="10.搭建kafka集群"></a>10.搭建kafka集群</h3><p>配置<code>kafka1</code>服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ vi config/server.properties</span><br><span class="line"></span><br><span class="line">broker.id=1                           <span class="comment"># 这里设置为1，另外两台分别设置为2、3</span></span><br><span class="line"></span><br><span class="line">listeners=PLAINTEXT://127.0.0.1:9092  <span class="comment"># IP地址和端口，这里使用默认的 9092，另外两台分别使用9093、9094</span></span><br><span class="line"></span><br><span class="line">log.dirs=/home/hewentian/ProjectD/kafkaCluster/kafka1/data/kafka</span><br><span class="line"></span><br><span class="line">zookeeper.connect=127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183</span><br></pre></td></tr></table></figure></p>
+<p>配置<code>kafka2</code>服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ vi config/server.properties</span><br><span class="line"></span><br><span class="line">broker.id=2</span><br><span class="line"></span><br><span class="line">listeners=PLAINTEXT://127.0.0.1:9093</span><br><span class="line"></span><br><span class="line">log.dirs=/home/hewentian/ProjectD/kafkaCluster/kafka2/data/kafka</span><br><span class="line"></span><br><span class="line">zookeeper.connect=127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183</span><br></pre></td></tr></table></figure></p>
+<p>配置<code>kafka3</code>服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ vi config/server.properties</span><br><span class="line"></span><br><span class="line">broker.id=3</span><br><span class="line"></span><br><span class="line">listeners=PLAINTEXT://127.0.0.1:9094</span><br><span class="line"></span><br><span class="line">log.dirs=/home/hewentian/ProjectD/kafkaCluster/kafka3/data/kafka</span><br><span class="line"></span><br><span class="line">zookeeper.connect=127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183</span><br></pre></td></tr></table></figure></p>
+<h3 id="11-启动三台kafka服务器"><a href="#11-启动三台kafka服务器" class="headerlink" title="11.启动三台kafka服务器"></a>11.启动三台kafka服务器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ ./bin/kafka-server-start.sh -daemon /home/hewentian/ProjectD/kafkaCluster/kafka1/config/server.properties</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ ./bin/kafka-server-start.sh -daemon /home/hewentian/ProjectD/kafkaCluster/kafka2/config/server.properties</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ./bin/kafka-server-start.sh -daemon /home/hewentian/ProjectD/kafkaCluster/kafka3/config/server.properties</span><br></pre></td></tr></table></figure>
+<p>分别从三台kafka服务器中查看启动日志<code>logs/server.log</code>，如果没报错，并且看到如下输出，则启动成功：</p>
+<pre><code># kafka1 的输出
+[2018-10-27 15:48:54,890] INFO Kafka version : 2.0.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:48:54,890] INFO Kafka commitId : 3402a8361b734732 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:48:54,895] INFO [KafkaServer id=1] started (kafka.server.KafkaServer)
+
+# kafka2 的输出
+[2018-10-27 15:49:22,694] INFO Kafka version : 2.0.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:49:22,694] INFO Kafka commitId : 3402a8361b734732 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:49:22,697] INFO [KafkaServer id=2] started (kafka.server.KafkaServer)
+
+# kafka3 的输出
+[2018-10-27 15:49:41,746] INFO Kafka version : 2.0.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:49:41,746] INFO Kafka commitId : 3402a8361b734732 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-27 15:49:41,749] INFO [KafkaServer id=3] started (kafka.server.KafkaServer)
+</code></pre><p>至此，kafka集群搭建成功。下面，我们简单的试用一下。</p>
+<h3 id="12-创建topic"><a href="#12-创建topic" class="headerlink" title="12.创建topic"></a>12.创建topic</h3><p>在任意一台kafka服务器上面创建topic，例如在kafka1上面创建一个名为 my-replicated-topic 的 topic，指定 1 个分区，3 个副本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ ./bin/kafka-topics.sh --create --zookeeper 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183 --replication-factor 3 --partitions 1 --topic my-replicated-topic</span><br><span class="line"></span><br><span class="line">Created topic <span class="string">"my-replicated-topic"</span>.</span><br></pre></td></tr></table></figure></p>
+<p>上面的参数<code>--zookeeper</code>是集群列表，可以指定所有节点，也可以指定为部分列表。</p>
+<p>查看topic的情况：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka1</span><br><span class="line">$ ./bin/kafka-topics.sh --describe --zookeeper 127.0.0.1:2181 --topic my-replicated-topic</span><br><span class="line"></span><br><span class="line">Topic:my-replicated-topic	PartitionCount:1	ReplicationFactor:3	Configs:</span><br><span class="line">	Topic: my-replicated-topic	Partition: 0	Leader: 3	Replicas: 3,2,1	Isr: 3,2,1</span><br></pre></td></tr></table></figure></p>
+<h3 id="13-发送消息"><a href="#13-发送消息" class="headerlink" title="13.发送消息"></a>13.发送消息</h3><p>往我们刚才创建的toipc中发送消息，在任意一台kafka上面都可以的，我们在kafka2上面执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ ./bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094 --topic my-replicated-topic</span><br><span class="line">&gt;</span><br><span class="line">&gt;my <span class="built_in">test</span> message 1</span><br><span class="line">&gt;my <span class="built_in">test</span> message 2</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="14-消费消息"><a href="#14-消费消息" class="headerlink" title="14.消费消息"></a>14.消费消息</h3><p>将我们刚刚发送的消息消费掉，我们从kafka3上面执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ./bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094 --from-beginning --topic my-replicated-topic</span><br><span class="line"></span><br><span class="line">my <span class="built_in">test</span> message 1</span><br><span class="line">my <span class="built_in">test</span> message 2</span><br></pre></td></tr></table></figure></p>
+<p>我们在生产者中发送消息，在消费者中就能实时的看到消息。</p>
+<h3 id="15-容错测试"><a href="#15-容错测试" class="headerlink" title="15.容错测试"></a>15.容错测试</h3><p>从上面可知my-replicated-topic的leader为3，那我们将broker.id=3的进程杀掉：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ps -ef | grep kafka3/config/server.properties</span><br><span class="line">hewenti+ 22018  1897  5 17:19 pts/23   00:00:16 /usr/<span class="built_in">local</span>/java/jdk1.8.0_102/bin/java -Xmx1G -Xms1G -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">[中间省略部分]</span><br><span class="line"></span><br><span class="line">-0.10.jar:/home/hewentian/ProjectD/kafkaCluster/kafka3/bin/../libs/zookeeper-3.4.13.jar kafka.Kafka /home/hewentian/ProjectD/kafkaCluster/kafka3/config/server.properties</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">kill</span> -9 22018       <span class="comment"># 单机环境下不能通过执行： ./bin/kafka-server-stop.sh 来杀掉当前目录下的kafka，它会杀掉全部kafka</span></span><br></pre></td></tr></table></figure></p>
+<p>再查看my-replicated-topic的情况：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ./bin/kafka-topics.sh --describe --zookeeper 127.0.0.1:2181 --topic my-replicated-topic</span><br><span class="line">Topic:my-replicated-topic	PartitionCount:1	ReplicationFactor:3	Configs:</span><br><span class="line">	Topic: my-replicated-topic	Partition: 0	Leader: 1	Replicas: 3,2,1	Isr: 1</span><br></pre></td></tr></table></figure></p>
+<p>由上面可见，leader已经变为1。并且，生产消息和消费消息一样可用，不受影响：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka2</span><br><span class="line">$ ./bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094 --topic my-replicated-topic</span><br><span class="line">&gt;</span><br><span class="line">&gt;my <span class="built_in">test</span> message 1</span><br><span class="line">&gt;my <span class="built_in">test</span> message 2</span><br><span class="line">&gt;</span><br><span class="line">&gt; Tim Ho</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafkaCluster/kafka3</span><br><span class="line">$ ./bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094 --from-beginning --topic my-replicated-topic</span><br><span class="line"></span><br><span class="line">my <span class="built_in">test</span> message 1</span><br><span class="line">my <span class="built_in">test</span> message 2</span><br><span class="line"></span><br><span class="line">Tim Ho</span><br></pre></td></tr></table></figure>
+<p>未完，待续……</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/10/27/kafka-cluster/" data-id="ck7ttggr7001mcq3kdx8lrspq" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-kafka-standalone" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/24/kafka-standalone/" class="article-date">
+  <time datetime="2018-10-24T00:32:40.000Z" itemprop="datePublished">2018-10-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bigdata/">bigdata</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/24/kafka-standalone/">kafka 单节点安装</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文将说下<code>kafka</code>的单节点安装，我的机器为<code>Ubuntu 16.04 LTS</code>，下面的安装过程参考：<br><a href="http://kafka.apache.org/quickstart" target="_blank" rel="noopener">http://kafka.apache.org/quickstart</a></p>
+<h3 id="第一步：我们要将kafka安装包下载回来"><a href="#第一步：我们要将kafka安装包下载回来" class="headerlink" title="第一步：我们要将kafka安装包下载回来"></a>第一步：我们要将<code>kafka</code>安装包下载回来</h3><p>截止本文写时，它的最新版本为<code>2.0.0</code>，可以在它的<a href="https://www.apache.org/dist/kafka/2.0.0/kafka_2.12-2.0.0.tgz" target="_blank" rel="noopener">官网</a>下载。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget https://www.apache.org/dist/kafka/2.0.0/kafka_2.12-2.0.0.tgz</span><br><span class="line">$ wget https://www.apache.org/dist/kafka/2.0.0/kafka_2.12-2.0.0.tgz.sha512</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性，在下载的时候要将 SHA512 文件也下载回来</span><br><span class="line">$ sha512sum -c kafka_2.12-2.0.0.tgz.sha512</span><br><span class="line">kafka_2.12-2.0.0.tgz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf kafka_2.12-2.0.0.tgz</span><br></pre></td></tr></table></figure></p>
+<h3 id="第二步：启动服务器"><a href="#第二步：启动服务器" class="headerlink" title="第二步：启动服务器"></a>第二步：启动服务器</h3><p>kafka需要用到zookeeper，所以必须首先启动zookeeper。在高版本的kafka发行包中，已经内置zookeeper，我们直接使用即可。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/zookeeper-server-start.sh config/zookeeper.properties</span><br></pre></td></tr></table></figure></p>
+<p>启动成功后，会看到如下输出：</p>
+<pre><code>[2018-10-24 09:14:29,072] INFO Server environment:java.io.tmpdir=/tmp (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:java.compiler=&lt;NA&gt; (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:os.name=Linux (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:os.arch=amd64 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:os.version=4.13.0-32-generic (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,072] INFO Server environment:user.name=hewentian (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,073] INFO Server environment:user.home=/home/hewentian (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,073] INFO Server environment:user.dir=/home/hewentian/ProjectD/kafka_2.12-2.0.0 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,091] INFO tickTime set to 3000 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,091] INFO minSessionTimeout set to -1 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,091] INFO maxSessionTimeout set to -1 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-10-24 09:14:29,111] INFO Using org.apache.zookeeper.server.NIOServerCnxnFactory as server connection factory (org.apache.zookeeper.server.ServerCnxnFactory)
+[2018-10-24 09:14:29,121] INFO binding to port 0.0.0.0/0.0.0.0:2181 (org.apache.zookeeper.server.NIOServerCnxnFactory)
+</code></pre><p>接着，打开另外一个终端，启动kafka服务器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-server-start.sh config/server.properties</span><br></pre></td></tr></table></figure></p>
+<p>启动成功后，会看到如下输出：</p>
+<pre><code>[2018-10-24 11:01:45,462] INFO [SocketServer brokerId=0] Started processors for 1 acceptors (kafka.network.SocketServer)
+[2018-10-24 11:01:45,494] INFO Kafka version : 2.0.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-24 11:01:45,494] INFO Kafka commitId : 3402a8361b734732 (org.apache.kafka.common.utils.AppInfoParser)
+[2018-10-24 11:01:45,497] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+</code></pre><h3 id="第三步：创建topic"><a href="#第三步：创建topic" class="headerlink" title="第三步：创建topic"></a>第三步：创建topic</h3><p>创建一个名字叫<code>test</code>的topic，只有一个分区和一个副本，打开另外一个终端：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic <span class="built_in">test</span></span><br><span class="line">Created topic <span class="string">"test"</span>.</span><br><span class="line"></span><br><span class="line">查看所有创建的topic</span><br><span class="line">$ ./bin/kafka-topics.sh --list --zookeeper localhost:2181</span><br><span class="line"><span class="built_in">test</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="第四步：往topic发送消息"><a href="#第四步：往topic发送消息" class="headerlink" title="第四步：往topic发送消息"></a>第四步：往topic发送消息</h3><p>kafka自带一个命令行的客户端，用于从文件中或者标准输入中读取消息并且发送到kafka集群，默认每一行会被作为一条消息发送：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic <span class="built_in">test</span></span><br><span class="line">&gt;This is a message</span><br><span class="line">&gt;This is another message</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="第五步：消费topic中的消息"><a href="#第五步：消费topic中的消息" class="headerlink" title="第五步：消费topic中的消息"></a>第五步：消费topic中的消息</h3><p>kafka同样自带一个命令行的消费者，它会将消息输出到标准输出：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/kafka_2.12-2.0.0/</span><br><span class="line">$ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic <span class="built_in">test</span> --from-beginning</span><br><span class="line">This is a message</span><br><span class="line">This is another message</span><br></pre></td></tr></table></figure></p>
+<p>这样，一个简单的单节点<code>kafka</code>服务器就搭建完成了，接下来我们将尝试搭建多节点的集群。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2018/10/24/kafka-standalone/" data-id="ck7ttggrb001ycq3k5maidztq" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-jenkins-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/05/jenkins-note/" class="article-date">
   <time datetime="2018-10-05T04:02:47.000Z" itemprop="datePublished">2018-10-05</time>
 </a>
     
@@ -89,7 +270,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/05/jenkins-install/">jenkins 学习笔记</a>
+      <a class="article-title" href="/2018/10/05/jenkins-note/">jenkins 学习笔记</a>
     </h1>
   
 
@@ -229,7 +410,7 @@ src/main/webapp/index.jsp
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-install/" data-id="ck2vog8q2001mxh3kw012l4eu" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/05/jenkins-note/" data-id="ck7ttggr4001dcq3kqc76n6ar" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li></ul>
@@ -241,9 +422,9 @@ src/main/webapp/index.jsp
 
 
   
-    <article id="post-ELK-install" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-elk-note" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/10/02/ELK-install/" class="article-date">
+    <a href="/2018/10/02/elk-note/" class="article-date">
   <time datetime="2018-10-02T03:09:56.000Z" itemprop="datePublished">2018-10-02</time>
 </a>
     
@@ -259,7 +440,7 @@ src/main/webapp/index.jsp
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/02/ELK-install/">ELK 日志系统的搭建</a>
+      <a class="article-title" href="/2018/10/02/elk-note/">ELK 日志系统的搭建</a>
     </h1>
   
 
@@ -269,7 +450,7 @@ src/main/webapp/index.jsp
       
         <p>本篇将介绍 ELK 日志系统的搭建，我们将在一台机器上面搭建，系统配置如下：<br><img src="/img/system-property.png" alt="" title="系统配置"></p>
 <p><code>logstash</code>的整体结构图如下：<br><img src="/img/elk-structure.png" alt="" title="来源：https://www.elastic.co/guide/en/logstash/current/static/images/basic_logstash_pipeline.png"></p>
-<p>我们将使用<code>redis</code>作为上图中的<code>INPUTS</code>，而<code>elasticsearch</code>作为上图中的<code>OUTPUTS</code>，这也是<code>logstash</code>官方的推荐。而它们的安装可以参考以下例子：<br><code>redis</code>的安装请参考：<a href="../../../../2018/08/07/redis-install/">redis 的安装使用</a><br><code>elasticsearch</code>的安装请参考：<a href="../../../../2018/09/16/elasticsearch-install/">elasticsearch 单节点安装</a></p>
+<p>我们将使用<code>redis</code>作为上图中的<code>INPUTS</code>，而<code>elasticsearch</code>作为上图中的<code>OUTPUTS</code>，这也是<code>logstash</code>官方的推荐。而它们的安装可以参考以下例子：<br><code>redis</code>的安装请参考：<a href="../../../../2018/08/07/redis-standalone/">redis 的安装使用</a><br><code>elasticsearch</code>的安装请参考：<a href="../../../../2018/09/16/elasticsearch-standalone/">elasticsearch 单节点安装</a></p>
 <p><strong> 注意：elasticsearch、logstash、kibana它们的版本最好保持一致，这里都是使用6.4.0版本。 </strong></p>
 <h3 id="kibana的安装将在本篇的稍后介绍，下面先介绍下logstash的安装"><a href="#kibana的安装将在本篇的稍后介绍，下面先介绍下logstash的安装" class="headerlink" title="kibana的安装将在本篇的稍后介绍，下面先介绍下logstash的安装"></a><code>kibana</code>的安装将在本篇的稍后介绍，下面先介绍下<code>logstash</code>的安装</h3><p>首先，我们要将<code>logstash</code>安装包下载回来，可以在它的<a href="https://artifacts.elastic.co/downloads/logstash/logstash-6.4.0.tar.gz" target="_blank" rel="noopener">官网</a>下载，当然，我们也可以从这里下载 <a href="https://pan.baidu.com/s/10p4YqzwSk1ixLqvSuv2sAA" title="百度网盘" target="_blank" rel="noopener">logstash-6.4.0.tar.gz</a>，推荐从<code>logstash</code>官网下载对应版本。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/logstash/logstash-6.4.0.tar.gz</span><br><span class="line">$ wget https://artifacts.elastic.co/downloads/logstash/logstash-6.4.0.tar.gz.sha512</span><br><span class="line"></span><br><span class="line">验证下载文件的完整性，在下载的时候要将 SHA512 文件也下载回来</span><br><span class="line">$ sha512sum -c logstash-6.4.0.tar.gz.sha512 </span><br><span class="line">logstash-6.4.0.tar.gz: OK</span><br><span class="line"></span><br><span class="line">$ tar xzf logstash-6.4.0.tar.gz</span><br></pre></td></tr></table></figure>
@@ -308,7 +489,7 @@ Configuration OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/10/02/ELK-install/" data-id="ck2vog8p50000xh3k2mmhcv4v" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/10/02/elk-note/" data-id="ck7ttggqq000dcq3krif4w69t" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -347,8 +528,8 @@ Configuration OK
     <div class="article-entry" itemprop="articleBody">
       
         <p>参考资料：<br><a href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/index.html" title="Elasticsearch 权威指南" target="_blank" rel="noopener">Elasticsearch 权威指南</a><br><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html" title="Elasticsearch Reference" target="_blank" rel="noopener">Elasticsearch Reference</a><br><a href="http://es.xiaoleilu.com/080_Structured_Search/20_contains.html" target="_blank" rel="noopener">http://es.xiaoleilu.com/080_Structured_Search/20_contains.html</a><br><a href="https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core">https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core</a></p>
-<p>首先，你必须至少有一台<code>elasticsearch</code>服务器可以使用，如果还没安装，可以参考我的上两篇 <a href="../../../../2018/09/16/elasticsearch-install" title="elasticsearch 单节点安装">elasticsearch 单节点安装</a>、<a href="../../../../2018/09/17/elasticsearch-cluster" title="elasticsearch 集群的搭建">elasticsearch 集群的搭建</a></p>
-<p>使用JAVA API来操作<code>elasticsearch</code>的例子可以在这里找到：<a href="https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/utils/EsJestUtil.java">EsJestUtil.java</a>、<a href="https://github.com/hewentian/hadoop-demo/blob/master/src/main/java/com/hewentian/hadoop/es/EsJestDemo.java">EsJestDemo.java</a></p>
+<p>首先，你必须至少有一台<code>elasticsearch</code>服务器可以使用，如果还没安装，可以参考我的上两篇 <a href="../../../../2018/09/16/elasticsearch-standalone" title="elasticsearch 单节点安装">elasticsearch 单节点安装</a>、<a href="../../../../2018/09/17/elasticsearch-cluster" title="elasticsearch 集群的搭建">elasticsearch 集群的搭建</a></p>
+<p>使用JAVA API来操作<code>elasticsearch</code>的例子可以在这里找到：<a href="https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/utils/EsJestUtil.java">EsJestUtil.java</a>、<a href="https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/es/EsJestDemo.java">EsJestDemo.java</a></p>
 <h4 id="要单独创建一个索引"><a href="#要单独创建一个索引" class="headerlink" title="要单独创建一个索引"></a>要单独创建一个索引</h4><pre>
 curl -XPUT 'http://localhost:9200/user_index' -H 'Content-Type: application/json' -d '{
     "settings" : {
@@ -528,7 +709,7 @@ curl -XPOST 'http://127.0.0.1:9200/facebook/tuser/1/_update' -H 'Content-Type: a
 <li>http.port<br>设置对外服务的http端口，默认为9200。不能相同，否则会冲突。</li>
 </ol>
 <p>ES有很多插件，我们可以选择安装一些，例如，以安装head插件为例。有两种方式安装，一种为在线安装，另一种为本地安装，本地安装要下载插件(git clone)。<br>插件下载地址为：<br><a href="https://github.com/mobz/elasticsearch-head">https://github.com/mobz/elasticsearch-head</a></p>
-<p>这里以在线安装为例，我之前在介绍<a href="../../../../2018/09/16/elasticsearch-install" title="elasticsearch 单节点安装">elasticsearch 单节点安装</a>中使用的是本地安装，推荐使用本地安装。旧版本安装过程如下：<br>进入ES的HOME目录，执行plugin命令，如下，</p>
+<p>这里以在线安装为例，我之前在介绍<a href="../../../../2018/09/16/elasticsearch-standalone" title="elasticsearch 单节点安装">elasticsearch 单节点安装</a>中使用的是本地安装，推荐使用本地安装。旧版本安装过程如下：<br>进入ES的HOME目录，执行plugin命令，如下，</p>
 <pre><code>cd ${ES_HOME}/bin
 ./elasticsearch-plugin install mobz/elasticsearch-head
 </code></pre><p>安装完毕后，要重启ES。在浏览器中输入：<a href="http://localhost:9200/_plugin/head/，如果看到了页面，则表明安装成功。" target="_blank" rel="noopener">http://localhost:9200/_plugin/head/，如果看到了页面，则表明安装成功。</a></p>
@@ -892,7 +1073,7 @@ GET people/user/_search
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="ck2vog8pk000dxh3ka26az3ca" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/18/elasticsearch-note/" data-id="ck7ttggqn0008cq3kfifqu16j" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -930,7 +1111,7 @@ GET people/user/_search
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>下面说说elasticsearch集群的搭建，同样是使用前面例子<a href="../../../../2018/09/16/elasticsearch-install" title="elasticsearch 安装">elasticsearch 单节点安装</a>使用的<code>elasticsearch-6.4.0.tar.gz</code>版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。</p>
+        <p>下面说说elasticsearch集群的搭建，同样是使用前面例子<a href="../../../../2018/09/16/elasticsearch-standalone" title="elasticsearch 安装">elasticsearch 单节点安装</a>使用的<code>elasticsearch-6.4.0.tar.gz</code>版本，我在一台机器上安装，所以这是伪集群，当修改为真集群的时候，只要将IP地址修改下即可，下面会说明。</p>
 <h3 id="下面开始搭建elasticsearch集群"><a href="#下面开始搭建elasticsearch集群" class="headerlink" title="下面开始搭建elasticsearch集群"></a>下面开始搭建elasticsearch集群</h3><p>创建一个目录用于存放集群使用到的所有实例信息<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mkdir elasticsearchCluster	<span class="comment"># 集群的文件都放在这里</span></span><br></pre></td></tr></table></figure></p>
 <p>将一个elasticsearch压缩包放到这个目录，我之前已在ProjectD目录下载好了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster</span><br><span class="line">$ cp /home/hewentian/ProjectD/elasticsearch-6.4.0.tar.gz ./</span><br><span class="line">$ tar xzvf elasticsearch-6.4.0.tar.gz</span><br><span class="line"></span><br><span class="line">为方便起见，这里将其重命名为elasticsearch-node1，先将elasticsearch-node1配置好，</span><br><span class="line">后面会将其复制为elasticsearch-node2, elasticsearch-node3</span><br><span class="line">$ mv elasticsearch-6.4.0 elasticsearch-node1</span><br></pre></td></tr></table></figure></p>
 <p>对<code>elasticsearch-node1</code>进行设置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/elasticsearchCluster/elasticsearch-node1/config</span><br><span class="line">$ vi elasticsearch.yml 		<span class="comment"># 增加下面的配置</span></span><br><span class="line"></span><br><span class="line">cluster.name: hewentian-cluster	<span class="comment"># 配置集群的名字</span></span><br><span class="line">node.name: node-1		<span class="comment"># 配置集群下的节点的名字</span></span><br><span class="line"></span><br><span class="line">node.master: <span class="literal">true</span>		<span class="comment"># 是否有资格被选举为master节点， 默认为 true</span></span><br><span class="line">node.data: <span class="literal">true</span>			<span class="comment"># 设置该节点是否存储数据， 默认为 true</span></span><br><span class="line"></span><br><span class="line">network.host: 127.0.0.1		<span class="comment"># 设置本机IP地址</span></span><br><span class="line">http.port: 9201			<span class="comment"># 将端口设置成9201</span></span><br><span class="line">transport.tcp.port: 9301	<span class="comment"># 内部节点之间沟通的端口</span></span><br><span class="line"></span><br><span class="line">discovery.zen.ping.unicast.hosts: [<span class="string">"127.0.0.1:9301"</span>, <span class="string">"127.0.0.1:9302"</span>, <span class="string">"127.0.0.1:9303"</span>]</span><br><span class="line"></span><br><span class="line">discovery.zen.minimum_master_nodes: 2	<span class="comment"># total number of master-eligible nodes / 2 + 1</span></span><br><span class="line"></span><br><span class="line">action.destructive_requires_name: <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">允许跨域，否则 elasticsearch head 不能访问 elasticsearch</span><br><span class="line">http.cors.enabled: <span class="literal">true</span></span><br><span class="line">http.cors.allow-origin: <span class="string">"*"</span></span><br></pre></td></tr></table></figure></p>
@@ -1088,7 +1269,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="ck2vog8pf0008xh3kdkace1uv" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/17/elasticsearch-cluster/" data-id="ck7ttggqi0002cq3kutob4kwh" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1100,9 +1281,9 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
 
 
   
-    <article id="post-elasticsearch-install" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-elasticsearch-standalone" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/09/16/elasticsearch-install/" class="article-date">
+    <a href="/2018/09/16/elasticsearch-standalone/" class="article-date">
   <time datetime="2018-09-16T03:18:34.000Z" itemprop="datePublished">2018-09-16</time>
 </a>
     
@@ -1118,7 +1299,7 @@ curl -XPUT 'http://localhost:9203/twitter/doc/3?pretty' -H 'Content-Type: applic
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/16/elasticsearch-install/">elasticsearch 单节点安装</a>
+      <a class="article-title" href="/2018/09/16/elasticsearch-standalone/">elasticsearch 单节点安装</a>
     </h1>
   
 
@@ -1412,7 +1593,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-install/" data-id="ck2vog8ph0009xh3kyikmr1wp" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/16/elasticsearch-standalone/" data-id="ck7ttggqo0009cq3kl4wi4lgd" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
@@ -1450,7 +1631,7 @@ yellow open   music   ytI7cirvQXOi1hsrvAMGGA   5   1          0            0    
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>首先，你必须有一台<code>redis</code>服务器可以使用，如果还没安装，可以参考我的上一篇 <a href="../../../../2018/08/07/redis-install/">redis 的安装使用</a></p>
+        <p>首先，你必须有一台<code>redis</code>服务器可以使用，如果还没安装，可以参考我的上一篇 <a href="../../../../2018/08/07/redis-standalone/">redis 的安装使用</a></p>
 <p>使用JAVA API来操作Redis的例子可以在这里找到：<a href="https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/util/RedisUtil.java">RedisUtil.java</a>、<a href="https://github.com/hewentian/studyResource/blob/master/src/main/java/com/hewentian/redis/RedisDemo.java">RedisDemo.java</a></p>
 <p>部分笔记摘自《Redis 实战》，它总结得很好。</p>
 <p>Redis默认16个数据库，并以数字为索引，从0开始到15，可以手工修改这个配置，增加数量。登录的时候，默认为0库。</p>
@@ -1648,7 +1829,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="ck2vog8qo0033xh3kxjydcoox" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/09/12/redis-note/" data-id="ck7ttggrj002qcq3kceddtaal" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1686,7 +1867,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>要配置主从，我们必须安装两台<code>redis</code>：主服务器为<code>master</code>，从服务器为<code>slave</code>。安装步骤请参考我的上一篇 <a href="../../../../2018/08/07/redis-install/">redis 的安装使用</a></p>
+        <p>要配置主从，我们必须安装两台<code>redis</code>：主服务器为<code>master</code>，从服务器为<code>slave</code>。安装步骤请参考我的上一篇 <a href="../../../../2018/08/07/redis-standalone/">redis 的安装使用</a></p>
 <h3 id="我们在一台机器上面配置主从，多台的配置是一样的，只要修改下IP和PORT即可。以我们上一篇安装好的一台redis为基础，它的安装路径为：-home-hewentian-ProjectD-redis-4-0-11"><a href="#我们在一台机器上面配置主从，多台的配置是一样的，只要修改下IP和PORT即可。以我们上一篇安装好的一台redis为基础，它的安装路径为：-home-hewentian-ProjectD-redis-4-0-11" class="headerlink" title="我们在一台机器上面配置主从，多台的配置是一样的，只要修改下IP和PORT即可。以我们上一篇安装好的一台redis为基础，它的安装路径为：/home/hewentian/ProjectD/redis-4.0.11"></a>我们在一台机器上面配置主从，多台的配置是一样的，只要修改下<code>IP</code>和<code>PORT</code>即可。以我们上一篇安装好的一台<code>redis</code>为基础，它的安装路径为：<code>/home/hewentian/ProjectD/redis-4.0.11</code></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mv redis-4.0.11 redis-4.0.11_master</span><br><span class="line">$ cp -r redis-4.0.11_master/ redis-4.0.11_slave/</span><br></pre></td></tr></table></figure>
 <p><code>master</code>服务器为：<code>/home/hewentian/ProjectD/redis-4.0.11_master</code><br><code>slave</code>服务器为：<code>/home/hewentian/ProjectD/redis-4.0.11_slave</code></p>
 <h3 id="master服务器使用默认端口6379，所以不用配置。下面我们配置slave服务器："><a href="#master服务器使用默认端口6379，所以不用配置。下面我们配置slave服务器：" class="headerlink" title="master服务器使用默认端口6379，所以不用配置。下面我们配置slave服务器："></a><code>master</code>服务器使用默认端口<code>6379</code>，所以不用配置。下面我们配置<code>slave</code>服务器：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/redis-4.0.11_slave/</span><br><span class="line">$ vi redis.conf</span><br><span class="line"></span><br><span class="line">// 将默认端口改为6380，并加上 slaveof 127.0.0.1 6379 和 pidfile，在文件里面改动如下：</span><br><span class="line">port 6380</span><br><span class="line">slaveof 127.0.0.1 6379</span><br><span class="line">pidfile /var/run/redis_6380.pid</span><br></pre></td></tr></table></figure>
@@ -1721,7 +1902,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="ck2vog8ql002wxh3kxbz4vbab" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/14/redis-master-slave/" data-id="ck7ttggrd0028cq3krzibnh46" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
@@ -1733,9 +1914,9 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
 
 
   
-    <article id="post-redis-install" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-redis-standalone" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/redis-install/" class="article-date">
+    <a href="/2018/08/07/redis-standalone/" class="article-date">
   <time datetime="2018-08-07T02:50:27.000Z" itemprop="datePublished">2018-08-07</time>
 </a>
     
@@ -1751,7 +1932,7 @@ Value at:0x7f6160c774e0 refcount:1 encoding:quicklist serializedlength:25 lru:95
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/redis-install/">redis 的安装使用</a>
+      <a class="article-title" href="/2018/08/07/redis-standalone/">redis 的安装使用</a>
     </h1>
   
 
@@ -1819,269 +2000,10 @@ OK
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/08/07/redis-install/" data-id="ck2vog8qk002uxh3kpfpske89" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2018/08/07/redis-standalone/" data-id="ck7ttggrh002kcq3kyeyknkjv" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-jvm-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/04/06/jvm-note/" class="article-date">
-  <time datetime="2018-04-06T03:29:42.000Z" itemprop="datePublished">2018-04-06</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/java/">java</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/06/jvm-note/">jvm 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近在看周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》，作笔记如下，以便自已复习。文中代码，大部分摘自书中。</p>
-<p>JVM的基本结构：类加载子系统、方法区、JAVA堆、JAVA栈、本地方法区、程序计数器、直接内存、垃圾回收系统和执行引擎。</p>
-<p>JVM的运行时数据区如下所示：<br><img src="/img/jvm-runtime-data-schema.png" alt="" title="图片来源于网络，仅用于学习使用"></p>
-<p>JAVA的NIO库允许程序使用直接内存，从而提高性能，通常直接内存速度会优于堆。读写频繁的场合，可以优先考虑使用。</p>
-<p>lambda函数式编程的一个重要优点就是这样的程序天然地适合并行运行，这对JAVA语言在多核时代继续保持主流语言的地位有很大的帮助。</p>
-<h3 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h3><ol>
-<li>引用计数法：是古老而经典的垃圾收集算法，其核心就是在对象被其他所引用的时候计数器加1,而当引用失效时则减1.但是这种方式有非常严重的问题：无法处理循环引用的情况、还有的就是每次进行加减操作比较浪费系统性能。</li>
-<li>标记清除法：分为标记和清除两个阶段，这种方式也有非常大的洞弊端，就是空间碎片问题，垃圾回收后，空间不是连续的。</li>
-<li>复制算法：其核心思想就是将内存分为两块，每次只使用其中一块。在回收时，将正在使用的内存中的存留对象复制到未被使用的内存中去，之后清除之前正在使用的内存中的所有对象，反复去交换两个内存的角式。</li>
-<li>标记压缩法：是在标记清除法的基础上做了优化，把存活的对象压缩到内存的一端，然后进行垃圾清理（老年代中使用的回收方法）</li>
-<li>分代算法：根据对象的特点把内存分成N块，然后根据每个对象的特点使用不同的算法。对于新生代，它的回收频率很高，但是每次回收耗时都很短；而老年代回收频率较低，但是耗时相对较长，所以应该尽量减少老年代的GC。</li>
-</ol>
-<h3 id="确定对像是否已死的方法"><a href="#确定对像是否已死的方法" class="headerlink" title="确定对像是否已死的方法"></a>确定对像是否已死的方法</h3><ol>
-<li>引用计数法；</li>
-<li>可达性分析算法GC Root.</li>
-</ol>
-<h3 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h3><ol>
-<li>串行回收器： 使用单线程进行垃圾回收的回收器。每次回收时，串行回收器只有一个工作线程，对于并行能力较弱的计算机来说，串行回收器的专注性和独占性往往有更好的性能表现。可以在新生代和老年代使用。<code>-XX:+UseSerialGC</code></li>
-<li>并行回收器： 在串行回收器的基础上作了改进，他可以使用多个线程同时进行垃圾回收，对于计算能力强的计算机而言，可以有效的缩短回收所需的实际时间。他只是简单的将串行回收器多线程化，他的回收策略和算法和串行回收器一样。只使用在新生代。<code>--XX:+UseParNewGC</code></li>
-<li>ParallelGC： 新生代回收器，使用了复杂算法的收集器，也是多线程独占形式的收集器，它有个特点，就是它非常关注系统的吞吐量。</li>
-<li>CMS：全称为<code>Concurrent Mark Sweep</code>，意为并发标记清除，他使用的是标记清除法，主要关注系统停顿时间。<code>-XX:+UseConcMarkSweepGC</code>进行设置，<code>-XX:ConcGCThreads</code>设置并发线程数量。CMS并不是独占的回收器，也就是说CMS回收的过程中，应用程序 仍然可以在不停的工作，不过会有新的垃圾产生。CMS比较耗内存，CMS不会等到应用程序饱和的时候才去回收垃圾，而是在某一个阀值的时候开始回收，可以使用参数指定：<code>-XX:CMSInitiatingOccupancyFraction</code>来指定，默认为68,也就是说当老年代的空间使用率达68%的时候，会执行CMS回收。如果内存不足，收集可能会失败，如果失败了，会启动老年代串行回收器。</li>
-<li>G1：<code>Garbage-First</code>是在JDK1.7中提出的垃圾回收器，是为了取代CMS的回收器。它属于分代回收器，并行性和并发性。并行性是G1回收期间可多线程同时工作，而并发性是G1拥有与应用程序交替执行能力，部分工作可与应用程序同时执行，在整个GC期间不会完全阻塞应用程序。它可以工作在新生代和老年代。之前的回收器，或者工作在新生代，或者工作在老年代。G1使用了有益智复制对象的方式，减少空间碎片。</li>
-</ol>
-<p>将GC的日志输出到文件可以配置JVM启动参数：<code>-Xloggc:/home/hewentian/Document/gc.log</code></p>
-<h3 id="class文件格式"><a href="#class文件格式" class="headerlink" title="class文件格式"></a>class文件格式</h3><p>class文件是一组以8位字节码为基础单位的二进制流，各个数据项目严格按照顺序紧凑地排列在class文件之中，中间没有添加任何分隔符，这使得整个class文件中存储的内容几乎全部是程序运行的必要数据，没有空隙存在。当遇到需要占用8位字节以上空间的数据项时，则会按照高位在前的方式分割成若干个8位字节进行存储。</p>
-<p>无符号数属于基本的数据类型，以u1, u2, u4, u8来分别代表1，2, 4, 8个字节的无符号数，无符号数可以用来描述数字、索引引用、数量值或者按照UTF-8编码构成字符串值。</p>
-<p>如下图所示：<br><img src="/img/class-file-format.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
-<h3 id="魔数与class文件的版本"><a href="#魔数与class文件的版本" class="headerlink" title="魔数与class文件的版本"></a>魔数与class文件的版本</h3><p><strong>魔数：</strong> 每个class文件的头4个字节称为魔数(Magic Number)，它的唯一作用是确定这个文件是否为一个能被虚拟机接受的class文件。<br><strong>版本号：</strong> 紧接着魔的4个字节存储的是class文件的版本号：第5和第6个字节是次版本号(Minor Version)，第7和第8个字节是主版本号(Major Version)。只有当前JVM的版本号大于等于这个文件的版本号，该文件才会被JVM加载。</p>
-<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><p>JVM直接支持（转换时无需显式的转换指令）：</p>
-<ol>
-<li>int类型到long, float或者double类型；</li>
-<li>long类型到float, double类型；</li>
-<li>float类型到double类型。</li>
-</ol>
-<h3 id="类的加载过程"><a href="#类的加载过程" class="headerlink" title="类的加载过程"></a>类的加载过程</h3><p>JVM中类的加载过程：加载、验证、准备、解析、初始化。如果算上：使用和缷载这两个过程，则一共有7个过程。</p>
-<p>加载：加载要完成以下三件事：</p>
-<ol>
-<li>通过一个类的全限定名来获取定义此类的二进制字节流（不一定从文件中读取，可以从网络或数据库中）；</li>
-<li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构;</li>
-<li>在内存中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口。</li>
-</ol>
-<p>验证：验证是连接阶段的第一步，这一阶段的目的是为了确保class文件的字节流中包含的信息符合当前JVM的要求，并且不会危害JVM自身的安全。<br>准备：正式为类变量分配内存并设置类变量（static修饰）初始值的阶段，通常是该类型的零值；<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> value = <span class="number">123</span>;</span><br></pre></td></tr></table></figure></p>
-<p>变量value在准备阶段过后的初始值为0，而不是123。赋值为123在初始化阶段才会执行。</p>
-<p>解析：JVM将常量池内的符号引用替换为直接引用的过程；<br>初始化：执行类构造器的过程，设置实例变量的初始值。</p>
-<p>其中，加载、验证、准备、初始化和缷载这5个阶段的顺序是确定的。如下图所示：<br><img src="/img/class-loading.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
-<h3 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h3><p>从JAVA开发人员的角度来看，绝大部分JAVA程序都会使用到以下3种系统提供的类加载器：</p>
-<ol>
-<li>启动类加载器(Bootstrap ClassLoader)：这个类加载器负责将存放在<code>&lt;JAVA_HOME&gt;\lib</code>目录中的，或者被<code>-Xbootclasspath</code>参数所指定的路径中的，并且是虚拟机识别的（仅按照文件名识别，如rt.jar，名字不符合的类库即使放在lib目录中也不会被加载）类库加载到虚拟机内存中。启动类加载器无法被JAVA程序直接引用，用户在编写自定义类加载器时，如果需要把加载请求委派给引导类加载器，那么使用null代替即可。</li>
-<li>扩展类加载器(Extension ClassLoader)：这个加载器由<code>sum.misc.Launcher$ExtClassLoader</code>实现，它负责加载<code>&lt;JAVA_HOME&gt;\lib\ext</code>目录中的，或者被<code>java.ext.dirs</code>系统变量所指定的路径中的所有类库，开发者可以直接使用扩展类加载器。</li>
-<li>应用程序类加载器(Application ClassLoader)：这个类加载器由<code>sum.misc.Launcher$AppClassLoader</code>实现。由于这个类加载器是<code>ClassLoader中的getSystemClassLoader()</code>方法的返回值，所以一般也称它为系统类加载器。它负责加载用户类路径(ClassPath)上所指定的类库，开发者可以直接使用这个类加载器，如果应用程序中没有自定义过自已的类加载器，一般情况下这个就是程序中默认的类加载器。</li>
-</ol>
-<p>我们的应用程序都是由这3种类加载器互相配合进行加载的，如果有必要，还可以加入自已定义的类加载器。这些类加载器之间的关系一般如下图所示，这种层次关系，称为类加载器的双亲委派模型。<br><img src="/img/class-loader-mode.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
-<h3 id="当泛型遇上重载"><a href="#当泛型遇上重载" class="headerlink" title="当泛型遇上重载"></a>当泛型遇上重载</h3><p>下面的代码是不能通过编译的，因为参数<code>List&lt;String&gt;</code>和<code>List&lt;Integer&gt;</code>编译之后都被擦除了，变成了一样的<code>List&lt;E&gt;</code>，擦除动作导致这两种方法的特征签名变得一模一样。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">(List&lt;String&gt; list)</span> </span>&#123;</span><br><span class="line">	System.out.println(<span class="string">"invoke method(List&lt;String&gt; list)"</span>);</span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">(List&lt;Integer&gt; list)</span> </span>&#123;</span><br><span class="line">	System.out.println(<span class="string">"invoke method(List&lt;Integer&gt; list)"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>如果真是要重载，可以适当修改上述代码，只要增加返回值即可，它也只能在JDK1.6上可以编译通过。在JDK1.8也是无法编译通过的。如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">method</span><span class="params">(List&lt;String&gt; list)</span> </span>&#123;</span><br><span class="line">	System.out.println(<span class="string">"invoke method(List&lt;String&gt; list)"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">method</span><span class="params">(List&lt;Integer&gt; list)</span> </span>&#123;</span><br><span class="line">	System.out.println(<span class="string">"invoke method(List&lt;Integer&gt; list)"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="自动装箱的陷阱"><a href="#自动装箱的陷阱" class="headerlink" title="自动装箱的陷阱"></a>自动装箱的陷阱</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	Integer a = <span class="number">1</span>;</span><br><span class="line">	Integer b = <span class="number">2</span>;</span><br><span class="line">	Integer c = <span class="number">3</span>;</span><br><span class="line">	Integer d = <span class="number">3</span>;</span><br><span class="line">	Integer e = <span class="number">321</span>;</span><br><span class="line">	Integer f = <span class="number">321</span>;</span><br><span class="line">	Long g = <span class="number">3L</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 在 JDK1.8 中的结果如下</span></span><br><span class="line">	System.out.println(c == d);		<span class="comment">// true, [-127, 128]之间的Integer数字会被缓存</span></span><br><span class="line">	System.out.println(e == f);		<span class="comment">// false</span></span><br><span class="line">	System.out.println(c == (a + b));	<span class="comment">// true</span></span><br><span class="line">	System.out.println(c.equals(a + b));	<span class="comment">// true</span></span><br><span class="line">	System.out.println(g == (a + b));	<span class="comment">// true</span></span><br><span class="line">	System.out.println(g.equals(a + b));	<span class="comment">// false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="final语言校验"><a href="#final语言校验" class="headerlink" title="final语言校验"></a>final语言校验</h3><p>下面这两段代码编译出来的class文件是一样的，没有任何区别。只是在编写程序的时候会受到final的约束。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方法一：带有final修饰</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">final</span> <span class="keyword">int</span> var = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">// do something</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法二：没有final修饰</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> var = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">// do something</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="解释器与编译器"><a href="#解释器与编译器" class="headerlink" title="解释器与编译器"></a>解释器与编译器</h3><p>尽管不是所有的JVM都采用解释器与编译器并存的架构，但许多主流的商用JVM，如HotSpot、J9等，都同时包含解释器与编译器。<strong>但是，三大商用JVM之一的JRockit是个例外，它内部没有解释器。</strong>解释器与编译器两者各有优势：当程序需要迅速启动和执行的时候，解释器可以首先发挥作用，省去编译的时间，立即执行。在程序运行后，随着时间的推移，编译器逐渐发挥作用，把越来越多的代码编译成本地代码之后，可以获取更高的执行效率。当程序运行环境中内存资源限制较大（如部分嵌入式系统中），可以使用解释执行节约内存，反之可以使用编译执行来提升效率。在整个JVM执行架构中，解释器与编译器经常配合工作，如下图。<br><img src="/img/compiler-and-interpreter.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
-<h3 id="程序编译与代码优化"><a href="#程序编译与代码优化" class="headerlink" title="程序编译与代码优化"></a>程序编译与代码优化</h3><p>从sum javac的代码来看，编译过程大致可以分成3个过程：</p>
-<ol>
-<li>解析与填充符号表的过程(Parse and Enter);</li>
-<li>插入式注解处理器的注解处理过程(Annotation Processing);</li>
-<li>分析与字节码生成的过程(Analyse and Generate)。</li>
-</ol>
-<h3 id="编译对象与触发条件"><a href="#编译对象与触发条件" class="headerlink" title="编译对象与触发条件"></a>编译对象与触发条件</h3><p>在程序运行的过程中会被即时编译器JIT编译的“热点代码”有两类：</p>
-<ol>
-<li>被多次调用的方法；</li>
-<li>被多次执行的循环体。</li>
-</ol>
-<p>判断一段代码是不是热点代码，是不是需要触发即时编译，这样的行为称为热点探测(Hot Spot Detection)，其实进行热点探测并不一定要知道方法具体被调用了多少次，目前主要的热点探测判定方法有两种，分别如下：</p>
-<ul>
-<li>基于采样的热点探测(Sample Based Hot Spot Detection)：采用这种方法的JVM会周期性地检查各个线程的栈顶，如果发现某个（或某些）方法经常出现在栈顶，那这个方法就是“热点方法”。基于采样的热点探测的好处是实现简单、高效，还可以很容易地获取方法调用关系（将调用堆栈展开即可），缺点是很难精确地确认一个方法的热度，容易因为受到线程阻塞或别的外界因素的影响而扰乱热点探测。</li>
-<li>基于计数器的热点探测(Counter Based Hot Spot Detection)：采用这种方法的JVM会为每个方法（甚至是代码块）建立计数器，统计方法的执行次数，如果执行次数超过一定的阈值就认为它是“热点方法”。这种统计方法实现起来麻烦一些，需要为每个方法建立并维护计数器，而且不能直接获取到方法的调用关系，但是它的统计结果相对来说更加精确和严谨。</li>
-</ul>
-<p>在HotSpot虚拟机中使用的是第二种–基于计数器的热点探测方法，因此它为每个方法准备了两类计数器：方法调用计数器(Invocation Counter)和回边计数器(Back Edge Counter)。</p>
-<p>在确定虚拟机运行参数的前提下，这两个计数器都有一个确定的阈值，当计数器超过阈值溢出了，就会触发JIT编译。</p>
-<p>我们首先来看看方法调用计数器，顾名思义，这个计数器就用于统计方法被调用的次数，它的默认阈值在Client模式下是1500次，在Server模式下是10000次，这个阈值可以通过JVM参数<code>-XX:CompileThreshold</code>来人为设定。</p>
-<p>下面我们再来看看回边计数器。<strong>什么是回边？ 在字节码遇到控制流向后跳转的指令称为回边（Back Edge）。</strong>回边计数器是用来统计一个方法中循环体代码执行的次数，回边计数器的阈值可以通过参数<code>-XX：OnStackReplacePercentage</code>来调整。</p>
-<p>虚拟机运行在Client模式下，回边计数器阈值计算公式为：<br>方法调用计数器阈值(CompileThreshold) x OSR比率(OnStackReplacePercentage) / 100<br>其中OnStackReplacePercentage默认值为933，如果都取默认值，那Client模式虚拟机的回边计数器的阈值为13995.</p>
-<p>虚拟机运行在Server模式下，回边计数器阈值的计算公式为：<br>方法调用计数器阈值(CompileThreshold) x (OSR比率(OnStackReplacePercentage) - 解释器监控比率(InterpreterProfilePercentage) / 100<br>其中OnStackReplacePercentage默认值为140，InterpreterProfilePercentage默认值为33。<br>如果都取默认值，那Server模式虚拟机回边计数器的阑值为10700。</p>
-<p>回边计数器与方法调用计数器不同的是，回边计数器没有热度衰减，因此这个计数器统计的就是循环执行的绝对次数。</p>
-<p>参见下图：<br><img src="/img/method-invoke-trigger-jit.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
-<h3 id="程序延时一定时间"><a href="#程序延时一定时间" class="headerlink" title="程序延时一定时间"></a>程序延时一定时间</h3><p>像下面的空循环经JIT编译器优化后，会被消除掉，以前很多入门教程把空循环当做程序延时的手段来介绍，其实是错误的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++)</span><br><span class="line">	;</span><br></pre></td></tr></table></figure></p>
-<p>要延时应该使用下面的方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">	e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>不使用的对象应手动设为null，不过，赋值为null的操作在经过JIT编译优化后就会被消除掉，这时候将变量设置为null就是没有意义的。</p>
-<h3 id="线程、主内存、工作内存、处理器、关系图"><a href="#线程、主内存、工作内存、处理器、关系图" class="headerlink" title="线程、主内存、工作内存、处理器、关系图"></a>线程、主内存、工作内存、处理器、关系图</h3><p><img src="/img/cpu-thread-memory.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
-<h3 id="内存间交互操作"><a href="#内存间交互操作" class="headerlink" title="内存间交互操作"></a>内存间交互操作</h3><p>关于主内存与工作内存之间具体的交互协议，即一个变量如何从主内存复制到工作内存、如何从工作内存同步回主内存之类的实现细节，JAVA内存模型中定义了以下8种操作来完成，虚拟机实现时必须保证下面提及的每一种操作都是原子的、不可再分的（对于double和long类型的变量来说，load、store、read和write操作在某些平台上允许有例外）。</p>
-<ul>
-<li>lock（锁定）：作用于主内存的变量，它把一个变量标识为一条线程独占的状态；</li>
-<li>unlock（解锁）：作用于主内存的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他线程锁定；</li>
-<li>read（读取）：作用于主内存的变量，它把一个变量的值从主内存传输到线程的工作内存中，以便随后的load动作使用；</li>
-<li>load（载入）：作用于工作内存的变量，它把read操作从主内存中得到的变量值放入工作内存的变量副本中；</li>
-<li>use（使用）：作用于工作内存的变量，它把工作内存中一个变量的值传递给执行引擎，每当虚拟机遇到一个需要使用到变量的值的字节码指令时将会执行这个操作；</li>
-<li>assign（赋值）：作用于工作内存的变量，它把一个从执行引擎接收到的值赋给工作内存的变量，每当虚拟机遇到一个给变量赋值的字节码指令时执行这个操作；</li>
-<li>store（存储）：作用于工作内存的变量，它把工作内存中一个变量的值传送到主内存中，以便随后的write操作使用；</li>
-<li>write（写入）：作用于主内存的变量，它把store操作从工作内存中得到的变量的值放入主内存的变量中。</li>
-</ul>
-<h3 id="volatile变量的使用场景"><a href="#volatile变量的使用场景" class="headerlink" title="volatile变量的使用场景"></a>volatile变量的使用场景</h3><p>由于volatile变量只能保证可见性，在不符合以下两条规则的运算场景中，我们仍然要通过加锁（使用synchronized或java.util.concurrent中的原子类）来保证原子性。</p>
-<ol>
-<li>运算结果并不依赖变量的当前值，或者能够确保只有单一的线程修改变量的值；</li>
-<li>变量不需要与其他的状态变量共同参与不变约束。</li>
-</ol>
-<p>像下面的代码就很适合使用volatile变量来控制并发，当shutdown方法被调用时，能保证所有线程中执行的doWork()方法都立即停下来。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="keyword">boolean</span> shutdownRequest;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	shutdownRequest = <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(!shutdownRequest) &#123;</span><br><span class="line">	<span class="comment">// do stuff</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="线程状态转换"><a href="#线程状态转换" class="headerlink" title="线程状态转换"></a>线程状态转换</h3><p>Java语言定义了5种线程状态，在任意一个时间点，一个线程只能有且只有其中的一种状态，这5种状态分别如下：</p>
-<ul>
-<li>新建（New）：创建后尚未启动的线程处于这种状态；</li>
-<li>运行（Runnable）：Runnable包括了操作系统线程状态中的Running和Ready，也就是处于此状态的线程有可能正在执行，也有可能正在等待着CPU为它分配执行时间；</li>
-<li>无限期等待（Waiting）：处于这种状态的线程不会被分配CPU执行时间，它们要等待被其他线程显式地唤醒。以下方法会让线程陷入无限期的等待状态：<ul>
-<li>没有设置Timeout参数的Object.wait()方法；</li>
-<li>没有设置Timeout参数的Thread.join()方法；</li>
-<li>LockSupport.park()方法；</li>
-</ul>
-</li>
-<li>限期等待（Timed Waiting）：处于这种状态的线程也不会被分配CPU执行时间，不过无须等待被其他线程显式地唤醒，在一定的时间之后它们会由系统自动唤醒。以下方法会让线程进入限期等待状态：<ul>
-<li>Thread.sleep()方法；</li>
-<li>设置了Timeout参数的Object.wait()方法；</li>
-<li>设置了Timeout参数的Thread.join()方法；</li>
-<li>LockSupport.parkNanos()方法；</li>
-<li>LockSupport.parkUntil()方法；</li>
-</ul>
-</li>
-<li>阻塞（Blocked）：线程被阻塞了，“阻塞状态”与“等待状态”的区别是：“阻塞状态”在等待着获取到一个排他锁，这个事件将在另外一个线程放弃这个锁的时候发生；而“等待状态”则是在等待一段时间，或者唤醒动作的发生。在程序等待进入同步区域的时候，线程将进入这种状态。</li>
-<li>结束（Terminated）：已终止线程的线程状态，线程已经结束执行。</li>
-</ul>
-<p>上述5种状态在遇到特定事件发生的时候会互相转换，它们的转换关系如下图所示：<br><img src="/img/thread-state-transform.png" alt="" title="图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》"></p>
-<p><strong>声明：</strong>图片来源于网络，仅用于学习使用。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/04/06/jvm-note/" data-id="ck2vog8q1001jxh3k4w4zoq21" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongo-note" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/03/07/mongo-note/" class="article-date">
-  <time datetime="2018-03-07T06:39:42.000Z" itemprop="datePublished">2018-03-07</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/db/">db</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/07/mongo-note/">mongo 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="安装mongodb数据库"><a href="#安装mongodb数据库" class="headerlink" title="安装mongodb数据库"></a>安装mongodb数据库</h3><p>首先，我们必须安装mongodb，这样才能使用。我们下载相应版本的mongodb，因为我的笔记本电脑是ubuntu，所以我下载mongodb的tgz版本，下载地址如下：</p>
-<pre><code>https://www.mongodb.com/download-center/community
-</code></pre><p>下载之后，得到如下两个文件：<br>mongodb-linux-x86_64-ubuntu1804-4.0.6.tgz<br>mongodb-linux-x86_64-ubuntu1804-4.0.6.tgz.md5</p>
-<p>mongodb依赖libcurl4、openssl，我们必须先安装这两个依赖包：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">如已安装，则可跳过，验证命令如下</span><br><span class="line">$ dpkg -s libcurl4</span><br><span class="line">$ dpkg -s openssl</span><br><span class="line"></span><br><span class="line">安装命令</span><br><span class="line">$ sudo apt-get install libcurl4 openssl</span><br></pre></td></tr></table></figure></p>
-<p>我们将压缩包下载到<code>/home/hewentian/ProjectD</code>目录，然后解压：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ tar xf mongodb-linux-x86_64-ubuntu1804-4.0.6.tgz</span><br><span class="line">$</span><br><span class="line">$ ls mongodb-linux-x86_64-ubuntu1804-4.0.6/</span><br><span class="line">bin  LICENSE-Community.txt  MPL-2  README  THIRD-PARTY-NOTICES</span><br></pre></td></tr></table></figure></p>
-<p>创建data目录和log目录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD</span><br><span class="line">$ mkdir -p db/mongodb/data</span><br><span class="line">$ mkdir -p db/mongodb/<span class="built_in">log</span></span><br></pre></td></tr></table></figure></p>
-<p>创建mongod.conf配置文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/</span><br><span class="line">$ vi mongod.conf</span><br></pre></td></tr></table></figure></p>
-<p>并在其中输入如下内容：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mongod.conf</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># for documentation of all options, see:</span></span><br><span class="line"><span class="comment">#   http://docs.mongodb.org/manual/reference/configuration-options/</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Where and how to store data.</span></span><br><span class="line">storage:</span><br><span class="line">  dbPath: /home/hewentian/ProjectD/db/mongodb/data</span><br><span class="line">  journal:</span><br><span class="line">    enabled: <span class="literal">true</span></span><br><span class="line"><span class="comment">#  engine:</span></span><br><span class="line"><span class="comment">#  mmapv1:</span></span><br><span class="line"><span class="comment">#  wiredTiger:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># where to write logging data.</span></span><br><span class="line">systemLog:</span><br><span class="line">  destination: file</span><br><span class="line">  logAppend: <span class="literal">true</span></span><br><span class="line">  path: /home/hewentian/ProjectD/db/mongodb/<span class="built_in">log</span>/mongod.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># network interfaces</span></span><br><span class="line">net:</span><br><span class="line">  port: 27017</span><br><span class="line">  bindIp: 127.0.0.1</span><br><span class="line"><span class="comment">#  bindIp: 0.0.0.0  </span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># how the process runs</span></span><br><span class="line">processManagement:</span><br><span class="line">  fork: <span class="literal">true</span>  <span class="comment"># fork and run in background</span></span><br><span class="line">  pidFilePath: /home/hewentian/ProjectD/db/mongodb/mongod.pid  <span class="comment"># location of pidfile</span></span><br><span class="line">  timeZoneInfo: /usr/share/zoneinfo</span><br><span class="line"></span><br><span class="line"><span class="comment">#security:</span></span><br><span class="line"><span class="comment">#  authorization: enabled</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#operationProfiling:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#replication:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#sharding:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## Enterprise-Only Options:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#auditLog:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#snmp:</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="启动mongodb"><a href="#启动mongodb" class="headerlink" title="启动mongodb"></a>启动mongodb</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/bin</span><br><span class="line">$ ./mongod -f ../mongod.conf</span><br><span class="line"></span><br><span class="line">about to fork child process, waiting until server is ready <span class="keyword">for</span> connections.</span><br><span class="line">forked process: 24049</span><br><span class="line">child process started successfully, parent exiting</span><br></pre></td></tr></table></figure>
-<h3 id="停止mongodb"><a href="#停止mongodb" class="headerlink" title="停止mongodb"></a>停止mongodb</h3><p>不要直接通过kill命令杀掉mongodb的进程，而应通过它官方提供的关闭脚本，如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/bin</span><br><span class="line">$ ./mongod -f ../mongod.conf --shutdown</span><br><span class="line"></span><br><span class="line">killing process with pid: 24049</span><br></pre></td></tr></table></figure></p>
-<h3 id="配置登录用户名和密码"><a href="#配置登录用户名和密码" class="headerlink" title="配置登录用户名和密码"></a>配置登录用户名和密码</h3><p>要开启密码登录，首先要将mongod.conf中的以下选项打开：</p>
-<pre><code>security:
-  authorization: enabled
-</code></pre><p>然后重启mongodb服务。</p>
-<ol>
-<li><p>添加管理员<br>使用mongo命令进入命令行交互模式，创建第一个用户admin，该用户需要有用户管理权限，其角色为root。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/mongodb-linux-x86_64-ubuntu1804-4.0.6/bin</span><br><span class="line">$ ./bin/mongo --host 127.0.0.1</span><br><span class="line">MongoDB shell version v4.0.6</span><br><span class="line">connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb</span><br><span class="line">Implicit session: session &#123; <span class="string">"id"</span> : UUID(<span class="string">"cbd0445f-667b-4d2a-92a8-66f8ad1d07ef"</span>) &#125;</span><br><span class="line">MongoDB server version: 4.0.6</span><br><span class="line">&gt; use admin</span><br><span class="line">switched to db admin</span><br><span class="line">&gt; db.createUser(&#123;user:<span class="string">"admin"</span>,<span class="built_in">pwd</span>:<span class="string">"12345"</span>,roles:[<span class="string">"root"</span>]&#125;)</span><br><span class="line">Successfully added user: &#123; <span class="string">"user"</span> : <span class="string">"admin"</span>, <span class="string">"roles"</span> : [ <span class="string">"root"</span> ] &#125;</span><br><span class="line">&gt; </span><br><span class="line">&gt; show collections</span><br><span class="line">Warning: unable to run listCollections, attempting to approximate collection names by parsing connectionStatus</span><br><span class="line">&gt; db.auth(<span class="string">"admin"</span>,<span class="string">"12345"</span>)</span><br><span class="line">1</span><br><span class="line">&gt; show collections</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>添加数据库用户<br>为数据库添加用户，添加用户前需要切换到该数据库，这里简单设置其角色为dbOwner</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; use bfg</span><br><span class="line">switched to db bfg</span><br><span class="line">&gt; db.createUser(&#123;user: <span class="string">"bfg"</span>, <span class="built_in">pwd</span>: <span class="string">"bfg100"</span>, roles: [&#123; role: <span class="string">"dbOwner"</span>, db: <span class="string">"bfg"</span> &#125;]&#125;)</span><br><span class="line">Successfully added user: &#123;</span><br><span class="line">	<span class="string">"user"</span> : <span class="string">"bfg"</span>,</span><br><span class="line">	<span class="string">"roles"</span> : [</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="string">"role"</span> : <span class="string">"dbOwner"</span>,</span><br><span class="line">			<span class="string">"db"</span> : <span class="string">"bfg"</span></span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>这样，bfg的用户就只能访问bfg这个库了，登录方式如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/mongo --host 127.0.0.1</span><br><span class="line">MongoDB shell version v4.0.6</span><br><span class="line">connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb</span><br><span class="line">Implicit session: session &#123; <span class="string">"id"</span> : UUID(<span class="string">"873114cf-fb7e-436a-b939-7e765dbecee9"</span>) &#125;</span><br><span class="line">MongoDB server version: 4.0.6</span><br><span class="line">&gt; use bfg</span><br><span class="line">switched to db bfg</span><br><span class="line">&gt; db.auth(<span class="string">"bfg"</span>,<span class="string">"bfg100"</span>)</span><br><span class="line">1</span><br><span class="line">&gt; show dbs</span><br><span class="line">bfg  0.000GB</span><br></pre></td></tr></table></figure></p>
-<p>至此，数据库安装完毕（此安装过程2019年初才补上）。</p>
-<h3 id="shell命令行方式连接到mongodb"><a href="#shell命令行方式连接到mongodb" class="headerlink" title="shell命令行方式连接到mongodb"></a>shell命令行方式连接到mongodb</h3><p>连接到单机：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mongo --host 192.168.1.111:27017 --authenticationDatabase user_database -u user_name -p user_password</span><br></pre></td></tr></table></figure></p>
-<p>连接到副本集：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mongo <span class="string">"192.168.1.111:27017,192.168.1.112:27017/user_database?replicaSet=mgset-9527&amp;readPreference=secondaryPreferred"</span> --authenticationDatabase user_database -u user_name -p user_password</span><br></pre></td></tr></table></figure></p>
-<h3 id="mongodb查询数组大小"><a href="#mongodb查询数组大小" class="headerlink" title="mongodb查询数组大小"></a>mongodb查询数组大小</h3><p>mongodb查询数组大小使用<code>$size</code>，例如：我们有一个名为<code>person</code>的集合，其中有个字段为<code>childrenNames</code>，是数组类型，如果我们要查询<code>childrenNames</code>长度为2的数据，则查询语句为：</p>
-<pre><code>db.getCollection(&apos;person&apos;).find({&apos;childrenNames&apos;:{&apos;$size&apos;:2}})
-</code></pre><p>但是它不能限定数组的大小范围，只能查询指定的长度。要查询数组范围，我们使用<code>$exists</code>，例如：查询数组长度大于等于3的语句如下（检查数组第3个元素是否存了）</p>
-<pre><code>db.getCollection(&apos;person&apos;).find({&apos;childrenNames.2&apos;:{&apos;$exists&apos;:1}})
-</code></pre><h3 id="mongodb分组查询"><a href="#mongodb分组查询" class="headerlink" title="mongodb分组查询"></a>mongodb分组查询</h3><p>如果我们要对集合<code>person</code>中的地区字段<code>area</code>来分组统计，语法如下：</p>
-<pre><code>db.getCollection(&apos;person&apos;).aggregate({&apos;$group&apos;:{&apos;_id&apos;:&apos;$area&apos;,&apos;count&apos;:{&apos;$sum&apos;:1}}})
-</code></pre><p>如果我们还想将分组统计结果，按数量倒序输出显示：</p>
-<pre><code>db.getCollection(&apos;person&apos;).aggregate([{&apos;$group&apos;:{&apos;_id&apos;:&apos;$area&apos;,&apos;count&apos;:{&apos;$sum&apos;:1}}},{&apos;$sort&apos;:{&apos;count&apos;:-1}}])
-</code></pre><p>对应的JAVA代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">MongoDatabase mongoDatabase = MongoUtil.getMongoDatabase(); <span class="comment">// 这个是我自已写的工具类</span></span><br><span class="line">MongoCollection&lt;Document&gt; personCollection = mongoDatabase.getCollection(<span class="string">"person"</span>);</span><br><span class="line"></span><br><span class="line">List&lt;BasicDBObject&gt; pipeline = <span class="keyword">new</span> ArrayList&lt;BasicDBObject&gt;();</span><br><span class="line">pipeline.add(<span class="keyword">new</span> BasicDBObject(<span class="string">"$group"</span>, <span class="keyword">new</span> BasicDBObject(<span class="string">"_id"</span>, <span class="string">"$area"</span>).append(<span class="string">"count"</span>, <span class="keyword">new</span> BasicDBObject(<span class="string">"$sum"</span>, <span class="number">1</span>))));</span><br><span class="line">pipeline.add(<span class="keyword">new</span> BasicDBObject(<span class="string">"$sort"</span>, <span class="keyword">new</span> BasicDBObject(<span class="string">"count"</span>, -<span class="number">1</span>))); <span class="comment">// 如果不要排序，则注释这一行</span></span><br><span class="line"></span><br><span class="line">AggregateIterable&lt;Document&gt; aggregate = personCollection.aggregate(pipeline);</span><br><span class="line">MongoCursor&lt;Document&gt; iterator = aggregate.iterator();</span><br></pre></td></tr></table></figure></p>
-<h3 id="mongodb更新部分字段"><a href="#mongodb更新部分字段" class="headerlink" title="mongodb更新部分字段"></a>mongodb更新部分字段</h3><p>例如我们要将<code>person</code>中<code>_id</code>为<code>123</code>的数据的<code>address</code>修改为：广东，语句如下：</p>
-<pre><code>db.getCollection(&apos;person&apos;).update({&apos;_id&apos;:&apos;123&apos;},{$set:{&apos;address&apos;:&apos;广东&apos;}})
-</code></pre><h3 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h3><p>删除数据的时候，要注意条件为null的情况，这在组成json条件的时候，会变成{}，这会将整个库的数据都删掉，这个要避免。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">MongoCollection&lt;Document&gt; mongoCollection = <span class="keyword">null</span>; <span class="comment">// 这里不建连接，仅演示</span></span><br><span class="line">JSONArray userNames = <span class="keyword">new</span> JSONArray();</span><br><span class="line"><span class="keyword">for</span> (String userName : Arrays.asList(<span class="string">""</span>, <span class="keyword">null</span>, <span class="string">"xiao ming"</span>)) &#123;</span><br><span class="line">    JSONObject obj = <span class="keyword">new</span> JSONObject();</span><br><span class="line">    obj.put(<span class="string">"userName"</span>, userName);</span><br><span class="line">    userNames.add(obj);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">JSONObject condition = <span class="keyword">new</span> JSONObject();</span><br><span class="line">condition.put(<span class="string">"$or"</span>, userNames);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除原有的数据</span></span><br><span class="line">log.info(<span class="string">"删除的语句为："</span> + condition); <span class="comment">// &#123;"$or":[&#123;"userName":""&#125;,&#123;&#125;,&#123;"userName":"xiao ming"&#125;]&#125;</span></span><br><span class="line">DeleteResult deleteResult = mongoCollection.deleteMany(BsonDocument.parse(condition.toJSONString()));</span><br><span class="line"></span><br><span class="line">log.info(<span class="string">"======mongo删除原有的数据条数：======"</span> + deleteResult.getDeletedCount());</span><br></pre></td></tr></table></figure></p>
-<h3 id="导出、导入数据库"><a href="#导出、导入数据库" class="headerlink" title="导出、导入数据库"></a>导出、导入数据库</h3><h4 id="我们使用mongoexport来导出指定的collection"><a href="#我们使用mongoexport来导出指定的collection" class="headerlink" title="我们使用mongoexport来导出指定的collection"></a>我们使用<code>mongoexport</code>来导出指定的<code>collection</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把一个<code>collection</code>导出成JSON或CSV格式的文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongoexport -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; -c &#123;COLLECTION_NAME&#125; -o &#123;EXPORT_FILE_PATH&#125; --<span class="built_in">type</span> json/csv -f fields</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	-c: collection名</span><br><span class="line">	-o: 输出的文件名</span><br><span class="line">	--<span class="built_in">type</span>: 输出的格式，默认为json</span><br><span class="line">	-f: 输出的字段，如果-<span class="built_in">type</span>为csv，则需要加上-f <span class="string">"字段名"</span></span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.json</span><br><span class="line">$ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.json --<span class="built_in">type</span> json -f  <span class="string">"_id,name"</span></span><br><span class="line">$ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.csv --<span class="built_in">type</span> csv -f  <span class="string">"_id,name"</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="我们使用mongoimport来导入指定的collection"><a href="#我们使用mongoimport来导入指定的collection" class="headerlink" title="我们使用mongoimport来导入指定的collection"></a>我们使用<code>mongoimport</code>来导入指定的<code>collection</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把一个json/csv文件导入到指定的<code>collection</code>中<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongoimport -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; -c &#123;COLLECTION_NAME&#125; --file &#123;IMPORT_FILE_PATH&#125; --headerline --<span class="built_in">type</span> json/csv -f fields</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	-c: collection名</span><br><span class="line">	--file: 要导入的文件</span><br><span class="line">	--<span class="built_in">type</span>: input format to import: json, csv, or tsv (defaults to <span class="string">'json'</span>) (default: json)</span><br><span class="line">	--headerline: use first line <span class="keyword">in</span> input <span class="built_in">source</span> as the field list (CSV and TSV only)</span><br><span class="line">	-f: 导入的字段名，CSV或TSV的时候可用</span><br><span class="line"> </span><br><span class="line">示例：</span><br><span class="line">$ mongoimport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user --file /home/hewentian/ProjectD/db/user.json</span><br><span class="line"></span><br><span class="line">注意：--headerline 和 -f 不能同时使用</span><br><span class="line"></span><br><span class="line">	--headerline: 使用CSV文件中首列指定的列名作为导入的name</span><br><span class="line">	-f: 会将CSV文件的所有列，作为数据进行导入，包括第一列的列名（如果文件中有指定列名）</span><br><span class="line"></span><br><span class="line">$ mongoimport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user --file /home/hewentian/ProjectD/db/user.csv --<span class="built_in">type</span> csv --headerline</span><br><span class="line">$ mongoimport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user --file /home/hewentian/ProjectD/db/user.csv --<span class="built_in">type</span> csv -f <span class="string">"_id,name,age"</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="我们使用mongodump来导出指定的database"><a href="#我们使用mongodump来导出指定的database" class="headerlink" title="我们使用mongodump来导出指定的database"></a>我们使用<code>mongodump</code>来导出指定的<code>database</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把一个<code>database</code>导出成指定目录下的JSON、BSON的文件集<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongodump -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; -o &#123;DUMP_FILE_PATH&#125;</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	-o: 输出的文件路径，要事先创建该目录，在该目录下会自动创建要导出的数据库作为子目录</span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongodump -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -o /home/hewentian/ProjectD/db/</span><br></pre></td></tr></table></figure></p>
-<h4 id="我们使用mongorestore来恢复指定的database"><a href="#我们使用mongorestore来恢复指定的database" class="headerlink" title="我们使用mongorestore来恢复指定的database"></a>我们使用<code>mongorestore</code>来恢复指定的<code>database</code></h4><p>该命令位于<code>{MONGO_HOME}/bin/</code>目录下，可以把指定目录下的JSON、BSON的文件集恢复成<code>database</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">$ mongorestore -h &#123;SERVER_ADDRESS&#125; --port &#123;SERVER_PORT&#125; -u &#123;USER_NAME&#125; -p &#123;PASSWORD&#125; --authenticationDatabase &#123;AUTH_DB&#125; -d &#123;DB_NAME&#125; --dir &#123;RESTORE_FILE_PATH&#125;</span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line"></span><br><span class="line">	-h: MONGODB服务器的地址</span><br><span class="line">	--port: MONGODB服务器的端口</span><br><span class="line">	-u: 用户名</span><br><span class="line">	-p: 密码</span><br><span class="line">	--authenticationDatabase: 验证数据库</span><br><span class="line">	-d: 数据库名</span><br><span class="line">	--dir: 要恢复的数据库的位置，注意与上面备份的 -o 不同，这里要指定到数据库的目录</span><br><span class="line"></span><br><span class="line">示例：</span><br><span class="line">$ mongorestore -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg --dir /home/hewentian/ProjectD/db/bfg/</span><br></pre></td></tr></table></figure></p>
-<h3 id="mongodb类型转换"><a href="#mongodb类型转换" class="headerlink" title="mongodb类型转换"></a>mongodb类型转换</h3><p>如下所示，将字符串类型的数据转换为int, double, date类型：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">先插入一条数据，都是字符串类型：</span><br><span class="line">db.getCollection(<span class="string">"userInfo"</span>).insert(&#123;<span class="string">"age"</span>:<span class="string">"20"</span>, <span class="string">"salary"</span>:<span class="string">"30"</span>, <span class="string">"birthday"</span>:<span class="string">"2018-12-21"</span>&#125;)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5c45b7099a14ab9807edaa75"</span>),</span><br><span class="line">    <span class="string">"age"</span> : <span class="string">"20"</span>,</span><br><span class="line">    <span class="string">"salary"</span> : <span class="string">"30"</span>,</span><br><span class="line">    <span class="string">"birthday"</span> : <span class="string">"2018-12-21"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">改变字段类型：</span><br><span class="line">db.getCollection(<span class="string">"userInfo"</span>).find(&#123;&#125;).forEach(function(doc) &#123;</span><br><span class="line">    db.getCollection(<span class="string">'userInfo'</span>).updateOne(&#123;_id: doc._id&#125;, &#123;$set: &#123;<span class="string">"age"</span>: NumberInt(doc.age), <span class="string">"salary"</span>: parseInt(doc.salary), <span class="string">"birthday"</span>: <span class="keyword">new</span> ISODate(doc.birthday)&#125;&#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5c45b7099a14ab9807edaa75"</span>),</span><br><span class="line">    <span class="string">"age"</span> : <span class="number">20</span>,</span><br><span class="line">    <span class="string">"salary"</span> : <span class="number">30.0</span>,</span><br><span class="line">    <span class="string">"birthday"</span> : ISODate(<span class="string">"2018-12-21T00:00:00.000Z"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>如果要将集合中已有文档的<code>ISODate</code>类型转换成<code>String</code>类型的日期，例如：将<code>updateTime</code>由<code>ISODate(&quot;2019-04-04T07:12:37.295Z&quot;)</code>转换为<code>2019-04-04 07:12:37</code>类型：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"updateTime"</span>:&#123;<span class="string">"$type"</span>:<span class="number">9</span>&#125;&#125;).forEach(<span class="function"><span class="keyword">function</span>(<span class="params">doc</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> mydate = doc.updateTime;</span><br><span class="line">    <span class="keyword">if</span> (mydate) &#123;</span><br><span class="line">        mydate = mydate.toJSON();</span><br><span class="line">        <span class="keyword">if</span> (mydate.length &gt; <span class="number">19</span>) &#123;</span><br><span class="line">            mydate = mydate.substr(<span class="number">0</span>, <span class="number">19</span>)</span><br><span class="line">            mydate = mydate.replace(<span class="string">'T'</span>,<span class="string">' '</span>);</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">   db.getCollection(<span class="string">'userInfo'</span>).update(&#123;<span class="string">"_id"</span>:doc._id&#125;, &#123;<span class="string">"$set"</span>:&#123;<span class="string">"updateTime"</span>:mydate&#125;&#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">验证结果：</span><br><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"_id"</span>:ObjectId(<span class="string">"5abc7ffc00a32c2b045e598c"</span>)&#125;)</span><br></pre></td></tr></table></figure></p>
-<h3 id="mongodb默认插入类型"><a href="#mongodb默认插入类型" class="headerlink" title="mongodb默认插入类型"></a>mongodb默认插入类型</h3><p>插入的int32整数会默认转为Double类型，若需插入为整数，需指定NumberInt：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">db.getCollection(<span class="string">"userInfo"</span>).insert(&#123;<span class="string">"age"</span>:<span class="number">20</span>, <span class="string">"salary"</span>:NumberInt(<span class="number">30</span>), <span class="string">"birthday"</span>:<span class="string">"2018-12-21"</span>&#125;)</span><br><span class="line"></span><br><span class="line">db.getCollection(<span class="string">"userInfo"</span>).find(&#123;&#125;)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5d3815a2a7de52e9fed7bbcf"</span>),</span><br><span class="line">    <span class="string">"age"</span> : <span class="number">20.0</span>,</span><br><span class="line">    <span class="string">"salary"</span> : <span class="number">30</span>,</span><br><span class="line">    <span class="string">"birthday"</span> : <span class="string">"2018-12-21"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="mongodb日期查询"><a href="#mongodb日期查询" class="headerlink" title="mongodb日期查询"></a>mongodb日期查询</h3><p>日期的类型不同，查询的方式也不同：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">如果日期的类型为String：</span><br><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"insertTime"</span>:&#123;$regex:<span class="string">"2019-01-07 *"</span>&#125;&#125;) <span class="comment">// *号前有个空格</span></span><br><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"insertTime"</span>:&#123;$gte:<span class="string">"2019-02-01 00:00:00"</span>,$lte:<span class="string">"2019-02-11 23:59:59"</span>&#125;&#125;)</span><br><span class="line"></span><br><span class="line">如果日期的类型为ISODate：</span><br><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"insertTime"</span>:&#123;$gte:ISODate(<span class="string">"2019-01-01T00:00:00Z"</span>),$lte:ISODate(<span class="string">"2019-02-11T23:59:59Z"</span>)&#125;&#125;)</span><br></pre></td></tr></table></figure></p>
-<h3 id="复制集合"><a href="#复制集合" class="headerlink" title="复制集合"></a>复制集合</h3><p>在复制集合的时候，修改某些值，可以使用javascript实现（建议在mongo shell下执行，这样不容易超时），示例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">var count=<span class="number">0</span>;</span><br><span class="line">var totalCount = db.getCollection(<span class="string">'user'</span>).count(&#123;&#125;);</span><br><span class="line">var lastId=<span class="string">''</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(count &lt; totalCount) &#123;</span><br><span class="line">    db.getCollection(<span class="string">'user'</span>).find(&#123;<span class="string">"_id"</span>:&#123;<span class="string">"$gt"</span>:lastId&#125;&#125;).sort(&#123;<span class="string">"_id"</span>:<span class="number">1</span>&#125;).limit(<span class="number">100</span>).forEach((doc)=&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (++count % <span class="number">1000</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            print(<span class="string">'handling: '</span> + count + <span class="string">' / '</span> + totalCount)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        lastId = doc._id;</span><br><span class="line">        doc._id=doc.regId;</span><br><span class="line">       db.getCollection(<span class="string">'user_new'</span>).save(doc);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="正则表达式的使用"><a href="#正则表达式的使用" class="headerlink" title="正则表达式的使用"></a>正则表达式的使用</h3><p>查询用户名<code>name</code>前后有空格的记录：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"name"</span>:/^\s+|\s+$/&#125;)</span><br><span class="line">db.getCollection(<span class="string">'userInfo'</span>).find(&#123;<span class="string">"$or"</span>:[&#123;<span class="string">"name"</span>:/^\s+|\s+$/&#125;, &#123;<span class="string">"postCode"</span>:/^\s+|\s+$/&#125;]&#125;)</span><br></pre></td></tr></table></figure></p>
-<h3 id="删除字段"><a href="#删除字段" class="headerlink" title="删除字段"></a>删除字段</h3><p>The following update() operation uses the <code>$unset</code> operator to remove the fields <code>quantity</code> and <code>instock</code> from the first document in the <code>products</code> collection where the field <code>sku</code> has a value of <code>unknown</code>.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.products.update(</span><br><span class="line">   &#123; sku: <span class="string">"unknown"</span> &#125;,</span><br><span class="line">   &#123; <span class="variable">$unset</span>: &#123; quantity: <span class="string">""</span>, instock: <span class="string">""</span> &#125; &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
-<p>if you want to update all matched, use <code>updateMany</code> instead.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2018/03/07/mongo-note/" data-id="ck2vog8qc0029xh3kaf6g7ke1" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongo/">mongo</a></li></ul>
 
     </footer>
   </div>
@@ -2101,9 +2023,9 @@ OK
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Catégories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -2113,7 +2035,7 @@ OK
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -2121,9 +2043,17 @@ OK
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/01/14/spark-note/">spark 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/30/scala-note/">scala 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2019/07/26/docker-note/">docker 学习笔记</a>
@@ -2135,14 +2065,6 @@ OK
         
           <li>
             <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/10/hive-note/">hive 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/01/hadoop-cluster-ha/">hadoop 集群的搭建HA</a>
           </li>
         
       </ul>
@@ -2167,8 +2089,8 @@ OK
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 Tim Ho<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      &copy; 2020 Tim Ho<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
