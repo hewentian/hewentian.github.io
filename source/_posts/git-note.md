@@ -1,8 +1,36 @@
 ---
 title: git 学习笔记
 date: 2017-10-17 10:17:07
+tags: git
 categories: other
 ---
+
+### 设置用户名和邮箱
+全局设置方式：
+``` bash
+$ git config --global user.name "hewentian"
+$ git config --global user.email "wentian.he@qq.com"
+```
+
+单独对某个仓库设置方式：
+``` bash
+$ git config user.name "hewentian"
+$ git config user.email "wentian.he@qq.com"
+```
+
+可以通过如下方式查看设置结果：
+``` bash
+$ git config user.name
+$ git config user.email
+```
+
+
+### 创建SSH KEY
+``` bash
+$ ssh-keygen -t rsa -C "youremail@example.com"
+```
+
+
 ## 下面记录一些经常会用到的命令：
 
 查看远程分支, 加上 -a 参数可以查看远程分支，远程分支会用红色表示出来（如果你开了颜色支持的话），不加 -a 则查看本地分支：
@@ -206,4 +234,16 @@ $ git commit -m "修改原因说明"
 $ git push origin fix20191106
 ```
 
+
+### 将本地仓库提交到多个远程仓库
+一般情况下，在本地有一个gitLab，在生产也有一个gitLab。我们要将本地代码提交到生产的gitLab，方法如下：
+将本地仓库和生产的远程仓库绑定：
+
+        cd ~/ProjectD/gitHub/bigdata
+        git remote add prod git@github.com:hewentian/bigdata.git
+
+在本地切换到和生产仓库一样的分支，然后提交到生产：
+
+        git checkout develop
+        git push prod develop
 

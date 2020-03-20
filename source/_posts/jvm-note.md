@@ -16,13 +16,13 @@ JAVA的NIO库允许程序使用直接内存，从而提高性能，通常直接�
 lambda函数式编程的一个重要优点就是这样的程序天然地适合并行运行，这对JAVA语言在多核时代继续保持主流语言的地位有很大的帮助。
 
 ### 垃圾回收算法
-1. 引用计数法：是古老而经典的垃圾收集算法，其核心就是在对象被其他所引用的时候计数器加1,而当引用失效时则减1.但是这种方式有非常严重的问题：无法处理循环引用的情况、还有的就是每次进行加减操作比较浪费系统性能。
-2. 标记清除法：分为标记和清除两个阶段，这种方式也有非常大的洞弊端，就是空间碎片问题，垃圾回收后，空间不是连续的。
+1. 引用计数法：是古老而经典的垃圾收集算法，其核心就是在对象被其他对象所引用的时候计数器加1，而当引用失效时则减1。但是这种方式有非常严重的问题：无法处理循环引用的情况、还有的就是每次进行加减操作比较浪费系统性能。
+2. 标记清除法：分为标记和清除两个阶段，这种方式也有非常大的漏洞弊端，就是空间碎片问题，垃圾回收后，空间不是连续的。
 3. 复制算法：其核心思想就是将内存分为两块，每次只使用其中一块。在回收时，将正在使用的内存中的存留对象复制到未被使用的内存中去，之后清除之前正在使用的内存中的所有对象，反复去交换两个内存的角式。
 4. 标记压缩法：是在标记清除法的基础上做了优化，把存活的对象压缩到内存的一端，然后进行垃圾清理（老年代中使用的回收方法）
 5. 分代算法：根据对象的特点把内存分成N块，然后根据每个对象的特点使用不同的算法。对于新生代，它的回收频率很高，但是每次回收耗时都很短；而老年代回收频率较低，但是耗时相对较长，所以应该尽量减少老年代的GC。
 
-### 确定对像是否已死的方法
+### 确定对象是否已死的方法
 1. 引用计数法；
 2. 可达性分析算法GC Root.
 
@@ -30,7 +30,7 @@ lambda函数式编程的一个重要优点就是这样的程序天然地适合�
 1. 串行回收器： 使用单线程进行垃圾回收的回收器。每次回收时，串行回收器只有一个工作线程，对于并行能力较弱的计算机来说，串行回收器的专注性和独占性往往有更好的性能表现。可以在新生代和老年代使用。`-XX:+UseSerialGC`
 2. 并行回收器： 在串行回收器的基础上作了改进，他可以使用多个线程同时进行垃圾回收，对于计算能力强的计算机而言，可以有效的缩短回收所需的实际时间。他只是简单的将串行回收器多线程化，他的回收策略和算法和串行回收器一样。只使用在新生代。`--XX:+UseParNewGC`
 3. ParallelGC： 新生代回收器，使用了复杂算法的收集器，也是多线程独占形式的收集器，它有个特点，就是它非常关注系统的吞吐量。
-4. CMS：全称为`Concurrent Mark Sweep`，意为并发标记清除，他使用的是标记清除法，主要关注系统停顿时间。`-XX:+UseConcMarkSweepGC`进行设置，`-XX:ConcGCThreads`设置并发线程数量。CMS并不是独占的回收器，也就是说CMS回收的过程中，应用程序 仍然可以在不停的工作，不过会有新的垃圾产生。CMS比较耗内存，CMS不会等到应用程序饱和的时候才去回收垃圾，而是在某一个阀值的时候开始回收，可以使用参数指定：`-XX:CMSInitiatingOccupancyFraction`来指定，默认为68,也就是说当老年代的空间使用率达68%的时候，会执行CMS回收。如果内存不足，收集可能会失败，如果失败了，会启动老年代串行回收器。
+4. CMS：全称为`Concurrent Mark Sweep`，意为并发标记清除，他使用的是标记清除法，主要关注系统停顿时间。`-XX:+UseConcMarkSweepGC`进行设置，`-XX:ConcGCThreads`设置并发线程数量。CMS并不是独占的回收器，也就是说CMS回收的过程中，应用程序仍然可以在不停的工作，不过会有新的垃圾产生。CMS比较耗内存，CMS不会等到应用程序饱和的时候才去回收垃圾，而是在某一个阀值的时候开始回收，可以使用参数指定：`-XX:CMSInitiatingOccupancyFraction`来指定，默认为68,也就是说当老年代的空间使用率达68%的时候，会执行CMS回收。如果内存不足，收集可能会失败，如果失败了，会启动老年代串行回收器。
 4. G1：`Garbage-First`是在JDK1.7中提出的垃圾回收器，是为了取代CMS的回收器。它属于分代回收器，并行性和并发性。并行性是G1回收期间可多线程同时工作，而并发性是G1拥有与应用程序交替执行能力，部分工作可与应用程序同时执行，在整个GC期间不会完全阻塞应用程序。它可以工作在新生代和老年代。之前的回收器，或者工作在新生代，或者工作在老年代。G1使用了有益智复制对象的方式，减少空间碎片。
 
 将GC的日志输出到文件可以配置JVM启动参数：`-Xloggc:/home/hewentian/Document/gc.log`
@@ -38,14 +38,14 @@ lambda函数式编程的一个重要优点就是这样的程序天然地适合�
 ### class文件格式
 class文件是一组以8位字节码为基础单位的二进制流，各个数据项目严格按照顺序紧凑地排列在class文件之中，中间没有添加任何分隔符，这使得整个class文件中存储的内容几乎全部是程序运行的必要数据，没有空隙存在。当遇到需要占用8位字节以上空间的数据项时，则会按照高位在前的方式分割成若干个8位字节进行存储。
 
-无符号数属于基本的数据类型，以u1, u2, u4, u8来分别代表1，2, 4, 8个字节的无符号数，无符号数可以用来描述数字、索引引用、数量值或者按照UTF-8编码构成字符串值。
+无符号数属于基本的数据类型，以u1, u2, u4, u8来分别代表1，2，4，8个字节的无符号数，无符号数可以用来描述数字、索引引用、数量值或者按照UTF-8编码构成字符串值。
 
 如下图所示：
 ![](/img/class-file-format.png "图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》")
 
 ### 魔数与class文件的版本
 **魔数：** 每个class文件的头4个字节称为魔数(Magic Number)，它的唯一作用是确定这个文件是否为一个能被虚拟机接受的class文件。
-**版本号：** 紧接着魔的4个字节存储的是class文件的版本号：第5和第6个字节是次版本号(Minor Version)，第7和第8个字节是主版本号(Major Version)。只有当前JVM的版本号大于等于这个文件的版本号，该文件才会被JVM加载。
+**版本号：** 紧接着魔数的4个字节存储的是class文件的版本号：第5和第6个字节是次版本号(Minor Version)，第7和第8个字节是主版本号(Major Version)。只有当前JVM的版本号大于等于这个文件的版本号，该文件才会被JVM加载。
 
 ### 类型转换
 JVM直接支持（转换时无需显式的转换指令）：
@@ -64,7 +64,7 @@ JVM中类的加载过程：加载、验证、准备、解析、初始化。如�
 3. 在内存中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口。
 
 验证：验证是连接阶段的第一步，这一阶段的目的是为了确保class文件的字节流中包含的信息符合当前JVM的要求，并且不会危害JVM自身的安全。
-准备：正式为类变量分配内存并设置类变量（static修饰）初始值的阶段，通常是该类型的零值；
+准备：正式为类变量（static修饰）分配内存并设置类变量初始值的阶段，通常是该类型的零值；
 ``` java
 public static int value = 123;
 ```
@@ -80,57 +80,77 @@ public static int value = 123;
 ### 类加载器
 从JAVA开发人员的角度来看，绝大部分JAVA程序都会使用到以下3种系统提供的类加载器：
 
-1. 启动类加载器(Bootstrap ClassLoader)：这个类加载器负责将存放在`<JAVA_HOME>\lib`目录中的，或者被`-Xbootclasspath`参数所指定的路径中的，并且是虚拟机识别的（仅按照文件名识别，如rt.jar，名字不符合的类库即使放在lib目录中也不会被加载）类库加载到虚拟机内存中。启动类加载器无法被JAVA程序直接引用，用户在编写自定义类加载器时，如果需要把加载请求委派给引导类加载器，那么使用null代替即可。
-2. 扩展类加载器(Extension ClassLoader)：这个加载器由`sum.misc.Launcher$ExtClassLoader`实现，它负责加载`<JAVA_HOME>\lib\ext`目录中的，或者被`java.ext.dirs`系统变量所指定的路径中的所有类库，开发者可以直接使用扩展类加载器。
-3. 应用程序类加载器(Application ClassLoader)：这个类加载器由`sum.misc.Launcher$AppClassLoader`实现。由于这个类加载器是`ClassLoader中的getSystemClassLoader()`方法的返回值，所以一般也称它为系统类加载器。它负责加载用户类路径(ClassPath)上所指定的类库，开发者可以直接使用这个类加载器，如果应用程序中没有自定义过自已的类加载器，一般情况下这个就是程序中默认的类加载器。
+1. 启动类加载器(Bootstrap ClassLoader)：这个类加载器负责将存放在`<JAVA_HOME>/lib`目录中的，或者被`-Xbootclasspath`参数所指定的路径中的，并且是虚拟机识别的（仅按照文件名识别，如rt.jar，名字不符合的类库即使放在lib目录中也不会被加载）类库加载到虚拟机内存中。启动类加载器无法被JAVA程序直接引用，用户在编写自定义类加载器时，如果需要把加载请求委派给引导类加载器，那么使用null代替即可。
+2. 扩展类加载器(Extension ClassLoader)：这个加载器由`sun.misc.Launcher$ExtClassLoader`实现，它负责加载`<JAVA_HOME>/lib/ext`目录中的，或者被`java.ext.dirs`系统变量所指定的路径中的所有类库，开发者可以直接使用扩展类加载器。
+3. 应用程序类加载器(Application ClassLoader)：这个类加载器由`sun.misc.Launcher$AppClassLoader`实现。由于这个类加载器是`ClassLoader中的getSystemClassLoader()`方法的返回值，所以一般也称它为系统类加载器。它负责加载用户类路径(ClassPath)上所指定的类库，开发者可以直接使用这个类加载器，如果应用程序中没有自定义过自已的类加载器，一般情况下这个就是程序中默认的类加载器。
 
 我们的应用程序都是由这3种类加载器互相配合进行加载的，如果有必要，还可以加入自已定义的类加载器。这些类加载器之间的关系一般如下图所示，这种层次关系，称为类加载器的双亲委派模型。
 ![](/img/class-loader-mode.png "图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》")
+
+什么时候触发类加载：
+1. `new`一个类实例的时候；
+2. 调用一个类的`static`变量或方法的时候，例如：`System.out`；
+3. 反射调用的时候，如果该类还没进行过初始化；
+4. 初始化一个类，其父类还没初始化时，会先初始化其父类；
+5. 启动时的类，即运行`main`方法类。
+
+静态加载和动态加载：
+静态加载：在代码中通过`new`创建实例，称为静态加载；
+动态加载：在运行时，通过`Class.forName()`加载一个类，称为动态加载。
+
+`loadClass()`和`Class.forName()`的区别：
+`ClassLoader.loadClass()`仅会将类加载到内存中，但不会实例化对象。而`Class.forName()`在加载之后，会实例化对象，也就是说它会返回一个对象。
+
+`new`和`newInstance()`创建类的区别：
+1. `newInstance()`必须保证这个类被加载；
+2. `new`关键字，如果类没有被加载，那么就会先加载；
+3. `new`可以调用类的任何构造方法，而`newInstance()`只能调用默认的无参构造方法；
+4. `new`出来的对象是强类型的，效率高；`newInstance()`创建的对象是弱类型的，效率相对较低。
 
 
 ### 当泛型遇上重载
 下面的代码是不能通过编译的，因为参数`List<String>`和`List<Integer>`编译之后都被擦除了，变成了一样的`List<E>`，擦除动作导致这两种方法的特征签名变得一模一样。
 ``` java
 public static void method(List<String> list) {
-	System.out.println("invoke method(List<String> list)");
+    System.out.println("invoke method(List<String> list)");
 }
-	
+
 public static void method(List<Integer> list) {
-	System.out.println("invoke method(List<Integer> list)");
+    System.out.println("invoke method(List<Integer> list)");
 }
 ```
 
 如果真是要重载，可以适当修改上述代码，只要增加返回值即可，它也只能在JDK1.6上可以编译通过。在JDK1.8也是无法编译通过的。如下所示：
 ``` java
 public static String method(List<String> list) {
-	System.out.println("invoke method(List<String> list)");
-	return "";
+    System.out.println("invoke method(List<String> list)");
+    return "";
 }
-	
+
 public static int method(List<Integer> list) {
-	System.out.println("invoke method(List<Integer> list)");
-	return 1;
+    System.out.println("invoke method(List<Integer> list)");
+    return 1;
 }
 ```
 
 ### 自动装箱的陷阱
 ``` java
 public static void main(String[] args) throws Exception {
-	Integer a = 1;
-	Integer b = 2;
-	Integer c = 3;
-	Integer d = 3;
-	Integer e = 321;
-	Integer f = 321;
-	Long g = 3L;
+    Integer a = 1;
+    Integer b = 2;
+    Integer c = 3;
+    Integer d = 3;
+    Integer e = 321;
+    Integer f = 321;
+    Long g = 3L;
 
-	// 在 JDK1.8 中的结果如下
-	System.out.println(c == d);		// true, [-127, 128]之间的Integer数字会被缓存
-	System.out.println(e == f);		// false
-	System.out.println(c == (a + b));	// true
-	System.out.println(c.equals(a + b));	// true
-	System.out.println(g == (a + b));	// true
-	System.out.println(g.equals(a + b));	// false
+    // 在 JDK1.8 中的结果如下
+    System.out.println(c == d);             // true, [-127, 128]之间的Integer数字会被缓存
+    System.out.println(e == f);             // false
+    System.out.println(c == (a + b));       // true
+    System.out.println(c.equals(a + b));    // true
+    System.out.println(g == (a + b));       // true
+    System.out.println(g.equals(a + b));    // false
 }
 ```
 
@@ -139,14 +159,14 @@ public static void main(String[] args) throws Exception {
 ``` java
 // 方法一：带有final修饰
 public void foo(final int arg) {
-	final int var = 0;
-	// do something
+    final int var = 0;
+    // do something
 }
 
 // 方法二：没有final修饰
 public void foo(int arg) {
-	int var = 0;
-	// do something
+    int var = 0;
+    // do something
 }
 ```
 
@@ -156,7 +176,7 @@ public void foo(int arg) {
 
 
 ### 程序编译与代码优化
-从sum javac的代码来看，编译过程大致可以分成3个过程：
+从sun javac的代码来看，编译过程大致可以分成3个过程：
 
 1. 解析与填充符号表的过程(Parse and Enter);
 2. 插入式注解处理器的注解处理过程(Annotation Processing);
@@ -179,7 +199,7 @@ public void foo(int arg) {
 在确定虚拟机运行参数的前提下，这两个计数器都有一个确定的阈值，当计数器超过阈值溢出了，就会触发JIT编译。
 
 我们首先来看看方法调用计数器，顾名思义，这个计数器就用于统计方法被调用的次数，它的默认阈值在Client模式下是1500次，在Server模式下是10000次，这个阈值可以通过JVM参数`-XX:CompileThreshold`来人为设定。
-	
+
 下面我们再来看看回边计数器。**什么是回边？ 在字节码遇到控制流向后跳转的指令称为回边（Back Edge）。**回边计数器是用来统计一个方法中循环体代码执行的次数，回边计数器的阈值可以通过参数`-XX：OnStackReplacePercentage`来调整。
 
 虚拟机运行在Client模式下，回边计数器阈值计算公式为：
@@ -200,16 +220,16 @@ public void foo(int arg) {
 ### 程序延时一定时间
 像下面的空循环经JIT编译器优化后，会被消除掉，以前很多入门教程把空循环当做程序延时的手段来介绍，其实是错误的。
 ``` java
-for(int i = 0; i < 10000; i++)
-	;
+for(int i = 1; i <= 10000; i++)
+    ;
 ```
 
 要延时应该使用下面的方法
 ``` java
 try {
-	Thread.sleep(1000);
+    Thread.sleep(1000);
 } catch (InterruptedException e) {
-	e.printStackTrace();
+    e.printStackTrace();
 }
 ```
 
@@ -217,7 +237,7 @@ try {
 不使用的对象应手动设为null，不过，赋值为null的操作在经过JIT编译优化后就会被消除掉，这时候将变量设置为null就是没有意义的。
 
 
-### 线程、主内存、工作内存、处理器、关系图
+### 线程、主内存、工作内存、处理器的关系图
 ![](/img/cpu-thread-memory.png "图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》")
 
 
@@ -245,11 +265,11 @@ try {
 volatile boolean shutdownRequest;
 
 public void shutdown() {
-	shutdownRequest = true;
+    shutdownRequest = true;
 }
 
 while(!shutdownRequest) {
-	// do stuff
+    // do stuff
 }
 ```
 
@@ -261,16 +281,16 @@ Java语言定义了5种线程状态，在任意一个时间点，一个线程只
 * 运行（Runnable）：Runnable包括了操作系统线程状态中的Running和Ready，也就是处于此状态的线程有可能正在执行，也有可能正在等待着CPU为它分配执行时间；
 * 无限期等待（Waiting）：处于这种状态的线程不会被分配CPU执行时间，它们要等待被其他线程显式地唤醒。以下方法会让线程陷入无限期的等待状态：
     * 没有设置Timeout参数的Object.wait()方法；
-	* 没有设置Timeout参数的Thread.join()方法；
+    * 没有设置Timeout参数的Thread.join()方法；
     * LockSupport.park()方法；
 * 限期等待（Timed Waiting）：处于这种状态的线程也不会被分配CPU执行时间，不过无须等待被其他线程显式地唤醒，在一定的时间之后它们会由系统自动唤醒。以下方法会让线程进入限期等待状态：
     * Thread.sleep()方法；
-	* 设置了Timeout参数的Object.wait()方法；
-	* 设置了Timeout参数的Thread.join()方法；
+    * 设置了Timeout参数的Object.wait()方法；
+    * 设置了Timeout参数的Thread.join()方法；
     * LockSupport.parkNanos()方法；
-	* LockSupport.parkUntil()方法；
+    * LockSupport.parkUntil()方法；
 * 阻塞（Blocked）：线程被阻塞了，“阻塞状态”与“等待状态”的区别是：“阻塞状态”在等待着获取到一个排他锁，这个事件将在另外一个线程放弃这个锁的时候发生；而“等待状态”则是在等待一段时间，或者唤醒动作的发生。在程序等待进入同步区域的时候，线程将进入这种状态。
-* 结束（Terminated）：已终止线程的线程状态，线程已经结束执行。
+* 结束（Terminated）：已终止线程的线程状态，线程已经执行结束。
 
 上述5种状态在遇到特定事件发生的时候会互相转换，它们的转换关系如下图所示：
 ![](/img/thread-state-transform.png "图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》")

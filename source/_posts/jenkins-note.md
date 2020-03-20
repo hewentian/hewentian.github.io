@@ -154,7 +154,7 @@ Password: abc123
 
 ### 下面安装插件
 `[Manage Jenkins]->[Manage Plugins]`
-安装`Maven Integration`插件，如下图，直接点击`Install wthout restart`，该插件是用于建立maven job
+安装`Maven Integration`插件，如下图，直接点击`Install without restart`，该插件是用于建立maven job
 ![](/img/jenkins-8.png "安装maven插件")
 
 安装`Deploy to container`插件，用于将构建好的应用部署到容器中：

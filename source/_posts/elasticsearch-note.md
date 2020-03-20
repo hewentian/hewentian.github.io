@@ -561,7 +561,25 @@ GET /people/user/_search
   },
   "size": 20
 }
+
+
+查询 username 必须存在的记录
+GET /people/user/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "exists": {
+            "field": "username"
+          }
+        }
+      ]
+    }
+  }
+}
 </pre>
+
 
 ### 查询返回某些指定的字段
 如果查询的结果字段很多，而我们仅需要其中的某些字段的时候，我们可能通过`_source`来指定，比如我们只要userName, address：
