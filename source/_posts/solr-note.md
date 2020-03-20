@@ -1,5 +1,5 @@
 ---
-title: solr学习笔记
+title: solr 学习笔记
 date: 2017-10-29 12:12:26
 tags: solr
 categories: bigdata

@@ -1,5 +1,5 @@
 ---
-title: solr配置拼音检索
+title: solr 配置拼音检索
 date: 2018-01-08 14:52:08
 tags: solr
 categories: bigdata

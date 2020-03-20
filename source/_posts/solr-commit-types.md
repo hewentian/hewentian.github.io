@@ -1,5 +1,5 @@
 ---
-title: solr提交索引的三种方式
+title: solr 提交索引的三种方式
 date: 2017-10-29 10:59:11
 tags: solr
 categories: bigdata

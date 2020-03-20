@@ -1,5 +1,5 @@
 ---
-title: hexo学习笔记
+title: hexo 学习笔记
 date: 2017-12-02 13:59:48
 categories: other
 ---

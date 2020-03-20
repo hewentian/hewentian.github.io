@@ -1,5 +1,5 @@
 ---
-title: neo4j学习笔记
+title: neo4j 学习笔记
 date: 2018-02-17 09:59:18
 tags: neo4j
 categories: db

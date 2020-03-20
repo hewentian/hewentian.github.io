@@ -1,5 +1,5 @@
 ---
-title: activeMQ学习笔记
+title: activeMQ 学习笔记
 date: 2018-01-23 20:46:34
 tags: activemq
 categories: bigdata

@@ -1,5 +1,5 @@
 ---
-title: solr配置IKAnalyzer的中文分词
+title: solr 配置IKAnalyzer中文分词
 date: 2018-01-08 16:07:17
 tags: solr
 categories: bigdata

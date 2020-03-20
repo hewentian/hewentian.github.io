@@ -1,5 +1,5 @@
 ---
-title: solr的安装使用
+title: solr 单节点安装
 date: 2017-10-28 10:57:27
 tags: solr
 categories: bigdata

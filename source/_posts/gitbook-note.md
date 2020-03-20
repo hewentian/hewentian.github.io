@@ -1,5 +1,5 @@
 ---
-title: gitbook学习笔记
+title: gitbook 学习笔记
 date: 2018-01-29 13:59:48
 tags:
 categories: other

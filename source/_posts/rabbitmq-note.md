@@ -1,5 +1,5 @@
 ---
-title: rabbitMQ学习笔记
+title: rabbitMQ 学习笔记
 date: 2018-01-17 12:06:58
 tags: rabbitmq
 categories: bigdata

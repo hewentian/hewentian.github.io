@@ -1,5 +1,5 @@
 ---
-title: hadoop mapreduce示例
+title: hadoop mapreduce 示例
 date: 2018-12-19 20:06:47
 tags: hadoop
 categories: bigdata

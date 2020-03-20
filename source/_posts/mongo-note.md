@@ -461,9 +461,9 @@ db.getCollection('userInfo').find({"insertTime":{$gte:ISODate("2019-01-01T00:00:
 ### 复制集合
 在复制集合的时候，修改某些值，可以使用javascript实现（建议在mongo shell下执行，这样不容易超时），示例：
 ``` java
-var count=0;
+var count = 0;
 var totalCount = db.getCollection('user').count({});
-var lastId='';
+var lastId = "000000000000000000000000";
 
 while(count < totalCount) {
     db.getCollection('user').find({"_id":{"$gt":lastId}}).sort({"_id":1}).limit(100).forEach((doc)=> {
