@@ -7,8 +7,12 @@ categories: db
 
 ### mysql 查询重复数据
 ``` sql
-SELECT user_name, COUNT(*) AS c FROM user_table GROUP BY user_name HAVING c > 1;
+SELECT user_name, COUNT(*) AS c 
+FROM user_table 
+GROUP BY user_name 
+HAVING c > 1;
 ```
+
 当查询几个列的组合的时候，可以这样
 ``` sql
 SELECT CONCAT(first_name, '_', last_name) AS user_name, COUNT(*) AS c 
@@ -16,11 +20,12 @@ FROM user_table
 GROUP BY user_name 
 HAVING c > 1;
 ```
-当使用`CONCAT(str1,str2,...)`函数的时候，只要有一个参数为`null`，则整个结果为`null`，而有时候这不是我们所想要的结果，这时候，我们可以使用`IFNULL(expr1,expr2)`函数来做一个转换，当`expr1`为`null`的时候，表达式的结果为`expr2`，否则为`expr1`，示例如下：
+
+当使用`CONCAT(str1,str2,...)`函数的时候，只要有一个参数为`NULL`，则整个结果为`NULL`，而有时候这不是我们所想要的结果，这时候，我们可以使用`IFNULL(expr1,expr2)`函数来做一个转换，当`expr1`为`NULL`的时候，表达式的结果为`expr2`，否则为`expr1`，示例如下：
 ``` sql
-SELECT CONCAT('Tim', ' ', 'Ho') FROM DUAL;	# Tim Ho
-SELECT IFNULL(null, 'expr2') FROM DUAL;		# expr2
-SELECT IFNULL('expr1', 'expr2') FROM DUAL;	# expr1
+SELECT CONCAT('Tim', ' ', 'Ho') FROM DUAL; # Tim Ho
+SELECT IFNULL(NULL, 'expr2') FROM DUAL;    # expr2
+SELECT IFNULL('expr1', 'expr2') FROM DUAL; # expr1
 ```
 
 
@@ -104,7 +109,7 @@ ALTER TABLE t_user ADD UNIQUE KEY `uk_login_name_phone` (login_name, phone);
 
 查看结果：
 ``` sql
-show create table t_user;
+SHOW CREATE TABLE t_user;
 
 CREATE TABLE `t_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
@@ -135,21 +140,26 @@ ALTER TABLE t_user DROP INDEX uk_login_name_phone;
     SELECT * FROM tableName LIMIT 起始位置, 长度;
 
 ``` sql
-SELECT * FROM t_user WHERE id > 2 LIMIT 5; // 前5条记录
-SELECT * FROM t_user WHERE id > 2 LIMIT 5, 10; // 第5条记录之后的前10条记录
+SELECT * FROM t_user WHERE id > 2 LIMIT 5;     // 前5条记录
+SELECT * FROM t_user WHERE id > 2 LIMIT 5, 10; // 第5条记录之后的前10条记录，不包括第5条记录
 ```
 
 
 ### MySQL中GROUP_CONCAT函数
-参考：http://hchmsguo.iteye.com/blog/555543
+https://www.mysqltutorial.org/mysql-group_concat/
+
 完整的语法如下：
 ``` sql
-GROUP_CONCAT([DISTINCT] 要连接的字段 [Order BY ASC/DESC 排序字段] [Separator '分隔符'])
+GROUP_CONCAT(
+    DISTINCT expression
+    ORDER BY expression
+    SEPARATOR sep
+);
 ```
 
 1. 基本查询
 ``` sql
-select * from aa;
+SELECT * FROM aa;
 
 +------+------+
 | id| name |
@@ -166,10 +176,10 @@ select * from aa;
 
 2. 以id分组，把name字段的值打印在一行，逗号分隔(默认)
 ``` sql
-select id,group_concat(name) from aa group by id;
+SELECT id, GROUP_CONCAT(name) FROM aa GROUP BY id;
 
 +------+--------------------+
-| id| group_concat(name) |
+| id| GROUP_CONCAT(name) |
 +------+--------------------+
 |1 | 10,20,20|
 |2 | 20 |
@@ -180,10 +190,10 @@ select id,group_concat(name) from aa group by id;
 
 3. 以id分组，把name字段的值打印在一行，分号分隔
 ``` sql
-select id,group_concat(name separator ';') from aa group by id;
+SELECT id, GROUP_CONCAT(name separator ';') FROM aa GROUP BY id;
 
 +------+----------------------------------+
-| id| group_concat(name separator ';') |
+| id| GROUP_CONCAT(name separator ';') |
 +------+----------------------------------+
 |1 | 10;20;20 |
 |2 | 20|
@@ -194,10 +204,10 @@ select id,group_concat(name separator ';') from aa group by id;
 
 4. 以id分组，把去冗余的name字段的值打印在一行，逗号分隔
 ``` sql
-select id,group_concat(distinct name) from aa group by id;
+SELECT id, GROUP_CONCAT(distinct name) FROM aa GROUP BY id;
 
 +------+-----------------------------+
-| id| group_concat(distinct name) |
+| id| GROUP_CONCAT(distinct name) |
 +------+-----------------------------+
 |1 | 10,20|
 |2 | 20 |
@@ -208,10 +218,10 @@ select id,group_concat(distinct name) from aa group by id;
 
 5. 以id分组，把name字段的值打印在一行，逗号分隔，以name排倒序
 ``` sql
-select id,group_concat(name order by name desc) from aa group by id;
+SELECT id, GROUP_CONCAT(name ORDER BY name DESC) FROM aa GROUP BY id;
 
 +------+---------------------------------------+
-| id| group_concat(name order by name desc) |
+| id| GROUP_CONCAT(name ORDER BY name DESC) |
 +------+---------------------------------------+
 |1 | 20,20,10 |
 |2 | 20|
@@ -219,11 +229,12 @@ select id,group_concat(name order by name desc) from aa group by id;
 +------+---------------------------------------+
 3 rows in set (0.00 sec)
 ```
+
 ---
 ### GROUP_CONCAT使用及报错分析
 函数GROUP_CONCAT，但在使用时，结果报了如下错误。
 
-	ERROR 1260 (HY000): Row 17 was cut by GROUP_CONCAT()
+    ERROR 1260 (HY000): Row 17 was cut by GROUP_CONCAT()
 原因：GROUP_CONCAT截断了结果，GROUP_CONCAT有个最大长度的限制，超过最大长度就会被截断掉。可以用下面命令查看其内存限制。
 ``` sql
 SELECT @@global.group_concat_max_len;
@@ -234,6 +245,7 @@ SELECT @@global.group_concat_max_len;
 |                      1024     |
 +-------------------------------+
 ```
+
 1024这就是一般MySQL系统默认的最大长度，解决限制方法有二：
 方法一：在MySQL配置文件中加上
 group_concat_max_len = 102400 #你要的最大长度
@@ -247,9 +259,9 @@ SET GLOBAL group_concat_max_len=102400;
 ### 对连接要注意的事项
 当用多个值连接起来产生一个MD5值、或其他用于确定唯一性的时候，几个值之间一定要加分隔符，否则不同记录可能会产生一样的MD5值。如下表：
 
-	NAME	AGE	FAMLY_NUM
-	张三	51	5
-	李四	5	15
+    NAME    AGE    FAMLY_NUM
+    张三    51     5
+    李四    5      15
 如果用AGE， FAMLY_NUM来产生一个MD5值来唯一确定这一条记录，在它们之间一定要加分隔符，否则连接结果都是515
 
 
@@ -319,9 +331,9 @@ DELIMITER $$
 
 DROP PROCEDURE IF EXISTS `proc_insert_student`$$
 
-CREATE PROCEDURE `proc_insert_student`(_sname VARCHAR(20),_sex TINYINT(4),_age INT)
+CREATE PROCEDURE `proc_insert_student`(_sname VARCHAR(20), _sex TINYINT(4), _age INT)
 BEGIN
-    INSERT INTO student(sname,sex,age) VALUES(_sname,_sex,_age);
+    INSERT INTO student(sname, sex, age) VALUES(_sname, _sex, _age);
 END$$
 
 DELIMITER ;
@@ -366,20 +378,20 @@ DELETE FROM t_user WHERE id > 1;
 ### mysql 仅保留 1000 条记录而删除其他记录
 ``` sql
 求取总记录数
-select count(*) from tb_name;
+SELECT COUNT(*) FROM tb_name;
 
 删除部分记录
-delete from tb_name limit 总记录数-1000
+DELETE FROM tb_name LIMIT 总记录数-1000
 
 例如，比如一个表有 10000 条记录，现想保留 1000 条数据
-delete from tb_name limit 9000
+DELETE FROM tb_name LIMIT 9000
 ```
 
 
 ### mysql查找删除重复数据并只保留一条
 有表数据如下：
 ``` sql
-mysql> select * from t_user;
+mysql> SELECT * FROM t_user;
 +------+-------+------+
 | id   | name  | age  |
 +------+-------+------+
@@ -389,18 +401,18 @@ mysql> select * from t_user;
 +------+-------+------+
 3 rows in set (0.00 sec)
 ```
-从上面可知，name字段有两条相同的记录zhang，我们要删除重复记录,保存id最小的一条
+从上面可知，name字段有两条相同的记录zhang，我们要删除重复记录，保存id最小的一条
 ``` sql
 DELETE 
 FROM
-	t_user 
+    t_user 
 WHERE
-	name IN ( SELECT t1.name FROM ( SELECT name FROM t_user GROUP BY name HAVING COUNT( * ) > 1 ) t1 ) 
-	AND 
-	id NOT IN (SELECT t2.id FROM ( SELECT min( id ) id FROM t_user GROUP BY name HAVING count( * ) > 1 ) t2 );
-	
+    name IN (SELECT t1.name FROM (SELECT name FROM t_user GROUP BY name HAVING COUNT(*) > 1) t1 ) 
+    AND 
+    id NOT IN (SELECT t2.id FROM (SELECT MIN(id) id FROM t_user GROUP BY name HAVING COUNT(*) > 1) t2 );
+
 然后再执行查询语句：
-mysql> select * from t_user;
+mysql> SELECT * FROM t_user;
 +------+-------+------+
 | id   | name  | age  |
 +------+-------+------+
@@ -412,49 +424,17 @@ mysql> select * from t_user;
 可知，id为3的记录已经被删掉了。
 
 
-### char varchar nvarchar区别
-参考：https://www.cnblogs.com/yelaiju/archive/2010/05/29/1746826.html
-Unicode字符集就是为了解决字符集的不兼容的问题而产生的，它所有的字符都用两个字节表示，即英文字符也是用两个字节表示
+### MySQL中CHAR和VARCHAR的区别
+| CHAR | VARCHAR |
+| :-----| :----- |
+| 全称是 CHARACTER | 全称是 VARIABLE CHARACTER |
+| 存储固定长度的数据，如果不足，会用空格补全，读取的时候可能会调用trim() | 按数据的实际长度存储，不会用空格补全 |
+| 占空间大 | 占空间小 |
+| 最大能存储255个字符 | 最大能存储65535个字符 |
+| 静态内存分配 | 动态内存分配 |
+| 索引效率高 | 索引效率没CHAR高 |
 
-varchar(n)
-长度为 n 个字节的可变长度且非 Unicode 的字符数据。n 必须是一个介于 1 和 8,000 之间的数值。存储大小为输入数据的字节的实际长度，而不是 n 个字节。
-
-nvarchar(n)
-包含 n 个字符的可变长度 Unicode 字符数据。n 的值必须介于 1 与 4,000 之间。字节的存储大小是所输入字符个数的两倍。
-
-两字段分别有字段值：我和coffee
-那么varchar字段占2×2+6=10个字节的存储空间，而nvarchar字段占8×2=16个字节的存储空间。
-
-一般来说，如果含有中文字符，用nchar/nvarchar，如果纯英文和数字，用char/varchar
-
-
-联机帮助上的：
-
-| 类型			| 长度	| 使用说明	| 长度说明		|
-| -				| -		| -			 | -			|
-| char(n)		| 定长	| 索引效率高 程序里面使用trim去除多余的空白 		| n 必须是一个介于 1 和 8,000 之间的数值,存储大小为 n 个字节	|
-| varchar(n)	| 变长	| 效率没char高 灵活							| n 必须是一个介于 1 和 8,000 之间的数值。存储大小为输入数据的字节的实际长度，而不是 n 个字节	|
-| text(n)		| 变长	| 非Unicode数据							  | 不用指定长度	|
-| nchar(n)		| 定长	| 处理unicode数据类型(所有的字符使用两个字节表示)	| n 的值必须介于 1 与 4,000 之间。存储大小为 n 字节的两倍	|
-| nvarchar(n)	| 变长	| 处理unicode数据类型(所有的字符使用两个字节表示)	| n 的值必须介于 1 与 4,000 之间。字节的存储大小是所输入字符个数的两倍。所输入的数据字符长度可以为零	|
-| ntext(n)		| 变长	| 处理unicode数据类型(所有的字符使用两个字节表示)	| 不用指定长度	|
-
-
-很多开发者进行数据库设计的时候往往并没有太多的考虑char， varchar类型，有的是根本就没注意，因为存储价格变得越来越便宜了，忘记了最开始的一些基本设计理论和原则，这点让我想到了现在的年轻人，大手一挥一把人民币就从他手里溜走了，其实我想不管是做人也好，做开发也好，细节的把握直接决定很多东西。当然还有一部分人是根本就没弄清楚他们的区别，也就随便选一个。在这里我想对他们做个简单的分析，当然如果有不对的地方希望大家指教。
-1、CHAR。CHAR存储定长数据很方便，CHAR字段上的索引效率级高，比如定义char(10)，那么不论你存储的数据是否达到了10个字节，都要占去10个字节的空间,不足的自动用空格填充，所以在读取的时候可能要多次用到trim（）。
-
-2、VARCHAR。存储变长数据，但存储效率没有CHAR高。如果一个字段可能的值是不固定长度的，我们只知道它不可能超过10个字符，把它定义为 VARCHAR(10)是最合算的。VARCHAR类型的实际长度是它的值的实际长度+1。为什么“+1”呢？这一个字节用于保存实际使用了多大的长度。从空间上考虑，用varchar合适；从效率上考虑，用char合适，关键是根据实际情况找到权衡点。
-
-3、TEXT。text存储可变长度的非Unicode数据，最大长度为2^31-1(2,147,483,647)个字符。
-
-4、NCHAR、NVARCHAR、NTEXT。这三种从名字上看比前面三种多了个“N”。它表示存储的是Unicode数据类型的字符。我们知道字符中，英文字符只需要一个字节存储就足够了，但汉字众多，需要两个字节存储，英文与汉字同时存在时容易造成混乱，Unicode字符集就是为了解决字符集这种不兼容的问题而产生的，它所有的字符都用两个字节表示，即英文字符也是用两个字节表示。nchar、nvarchar的长度是在1到4000之间。和char、varchar比较起来，nchar、nvarchar则最多存储4000个字符，不论是英文还是汉字；而char、varchar最多能存储8000个英文，4000个汉字。可以看出使用nchar、nvarchar数据类型时不用担心输入的字符是英文还是汉字，较为方便，但在存储英文时数量上有些损失。
-
-所以一般来说，如果含有中文字符，用nchar/nvarchar，如果纯英文和数字，用char/varchar
-
-它们的区别概括成：
-CHAR，NCHAR 定长，速度快，占空间大，需处理
-VARCHAR，NVARCHAR，TEXT 不定长，空间小，速度慢，无需处理
-NCHAR、NVARCHAR、NTEXT处理Unicode码
+**VARCHAR存储的实际长度是它的值的长度+1，多出的这一个用于保存它实际使用了多大的长度。**
 
 
 ### 复制表
@@ -470,22 +450,22 @@ CREATE TABLE tableName_new AS SELECT * FROM tableName_old;
 
 
 ### mysql 修改字段定义
-下面的关键字`column`是可以省略的：
+下面的关键字`COLUMN`是可以省略的：
 ``` sql
-alter table [表名] modify column [字段名] [类型];
+ALTER TABLE [表名] MODIFY COLUMN [字段名] [类型];
 
 示例: sys_user表里的user_name字段，由原来长度是10个字符，修改改成40个字符
-alter table sys_user modify column user_name varchar(40);
+ALTER TABLE sys_user MODIFY COLUMN user_name VARCHAR(40);
 ```
 
 
 ### mysql 增加列（字段）
 ``` sql
-alter table [表名] add [列名] [列类型] [其他属性，如默认值];
+ALTER TABLE [表名] ADD [列名] [列类型] [其他属性，如默认值];
 
 示例: sys_user表增加一个地址列，长度为200个字符，默认值为null
-alter table sys_user add address varchar(200) default null;
-alter table sys_user add address varchar(200) default null after age;
+ALTER TABLE sys_user ADD address VARCHAR(200) DEFAULT NULL;
+ALTER TABLE sys_user ADD address VARCHAR(200) DEFAULT NULL AFTER age;
 
 可以一次增加多个列：
 ALTER TABLE sys_user ADD (
@@ -511,25 +491,69 @@ DROP TABLE tableName;
 ```
 
 
-### mysql 按字段分组，取最小生日记录
-有用户表如下：
+### mysql 分组统计
+表结构和数据如下：
 ``` sql
-sql> select * from user;
+CREATE TABLE t_user (
+id INT PRIMARY KEY, 
+name VARCHAR(20), 
+salary INT,
+birthday TIMESTAMP
+);
 
-id	name	birthday
-1	a	2018-01-25 09:30:05
-2	a	2018-01-25 09:30:14
-3	a	2018-01-25 09:30:10
-4	b	2018-01-25 09:30:29
-5	b	2018-01-25 09:30:24
+
+sql> INSERT INTO t_user(id, name, salary, birthday) VALUES (1, "a", 4000, STR_TO_DATE("2018-01-25 09:30:05","%Y-%m-%d %h:%i:%s"));
+sql> INSERT INTO t_user(id, name, salary, birthday) VALUES (2, "a", 2000, STR_TO_DATE("2018-01-25 09:30:14","%Y-%m-%d %h:%i:%s"));
+sql> INSERT INTO t_user(id, name, salary, birthday) VALUES (3, "a", 3000, STR_TO_DATE("2018-01-25 09:30:10","%Y-%m-%d %h:%i:%s"));
+sql> INSERT INTO t_user(id, name, salary, birthday) VALUES (4, "b", 6000, STR_TO_DATE("2018-01-25 09:30:29","%Y-%m-%d %h:%i:%s"));
+sql> INSERT INTO t_user(id, name, salary, birthday) VALUES (5, "b", 5000, STR_TO_DATE("2018-01-25 09:30:24","%Y-%m-%d %h:%i:%s"));
+
+
+sql> SELECT * FROM t_user;
++----+------+--------+---------------------+
+| id | name | salary | birthday            |
++----+------+--------+---------------------+
+|  1 | a    |   4000 | 2018-01-25 09:30:05 |
+|  2 | a    |   2000 | 2018-01-25 09:30:14 |
+|  3 | a    |   3000 | 2018-01-25 09:30:10 |
+|  4 | b    |   6000 | 2018-01-25 09:30:29 |
+|  5 | b    |   5000 | 2018-01-25 09:30:24 |
++----+------+--------+---------------------+
 ```
-**要求：**以name分组，取出生日最小的记录，即id为2、4的记录
-``` sql
-sql> select * from (select * from user order by birthday desc) t group by t.name;
 
-id	name	birthday
-2	a	2018-01-25 09:30:14
-4	b	2018-01-25 09:30:29
+1. 按用户名分组，查询salary最大的记录
+``` sql
+sql> SELECT id, name, MAX(salary) FROM t_user GROUP BY name;
+
++----+------+-------------+
+| id | name | MAX(salary) |
++----+------+-------------+
+|  1 | a    |        4000 |
+|  4 | b    |        6000 |
++----+------+-------------+
+
+
+或者
+sql > SELECT * FROM (SELECT * FROM t_user ORDER BY salary DESC) t GROUP BY t.name;
+
++----+------+--------+---------------------+
+| id | name | salary | birthday            |
++----+------+--------+---------------------+
+|  1 | a    |   4000 | 2018-01-25 09:30:05 |
+|  4 | b    |   6000 | 2018-01-25 09:30:29 |
++----+------+--------+---------------------+
+```
+
+2. 按用户名分组，取生日最小的记录
+``` sql
+sql> SELECT * FROM (SELECT * FROM t_user ORDER BY birthday DESC) t GROUP BY t.name;
+
++----+------+--------+---------------------+
+| id | name | salary | birthday            |
++----+------+--------+---------------------+
+|  2 | a    |   2000 | 2018-01-25 09:30:14 |
+|  4 | b    |   6000 | 2018-01-25 09:30:29 |
++----+------+--------+---------------------+
 ```
 
 
@@ -575,20 +599,20 @@ mysqldump -uusername -ppassword databasename | mysql -host=*.*.*.* -C databasena
 ```
 
 
-### select into
-除此之外，你还可以使用`select into`命令来导出数据，它与mysqldump的区别是：
+### SELECT INTO
+除此之外，你还可以使用`SELECT INTO`命令来导出数据，它与mysqldump的区别是：
 
 1. mysqldump: 导出的文本包括了数据库的结构和记录；
-2. select into: 导出的文本只有记录，并且，一般要数据库的管理员帐号，例如root才能执行；
+2. SELECT INTO: 导出的文本只有记录，并且，一般要数据库的管理员帐号，例如root才能执行；
 
-select into 有两种使用方式：
+SELECT INTO 有两种使用方式：
 ``` sql
 方式一：
-mysql> select * from t_user into outfile 't_user.txt';
+mysql> SELECT * FROM t_user INTO OUTFILE 't_user.txt';
 Query OK, 2 rows affected (0.16 sec)
 
 方式二：
-mysql> select * into outfile 't_user.txt' from t_user;
+mysql> SELECT * INTO OUTFILE 't_user.txt' FROM t_user;
 Query OK, 2 rows affected (0.00 sec)
 ```
 导出的数据一般在数据库的安装目录下，你也可以使用`find / -name t_user.txt`来查找到
@@ -598,7 +622,7 @@ Query OK, 2 rows affected (0.00 sec)
 根据提示，是说mysql中/tmp使用的磁盘空间不足。
 在MYSQL命令行下执行：
 ``` sql
-mysql> show variables like 'tmpdir';
+mysql> SHOW VARIABLES LIKE 'tmpdir';
 +---------------+-------+
 | Variable_name | Value |
 +---------------+-------+
@@ -617,17 +641,18 @@ $ chmod a+w mysqltmp
 $ whereis my.cnf
 $ cd {my.cnf所在的目录}
 $ vi my.cnf
-# 修改的内容如下
+
+修改的内容如下
 tmpdir = /opt/data/mysqltmp
 ```
 
 重启mysql
 ``` bash
-$ /etc/init.d/mysqld restart	# 注意linux系统，命令可能不同
+$ /etc/init.d/mysqld restart    # 不同Linux系统，命令可能不同
 ```
 在MYSQL命令行中查看下是否生效
 ``` sql
-mysql> show variables like 'tmpdir';
+mysql> SHOW VARIABLES LIKE 'tmpdir';
 +---------------+--------------------+
 | Variable_name | Value              |
 +---------------+--------------------+
@@ -638,7 +663,8 @@ mysql> show variables like 'tmpdir';
 问题解决。
 
 
-读一致性：ORACLE有一个表，有1000W条记录。在9：00的时候A用户对表进行查询，查询需10分钟才能完成，表没索引，FULL SCAN，表中某条记录的值为100。在9：05分的时候B对表进行了UPDATE操作，将记录的值修改为200。那么在9:10的时候，A获致到的是100还是200？结果是100.因为这是读一致性的问题，在A查的时候，它看到的是整个表在那一刻的快照的数据，返回的是那一刻的结果。不过，它有可能会抛出 snapshot too old 这个异常。
+### 读一致性
+mysql有一个表，有1000W条记录。在9：00的时候A用户对表进行查询，查询需10分钟才能完成，表没索引，FULL SCAN，表中某条记录的值为100。在9：05分的时候B对表进行了UPDATE操作，将记录的值修改为200。那么在9:10的时候，A获致到的是100还是200？结果是100。因为这是读一致性的问题，在A查的时候，它看到的是整个表在那一刻的快照的数据，返回的是那一刻的结果。不过，它有可能会抛出 snapshot too old 这个异常。
 
 
 ### mysql 修改表名
@@ -657,18 +683,18 @@ CREATE TABLE t_user (
 );
 
 INSERT INTO t_user (name) VALUES ('Scott');
-INSERT INTO t_user VALUES (null, 'Scott', 20);
-INSERT INTO t_user VALUES (null, 'Scott', 20), (null, 'tiger', 21);
+INSERT INTO t_user VALUES (NULL, 'Scott', 20);
+INSERT INTO t_user VALUES (NULL, 'Scott', 20), (NULL, 'tiger', 21);
 ```
 
 
 ### MYSQL插入数据时忽略重复数据的方法
 使用`IGNORE`关键字，示例：
 ``` mysql
-INSERT IGNORE INTO table(column_list)
-VALUES( value_list),
-      ( value_list),
-      ...
+INSERT IGNORE INTO tableName(column_list)
+VALUES (value_list),
+       (value_list),
+       ...
 ```
 
 
@@ -681,47 +707,42 @@ INSERT [IGNORE] INTO 数据库B.`表名b`(col1, col2, col3) SELECT col1, col2, c
 ```
 
 
-### MySQL 百万级分页优化(Mysql千万级快速分页)
-转自：http://www.jb51.net/article/31868.htm
-
-一般刚开始学SQL的时候，会这样写，代码如下:
+### MySQL千万级数据快速分页
+数据量少的时候，可以这样写：
 ``` mysql
-SELECT * FROM table ORDER BY id LIMIT 1000, 10; 
-```
-但在数据达到百万级的时候，这样写会慢死，代码如下:
-``` mysql
-SELECT * FROM table ORDER BY id LIMIT 1000000, 10; 
-```
-也许耗费几十秒 
-
-网上很多优化的方法是这样的，代码如下:
-``` mysql
-SELECT * FROM table WHERE id >= (SELECT id FROM table LIMIT 1000000, 1) LIMIT 10; 
-```
-是的，速度提升到0.x秒了，看样子还行了 
-可是，还不是完美的！ 
-
-以下这句才是完美的！代码如下:
-``` mysql
-SELECT * FROM table WHERE id BETWEEN 1000000 AND 1000010; 
-```
-比上面那句，还要再快5至10倍 
-
-另外，如果需要查询 id 不是连续的一段，最佳的方法就是先找出 id ，然后用 in 查询，代码如下:
-``` mysql
-SELECT * FROM table WHERE id IN(10000, 100000, 1000000...); 
+SELECT * FROM tableName ORDER BY id LIMIT 1000, 10; 
 ```
 
-再分享一点 
-查询字段一较长字符串的时候，表设计时要为该字段多加一个字段,如，存储网址的字段，查询的时候，不要直接查询字符串，效率低下，应该查询该字串的crc32或md5 
+但在数据量达到百万级，甚至千万级的时候，这样写会慢死：
+``` mysql
+SELECT * FROM tableName ORDER BY id LIMIT 1000000, 10; 
+```
+
+可能耗费几十秒，网上有很多优化的方法是这样的：
+``` mysql
+SELECT * FROM tableName WHERE id >= (SELECT id FROM tableName LIMIT 1000000, 1) LIMIT 10; 
+```
+
+是的，速度提升到0.x秒了，看样子还行。但，还不是完美的！下面这句才是完美的：
+``` mysql
+SELECT * FROM tableName WHERE id BETWEEN 1000000 AND 1000010; 
+```
+比上面那句，还要再快5至10倍
+
+另外，如果需要查询`id`不是连续的一段，最佳的方法就是先找出`id`，然后用`IN`查询，代码如下：
+``` mysql
+SELECT * FROM tableName WHERE id IN (10000, 100000, 1000000, ...); 
+```
+
+如果查询的字段是一较长字符串的时候，表设计时要为该字段多加一个字段。如，存储网址的字段，查询的时候，不要直接查询该字符串，这样效率低下，应该查询该字符串的CRC32或MD5。
 
 
-### mysql 查询一个字符串字段 最长的一条记录
+### mysql 查询一个字符串字段最长的一条记录
 参考：http://stackoverflow.com/questions/2357620/maxlengthfield-in-mysql
 ``` mysql
-select name, length( name )
-from my_table
-where length( name ) = ( select max( length( name ) ) from my_table );
+SELECT name, LENGTH(name)
+FROM my_table
+WHERE LENGTH(name) = (SELECT MAX(LENGTH(name)) FROM my_table);
 ```
 
 
@@ -729,22 +750,34 @@ where length( name ) = ( select max( length( name ) ) from my_table );
 这是个非常有用的mysql启动参数
 
 在my.cnf文件中增加一行：
-
-    [mysqld]
-    skip-grant-tables
+``` xml
+[mysqld]
+skip-grant-tables
+```
 
 或者以命令行参数启动mysql：
 
-    /usr/bin/mysqld_safe --skip-grant-tables &
+        /usr/bin/mysqld_safe --skip-grant-tables &
 
 登陆mysql修改管理员密码：
-
-    use mysql;
-    update user set password=password('root') where user='root';
-    flush privileges;
-    exit;
+``` mysql
+USE mysql;
+UPDATE user SET password=password('root') WHERE user='root';
+FLUSH PRIVILEGES;
+EXIT;
+```
 
 重启mysql
+
+
+### DELETE和TRUNCATE的区别
+TRUNCATE TABLE 属于DDL，它虽然和对整张表执行DELETE操作产生的效果差不多，但是它是不能回滚的。
+
+
+### 三大范式
+第一范式(1NF)：在关系模式R中的每一个具体关系r，必须要有主键，并且每个属性值都是不可再分的最小数据单位，则称R是第一范式的关系；
+第二范式(2NF)：如果关系模式R中的所有非主属性都完全依赖于主关键字，则称关系R是属于第二范式的；
+第三范式(3NF)：关系模式R中的非主关键字不能依赖于其他非主关键字。即非主关键字之间不能有函数（传递）依赖关系，则称关系R是属于第三范式的。
 
 
 ### VARCHAR类型的说明
@@ -753,7 +786,7 @@ where length( name ) = ( select max( length( name ) ) from my_table );
 1. 表的CHARSET=latin1时，能使用VARCHAR(65532)；
 2. 表的CHARSET=GBK时，能使用VARCHAR(32767)；
 3. 表的CHARSET=UTF8，能使用VARCHAR(21845)；
-4. 如果表的SQL_MODE为非严格模式，则表的CHARSET=latin1时，或者能使用VARCHAR(65535)成功创建表，但是可能会有warning。warning可能是数据将那列自动转换为TEXT类型了；
+4. 如果表的SQL_MODE为非严格模式，则表的CHARSET=latin1时，或者能使用VARCHAR(65535)成功创建表，但是可能会有warning。warning可能是数据库将那列自动转换为TEXT类型了；
 5. 还有一个需要注意的地方是，65535长度是指表中所有VARCHAR列的长度总和。如果列的长度总和超出这个限制，依然无法创建表。
 
 
@@ -766,14 +799,14 @@ CHAR(N)中的N指的是字符，对于多字节字符编码的CHAR数据类型�
 ### 强制使用索引
 在查询的过程中可以使用`FORCE INDEX`来强制查询优化器使用指定的索引，例如表`t_user`有索引`idx_name`，则我们可以这样查询：
 ``` mysql
-SELECT * FROM t_user FORCE INDEX(idx_name) WHERE name='Tim' and age=22;
+SELECT * FROM t_user FORCE INDEX(idx_name) WHERE name='Tim' AND age=22;
 ```
 
 
 ### 索引提示
 在查询的过程中可以使用`USE INDEX`来显式地告诉查询优化器使用哪个索引，例如表`t_user`有索引`idx_name`，则我们可以这样查询：
 ``` mysql
-SELECT * FROM t_user USE INDEX(idx_name) WHERE name='Tim' and age=22;
+SELECT * FROM t_user USE INDEX(idx_name) WHERE name='Tim' AND age=22;
 ```
 
 主要在以下2种情况下要使用索引提示：
@@ -801,13 +834,23 @@ SELECT cash FROM account WHERE user='user_name' FOR UPDATE;
 ```
 
 
-### 事务的特性
-对于InnoDB存储引擎而言，它默认的事务隔离级别为READ REPEATABLE，完全遵循和满足事务的ACID特性。
+### 事务的ACID特性
+原子性（Atomicity）
+整个事务中的所有操作，要么全部成功执行，要么全部失败。
 
-TRUNCATE TABLE 属于DDL，它虽然和对整张表执行DELETE操作产生的效果差不多，但是它是不能ROLLBACK的。
+一致性（Consistency）
+事务提交前后，表的所有约束条件都保持完好。对表的修改符合所有的Keys、数据类型、Checks和触发器的约束，没有约束被破坏。
+
+隔离性（Isolation）
+一个事务，无法访问到另一个事务未提交的数据。
+
+持久性（Durability）
+事务成功执行后，对数据的修改会持久保存在数据库中，不会被回滚，就算系统死机。
 
 
 ### 事务的隔离级别
+对于InnoDB存储引擎而言，它默认的事务隔离级别为READ REPEATABLE，完全遵循和满足事务的ACID特性。
+
 SQL标准定义了4个隔离级别：
 READ UNCOMMITTED
 READ COMMITTED
@@ -852,15 +895,15 @@ mysqldump不能导出视图。免费好用的开源热备份工具有XtraBackup�
 
 ### 连接到mysql
 ``` sql
-mysql -h192.168.1.100 -uscoot -p
-mysql -h192.168.1.100 -uscoot -ptiger
+$ mysql -h192.168.1.100 -uscoot -p
+$ mysql -h192.168.1.100 -uscoot -ptiger
 ```
 
 
 ### 不登录MYSQL来执行查询
 可以在操作系统命令行下通过`-e`参数实现，例如查询test库下的表t_user：
 ``` mysql
-# mysql -h192.168.1.100 -uscoot -ptiger test -e "select * from t_user"
+$ mysql -h192.168.1.100 -uscoot -ptiger test -e "SELECT * FROM t_user"
 
 +----+-------+------+
 | id | name  | age  |
@@ -893,7 +936,7 @@ MYSQL中支持以下五类约束：
 
 ### NOT NULL约束
 如果我们向NOT NULL的字段插入一下NULL值，MySQL数据库会将其更改为0再进行插入。我们可以通过设置SQL_MODE来严格审核输入参数。
-所有数据类型值都可以为null，如：int ,float等。空字符串不等于null,0也不等于null。
+所有数据类型值都可以为null，如：int，float等。空字符串不等于null，0也不等于null。
 
 
 ### UNIQUE约束
@@ -966,6 +1009,47 @@ CREATE TABLE t_user (
 https://dev.mysql.com/doc/refman/5.7/en/create-table.html#create-table-indexes-keys
 
     The CHECK clause is parsed but ignored by all storage engines.
+
+
+### COUNT(1)、COUNT(*)、COUNT(pk)的区别
+下面两句产生的结果是一样的:
+COUNT(*) 统计表中有多少行，包括字段为NULL的行
+COUNT(1) 统计表中有多少行，包括字段为NULL的行
+
+当pk为主键的时候，因为主键不允许为NULL，所以
+COUNT(pk) 同样是，统计表中有多少行，包括字段为NULL的行
+
+但是，如果pk代表的字段允许为NULL，那么将产生不同的结果
+COUNT(pk) 统计表中有多少行，不包括pk为NULL的行
+
+``` sql
+sql> SELECT * FROM t_user;
++----+------+--------+---------------------+
+| id | name | salary | birthday            |
++----+------+--------+---------------------+
+|  1 | a    |   4000 | 2018-01-25 09:30:05 |
+|  2 | a    |   2000 | 2018-01-25 09:30:14 |
+|  3 | a    |   3000 | 2018-01-25 09:30:10 |
+|  4 | b    |   6000 | 2018-01-25 09:30:29 |
+|  5 | b    |   5000 | 2018-01-25 09:30:24 |
+|  6 | NULL |   6000 | 2018-01-25 09:30:29 |
++----+------+--------+---------------------+
+6 rows in set (0.00 sec)
+
+sql> SELECT COUNT(*), COUNT(1), COUNT(name) FROM t_user;
++----------+----------+-------------+
+| COUNT(*) | COUNT(1) | COUNT(name) |
++----------+----------+-------------+
+|        6 |        6 |           5 |
++----------+----------+-------------+
+```
+
+通常，建议使用COUNT(*)，因为它是SQL推荐的，SQL会自动优化到一个字段。
+
+执行效率：
+1. 当pk为主键时，COUNT(pk)比COUNT(1)快，否则COUNT(1)比COUNT(pk)快；
+2. 当表有多个列时，如果没有主键，则COUNT(1)比COUNT(*)快； 如果有主键，则COUNT(pk)的效率是最优的；
+3. 当表只有一个列时，COUNT(*)最优。
 
 
 ### 对MySQL数据库性能的测试工具
