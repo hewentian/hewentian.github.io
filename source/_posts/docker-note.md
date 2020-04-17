@@ -776,10 +776,10 @@ training/webapp     latest              6fae60ef3446        4 years ago         
 ```
 
 或者使用压缩方式导出导入
-``` bash
-$ sudo docker save mysql:5.6.42 | gzip > mysql-5.6.42.tar.gz
-$ sudo docker load < mysql-5.6.42.tar.gz
-```
+
+        $ sudo docker save mysql:5.6.42 | gzip > mysql-5.6.42.tar.gz
+        $ sudo docker load < mysql-5.6.42.tar.gz
+
 
 **注意：导出镜像的时候，要使用`REPOSITORY:TAG`，而不是`IMAGE ID`，否则在重新导入的时候会没有`REPOSITORY:TAG`，显示为none**
 
@@ -1106,6 +1106,7 @@ Error response from daemon: Get https://harbor.hewentian.com/v2/: dial tcp 192.1
 ```
 
 有可能会报上面的错误，原因是docker与registry交互默认使用的是HTTPS，但是我们搭建的harbor默认使用的是HTTP服务。解决方法：
+在要登录到harbor的机器（本地机器）作如下配置
 ``` bash
 $ sudo vi /etc/docker/daemon.json
 
@@ -1117,7 +1118,7 @@ $ sudo vi /etc/docker/daemon.json
 文件`/etc/docker/daemon.json`原先可能并不存在，它所有可能的配置，可以参考这里：
 https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
 
-重启docker，并尝试登录到harbor
+重启（本地机器）的docker，并重新尝试登录到harbor
 ``` bash
 $ sudo service docker restart
 
@@ -1285,7 +1286,7 @@ Starting proxy       ... done
 https://docs.docker.com/
 https://blog.docker.com/
 https://github.com/goharbor/harbor
-https://www.runoob.com/docker/docker-image-usage.html
+
 
 未完待续……
 

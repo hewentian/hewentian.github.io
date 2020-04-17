@@ -23,8 +23,22 @@ lambda函数式编程的一个重要优点就是这样的程序天然地适合�
 5. 分代算法：根据对象的特点把内存分成N块，然后根据每个对象的特点使用不同的算法。对于新生代，它的回收频率很高，但是每次回收耗时都很短；而老年代回收频率较低，但是耗时相对较长，所以应该尽量减少老年代的GC。
 
 ### 确定对象是否已死的方法
+也就是如何判定对象是否为垃圾。
 1. 引用计数法；
 2. 可达性分析算法GC Root.
+
+GC Root有以下几种：
+1. jvm stack
+2. native method stack
+3. runtime constant pool
+4. static references in method area
+
+翻译如下：
+1. 虚拟机栈中（局部变量）的引用对象
+2. 本地方法栈中JNI（Native方法）的引用对象
+3. 方法区中常量引用的对象（final 的常量值）
+4. 方法区中的类静态属性引用对象
+
 
 ### 垃圾回收器
 1. 串行回收器： 使用单线程进行垃圾回收的回收器。每次回收时，串行回收器只有一个工作线程，对于并行能力较弱的计算机来说，串行回收器的专注性和独占性往往有更好的性能表现。可以在新生代和老年代使用。`-XX:+UseSerialGC`
@@ -34,6 +48,10 @@ lambda函数式编程的一个重要优点就是这样的程序天然地适合�
 4. G1：`Garbage-First`是在JDK1.7中提出的垃圾回收器，是为了取代CMS的回收器。它属于分代回收器，并行性和并发性。并行性是G1回收期间可多线程同时工作，而并发性是G1拥有与应用程序交替执行能力，部分工作可与应用程序同时执行，在整个GC期间不会完全阻塞应用程序。它可以工作在新生代和老年代。之前的回收器，或者工作在新生代，或者工作在老年代。G1使用了有益智复制对象的方式，减少空间碎片。
 
 将GC的日志输出到文件可以配置JVM启动参数：`-Xloggc:/home/hewentian/Document/gc.log`
+
+minorGC：Eden区满的时候执行；
+FullGC：老年代空间不足时，或方法区空间不足时执行，`System.gc()`；
+
 
 ### class文件格式
 class文件是一组以8位字节码为基础单位的二进制流，各个数据项目严格按照顺序紧凑地排列在class文件之中，中间没有添加任何分隔符，这使得整个class文件中存储的内容几乎全部是程序运行的必要数据，没有空隙存在。当遇到需要占用8位字节以上空间的数据项时，则会按照高位在前的方式分割成若干个8位字节进行存储。
@@ -53,6 +71,12 @@ JVM直接支持（转换时无需显式的转换指令）：
 1. int类型到long, float或者double类型；
 2. long类型到float, double类型；
 3. float类型到double类型。
+
+
+### JVM中对象的创建过程
+1. 当使用创建指令new一个对象的时候，在方法区的常量池中定位一个对象的符号引用，如果该类未被加载就先加载；
+2. 然后再为该对象分配内存，最后是对象初始化，即调用它的构造方法。分配内存分指针碰撞和空闲链表两种。
+
 
 ### 类的加载过程
 JVM中类的加载过程：加载、验证、准备、解析、初始化。如果算上：使用和缷载这两个过程，则一共有7个过程。
@@ -240,6 +264,19 @@ try {
 ### 线程、主内存、工作内存、处理器的关系图
 ![](/img/cpu-thread-memory.png "图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》")
 
+除了增加高速缓存，为了使处理器内部运算单元尽可能被充分利用，处理器还会对输入的代码进行乱序执行(Out-Of-Order Execution)优化，处理器会在乱序执行之后的结果进行重组，保证结果的正确性，也就是保证结果与顺序执行的结果一致。但是在真正的执行过程中，代码执行的顺序并不一定按照代码的书写顺序来执行，可能和代码的书写顺序不同。
+
+
+### java内存模型
+虽然java程序所有的运行都是在虚拟机中，涉及到的内存等信息都是虚拟机的一部分，但实际也是物理机的，只不过是虚拟机作为最外层的容器统一做了处理。虚拟机的内存模型，以及多线程的场景下与物理机的情况是很相似的，可以类比参考。
+Java内存模型的主要目标是定义程序中变量的访问规则。即在虚拟机中将变量存储到主内存或者将变量从主内存取出这样的底层细节。需要注意的是这里的变量跟我们写java程序中的变量不是完全等同的。这里的变量是指实例字段，静态字段，构成数组对象的元素，但是不包括局部变量和方法参数（因为这是线程私有的）。这里可以简单的认为主内存是java虚拟机内存区域中的堆，局部变量和方法参数是在虚拟机栈中定义的。但是在堆中的变量如果在多线程中都使用，就涉及到了堆和不同虚拟机栈中变量的值的一致性问题了。
+
+Java内存模型中涉及到的概念有：
+* 主内存：java虚拟机规定所有的变量（不是程序中的变量）都必须在主内存中产生，为了方便理解，可以认为是堆区。可以与前面说的物理机的主内存相比，只不过物理机的主内存是整个机器的内存，而虚拟机的主内存是虚拟机内存中的一部分。
+* 工作内存：java虚拟机中每个线程都有自己的工作内存，该内存是线程私有的为了方便理解，可以认为是虚拟机栈。可以与前面说的高速缓存相比。线程的工作内存保存了线程需要的变量在主内存中的副本。虚拟机规定，线程对主内存变量的修改必须在线程的工作内存中进行，不能直接读写主内存中的变量。不同的线程之间也不能相互访问对方的工作内存。如果线程之间需要传递变量的值，必须通过主内存来作为中介进行传递。
+
+这里需要说明一下：主内存、工作内存与java内存区域中的java堆、虚拟机栈、方法区并不是一个层次的内存划分。这两者基本上是没有关系的，上文只是为了便于理解，做的类比。
+
 
 ### 内存间交互操作
 关于主内存与工作内存之间具体的交互协议，即一个变量如何从主内存复制到工作内存、如何从工作内存同步回主内存之类的实现细节，JAVA内存模型中定义了以下8种操作来完成，虚拟机实现时必须保证下面提及的每一种操作都是原子的、不可再分的（对于double和long类型的变量来说，load、store、read和write操作在某些平台上允许有例外）。
@@ -255,6 +292,79 @@ try {
 
 
 ### volatile变量的使用场景
+关键字volatile可以说是java虚拟机中提供的最轻量级的同步机制。java内存模型对volatile专门定义了一些特殊的访问规则。这些规则有些晦涩拗口，先列出规则，然后用更加通俗易懂的语言来解释：
+假定T表示一个线程，V和W分别表示两个volatile修饰的变量，那么在进行read、load、use、assign、store和write操作的时候需要满足如下规则：
+* **只有当线程T对变量V执行的前一个动作是load，线程T对变量V才能执行use动作；同时只有当线程T对变量V执行的后一个动作是use的时候线程T对变量V才能执行load操作。**所以，线程T对变量V的use动作和线程T对变量V的read、load动作相关联，必须是连续一起出现。也就是在线程T的工作内存中，每次使用变量V之前必须从主内存去重新获取最新的值，用于保证线程T能看得见其他线程对变量V的最新的修改后的值。
+* **只有当线程T对变量V执行的前一个动作是assign的时候，线程T对变量V才能执行store动作；同时只有当线程T对变量V执行的后一个动作是store的时候，线程T对变量V才能执行assign动作。**所以，线程T对变量V的assign操作和线程T对变量V的store、write动作相关联，必须一起连续出现。也即是在线程T的工作内存中，每次修改变量V之后必须立刻同步回主内存，用于保证线程T对变量V的修改能立刻被其他线程看到。
+* **假定动作A是线程T对变量V实施的use或assign动作，动作F是和动作A相关联的load或store动作，动作P是和动作F相对应的对变量V的read或write动作；类似的，假定动作B是线程T对变量W实施的use或assign动作，动作G是和动作B相关联的load或store动作，动作Q是和动作G相对应的对变量W的read或write动作。如果动作A先于B，那么P先于Q。**也就是说在同一个线程内部，被volatile修饰的变量不会被指令重排序，保证代码的执行顺序和程序的顺序相同。
+
+总结上面三条规则，前面两条可以概括为：**volatile类型的变量保证对所有线程的可见性。**第三条为：**volatile类型的变量禁止指令重排序优化。**下面分别说明一下：
+
+* valatile类型的变量保证对所有线程的可见性
+可见性是指当一个线程修改了这个变量的值，新值（修改后的值）对于其他线程来说是立即可以得知的。正如上面的前两条规则规定，volatile类型的变量每次值被修改了就立即同步回主内存，每次使用时就需要从主内存重新读取值。返回到前面对普通变量的规则中，并没有要求这一点，所以普通变量的值是不会立即对所有线程可见的。
+误解：volatile变量对所有线程是立即可见的，所以对volatile变量的所有修改(写操作)都立刻能反应到其他线程中。或者换句话说：volatile变量在各个线程中是一致的，所以基于volatile变量的运算在并发下是线程安全的。
+这个观点的论据是正确的，但是根据论据得出的结论是错误的，并不能得出这样的结论。volatile的规则，保证了read、load、use的顺序和连续行，同理assign、store、write也是顺序和连续的。也就是这几个动作是原子性的，但是对变量的修改，或者对变量的运算，却不能保证是原子性的。如果对变量的修改是分为多个步骤的，那么多个线程同时从主内存拿到的值是最新的，但是经过多步运算后回写到主内存的值是有可能存在覆盖情况发生的。如下代码的例子：
+``` java
+public class VolatileTest {
+    private static final int THREADS_NUM = 20;
+    public static volatile int count = 0;
+
+    public static void increase() {
+        count++;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(THREADS_NUM);
+        Thread[] threads = new Thread[THREADS_NUM];
+
+        for (int i = 0; i < THREADS_NUM; i++) {
+            threads[i] = new Thread(() -> {
+                for (int j = 0; j < 10000; j++) {
+                    increase();
+                }
+
+                latch.countDown();
+            });
+
+            threads[i].start();
+        }
+
+        latch.await();
+
+        System.out.println(count);
+    }
+}
+```
+
+代码就是对volatile类型的变量启动了20个线程，每个线程对变量执行1w次加1操作，如果volatile变量并发操作没有问题的话，那么结果应该是输出20w，但是结果运行的时候每次都是小于20w，这就是因为count++操作不是原子性的，是分多个步骤完成的。假设两个线程a、b同时取到了主内存的值，是0，这是没有问题的，在进行++操作的时候假设线程a执行到一半，线程b执行完了，这时线程b立即同步给了主内存，主内存的值为1，而线程a此时也执行完了，同步给了主内存，此时的值仍然是1，线程b的结果被覆盖掉了。
+
+* volatile变量禁止指令重排序优化
+普通的变量仅仅会保证在该方法执行的过程中，所有依赖赋值结果的地方都能获取到正确的结果，但不能保证变量赋值的操作顺序和程序代码的顺序一致。因为在一个线程的方法执行过程中无法感知到这一点，这也就是java内存模型中描述的所谓的“线程内部表现为串行的语义”。也就是在单线程内部，我们看到的或者感知到的结果和代码顺序是一致的，即使代码的执行顺序和代码顺序不一致，但是在需要赋值的时候结果也是正确的，所以看起来就是串行的。但实际结果有可能代码的执行顺序和代码顺序是不一致的。这在多线程中就会出现问题。
+看下面的伪代码举例：
+``` java
+Map<String, String> configOptions;
+char[] configText;
+// volatile类型变量
+volatile boolean initialized = false;
+
+// 假设以下代码在线程A中执行
+// 模拟读取配置信息，读取完成后认为是初始化完成
+configOptions = new HashMap();
+configText = readConfigFile(fileName);
+processConfigOptions(configText, configOptions);
+initialized = true;
+
+// 假设以下代码在线程B中执行
+// 等待initialized为true后，读取配置信息进行操作
+while (!initialized) {
+  sleep();
+}
+doSomethingWithConfig();
+```
+
+如果initialiezd是普通变量，没有被volatile修饰，那么线程A执行的代码的修改初始化完成的结果`initialized = true`就有可能先于之前的三行代码执行，而此时线程B发现initialized为true了，就执行`doSomethingWithConfig()`方法，但是里面的配置信息都是null的，就会出现问题了。现在initialized是volatile类型变量，保证禁止代码重排序优化，那么就可以保证`initialized = true`执行的时候，前边的三行代码一定执行完成了，那么线程B读取的配置文件信息就是正确的。
+
+
 由于volatile变量只能保证可见性，在不符合以下两条规则的运算场景中，我们仍然要通过加锁（使用synchronized或java.util.concurrent中的原子类）来保证原子性。
 
 1. 运算结果并不依赖变量的当前值，或者能够确保只有单一的线程修改变量的值；
@@ -411,6 +521,53 @@ In this tutorial, we've shown multiple ways to capture a heap dump in Java.
 As a rule of thumb, we should remember to use the HeapDumpOnOutOfMemoryError option always when running Java applications. For other purposes, any of the other tools can be perfectly used as long as we keep in mind the unsupported status of jmap.
 
 we can open the file in Java VisualVM by choosing `File -> Load` from the main menu.
+
+
+### 使用jstat命令查看jvm的GC情况
+``` bash
+$ jps
+130014 Jps
+129998 Test
+
+$ jstat -gc 129998 2000
+ S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT
+5120.0 5120.0  0.0    0.0   31744.0   3810.3   84992.0      0.0     4480.0 774.3  384.0   75.9       0    0.000   0      0.000    0.000
+5120.0 5120.0  0.0    0.0   31744.0   3810.3   84992.0      0.0     4480.0 774.3  384.0   75.9       0    0.000   0      0.000    0.000
+5120.0 5120.0  0.0    0.0   31744.0   3810.3   84992.0      0.0     4480.0 774.3  384.0   75.9       0    0.000   0      0.000    0.000
+5120.0 5120.0  0.0    0.0   31744.0   3810.3   84992.0      0.0     4480.0 774.3  384.0   75.9       0    0.000   0      0.000    0.000
+5120.0 5120.0  0.0    0.0   31744.0   3810.3   84992.0      0.0     4480.0 774.3  384.0   75.9       0    0.000   0      0.000    0.000
+5120.0 5120.0  0.0    0.0   31744.0   3810.3   84992.0      0.0     4480.0 774.3  384.0   75.9       0    0.000   0      0.000    0.000
+5120.0 5120.0  0.0    0.0   31744.0   3810.3   84992.0      0.0     4480.0 774.3  384.0   75.9       0    0.000   0      0.000    0.000
+5120.0 5120.0  0.0    0.0   31744.0   3810.3   84992.0      0.0     4480.0 774.3  384.0   75.9       0    0.000   0      0.000    0.000
+5120.0 5120.0  0.0    0.0   31744.0   3810.3   84992.0      0.0     4480.0 774.3  384.0   75.9       0    0.000   0      0.000    0.000
+5120.0 5120.0  0.0    0.0   31744.0   3810.3   84992.0      0.0     4480.0 774.3  384.0   75.9       0    0.000   0      0.000    0.000
+```
+
+使用下面2个命令也行：
+
+        jstat -gcutil 129998 2000
+        jstat -gccause 129998 2000
+
+上面的命令，最后2个参数指：进程号，时间间隔。示例的是，每2秒显示一次进程号为129998的java进程的GC情况。一些参数说明如下：
+Column    Description
+S0C	      Current survivor space 0 capacity (KB).
+S1C	      Current survivor space 1 capacity (KB).
+S0U	      Survivor space 0 utilization (KB).
+S1U	      Survivor space 1 utilization (KB).
+EC	      Current eden space capacity (KB).
+EU	      Eden space utilization (KB).
+OC	      Current old space capacity (KB).
+OU	      Old space utilization (KB).
+PC	      Current permanent space capacity (KB).
+PU	      Permanent space utilization (KB).
+YGC	      Number of young generation GC Events.
+YGCT	  Young generation garbage collection time.
+FGC	      Number of full GC events.
+FGCT	  Full garbage collection time.
+GCT	      Total garbage collection time.
+
+更多选项，请参见：
+https://docs.oracle.com/javase/7/docs/technotes/tools/share/jstat.html
 
 **声明：**图片来源于网络，仅用于学习使用。
 

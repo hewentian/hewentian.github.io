@@ -7,10 +7,10 @@ categories: Linux
 
 在安装ubuntu的过程中的分区顺序: EFI -> /boot -> swap -> /:
 
-    EFI		primary 	200M
-    /boot	primary		512M
-    swap	logic		内存2倍
-    /		primary		剩下的容量
+        EFI     primary     200M
+        /boot   primary     512M
+        swap    logic       内存2倍
+        /       primary     剩下的容量
 
 例如在小米笔记本安装 ubuntu 18.04 的时候，必须关闭安全启动，secure BOOT, 
 重启电脑，出现mi时，F2进入BIOS中，在secure中关闭安全启动，对了，要首先设置superviser password， 否则secure boot 无法关闭。 
@@ -44,19 +44,23 @@ $ sudo apt-get install openssh-server
 $ sudo service ssh start
 ```
 
-最后我们用命令ps -e | grep ssh 来看下open-server安装成功没有，如果出现如下截图红色标出的部分，说明安装成功了。
+最后我们用命令`ps -ef | grep ssh`来看下open-server安装成功没有，如果出现像下面的输出，说明安装成功了。
 ``` bash
-$ ps -e | grep ssh
+$ ps -ef | grep ssh
+
+hewenti+  2654  2565  0 10:04 ?        00:00:00 /usr/bin/ssh-agent /usr/bin/im-launch env GNOME_SHELL_SESSION_MODE=ubuntu gnome-session --session=ubuntu
+hewenti+  8845  6801  0 10:29 pts/1    00:00:00 grep --color=auto ssh
 ```
 这样就可以在其他机器连到这台机器或者执行scp命令了。
 
 
-在ubuntu中的vi编辑器中怎么使用
-默认情况下ubuntu上也安装有vi但是奇怪的是这个vi是vim-common版本，基本上用不了所以要先把这个版本的vi卸载掉才可以，卸载命令是
+在ubuntu中的vi编辑器怎么使用
+默认情况下ubuntu上也安装有vi但是奇怪的是这个vi是vim-common版本，基本上用不了所以要先把这个版本的vi卸载掉，然后重新安装vim。
 ``` bash
 $ sudo apt-get remove vim-common
+$ sudo apt-get install vim
 ```
-卸载成功之后接着执行 sudo apt-get install vim,安装好之后就能使用了
+
 
 ### useradd与adduser区别
 ``` bash
@@ -68,8 +72,8 @@ $ useradd -m username	# 跟adduser一样，会在/home下建立一个文件夹us
 ### userdel删除用户账号
 userdel 会查询系统账户文件，例如`/etc/password`和`/etc/group`，它会删除所有和用户名相关的文件
 ``` bash
-$ userdel peter # 不带选项使用 userdel，只会删除用户。用户的家目录将仍会在/home目录下
-$ userdel -r peter # 使用 -r 选项，在删除用户时将完全删除家目录、用户的邮件池
+$ userdel peter     # 不带选项使用 userdel，只会删除用户。用户的目录将仍会在/home目录下
+$ userdel -r peter  # 使用 -r 选项，在删除用户时将完全删除用户的目录、用户的邮件池
 ```
 
 还有的就是文件编码的问题，在windows下默认都是用ANSI格式编码，但是在ubuntu下面可能会是其他格式的编码，如果两个系统的编码不一致，就会产生乱码。
@@ -77,7 +81,7 @@ $ userdel -r peter # 使用 -r 选项，在删除用户时将完全删除家目�
 
 
 ubuntu root默认密码（初始密码）
-ubuntu安装好后，root初始密码（默认密码）不知道，需要设置。
+ubuntu安装好后，root初始密码（默认密码）是没有的，需要设置。
 
 1、先用安装时候的用户登录进入系统
 
@@ -106,14 +110,13 @@ $ su root
 $ sudo apt-get install build-essential
 ```
 
-在ubuntu软件源里zlib和zlib-devel叫做zlib1g zlib1g.dev
+在ubuntu软件源里zlib和zlib-devel叫做zlib1g、zlib1g.dev
 ``` bash
 $ sudo apt-get install zlib1g
 $ sudo apt-get install zlib1g.dev
 ```
 
-直接输入上述命令后还是不能安装。这就要求我们先装ruby.
-在ubuntu里，zlib叫zlib1g，相应的zlib-devel叫zlib1g.dev。默认的安装源里没有zlib1g.dev。要在packages.ubuntu.com上找。
+直接输入上述命令后还是不能安装。这就要求我们先装ruby，默认的安装源里没有zlib1g.dev。要在packages.ubuntu.com上找。
 ``` bash
 $ sudo apt-get install ruby
 ```
@@ -126,19 +129,19 @@ $ sudo apt-get install zlib1g-dev
 解决依赖包openssl安装，命令：
 [cpp] view plain copy 在CODE上查看代码片派生到我的代码片
 ``` baah
-$ sudo apt-get install openssl libssl-dev  
+$ sudo apt-get install openssl libssl-dev
 ```
 
 解决依赖包pcre安装，命令：
 [cpp] view plain copy 在CODE上查看代码片派生到我的代码片
 ``` bash
-$ sudo apt-get install libpcre3 libpcre3-dev  
+$ sudo apt-get install libpcre3 libpcre3-dev
 ```
 
 解决依赖包zlib安装，命令：
 [cpp] view plain copy 在CODE上查看代码片派生到我的代码片
 ``` bash
-$ sudo apt-get install zlib1g-dev  
+$ sudo apt-get install zlib1g-dev
 ```
 
 ### 当你安装完ubuntu后，安装五笔输入法：
@@ -193,13 +196,13 @@ localhost  hewentian-Lenovo-IdeaPad-Y470
 $ netstat -apn | grep 8761
 (Not all processes could be identified, non-owned process info
  will not be shown, you would have to be root to see it all.)
-tcp6       0      0 :::8761                 :::*                    LISTEN      24831/java      
-tcp6       0      0 127.0.0.1:49958         127.0.0.1:8761          ESTABLISHED 24824/java      
-tcp6       0      0 127.0.0.1:50494         127.0.0.1:8761          TIME_WAIT   -               
-tcp6       0      0 127.0.0.1:50502         127.0.0.1:8761          TIME_WAIT   -               
-tcp6       0      0 127.0.0.1:50484         127.0.0.1:8761          TIME_WAIT   -               
-tcp6       0      0 127.0.0.1:8761          127.0.0.1:49958         ESTABLISHED 24831/java      
-unix  3      [ ]         STREAM     CONNECTED     2887618  21883/chrome        
+tcp6       0      0 :::8761                 :::*                    LISTEN      24831/java
+tcp6       0      0 127.0.0.1:49958         127.0.0.1:8761          ESTABLISHED 24824/java 
+tcp6       0      0 127.0.0.1:50494         127.0.0.1:8761          TIME_WAIT   -
+tcp6       0      0 127.0.0.1:50502         127.0.0.1:8761          TIME_WAIT   -
+tcp6       0      0 127.0.0.1:50484         127.0.0.1:8761          TIME_WAIT   -
+tcp6       0      0 127.0.0.1:8761          127.0.0.1:49958         ESTABLISHED 24831/java
+unix  3      [ ]         STREAM     CONNECTED     2887618  21883/chrome
 unix  3      [ ]         STREAM     CONNECTED     2887619  22047/chrome --type 
 ```
 其中最后一栏是PID/Program name 
@@ -250,15 +253,15 @@ tar -xzvf /home/hewentian/Downloads/navicat120_mysql_en_x64.tar.gz
 ```
 3. 解压后  进入解压后的目录运行命令：
 ``` bash
-./start_navicat   
+./start_navicat
 ```
 这样OK啦
 
 连接上数据库后里面的中文数据是乱码,把Ubuntu的字符集修改为`zh_CN.utf8`就行了,修改方法:
 
 1. 查看当前系统的字符集：echo $LANG
-2. 查看系统支持的字符集: locale -a  
-3. 修改字符集: export LANG=zh_CN.utf8  
+2. 查看系统支持的字符集: locale -a
+3. 修改字符集: export LANG=zh_CN.utf8
 4. 打开start_navicat文件，会看到 export LANG="en_US.UTF-8" 将这句话改为 export LANG="zh_CN.UTF-8"
 
 经过以上修改，我的还是有中文乱码。
@@ -267,26 +270,28 @@ tar -xzvf /home/hewentian/Downloads/navicat120_mysql_en_x64.tar.gz
 第一次执行start_navicat时，会在用户主目录下生成一个名为`.navicat64`的隐藏文件夹，只要重新删除该文件即可重新计算14天试用期。
 ``` bash
 $ cd /home/hewentian
-$ ls -a 				# 显示隐藏文件内的所有文件
-$ rm -rf .navicat64 	# 删除该文件
-$ 						# 或者删除此目录下的system.reg文件，但是没有效果
+$ ls -a              # 显示隐藏文件内的所有文件
+$ rm -rf .navicat64  # 删除该文件
+$                    # 或者删除此目录下的system.reg文件，但是没有效果
 ```
-把文件夹删除后，下次启动navicat 会重新生成此文件，14天试用期会按新的时间开始计算。
+把文件夹删除后，下次启动navicat会重新生成此文件，14天试用期会按新的时间开始计算。
 
 
 ### linux中解压rar文件
-可以先执行如下命令，看系统是否已经安装 rar 命令
+可以先执行如下命令，看系统是否已经安装`rar`命令
 ``` bash
-hewentian@hewentian-Lenovo-IdeaPad-Y470:~/Downloads$ rar
+$ rar
+
 The program 'rar' is currently not installed. You can install it by typing:
 sudo apt install rar
 ```
+
 如果输出如上面，则`Linux`中未安装`rar`命令，按提示安装即可
 ``` bash
-hewentian@hewentian-Lenovo-IdeaPad-Y470:~/Downloads$ sudo apt install rar
+$ sudo apt install rar
 [sudo] password for hewentian: 
 Reading package lists... Done
-Building dependency tree       
+Building dependency tree
 Reading state information... Done
 Suggested packages:
   unrar
@@ -296,7 +301,7 @@ The following NEW packages will be installed:
 ```
 等待安装完成即可，验证是否成功安装，输入`rar`即可，看到如下输出，即证明安装成功。
 ``` bash
-hewentian@hewentian-Lenovo-IdeaPad-Y470:~/Downloads$ rar
+$ rar
 
 RAR 5.30 beta 2   Copyright (c) 1993-2015 Alexander Roshal   4 Aug 2015
 Trial version             Type RAR -? for help
@@ -314,7 +319,7 @@ Usage:     rar <command> -<switch 1> -<switch N> <archive> <files...>
 ```
 解压方法很简单：
 ``` bash
-hewentian@hewentian-Lenovo-IdeaPad-Y470:~/Downloads$ rar x 要解压的文件名.rar
+$ rar x 要解压的文件名.rar
 ```
 这将压缩包解压在当前目录下
 
@@ -521,31 +526,6 @@ curl -d "param1=value1&param2=value2" "http://www.baidu.com"
 3. json格式的post请求
 curl -l -H "Content-type: application/json" -X POST -d '{"phone":"13800138000","password":"passwd"}' http://domain/apis/users.json
 
-### 在ubuntu上面安装 maven
-``` bash
-$ su root 	# 切换到 root 用户
-$ cd /home/hewentian/Downloads	# 进入到 maven 下载的目录
-$ tar xzvf apache-maven-3.3.9-bin.tar.gz
-# cd /usr/local
-# mv /home/hewentian/Downloads/apache-maven-3.3.9 ./
-$# 在 /etc/profile 文件中添加 maven 路径
-# vi /etc/profile
-$ # 在打开的文件中添加如下代码
-# add maven
-export M2_HOME=/usr/local/apache-maven-3.3.9
-export PATH=$M2_HOME/bin:$PATH
-
-保存，并退出，执行如下语句，验证安装结果
-$ source /etc/profile
-$ mvn -version
-
-$ # 如无意外，你将看到如下输出
-Maven home: /usr/local/apache-maven-3.3.9
-Java version: 1.8.0_102, vendor: Oracle Corporation
-Java home: /usr/local/java/jdk1.8.0_102/jre
-Default locale: en_US, platform encoding: UTF-8
-OS name: "linux", version: "4.10.0-28-generic", arch: "amd64", family: "unix"
-```
 
 ### ubuntu 16.04 安装 google-chrome-stable_current_amd64.deb 方法
 ``` bash
@@ -813,8 +793,8 @@ $ sz a.txt
 �B00000000000000
 （按 ctrl + @ 进入文件传输状态）
 zssh > rz
-Receiving: a.txt                                                     
-Bytes received:       7/      7   BPS:1198                  
+Receiving: a.txt
+Bytes received:       7/      7   BPS:1198
 
 Transfer complete
 
@@ -1092,17 +1072,17 @@ This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
 
-pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC  
+pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC
                      trust: full          validity: unknown
-sub  4096R/12EBCE19  created: 2016-05-17  expires: never       usage: E   
+sub  4096R/12EBCE19  created: 2016-05-17  expires: never       usage: E
 [ unknown] (1). RabbitMQ Release Signing Key <info@rabbitmq.com>
 ```
 在GPG提示符下键入“trust”，这会让你可以选择该密钥的信任级别：从1到5，这里选择4
 ``` bash
 gpg> trust
-pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC  
+pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC
                      trust: full          validity: unknown
-sub  4096R/12EBCE19  created: 2016-05-17  expires: never       usage: E   
+sub  4096R/12EBCE19  created: 2016-05-17  expires: never       usage: E
 [ unknown] (1). RabbitMQ Release Signing Key <info@rabbitmq.com>
 
 Please decide how far you trust this user to correctly verify other users' keys
@@ -1117,14 +1097,14 @@ Please decide how far you trust this user to correctly verify other users' keys
 
 Your decision? 4
 
-pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC  
+pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC
                      trust: full          validity: unknown
-sub  4096R/12EBCE19  created: 2016-05-17  expires: never       usage: E   
+sub  4096R/12EBCE19  created: 2016-05-17  expires: never       usage: E
 [ unknown] (1). RabbitMQ Release Signing Key <info@rabbitmq.com>
 
 gpg> sign
 
-pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC  
+pub  4096R/6026DFCA  created: 2016-05-17  expires: never       usage: SC
                      trust: full          validity: unknown
  Primary key fingerprint: 0A9A F211 5F46 87BD 2980  3A20 6B73 A36E 6026 DFCA
 
@@ -1551,7 +1531,7 @@ sudo apt install filezilla
 $ sudo apt install filezilla
 [sudo] password for hewentian: 
 Reading package lists... Done
-Building dependency tree       
+Building dependency tree
 Reading state information... Done
 ...
 ...
@@ -1875,10 +1855,10 @@ $ cc
 
 Command 'cc' not found, but can be installed with:
 
-sudo apt install gcc            
-sudo apt install clang          
+sudo apt install gcc
+sudo apt install clang
 sudo apt install pentium-builder
-sudo apt install tcc            
+sudo apt install tcc
 
 $ sudo apt install gcc
 

@@ -5,6 +5,31 @@ tags: maven
 categories: other
 ---
 
+### 在ubuntu上面安装 maven
+``` bash
+$ su root
+$ cd /home/hewentian/Downloads
+$ tar xzvf apache-maven-3.3.9-bin.tar.gz
+$ cd /usr/local
+$ mv /home/hewentian/Downloads/apache-maven-3.3.9 ./
+
+$ vi /etc/profile
+# 在打开的文件中添加如下代码
+# add maven
+export M2_HOME=/usr/local/apache-maven-3.3.9
+export PATH=$M2_HOME/bin:$PATH
+
+$ source /etc/profile
+$ mvn -version
+
+Maven home: /usr/local/apache-maven-3.3.9
+Java version: 1.8.0_102, vendor: Oracle Corporation
+Java home: /usr/local/java/jdk1.8.0_102/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "4.10.0-28-generic", arch: "amd64", family: "unix"
+```
+
+
 maven的学习有个好网站：https://howtodoinjava.com/maven/
 
 ### Maven Dependency Scopes

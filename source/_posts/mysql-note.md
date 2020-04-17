@@ -852,10 +852,10 @@ SELECT cash FROM account WHERE user='user_name' FOR UPDATE;
 对于InnoDB存储引擎而言，它默认的事务隔离级别为READ REPEATABLE，完全遵循和满足事务的ACID特性。
 
 SQL标准定义了4个隔离级别：
-READ UNCOMMITTED
-READ COMMITTED
-REPEATABLE READ
-SERIALIZABLE
+READ UNCOMMITTED：会出现脏读、不可重复读、幻读（隔离级别最低，并发性能高）
+READ COMMITTED：会出现不可重复读、幻读问题（锁定正在读取的行）
+REPEATABLE READ：会出幻读（锁定所读取的所有行）
+SERIALIZABLE：保证所有的情况不会发生（锁表）
 
 可以在数据库启动的时候设置它的默认隔离级别：
 ``` mysql
