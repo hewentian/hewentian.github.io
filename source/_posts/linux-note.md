@@ -350,7 +350,7 @@ $ dpkg-query -l firefox
 ``` bash
 $ dpkg --get-selections
 ```
-你同样可以通过grep来过滤割到更精确的包。比如，我想要使用dpkg命令查看系统中安装的gcc包：
+你同样可以通过grep来过滤找到更精确的包。比如，我想要使用dpkg命令查看系统中安装的gcc包：
 ``` bash
 $ dpkg --get-selections | grep gcc
 ```
@@ -361,13 +361,17 @@ $ dpkg --get-selections | grep gcc
 有2种方式解决问题：
 
 1. 通过`unzip`命令解压，指定字符集
-unzip -O CP936 {要解压的文件名}.zip (用GBK, GB18030也可以)
-unzip -O CP936 {要解压的文件名}.zip -d {目标文件夹名}		# -d 是指定解决到这个目录
+
+        unzip -O CP936 {要解压的文件名}.zip (用GBK, GB18030也可以)
+        unzip -O CP936 {要解压的文件名}.zip -d {目标文件夹名}    # -d 指定解压到这个目录
 
 2. 在环境变量中，指定unzip参数，总是以指定的字符集显示和解压文件
-/etc/environment中加入2行
-UNZIP="-O CP936"
-ZIPINFO="-O CP936"
+
+        vi /etc/environment
+
+        # 加入下面2行
+        UNZIP="-O CP936"
+        ZIPINFO="-O CP936"
 
 
 ### 在 Ubuntu 上面远程连回 Windows 7
@@ -394,7 +398,7 @@ Failed to connect, CredSSP required by server.
 ``` bash
 $ touch rd.sh
 $ chmod +x rd.sh
-# 以这种方式动行 sh rd.sh
+$ sh rd.sh
 ```
 并在rd.sh中输入以下内容
 ``` bash
@@ -463,7 +467,7 @@ $ crontab -e
 ``` bash
 ############################################################
 # desc: backup important data. every saturday 23:50 run, and the cron is:
-#       50 23 * * 6 /bin/sh /home/hewentian/backupData.sh >> /home/hewentian/backupData.log
+#       50 23 * * 6 /bin/sh /home/hewentian/backupData.sh >> /home/hewentian/backupData.log 2>&1
 # author: Tim Ho
 # mail: wentian.he@qq.com
 # created time: 2019-07-24 10:22:28 AM
@@ -506,25 +510,28 @@ echo "-------------------- end to backup data $(date) --------------------"
 1. 访问共享文件夹：在资源浏览器`[Connect to Server]`窗口输入：smb://需要访问的机器IP，等同于Windows下输入：\\IP
 2. 访问FTP机器：在资源浏览器`[Connect to Server]`窗口输入：ftp://192.168.1.128/
 3. `[Connect to Server]`在`~/.config/nautilus/servers`中，可以编辑它的bookmark
+
 ![](/img/connect-to-server.png "Connect to Server")
 
 
 ### curl模拟http发送get或post请求
 参照：http://www.voidcn.com/blog/Vindra/article/p-4917667.html
 
-1. get请求 
-curl "http://www.baidu.com"  如果这里的URL指向的是一个文件或者一幅图都可以直接下载到本地
-curl -i "http://www.baidu.com"  显示全部信息
-curl -l "http://www.baidu.com" 只显示头部信息
-curl -v "http://www.baidu.com" 显示get请求全过程解析
+1. get请求
 
-wget "http://www.baidu.com"也可以
+        curl "http://www.hewentian.com"     如果这里的URL指向的是一个文件或者一幅图都可以直接下载到本地
+        curl -i "http://www.hewentian.com"  显示全部信息
+        curl -l "http://www.hewentian.com"  只显示头部信息
+        curl -v "http://www.hewentian.com"  显示get请求全过程解析
+        wget "http://www.hewentian.com"     也可以
 
 2. post请求
-curl -d "param1=value1&param2=value2" "http://www.baidu.com"
+
+        curl -d "param1=value1&param2=value2" "http://www.hewentian.com"
 
 3. json格式的post请求
-curl -l -H "Content-type: application/json" -X POST -d '{"phone":"13800138000","password":"passwd"}' http://domain/apis/users.json
+
+        curl -l -H "Content-type: application/json" -X POST -d '{"phone":"13800138000","password":"passwd"}' http://www.hewentian.com/apis/users
 
 
 ### ubuntu 16.04 安装 google-chrome-stable_current_amd64.deb 方法
@@ -1387,6 +1394,19 @@ $ more ent.txt
 ```
 
 
+### sed命令提取文件中指定格式的数据
+有文件内容如下：
+        2020-05-28 17:49:22,416  [com.hewentian.crawler.DayCrawler] [WARN] - {"date":"2020-01-01","type":1}
+        2020-05-28 17:49:27,419  [com.hewentian.crawler.DayCrawler] [WARN] - {"date":"2020-01-01","type":2}
+
+我想提取花括号中的内容，命令如下：
+``` bash
+$ sed 's/^.*\({.*}\).*/\1/g' dayError.log
+
+{"date":"2020-01-01","type":1}
+{"date":"2020-01-01","type":2}
+```
+
 ### 去除重复的行
 可以联合使用sort和uniq命令，uniq只会去除连续重复的行。
 ``` bash
@@ -1809,6 +1829,24 @@ $ vi shadowsocks.json
 ``` bash
 $ ssserver -c shadowsocks.json -d start
 ```
+
+如果服务器端有安装docker，也可以通过docker方式，用两条命令完成安装：
+``` bash
+$ docker pull shadowsocks/shadowsocks-libev
+
+$ docker run -d \
+--name ss-server \
+-p 4343:4343 \
+-p 4343:4343/udp \
+-e SERVER_ADDR=0.0.0.0 \
+-e SERVER_PORT=4343 \
+-e METHOD=aes-256-cfb \
+-e PASSWORD="abcd1234*#(" \
+-e TIMEOUT=300 \
+-e DNS_ADDRS="8.8.8.8,8.8.4.4" \
+shadowsocks/shadowsocks-libev
+```
+
 
 然后在客户端（用户本机）安装shadowsocks
 ``` bash

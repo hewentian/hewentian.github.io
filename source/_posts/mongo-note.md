@@ -71,7 +71,7 @@ systemLog:
 # network interfaces
 net:
   port: 27017
-  bindIp: 127.0.0.1
+  bindIp: 127.0.0.1,192.168.56.110 # 127.0.0.1只能从本机访问，将本机的IP配置到这里，这样其他机器才能通过该IP访问
 #  bindIp: 0.0.0.0  
 
 
@@ -579,4 +579,28 @@ while (handleCount < totalCount) {
 
 
 ```
+
+
+### MongoDB 去重(distinct)查询后求总数(count)
+1. 直接使用distinct语句查询，这种查询会将所有查询出来的数据返回给用户，然后对查询出来的结果集求总数（耗内存，耗时一些）
+        db.student.distinct("name", {"age" : 18}).length
+
+使用这种方法查询时，查询的结果集大于16M时会查询失败：
+        {“message” : “distinct failed: MongoError: distinct too big, 16mb cap”,”stack” : “script:1:20”}
+
+2. 使用聚合函数，多次分组统计结果，最终将聚合的结果数返回给用户
+        db.student.aggregate([
+            {$match:{"age" : 18}},
+            {$project:{"name":true}},
+            {$group:{_id:"$name"}},
+            {$count:"total_count"}
+        ])
+        或者
+        db.student.aggregate([
+            {$match:{"age" : 18}},
+            {$project:{"name":true}},
+            {$group:{_id:"$name",total_count:{$sum:1}}}
+        ])
+
+这种查询数据量大时就不会出现如上查询失败的情况，而且这种查询不管是内存消耗还是时间消耗都优于上面一种查询。
 

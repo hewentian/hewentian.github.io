@@ -115,3 +115,16 @@ You can find the list of all the available commands at http://redis.io/commands.
 	127.0.0.1:6379> AUTH abc123
 	OK
 
+
+### 一些常规配置
+``` bash
+$ vi {REDIS_HOME}/redis.conf
+
+pidfile /home/hewentian/db/redis/redis.pid
+logfile /home/hewentian/db/redis/logs/redis.log
+dir /home/hewentian/db/redis/data
+daemonize yes                       # 是否以后台进程运行
+bind 127.0.0.1 redis.hewentian.com  # 127.0.0.1只能在本机访问，如果要在外网访问，要配置多一个地址，用空格隔开
+```
+
+

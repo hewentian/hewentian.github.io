@@ -54,6 +54,24 @@ Redis不支持嵌套结构特性
   Redis提供了两种不同的持久化方法来将数据存储到硬盘里面。一种方法叫快照(snapshotting)，它可以将存在于某一时刻的所有数据都写入硬盘里面。另一种方法叫只追加文件(append-only file, AOF)，它会在执行写命令时，将被执行的写命令复制到硬盘里面。这两种持久化方法既可以同时使用，又可以单独使用，在某些情况下甚至可以两种方法都不使用。
   为了防止Redis因为创建子进程而出现停顿，我们可以考虑关闭自动保存，转而通过手动发送BGSAVE或者SAVE来进行持久化。手动发送BGSAVE一样会引起停顿，唯一不同的是用户可以通过手动发送BGSAVE命令来控制停顿出现的时间。另一方面，虽然SAVE会一直阻塞Redis直到快照生成完毕，但是因为它不需要创建子进程，所以就不会像BGSAVE一样因为创建子进程而导致Redis停顿；并且因为没有子进程在争抢资源，所以SAVE创建快照的速度会比BGSAVE创建快照的速度要来得更快一些。
 
+
+#### 配置AOF持久化机制
+修改redis配置文件，增加如下配置。
+``` bash
+$ vi {REDIS_HOME}/redis.conf
+
+appendonly yes
+appendfilename "appendonly.aof"
+appendfsync everysec
+no-appendfsync-on-rewrite no
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+aof-load-truncated yes
+```
+
+然后重启redis即可。可以登录redis，然后使用命令`config get *`查看配置。
+
+
 #### 创建快照的办法有以下几种
 
 1. 客户端可以通过向Redis发送BGSAVE命令来创建一个快照；

@@ -643,6 +643,8 @@ mysql               5.6.42              27e29668a08a        12 months ago       
 运行容器
 ``` bash
 $ sudo docker run -itd --name mysql-hwt -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:5.6.42
+或者
+$ sudo docker run -itd --name mysql-hwt -p 3306:3306 -v /root/db/mysql/data:/var/lib/mysql -v /root/db/mysql/logs:/logs -e MYSQL_ROOT_PASSWORD=123456 mysql:5.6.42
 524097ed5349347eabda6537d52e69b92678dff7ef5c2038a644e8e1f7dada6e
 
 $ sudo docker ps

@@ -341,3 +341,20 @@ s = s.replaceAll("[\\u00A0]+", "");
 System.out.println(s); // abc，这里后面的空格也去掉了
 ```
 
+
+### 命令行下替换jar包中指定文件
+1. 列出指定文件的路径
+
+        jar -tvf test.jar | grep config.properties
+
+2. 解压指定路径下的文件
+
+        jar -xvf test.jar conf/config.properties
+
+3. 修改文件
+
+4. 更新到jar包中
+
+        jar -uvf test.jar conf/config.properties
+
+
