@@ -210,10 +210,32 @@ mongodb查询数组大小使用`$size`，例如：我们有一个名为`person`�
 	db.getCollection('person').find({'childrenNames.2':{'$exists':1}})
 
 
+### 数组查询
+有如下数组，它的查询方式为：
+        db.getCollection('userInfo').find({"sons": {$elemMatch: {"birthday": {$gte:1594252800000, $lte:1594339200000}}}})
+
+``` javascript
+{
+    "_id" : ObjectId("5f0e26bcf0a06369a460b4c8"),
+    "name" : "tony",
+    "sons" : [ 
+        {
+            "name" : "h",
+            "birthday" : NumberLong(1594762936000),
+        },
+		  {
+            "name" : "w",
+            "birthday" : NumberLong(1594762936000),
+        }
+    ]
+}
+```
+
+
 ### mongodb分组查询
 如果我们要对集合`person`中的地区字段`area`来分组统计，语法如下：
 
-	db.getCollection('person').aggregate({'$group':{'_id':'$area','count':{'$sum':1}}})
+	db.getCollection('person').aggregate([{'$group':{'_id':'$area','count':{'$sum':1}}}])
 
 如果我们还想将分组统计结果，按数量倒序输出显示：
 
@@ -286,6 +308,17 @@ $ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticatio
 $ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.json --type json -f  "_id,name"
 $ mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.csv --type csv -f  "_id,name"
 ```
+
+如果导出的数据中包含查询条件，则要用下面这种方式导出：
+``` bash
+$ mongo "192.168.1.111:27017/user_database" --authenticationDatabase user_database -u user_name -p user_password --quiet --eval 'db.user.find({ _id: {$gt: ObjectId("5ee08d67e144cb56edf945da")}}).forEach(printjson);' > a.json
+```
+
+如果导出的查询条件中包含ObjectId，则要用`$oid`来代替它：
+``` bash
+mongoexport -h 127.0.0.1 --port 27017 -u bfg_user -p a12345678 --authenticationDatabase admin -d bfg -c user -o /home/hewentian/ProjectD/db/user.json -q '{"_id":{"$oid":"5ece9b4d8008d750e611010c"}}'
+```
+
 
 #### 我们使用`mongoimport`来导入指定的`collection`
 该命令位于`{MONGO_HOME}/bin/`目录下，可以把一个json/csv文件导入到指定的`collection`中
@@ -447,6 +480,14 @@ db.getCollection("userInfo").find({})
 ```
 
 
+### mongodb模糊查询
+``` java
+db.getCollection('userInfo').find({"name":{"$regex":"t"}})
+```
+
+这样名字中包含"tom"和"scott"的记录都会查询出来。
+
+
 ### mongodb日期查询
 日期的类型不同，查询的方式也不同：
 ``` java
@@ -591,16 +632,92 @@ while (handleCount < totalCount) {
 2. 使用聚合函数，多次分组统计结果，最终将聚合的结果数返回给用户
         db.student.aggregate([
             {$match:{"age" : 18}},
-            {$project:{"name":true}},
-            {$group:{_id:"$name"}},
-            {$count:"total_count"}
-        ])
-        或者
-        db.student.aggregate([
-            {$match:{"age" : 18}},
-            {$project:{"name":true}},
-            {$group:{_id:"$name",total_count:{$sum:1}}}
+            {$project:{"name":1}},
+            {$group:{"_id":"$name","count":{$sum:1}}},
+            {$sort:{"count":-1}}
         ])
 
 这种查询数据量大时就不会出现如上查询失败的情况，而且这种查询不管是内存消耗还是时间消耗都优于上面一种查询。
+
+
+### BSON ObjectID Specification
+A BSON ObjectID is a 12-byte value consisting of a 4-byte timestamp (seconds since epoch), a 3-byte machine id, 
+a 2-byte process id, and a 3-byte counter. Note that the timestamp and counter fields must be stored big endian 
+unlike the rest of BSON. This is because they are compared byte-by-byte and we want to ensure a mostly increasing 
+order. The format:
+
+        0 1 2 3    4 5 6    7 8    9 10 11
+        time       machine	pid	   inc
+
+* TimeStamp: This is a unix style timestamp. It is a signed int representing the number of seconds before or after January 1st 1970 (UTC).
+* Machine: This is the first three bytes of the (md5) hash of the machine host name, or of the mac/network address, or the virtual machine id.
+* Pid: This is 2 bytes of the process id (or thread id) of the process generating the object id.
+* Increment: This is an ever incrementing value, or a random number if a counter can't be used in the language/runtime.
+
+BSON ObjectIds can be any 12 byte binary string that is unique; however, the server itself and almost all drivers use the format above.
+
+ObjectId占用12字节的存储空间，由“时间戳” 、“机器名”、“PID号”和“计数器”组成。使用机器名的好处是在分布式环境中能够避免
+单点计数的性能瓶颈。使用PID号的好处是支持同一机器内运行多个mongod实例。最终采用时间戳和计数器的组合来保证唯一性。
+
+自动生成的主键objectId是一个24位的字符串，它是由一组十六进制的字符构成，每个字节两位的十六进制数字，总共用了12字节的存储空间。
+
+* 时间戳
+确保ObjectId唯一性依赖的是时间的顺序，不依赖时间的取值，因此集群节点的时间不必完全同步。既然ObjectId已经有了时间戳，
+那么在文档中就可以省掉一个时间戳了。在使用ObjectID提取时间时，应注意到MongoDB允许各节点时间不一致这一细节。
+
+* 机器名
+机器名通过Md5加密后取前三个字节，应该还是有重复概率的，配置生产集群时检查一下总不会错。另外，我也注意到重启MongoDB后
+MD5加密结果会发生变化，在利用ObjectID提取机器名信息时需格外注意。
+
+* PID号
+注意到每次重启mongod进程后PID号通常会发生变化就可以了。
+
+* 计数器
+计数器占3个字节，表示的取值范围就是`256*256*256-1=16777215`。不妨认为MongDB性能的极限是单台设备一秒钟插入一千万条记录。
+以目前的水平看，单台设备一秒钟插入一万条就很不错了，因此ObjectID计数器的设计是够用的。
+
+``` javascript
+> db.user.findOne()._id
+ObjectId("5eda936e8008d750e63ee723")
+
+> db.user.findOne()._id.toString()
+ObjectId("5eda936e8008d750e63ee723")
+
+> db.user.findOne()._id.toJSON()
+{ "$oid" : "5eda936e8008d750e63ee723" }
+
+> db.user.findOne()._id.toJSON().$oid.substring(0, 8)
+5eda936e
+
+> db.user.findOne()._id.getTimestamp()
+ISODate("2020-06-06T02:48:14Z")
+```
+
+* 从mongoDB的ObjectId中提取时间信息
+取8个字符，得到的是这条数据创建时的时间戳（不带毫秒位数），在后面补上毫秒位数"000"。
+
+java代码
+``` java
+// ObjectId("5eda936e8008d750e63ee723")
+String id = "5eda936e8008d750e63ee723";
+
+// 取前8位
+long timestamp = Long.parseLong(Integer.parseInt(id.substring(0, 8), 16) + "000");
+
+Date date = new Date(timestamp);
+System.out.println(date); // Sat Jun 06 02:48:14 CST 2020
+```
+
+javascript代码
+``` javascript
+// ObjectId("5eda936e8008d750e63ee723")
+var id = "5eda936e8008d750e63ee723";
+
+// 取前8位
+var timestamp = Number(parseInt(id.substring(0, 8), 16).toString() + "000");
+
+var date = new Date(timestamp);
+
+console.log(date); // Sat Jun 06 2020 02:48:14 GMT+0800 (China Standard Time)
+```
 

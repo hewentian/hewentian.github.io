@@ -623,8 +623,60 @@ $ sudo docker run --name nginx-test2 -p 8082:80 -d -v /home/hewentian/Documents/
 http://localhost:8082/
 
 
+### docker安装redis
+先建立保存数据的目录和设置好配置文件：
+``` bash
+$ cd /root/db/redis
+$ mkdir data conf
+$ cd conf
+$ vi redis.conf
+
+requirepass abc12345
+
+appendonly yes
+appendfilename "appendonly.aof"
+appendfsync everysec
+no-appendfsync-on-rewrite no
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+aof-load-truncated yes
+```
+
+开始安装
+``` bash
+$ sudo docker pull redis
+$
+$ sudo docker run \
+    --name redis \
+    -p 6379:6379 \
+    -v /root/db/redis/conf/redis.conf:/etc/redis/redis.conf \
+    -v /root/db/redis/data:/data \
+    -d redis redis-server /etc/redis/redis.conf
+```
+
+
 ### docker安装mysql
-首先拉取镜像
+先建立保存数据的目录和设置好配置文件：
+``` bash
+$ cd /root/db/mysql
+$ mkdir data conf logs
+$ cd conf
+$ vi mysql.cnf
+
+[client]
+port=3306
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+
+[mysqld]
+port=3306
+character-set-server=utf8
+max_connections=100
+```
+
+拉取镜像
 ``` bash
 $ sudo docker search mysql
 $ sudo docker pull mysql:5.6.42
@@ -641,11 +693,26 @@ mysql               5.6.42              27e29668a08a        12 months ago       
 ```
 
 运行容器
+1. 简单安装
 ``` bash
-$ sudo docker run -itd --name mysql-hwt -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:5.6.42
-或者
-$ sudo docker run -itd --name mysql-hwt -p 3306:3306 -v /root/db/mysql/data:/var/lib/mysql -v /root/db/mysql/logs:/logs -e MYSQL_ROOT_PASSWORD=123456 mysql:5.6.42
-524097ed5349347eabda6537d52e69b92678dff7ef5c2038a644e8e1f7dada6e
+$ sudo docker run \
+    -itd --name mysql-hwt \
+    -p 3306:3306 \
+    -e MYSQL_ROOT_PASSWORD=123456 \
+    mysql:5.6.42
+```
+
+2. 详细安装
+``` bash
+$ sudo docker run \
+    -itd --name mysql-hwt \
+    -p 3306:3306 \
+    -v /root/db/mysql/conf/mysql.cnf:/etc/mysql/conf.d/mysql.cnf \
+    -v /root/db/mysql/data:/var/lib/mysql \
+    -v /root/db/mysql/logs:/logs \
+    -e MYSQL_ROOT_PASSWORD=123456 \
+    mysql:5.6.42
+
 
 $ sudo docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                PORTS                       NAMES
@@ -662,6 +729,89 @@ mysql> FLUSH PRIVILEGES;
 ```
 
 然后创建一个用于操作mysql的简单用户，参考之前的 [mysql 学习笔记](../../../../2017/12/07/mysql-note/)。
+
+
+### docker安装mongo
+先建立保存数据的目录和设置好配置文件：
+``` bash
+$ cd /root/db/mongodb
+$ mkdir configdb data logs
+$ cd configdb
+$ vi mongod.conf
+
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+```
+
+开始安装
+``` bash
+$ sudo docker pull mongo
+$
+$ sudo docker run \
+    -itd --name mongo \
+    -p 27017:27017 \
+    -v /root/db/mongodb/data:/data/db \
+    -v /root/db/mongodb/configdb:/data/configdb \
+    -v /root/db/mongodb/logs:/data/logs \
+    mongo:latest --auth \
+    -f /data/configdb/mongod.conf \
+    --bind_ip_all
+```
+
+1. 进入mongo，添加管理员。创建第一个用户admin，该用户需要有用户管理权限，其角色为root。
+``` bash
+$ sudo docker exec -it mongo mongo
+MongoDB shell version v4.2.7
+connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("81ad33aa-6318-4854-98df-9910a8927698") }
+MongoDB server version: 4.2.7
+Welcome to the MongoDB shell.
+For interactive help, type "help".
+For more comprehensive documentation, see
+	http://docs.mongodb.org/
+Questions? Try the support group
+	http://groups.google.com/group/mongodb-user
+> use admin
+switched to db admin
+>
+>
+>  db.createUser({user:"admin",pwd:"12345",roles:["root"]})
+Successfully added user: { "user" : "admin", "roles" : [ "root" ] }
+>
+>
+> show collections
+Warning: unable to run listCollections, attempting to approximate collection names by parsing connectionStatus
+>
+>
+> db.auth("admin","12345")
+1
+>
+> show collections
+system.users
+system.version
+>
+```
+
+2. 添加数据库用户
+为数据库添加用户，添加用户前需要切换到该数据库，这里简单设置其角色为dbOwner
+``` bash
+> use bfg
+switched to db bfg
+>
+>
+> db.createUser({user: "bfg", pwd: "bfg100", roles: [{ role: "dbOwner", db: "bfg" }]})
+Successfully added user: {
+	"user" : "bfg",
+	"roles" : [
+		{
+			"role" : "dbOwner",
+			"db" : "bfg"
+		}
+	]
+}
+```
 
 
 ### 进入指定的容器
@@ -1288,6 +1438,13 @@ Starting proxy       ... done
 https://docs.docker.com/
 https://blog.docker.com/
 https://github.com/goharbor/harbor
+
+
+### 将宿主机的文件复制到容器里面
+
+        sudo docker cp /data.txt containerID:/
+
+注意：一定要指定复制到的目录位置
 
 
 未完待续……

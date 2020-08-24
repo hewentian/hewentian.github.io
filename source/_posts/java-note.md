@@ -358,3 +358,11 @@ System.out.println(s); // abc，这里后面的空格也去掉了
         jar -uvf test.jar conf/config.properties
 
 
+### IDEA一个工作空间打开多个项目
+如果，多个项目之间不是parent和module的关系，IDEA一个工作空间只能打开一个项目。这样的话，
+如果有多个项目，来回切换视图让人烦不胜烦。在IDEA一个工作空间中打开多个项目的方法。
+1. 首先打开一个项目；
+2. 点击项目右边的Maven Project，并点击绿色的`+`号；
+3. 找到要打开的另一个项目，选中pom.xml文件，点击 [ok] 即可。
+
+

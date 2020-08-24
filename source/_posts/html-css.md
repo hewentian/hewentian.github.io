@@ -95,4 +95,118 @@ Load unsafe scripts
 清空缓存并硬性重新加载：可以深层次的清除所有的缓存。（建议用这个）
 
 
+### 网页请求不带cookie问题
+为什么ajax请求没有带上cookie呢？然后去查了一下资料，原来ajax默认只会带上同源的cookie。如果只是这样还没什么，
+重点是localhost和本机的Ip地址（我的是192.168.1.112）不是一个域，因为我在浏览器输入网址打的是`localhost:8761`
+（也就是说当前域是localhost:8761），但为ajax的请求地址是写`192.168.1.112:8761`，所以ajax请求就没带上`localhost:8761`
+下的cookie。补充一下：当然不仅ajax，比如直接在浏览器上输入地址或者通过表单提交都是默认只带上同源的cookie。
+
+
+### js发送post请求下载文件
+JQuery的ajax函数的返回类型只有xml、text、json、html等类型，没有“流”类型，所以我们要实现ajax下载，
+不能够使用相应的ajax函数进行文件下载。但可以用js生成一个form，用这个form提交参数，并返回“流”类型
+的数据。在实现过程中，页面也没有进行刷新。
+``` javascript
+function toExport() {
+    let formData = getFormData();
+
+    if (formData) {
+        var $iframe = $('<iframe id="down-file-iframe" />');
+        var $form = $('<form target="down-file-iframe" method="post" />');
+        $form.attr('action', 'http://study.hewentian.com/userInfo/download');
+
+        for (var key in formData) {
+            $form.append('<input type="hidden" name="' + key + '" value="' + formData[key] + '" />');
+        }
+
+        $iframe.append($form);
+        $(document.body).append($iframe);
+        $form[0].submit();
+        $iframe.remove();
+    }
+}
+
+function getFormData() {
+    let userName = $('#userName').val();
+
+    let startTime = $('#startTime').val();
+    let endTime = $('#endTime').val();
+
+    if (isNull(startTime) || isNull(endTime)) {
+        layer.alert("请选择日期范围");
+        return;
+    }
+
+    return {
+        'userName': userName,
+        'startTime': startTime,
+        'endTime': endTime
+    };
+}
+```
+
+``` java
+@RestController
+@RequestMapping("/web/userInfo")
+@Slf4j
+public class UserInfoController {
+    @Autowired
+    private IUserInfoService userInfoService;
+
+    @PostMapping("/download")
+    public void download(String userName, String startTime, String endTime, HttpServletResponse response) {
+        XSSFWorkbook xssfWorkbook = userInfoService.getXSSFWorkbook(userName, startTime, endTime);
+
+        try {
+            String filename = "用户信息-" + DateFormatUtils.format(new Date(), "yyyy-MM-dd") + ".xlsx";
+            response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+            response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+
+            response.setCharacterEncoding("UTF-8");
+            OutputStream outputStream = response.getOutputStream();
+
+            xssfWorkbook.write(outputStream);
+
+            outputStream.flush();
+            outputStream.close();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+}
+```
+
+
+### JAVA后台接收前端参数
+如果JAVA后台想以`@RequestBody`方式，用实体类来接收参数，那么前端就不能以form方式提交表单。
+        @PostMapping("/search")
+        public ResponseEntity search(@RequestBody UserDTO dto) {
+
+此时前端必须要使用`contentType: 'application/json'`指定参数类型。
+``` javascript
+$.ajax({
+    url: url,
+    type: method,
+    async: async,
+    xhrFields: {withCredentials: true},
+    contentType: 'application/json',
+    dataType: 'json',
+    data: data ? method === 'GET' ? data : JSON.stringify(data) : null,
+    success: function (data) {
+        let code = data.code;
+        if (code === 4003){
+            layer.confirm(data.message, function (index) {
+                $.removeCookie('username');
+                top.location.href = LOGIN_URI;
+            });
+        } else {
+            layer.msg(data.message);
+        }
+    },
+    error: function () {
+        layer.msg("客户端繁忙...");
+    }
+});
+```
+
 

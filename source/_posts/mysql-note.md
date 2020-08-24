@@ -459,6 +459,15 @@ ALTER TABLE sys_user MODIFY COLUMN user_name VARCHAR(40);
 ```
 
 
+### mysql 修改字段名
+``` sql
+ALTER TABLE [表名] CHANGE [旧字段名] [新字段名] [类型];
+
+示例: sys_user表里的user_name字段，修改改成user_name_new
+ALTER TABLE sys_user CHANGE user_name user_name_new VARCHAR(40);
+```
+
+
 ### mysql 增加列（字段）
 ``` sql
 ALTER TABLE [表名] ADD [列名] [列类型] [其他属性，如默认值];

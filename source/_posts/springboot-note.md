@@ -108,5 +108,16 @@ nohup java -Dloader.path=/home/root/userinfo/libs \
 2. `logging.path`指定日志文件存放的目录；
 3. `spring.config.location`指定要加载的配置文件。
 
+### 日志管理
+如果要编写除控制台输出之外的日志文件，则需在 application.properties 中设置 logging.file 或 logging.path 属性。
+logging.file： 设置文件，可以是绝对路径，也可以是相对路径。如： logging.file=my.log
+logging.path： 设置目录，会在该目录下创建 spring.log 文件，并写入日志内容，如： logging.path=/var/log
+
+如果只配置 logging.file ，会在项目的当前路径下生成一个 xxx.log 日志文件。
+如果只配置 logging.path ，在 /var/log 文件夹生成一个日志文件为 spring.log
+
+注：二者不能同时使用，如若同时使用，则只有 logging.file 生效
+
+默认情况下，日志文件的大小达到 10MB 时会切分一次，产生新的日志文件，默认级别为： ERROR、WARN、INFO
 
 

@@ -213,10 +213,34 @@ netstat -ntlp    // 查看当前所有tcp端口
 netstat -ntulp | grep 9012    // 查看所有9012端口使用情况
 
 lsof -i:8020    // 查看8020端口是否开启
-
-telnet localhost <port>    // On the server, try to see if the port is open there
-telnet <server> <port>    // On the client, try to see if the port is accessible remotely
 ```
+
+
+### 检查远程端口是否可以连通
+方法一：使用telnet
+
+        telnet localhost <port>    // On the server, try to see if the port is open there
+        telnet <server> <port>     // On the client, try to see if the port is accessible remotely
+
+示例：
+``` bash
+$ telnet 192.168.8.112 8088
+
+Trying 192.168.8.112...
+Connected to 192.168.8.112.
+Escape character is '^]'.
+```
+
+方法二：使用nc
+``` bash
+$ nc -v 192.168.8.112 8088
+Connection to 192.168.8.112 8088 port [tcp/omniorb] succeeded!
+```
+
+redHat安装nc
+
+        sudo yum install -y nc
+
 
 ### ubuntu下安装notepadqq
 安装过程中参考了如下文章：
@@ -544,6 +568,9 @@ $ # 那么执行如下命令
 $ sudo apt-get -f install libappindicator1 libindicator7
 $ # 然后再执行原来的安装命令
 $ sudo dpkg -i google-chrome-stable_current_amd64.deb
+
+卸载方法
+$ sudo apt-get remove google-chrome-stable
 ```
 
 ### Ubuntu 16.04 关闭笔记本触摸板
@@ -823,11 +850,77 @@ zssh > sz 123.txt   //上传本地机器的当前目录的123.txt到远程机器
 
 下载服务器文件到本地
 sz filename             //在远程机器上,启动sz, 准备发送文件
-                               //看到一堆乱码,不要怕,这会按下组合键
+                        //看到一堆乱码,不要怕,这会按下组合键
 ctrl+@
 zssh > pwd              //看看在那个目录,cd 切换到合适的目录
 zssh > rz -bye                 //接住对应的文件
 ```
+
+
+### ubuntu 开放指定端口
+一般情况下，ubuntu安装好的时候，iptables会被安装上，如果没有的话先安装
+
+        sudo apt-get install iptables
+
+添加开放端口
+        sudo iptables -A INPUT -p tcp --dport 4412 -j ACCEPT
+        sudo iptables -A OUTPUT -p tcp --sport 4412 -j ACCEPT
+
+        # 临时保存配置，重启后失效
+        sudo iptables-save
+
+安装`iptables-persistent`工具，持久化开放端口配置
+        sudo apt-get install iptables-persistent
+
+        sudo netfilter-persistent save
+        sudo netfilter-persistent reload
+
+完成上述操作就可以永久打开我们需要的端口了
+
+
+### redHat 开放指定端口
+同样的，我们开放4412这个端口。先检查iptables是否启动：
+
+        sudo service iptables status
+
+        Redirecting to /bin/systemctl status  iptables.service
+        Unit iptables.service could not be found.
+
+安装iptables-services：
+
+        sudo yum install iptables-services
+
+启动iptables：
+
+        sudo service iptables start
+
+编辑配置文件，将4412端口添加到22端口下：
+
+        sudo vi /etc/sysconfig/iptables
+
+        # sample configuration for iptables service
+        # you can edit this manually or use system-config-firewall
+        # please do not ask us to add additional ports/services to this default configuration
+        *filter
+        :INPUT ACCEPT [0:0]
+        :FORWARD ACCEPT [0:0]
+        :OUTPUT ACCEPT [0:0]
+        -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+        -A INPUT -p icmp -j ACCEPT
+        -A INPUT -i lo -j ACCEPT
+        -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+        -A INPUT -m state --state NEW -m tcp -p tcp --dport 4412 -j ACCEPT
+        -A INPUT -j REJECT --reject-with icmp-host-prohibited
+        -A FORWARD -j REJECT --reject-with icmp-host-prohibited
+        COMMIT
+
+重启：
+
+        sudo service iptables restart
+
+查看开放端口：
+
+        sudo iptables -nL
 
 
 ### Linux下打开ISO文件方法
@@ -1492,9 +1585,9 @@ $ exit
 
 4、清理系统：
 
-	sudo apt-get autoclean
-	sudo apt-get clean
-	sudo apt-get autoremove
+        sudo apt-get autoclean     将已经删除了的软件包的.deb安装文件从硬盘中删除掉
+        sudo apt-get clean         会把你已安装的软件包的安装包也删除掉，当然多数情况下这些包没什么用了
+        sudo apt-get autoremove    删除为了满足其他软件包的依赖而安装的，但现在不再需要的软件包
 
 
 ### linux系统ssh免密码登录另一台linux机器执行某个脚本
@@ -1776,6 +1869,19 @@ $ cat a.txt | awk -F'###' '{print $1,$2}'
 ```
 也可以单独提取某一列。
 
+
+### Linux下通过一行命令查找并杀掉进程
+如果我们运行了一个进程：
+``` bash
+$ nohup java -jar he-app.jar 2>&1 &
+```
+
+通过一条命令杀掉它：
+``` bash
+$ ps -ef | grep he-app.jar | grep -v grep | awk '{print $2}' | xargs kill -9
+```
+
+
 ### 测试网速的工具
 可以使用`speedtest-cli`这个工具来测试，如果还未安装，可使用如下命令安装：
 ``` bash
@@ -1932,4 +2038,76 @@ $ sudo apt-get update
 $ sudo apt-get upgrade
 ```
 
+
+### redHat升级内核
+有时候，系统内核太低了，在安装某些软件后，会提示：
+
+        kernel too old
+
+导致无法使用。这时就要升级系统的内核了。这里以redHat为例。
+
+1. 查看系统当前内核版本：
+
+        uname -r
+
+2. 更新nss：
+
+        sudo yum update nss
+
+3. 安装elrepo的yum源，升级内核需要使用elrepo的yum源，在安装yum源之前还需要我们导入elrepo的key：
+
+        sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+        sudo rpm -Uvh http://www.elrepo.org/elrepo-release-6-8.el6.elrepo.noarch.rpm
+
+4. 升级内核。在yum的elrepo源中有ml和lt两种内核，其中ml(mainline)为最新版本的内核，lt为长期支持的内核。
+
+安装ml内核使用如下命令：
+
+        yum --enablerepo=elrepo-kernel -y install kernel-ml
+
+安装lt内核使用如下命令：
+
+        yum --enablerepo=elrepo-kernel -y install kernel-lt
+
+此处选择lt内核：
+
+        sudo yum --enablerepo=elrepo-kernel -y install kernel-lt
+
+5. 修改grub.conf文件，内核升级完后需要修改内核的启动顺序。
+
+        sudo vi grub.conf
+        default=1 改为 default=0
+
+6. 重启系统：
+
+        sudo reboot
+
+
+### top命令
+top命令在执行过程中可以使用的一些交互命令：
+
+        c    切换显示命令名称和完整命令行
+        M    根据驻留内存大小进行排序
+        P    根据CPU使用百分比大小进行排序
+        k    终止一个进程。系统将提示用户输入需要终止的进程PID，以及需要发送给该进程什么样的信号。一般的终止进程可以使用15信号；如果不能正常结束那就使用信号9强制结束该进程。默认值是信号15。在安全模式中此命令被屏蔽
+
+top常用命令参数
+        top                    每隔5秒显式所有进程的资源占用情况
+        top -d 2               每隔2秒显式所有进程的资源占用情况
+        top -c                 每隔5秒显式进程的资源占用情况，并显示进程的命令行参数（默认只有进程名）
+        top -p 3306 -p 6378    每隔5秒显示pid是3306和pid是6379的两个进程的资源占用情况
+        top -d 2 -c -p 6379    每隔2秒显示pid是6379的进程的资源使用情况，并显示该进程启动的命令行参数
+
+
+### linux创建和删除用户
+创建用户
+        useradd -m username 创建用户，要加-m参数才会在/home目录下创建用户目录
+        passwd username  为useradd创建的用户设置密码
+        adduser username 创建用户，自动会在/home目录下创建用户目录，但是它一创建用户，就会要求输入密码
+
+删除用户
+若使用userdel username命令删除用户时，并不能删除该用户的所有信息，只是删除了/etc/passwd、/etc/shadow、/etc/group/、/etc/gshadow四个文件里的该账户和组的信息。默认情况下创建一个用户账号，会创建一个home目录和一个用户邮箱（在/var/spool/mail目录以用户名命名）。下次再创建用户时，就会出现：该用户已存在的提示。
+
+正确删除用户
+        userdel -r username
 
