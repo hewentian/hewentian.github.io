@@ -2111,3 +2111,121 @@ top常用命令参数
 正确删除用户
         userdel -r username
 
+
+### 使用msmtp发送邮件
+安装
+
+From source
+CentOS repository doesn't have a RPM package for MSMTP so we need to install it from source:
+
+        yum -y install make pkgconfig gcc gcc-c++ gnutls gnutls-devel gnutls-utils openssl openssl-devel libidn libidn-devel
+        wget https://marlam.de/msmtp/releases/msmtp-1.8.12.tar.xz
+        tar xJvf msmtp-1.8.12.tar.xz
+        cd msmtp-1.8.12/
+        ./configure --with-ssl=openssl
+        make
+        make install
+
+
+On Ubuntu/Debian distribution use apt-get:
+
+        sudo apt-get install msmtp
+
+配置
+The configuration file of MSMTP is stored in `~/.msmtprc` for each user and `/etc/msmtprc` is the system wide configuration file. Open the configuration file in your directory.
+
+        vi ~/.msmtprc
+
+``` bash
+defaults
+tls on
+logfile /var/log/msmtp.log
+
+account th
+host smtp.exmail.qq.com
+port 465
+auth on
+tls on
+tls_starttls off
+tls_certcheck off
+from test@th.com
+user test@th.com
+password yourThPassw0rd
+
+account default: th
+```
+
+This file can also have more than one account, just ensure that the "account" value is unique for each section. When sending with `-a {accountId}` to specific the account. Save the file and use chmod to make this file readable only by the owner since it contains passwords. This step is mandatory because msmtp won't run if the permissions are more than 600.
+
+        chmod 600 ~/.msmtprc
+
+check from the command-line to ensure it works properly. To do this:
+
+        echo -e "Subject: test msmtp\r\n\r\nThis is a test for th." | /usr/bin/msmtp -d -C ~/.msmtprc -t wentian.he@qq.com
+        echo -e "Subject: test msmtp\r\n\r\nThis is a test for th." | /usr/bin/msmtp -d -C ~/.msmtprc -t wentian.he@qq.com,other@qq.com    # 可以同时给多个地址发邮件
+
+if everything is setup correctly, you can copy this file to the/etc directory, but this is option:
+
+        sudo cp ~/.msmtprc /etc/.msmtprc
+
+
+### 监控系统磁盘、CPU、内存使用量
+``` bash
+############################################################
+#    */10 * * * * /bin/sh /home/hewentian/system_monitor.sh
+############################################################
+
+#!/bin/sh
+
+ip=$(ifconfig enp1s0 | grep "inet " | awk -F ' ' '{print $2}')
+
+msg=""
+
+# 获取磁盘使用量，记得修改下面的磁盘编号
+disk_total=$(df -h | grep "dev/sda1" | awk -F ' ' '{print $2}')
+disk_used=$(df -h | grep "dev/sda1" | awk -F ' ' '{print $3}')
+disk_used_percent=$(df -h | grep "dev/sda1" | awk -F '[ %]+' '{print $5}')
+echo "disk used: ${disk_used} / ${disk_total}, ${disk_used_percent}%"
+
+# 获取内存使用占比
+mem_total=$(free -m | grep Mem | awk -F ' ' '{print $2}')
+mem_used=$(free -m | grep Mem | awk -F ' ' '{print $3}')
+mem_used_percent=$(awk 'BEGIN{printf "%.0f\n",('$mem_used'/'$mem_total')*100}')
+echo "mem used: ${mem_used}M / ${mem_total}M, ${mem_used_percent}%"
+
+# 获取CPU使用率
+cpu_idle=$(top -n 1 | grep Cpu | awk '{print $8}' | cut -f 1 -d '.')
+echo "cpu idle: ${cpu_idle}"
+
+
+# 下面进行判断
+if [ $disk_used_percent -gt 10 ];then
+    msg="disk used: ${disk_used} / ${disk_total}, ${disk_used_percent}%"
+fi
+
+if [ $mem_used_percent -gt 30 ];then
+    msg=$msg"\nmem used: ${mem_used}M / ${mem_total}M, ${mem_used_percent}%"
+fi
+
+if [ $cpu_idle -lt 99 ];then
+    msg=$msg"\ncpu idle: ${cpu_idle}%"
+fi
+
+echo ""
+
+if [ -n "$msg" ]; then
+    msg="ip: ${ip}\n"$msg
+    echo "${msg}"
+    echo "Subject: system monitor\r\n\r\n${msg}" | /usr/bin/msmtp -d -C ~/.msmtprc -t wentian.he@qq.com
+fi
+```
+
+
+### 获取本机的公网IP
+
+        curl ifconfig.me
+        curl cip.cc
+        curl ipinfo.io
+        curl myip.ipip.net
+
+

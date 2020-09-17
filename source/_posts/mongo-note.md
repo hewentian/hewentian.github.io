@@ -721,3 +721,166 @@ var date = new Date(timestamp);
 console.log(date); // Sat Jun 06 2020 02:48:14 GMT+0800 (China Standard Time)
 ```
 
+
+### explain查询执行情况
+explain的目的是将mongo的黑盒操作白盒化。比如查询很慢的时候想知道原因。explain有三种模式：
+1. queryPlanner: 不会真正的执行查询，只是分析查询，选出winningPlan。
+2. executionStats: 返回winningPlan的关键数据。
+3. allPlansExecution: 执行所有的plans。
+
+通过explain("executionStats")来选择模式，默认是第一种模式。一些返回字段的说明：
+namespace: 本次所查询的集合
+indexFilterSet: 是否使用partial index，比如只对某个集合中的部分文档进行index
+parsedQuery: 本次执行的查询
+executionTimeMillis: 该query查询的总体时间
+indexName: 所使用的索引的名字
+indexBounds: 索引查找时使用的范围
+stage:
+  COLLSCAN: 全表扫描
+  IXSCAN: 索引扫描
+  FETCH: 根据索引去检索指定document
+  SHARD_MERGE: 将各个分片返回数据进行merge
+  SORT: 表明在内存中进行了排序
+  LIMIT: 使用limit限制返回数
+  SKIP: 使用skip进行跳过
+  IDHACK: 针对_id进行查询
+
+通过这些信息就能判断查询时如何执行的了。示例如下，先插入3个文档：
+``` javascript
+db.getCollection("userInfo").insert({"age":"20", "name":"scott", "birthday":"2018-12-21"})
+db.getCollection("userInfo").insert({"age":"21", "name":"tiger", "birthday":"2019-12-21"})
+db.getCollection("userInfo").insert({"age":"23", "name":"tom", "birthday":"1919-11-21"})
+```
+
+没有建立索引的时候查询：
+``` javascript
+db.getCollection("userInfo").find({"name":"tom"}).explain()
+{
+	"queryPlanner" : {
+		"plannerVersion" : 1,
+		"namespace" : "bfg.userInfo",
+		"indexFilterSet" : false,
+		"parsedQuery" : {
+			"name" : {
+				"$eq" : "tom"
+			}
+		},
+		"queryHash" : "01AEE5EC",
+		"planCacheKey" : "01AEE5EC",
+		"winningPlan" : {
+			"stage" : "COLLSCAN",
+			"filter" : {
+				"name" : {
+					"$eq" : "tom"
+				}
+			},
+			"direction" : "forward"
+		},
+		"rejectedPlans" : [ ]
+	},
+	"serverInfo" : {
+		"host" : "0d550468977f",
+		"port" : 27017,
+		"version" : "4.4.0",
+		"gitVersion" : "563487e100c4215e2dce98d0af2a6a5a2d67c5cf"
+	},
+	"ok" : 1
+}
+```
+
+从`"stage" : "COLLSCAN"`可知，没有使用到索引，是全表扫描的。我们建个索引，再查询。
+
+        db.getCollection('userInfo').ensureIndex({"name":1}, {background:true})
+
+``` javascript
+db.getCollection("userInfo").find({"name":"tom"}).explain()
+{
+	"queryPlanner" : {
+		"plannerVersion" : 1,
+		"namespace" : "bfg.userInfo",
+		"indexFilterSet" : false,
+		"parsedQuery" : {
+			"name" : {
+				"$eq" : "tom"
+			}
+		},
+		"queryHash" : "01AEE5EC",
+		"planCacheKey" : "4C5AEA2C",
+		"winningPlan" : {
+			"stage" : "FETCH",
+			"inputStage" : {
+				"stage" : "IXSCAN",
+				"keyPattern" : {
+					"name" : 1
+				},
+				"indexName" : "name_1",
+				"isMultiKey" : false,
+				"multiKeyPaths" : {
+					"name" : [ ]
+				},
+				"isUnique" : false,
+				"isSparse" : false,
+				"isPartial" : false,
+				"indexVersion" : 2,
+				"direction" : "forward",
+				"indexBounds" : {
+					"name" : [
+						"[\"tom\", \"tom\"]"
+					]
+				}
+			}
+		},
+		"rejectedPlans" : [ ]
+	},
+	"serverInfo" : {
+		"host" : "0d550468977f",
+		"port" : 27017,
+		"version" : "4.4.0",
+		"gitVersion" : "563487e100c4215e2dce98d0af2a6a5a2d67c5cf"
+	},
+	"ok" : 1
+}
+```
+
+这次可以看到，它使用了索引。
+
+
+### 监控
+    mongodb可以通过profile来监控数据，进行优化。查看当前是否开启profile功能用命令：`db.getProfilingLevel()`
+返回level等级，值为`0|1|2`，分别代表意思：0代表关闭，1代表记录慢命令，2代表全部。开启profile功能为
+`db.setProfilingLevel(level)`，level为1的时候，慢命令默认值为100ms，更改为`db.setProfilingLevel(level, slowms)`
+如`db.setProfilingLevel(1,50)`这样就更改为50毫秒。通过`db.system.profile.find()`查看当前的监控日志。通过执行
+`db.system.profile.find({millis:{$gt:500}})`能够返回查询时间在500毫秒以上的查询命令。
+
+这里值的含义
+op: query，代表查询
+ns: 代表查询的库与集合
+command: 命令的内容
+responseLength: 返回的结果集大小，byte数
+nscanned: 扫描记录数量
+filter: 后面是查询条件
+nreturned: 返回记录数
+ts: 命令执行的时刻
+millis: 所花时间
+
+如果发现时间比较长，那么就需要作优化。比如nscanned数很大，或者接近记录总数，那么可能没有用到索引查询。
+responseLength很大，有可能返回没必要的字段。
+nreturned很大，那么有可能查询的时候没有加限制。
+
+mongo可以通过`db.serverStatus()`查看mongod的运行状态
+mongo可以通过`db.currentOp()`可以查看当前正在执行的操作。这两个命令，必须用`admin`帐号才能操作。
+
+如果出现如下错误提示，则是由于auth太多了，退出，并且以admin帐号登录admin库来执行
+        mongo --host 192.168.1.100 --port 27017 --authenticationDatabase admin -u admin -p 12345
+
+``` javascript
+db.currentOp()
+{
+	"ok" : 0,
+	"errmsg" : "too many users are authenticated",
+	"code" : 13,
+	"codeName" : "Unauthorized"
+}
+```
+
+

@@ -107,6 +107,12 @@ For example, when you have JUnit 4.12 in classpath and including DBUnit dependen
 打包，将编译生成的target目录下的class文件打成jar包
         mvn package
 
+安装到本地仓库，把打好的包放入本地仓库(~/.m2/repository)
+        mvn install
+
+安装到远程仓库，把打好的包发布到远程仓库
+        mvn deploy
+
 一般组合使用这些使用，如`mvn clean compile`、`mvn clean package`
 
 在`eclipse`中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8

@@ -46,7 +46,7 @@ $ ls
 auto  CHANGES  CHANGES.ru  conf  configure  contrib  html  LICENSE  man  README  src
 
 
-$ sudo ./configure 
+$ sudo ./configure --with-http_stub_status_module --with-http_ssl_module --with-http_realip_module
 checking for OS
  + Linux 4.15.0-39-generic x86_64
 ...
@@ -536,6 +536,51 @@ server {
     }
 }
 ```
+
+
+### 示例六：服务器使用nginx做代理，通过HttpServletRequest获取请求用户的真实IP地址
+    在使用nginx做代理时，服务端如果直接从`X-Forwarded-For`头部获取来源IP，将获取到nginx所在的ip
+地址，而不是请求的真实ip地址。那么，如何获取请求的真实IP地址？
+
+    首先，在nginx执行`./configure`的时候一定要加上`--with-http_realip_module`模块，然后在nginx
+的配置中添加如下配置。
+``` bash
+location /api/userinfo {
+    proxy_pass http://127.0.0.1:8081/api/userinfo;
+    proxy_set_header Host      $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+```
+
+在nginx中将请求来源IP添加到代理请求头部，然后使用命令重新加载配置
+
+        nginx -s reload
+
+服务端使用以下代码即可获取请求主机真实IP地址
+``` java
+private String getRealIP(HttpServletRequest request) {
+    for (String head : Arrays.asList("X-Forwarded-For", "X-Real-IP")) {
+        String ip = request.getHeader(head);
+
+        if (StringUtils.isBlank(ip)) {
+            continue;
+        }
+
+        log.info("{} : {}", head, ip);
+
+        int index = ip.indexOf(',');
+        if (index != -1) {
+            ip = ip.substring(0, index);
+        }
+
+        return ip.trim();  // 一般从 X-Forwarded-For 中即可获取并返回
+    }
+
+    return null;
+}
+```
+
 
 [link_id_nginx-1.16.0.tar.gz]: http://nginx.org/download/nginx-1.16.0.tar.gz
 

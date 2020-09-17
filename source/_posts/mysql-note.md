@@ -844,6 +844,9 @@ SELECT cash FROM account WHERE user='user_name' FOR UPDATE;
 
 
 ### 事务的ACID特性
+    事务是作为一个逻辑单元执行的一系列操作，一个逻辑工作单元必须有四个属性，
+称为 ACID（原子性、一致性、隔离性和持久性）属性，只有这样才能成为一个事务。
+
 原子性（Atomicity）
 整个事务中的所有操作，要么全部成功执行，要么全部失败。
 

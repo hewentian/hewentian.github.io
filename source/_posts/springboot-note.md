@@ -121,3 +121,18 @@ logging.path： 设置目录，会在该目录下创建 spring.log 文件，并�
 默认情况下，日志文件的大小达到 10MB 时会切分一次，产生新的日志文件，默认级别为： ERROR、WARN、INFO
 
 
+### 通过命令行设置属性值
+相信使用过一段时间Spring Boot的用户，一定知道这条命令：
+
+        java -jar xxx.jar --server.port=8888 --spring.profiles.active=dev
+
+通过使用`--server.port`属性来设置`xxx.jar`应用的端口为8888。
+
+    在命令行运行时，连续的两个减号`--`就是对application.properties中的属性值进行覆盖的标识。
+
+    通过命令行来修改属性值固然提供了不错的便利性，但是通过命令行就能更改应用运行的参数，那岂
+不是很不安全？是的，所以Spring Boot也提供了屏蔽命令行访问属性的设置，只需要这句设置就能屏蔽：
+
+        SpringApplication.setAddCommandLineProperties(false);
+
+

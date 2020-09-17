@@ -210,3 +210,80 @@ $.ajax({
 ```
 
 
+### javascript中的字符串替换函数replace
+字符串 stringObject 的 replace() 方法执行的是查找并替换的操作。它将在 stringObject 中查找与 regexp 相
+匹配的子字符串，然后用 replacement 来替换这些子串。如果 regexp 具有全局标志 g，那么 replace() 方法将替
+换所有匹配的子串。否则，它只替换第一个匹配子串。
+
+``` javascript
+var str = "abcdbe";
+var str1 = str.replace('b','B');  // aBcdbe
+var str2 = str.replace(/b/g,'B'); // aBcdBe
+```
+
+
+### javascript中字符串与数组的互转
+``` javascript
+var str = "a,b,c,d";
+var strArray = str.split(","); // 字符串转数组
+
+var str1 = strArray.join(","); // 数组转字符串，用指定的分隔符分隔
+var str2 = String(strArray);   // 数组转字符串，默认的分隔符为逗号
+```
+
+
+### javascript函数的参数中有逗号的情况
+当往函数中传递的参数中包含有逗号的时候，要用单引号将其括起来。
+
+``` javascript
+var username = "scott, tiger";
+var age = 20;
+
+printUserinfo("'" + username + "'", age);
+
+function printUserinfo(username, age) {
+    console.log(username + ", " + age)
+}
+```
+
+
+### javascript将字符串转为JSON对象
+`JSON.parse()`方法用于将一个`JSON`字符串转换为对象。
+        var str = '[{"name":"scott","age":20},{"name":"tiger","age":21}]'; // str是一个字符串
+
+        var jsonArray = JSON.parse(str); // 转换为json对象
+
+        for(var i = 0; i < jsonArray.length; i++) {
+            var jsonObj = jsonArray[i];
+            console.log(jsonObj.name + ", " + jsonObj.age); // 取json中的值
+        }
+
+
+### javascript将JSON对象转为字符串
+`JSON.stringify()`方法用于将`javaScript`值转换为`JSON`字符串，一般用于将服务器端返回的对象转成JSON字符串。
+``` javascript
+var objArray = [{"name":"scott","age":20},{"name":"tiger","age":21}]; // objArray是一个数组对象
+var jsonStr = JSON.stringify(objArray);
+console.log(jsonStr);
+
+var jsonStr2 = JSON.stringify(objArray, null, 4);
+console.log(jsonStr2);
+```
+
+输出结果分别如下，第二个会使用4个空格格式化输出：
+``` javascript
+[{"name":"scott","age":20},{"name":"tiger","age":21}]
+
+[
+    {
+        "name": "scott",
+        "age": 20
+    },
+    {
+        "name": "tiger",
+        "age": 21
+    }
+]
+```
+
+
