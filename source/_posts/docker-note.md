@@ -814,6 +814,24 @@ Successfully added user: {
 ```
 
 
+### docker安装rabbitmq
+1. 简单安装
+``` bash
+$ sudo docker pull rabbitmq:3.8.9-management
+$
+$ sudo docker run \
+    -itd --name rabbitmq-hwt \
+    -p 5672:5672 \
+    -p 15672:15672 \
+    -e RABBITMQ_DEFAULT_USER=admin \
+    -e RABBITMQ_DEFAULT_PASS=admin \
+    rabbitmq:3.8.9-management
+```
+
+访问WEB界面：
+http://192.168.56.113:15672/
+
+
 ### 进入指定的容器
 若启动容器的时候不是以交互模式，之后又想进入容器，则可以使用如下命令：
 ``` bash

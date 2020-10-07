@@ -2229,3 +2229,47 @@ fi
         curl myip.ipip.net
 
 
+### ubuntu播放rmvb视频问题
+如果出现如下问题：
+        The playback of this movie requires a realmedia demuxer plugin  which is not installed.
+
+可执行如下命令修复：
+        sudo apt install libdvdnav4 libdvd-pkg gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly libdvd-pkg
+        sudo apt install ubuntu-restricted-extras
+        sudo dpkg-reconfigure libdvd-pkg
+
+或者安装新的播放器：
+        sudo apt-get install vlc
+
+
+### unattended-upgrade进程的CPU占用100%
+当用top查看CPU占用太高的进程时，如果看到：
+
+        /usr/bin/python3 /usr/bin/unattended-upgrade --download-only
+
+解决方法：
+
+        sudo vi /etc/apt/apt.conf.d/10periodic
+        sudo vi /etc/apt/apt.conf.d/20auto-upgrades
+
+将`APT::Periodic::Unattended-Upgrade "1"`中的`1`改成`0`，重启即可。
+
+
+### pulseaudio进程的CPU占用40%
+当用top查看CPU占用太高的进程时，如果看到：
+
+        /usr/bin/pulseaudio --start --log-target=syslog
+
+解决方法：
+
+        sudo vi /var/lib/gdm/.pulse/client.conf
+        sudo chown gdm:gdm /var/lib/gdm/.pulse/client.conf
+
+增加下面两行：
+        autospawn = no
+        daemon-binary = /bin/true
+
+如果还是占用太高，再执行下面这行：
+        mkdir -p ~/.config/speech-dispatcher && echo "DisableAutoSpawn" >> ~/.config/speech-dispatcher/speechd.conf
+
+

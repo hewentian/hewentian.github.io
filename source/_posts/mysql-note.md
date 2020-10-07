@@ -277,9 +277,9 @@ mysql> FLUSH PRIVILEGES;
 ``` sql
 CREATE DATABASE IF NOT EXISTS bfg_db COLLATE = 'utf8_general_ci' CHARACTER SET = 'utf8';
 
-GRANT ALL ON bfg_db.* TO 'bfg_user'@'%' IDENTIFIED BY 'iE1zNB?A91*YbQ9hK';
+GRANT ALL ON bfg_db.* TO 'bfg_user'@'%' IDENTIFIED BY 'gXk9IDpybrJPVMKq';
 
-GRANT ALL ON bfg_db.* TO 'bfg_user'@'localhost' IDENTIFIED BY 'iE1zNB?A91*YbQ9hK';
+GRANT ALL ON bfg_db.* TO 'bfg_user'@'localhost' IDENTIFIED BY 'gXk9IDpybrJPVMKq';
 
 FLUSH PRIVILEGES;
 ```
