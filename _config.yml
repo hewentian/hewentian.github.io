@@ -79,4 +79,4 @@ theme: landscape
 deploy:
   type: git
   repository: git@github.com:hewentian/hewentian.github.io.git
-  branch: master
+  branch: main

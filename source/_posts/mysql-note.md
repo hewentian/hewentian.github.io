@@ -673,7 +673,7 @@ mysql> SHOW VARIABLES LIKE 'tmpdir';
 
 
 ### 读一致性
-mysql有一个表，有1000W条记录。在9：00的时候A用户对表进行查询，查询需10分钟才能完成，表没索引，FULL SCAN，表中某条记录的值为100。在9：05分的时候B对表进行了UPDATE操作，将记录的值修改为200。那么在9:10的时候，A获致到的是100还是200？结果是100。因为这是读一致性的问题，在A查的时候，它看到的是整个表在那一刻的快照的数据，返回的是那一刻的结果。不过，它有可能会抛出 snapshot too old 这个异常。
+mysql有一个表，有1000W条记录。在9:00的时候A用户对表进行查询，查询需10分钟才能完成，表没索引，FULL SCAN，表中某条记录的值为100。在9:05分的时候B对表进行了UPDATE操作，将记录的值修改为200。那么在9:10的时候，A获致到的是100还是200？结果是100。因为这是读一致性的问题，在A查的时候，它看到的是整个表在那一刻的快照的数据，返回的是那一刻的结果。不过，它有可能会抛出 snapshot too old 这个异常。
 
 
 ### mysql 修改表名
@@ -861,7 +861,7 @@ SELECT cash FROM account WHERE user='user_name' FOR UPDATE;
 
 
 ### 事务的隔离级别
-对于InnoDB存储引擎而言，它默认的事务隔离级别为READ REPEATABLE，完全遵循和满足事务的ACID特性。
+对于InnoDB存储引擎而言，它默认的事务隔离级别为REPEATABLE READ，完全遵循和满足事务的ACID特性。而Oracle、sqlServer则是READ COMMITTED。
 
 SQL标准定义了4个隔离级别：
 READ UNCOMMITTED：会出现脏读、不可重复读、幻读（隔离级别最低，并发性能高）

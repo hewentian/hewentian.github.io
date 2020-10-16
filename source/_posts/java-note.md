@@ -287,7 +287,7 @@ duration(ms): 5000
 duration(ms): 5000
 duration(ms): 5000
 ```
-btrace的介绍就到这里，这只是入门。更多内容，参考了：http://calvin1978.blogcn.com/articles/btrace1.html。这篇文章写得非常好。
+btrace的介绍就到这里，这只是入门。更多内容，参考[这篇文章](http://calvin1978.blogcn.com/articles/btrace1.html)，它写得非常好。
 
 在我们对一个对象的方法加锁的时候，需要考虑业务的整体性，即为getter/setter方法同时加锁synchronized同步关键字，保证业务的原子性。以免出现脏读。
 

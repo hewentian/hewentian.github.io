@@ -128,10 +128,9 @@ logging.path： 设置目录，会在该目录下创建 spring.log 文件，并�
 
 通过使用`--server.port`属性来设置`xxx.jar`应用的端口为8888。
 
-    在命令行运行时，连续的两个减号`--`就是对application.properties中的属性值进行覆盖的标识。
+在命令行运行时，连续的两个减号`--`就是对application.properties中的属性值进行覆盖的标识。
 
-    通过命令行来修改属性值固然提供了不错的便利性，但是通过命令行就能更改应用运行的参数，那岂
-不是很不安全？是的，所以Spring Boot也提供了屏蔽命令行访问属性的设置，只需要这句设置就能屏蔽：
+通过命令行来修改属性值固然提供了不错的便利性，但是通过命令行就能更改应用运行的参数，那岂不是很不安全？是的，所以Spring Boot也提供了屏蔽命令行访问属性的设置，只需要这句设置就能屏蔽：
 
         SpringApplication.setAddCommandLineProperties(false);
 
