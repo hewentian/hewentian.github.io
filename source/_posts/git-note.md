@@ -247,3 +247,17 @@ $ git push origin fix20191106
         git checkout develop
         git push prod develop
 
+
+### git本地分支和远程分支建立追踪关系的三种方式
+1. 手动建立追踪关系
+        $ git branch --set-upstream-to=<远程主机名>/<远程分支名> <本地分支名>
+
+2. push时建立追踪关系
+        $ git push -u <远程主机名> <本地分支名>
+
+加上-u参数，这样push时，本地指定分支就和远程主机的同名分支建立追踪关系。
+
+3. 新建分支时建立跟踪关系
+        $ git checkout -b <本地分支名> <远程主机名>/<远程分支名>
+
+

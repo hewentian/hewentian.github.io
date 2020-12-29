@@ -263,9 +263,16 @@ $ sudo apt-get install notepadqq
 成功。
 
 
+### ubuntu安装mysql 8 client
+``` bash
+$ wget -c https://dev.mysql.com/get/mysql-apt-config_0.8.11-1_all.deb
+$ sudo dpkg -i mysql-apt-config_0.8.11-1_all.deb
+$ sudo apt-get update
+$ sudo apt-get install mysql-client
+```
 
 
-### ubuntu Navicat for MySQL 安装以及破解方案  
+### ubuntu Navicat for MySQL 安装以及破解方案
 
 首先上官网上下载LINUX版本： http://www.navicat.com/download/navicat-for-mysql
 
@@ -299,6 +306,9 @@ $ rm -rf .navicat64  # 删除该文件
 $                    # 或者删除此目录下的system.reg文件，但是没有效果
 ```
 把文件夹删除后，下次启动navicat会重新生成此文件，14天试用期会按新的时间开始计算。
+
+
+**注意**：现在已经用[DBeaver](https://dbeaver.io/)来代替`Navicat`了。我目前使用的是`dbeaver-ce-7.3.1-linux.gtk.x86_64.tar.gz`，它支持Mysql 8，解压后，就可以直接使用啦。
 
 
 ### linux中解压rar文件
@@ -378,6 +388,24 @@ $ dpkg --get-selections
 ``` bash
 $ dpkg --get-selections | grep gcc
 ```
+
+如果知道一个命令，比如mysql，要想知道它安装在哪里，使用
+``` bash
+$ whereis mysql
+mysql: /usr/bin/mysql /etc/mysql /usr/share/man/man1/mysql.1.gz
+```
+
+然后找到它的安装包
+``` bash
+$ dpkg -S /usr/bin/mysql
+mariadb-client-core-10.1: /usr/bin/mysql
+```
+
+然后卸载它
+``` bash
+$ sudo apt-get remove --purge mariadb-client-core-10.1
+```
+
 
 ### ubuntu 解压zip文件出现乱码
 由于zip格式中并没有指定编码格式，Windows下生成的zip文件中的编码是GBK/GB2312等，因此，导致这些zip文件在Linux下解压时出现乱码问题，因为Linux下的默认编码是UTF8
@@ -2271,5 +2299,57 @@ fi
 
 如果还是占用太高，再执行下面这行：
         mkdir -p ~/.config/speech-dispatcher && echo "DisableAutoSpawn" >> ~/.config/speech-dispatcher/speechd.conf
+
+
+### ubuntu休眠后无法唤醒黑屏
+1. 检查是否安装了`laptop-mode-tools`
+        dpkg -l | grep laptop-mode-tools
+
+2. 未安装的话，就先安装
+        sudo apt-get install laptop-mode-tools
+
+3. 判断Laptop是否启用了laptop_mode模式
+        cat /proc/sys/vm/laptop_mode
+
+如果显示结果为0，则表示未启动，如果为非0的数字则表示启动了
+
+4. 启动laptop_mode
+修改配置文件`/etc/default/acpi-support`，更改`ENABLE_LAPTOP_MODE=true`。直接在终端中输入`sudo laptop_mode start`启动了laptop_mode之后，在ubuntu挂起后，基本上就不会遇到无法唤醒的情况了。
+
+如果在`/etc/default/acpi-support`中未找到`ENABLE_LAPTOP_MODE=true`被注释的项，看文件最后一行的提示：
+        # Note: to enable "laptop mode" (to spin down your hard drive for longer
+        # periods of time), install the laptop-mode-tools package and configure
+        # it in /etc/laptop-mode/laptop-mode.conf.
+
+打开`/etc/laptop-mode/laptop-mode.conf`文件，设置以下项
+
+        # Enable laptop mode power saving, when on battery power.
+        #
+        ENABLE_LAPTOP_MODE_ON_BATTERY=1
+
+        #
+        # Enable laptop mode power savings, even when on AC power.
+        # This is useful when running as a headless machine, in low power mode
+        #
+        ENABLE_LAPTOP_MODE_ON_AC=1
+
+        #
+        # Enable laptop mode when the laptop's lid is closed, even when we're on AC
+        # power? (ACPI-ONLY)
+        #
+        ENABLE_LAPTOP_MODE_WHEN_LID_CLOSED=1
+
+启动laptop_mode并查看结果
+        sudo laptop_mode start
+        cat /proc/sys/vm/laptop_mode
+
+
+### ubuntu设置快速启动图标
+        cd ~/.local/share/applications/
+
+以已有的为基础，复制一个
+        cp a.desktop b.desktop
+
+然后修改复制出来的文件即可。
 
 

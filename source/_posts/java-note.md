@@ -366,3 +366,10 @@ System.out.println(s); // abc，这里后面的空格也去掉了
 3. 找到要打开的另一个项目，选中pom.xml文件，点击 [ok] 即可。
 
 
+### Ubuntu卸载IDEA
+缓存目录：~/.cache/JetBrains
+配置目录：~/.config/JetBrains
+插件目录：~/.local/share/JetBrains
+快速启动图标：~/.local/share/applications/jetbrains-idea.desktop
+
+

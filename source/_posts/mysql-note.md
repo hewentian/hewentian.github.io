@@ -1064,6 +1064,110 @@ sql> SELECT COUNT(*), COUNT(1), COUNT(name) FROM t_user;
 3. 当表只有一个列时，COUNT(*)最优。
 
 
+### left join, right join, inner join, join区别
+有如下表：
+``` sql
+CREATE TABLE t_user (
+  id INT NOT NULL,
+  name VARCHAR(20)
+);
+
+CREATE TABLE t_contact (
+  id INT NOT NULL COMMENT 't_user的主键 id',
+  card VARCHAR(20)
+);
+
+INSERT INTO t_user VALUES (1, 'Scott'),(2, 'Tiger'),(3, 'Larry');
+INSERT INTO t_contact VALUES (1, 'A'),(1, 'B'),(2, 'C'),(4, 'D');
+
+
+MySQL [test]> select * from t_user;
++----+-------+
+| id | name  |
++----+-------+
+|  1 | Scott |
+|  2 | Tiger |
+|  3 | Larry |
++----+-------+
+3 rows in set (0.00 sec)
+
+MySQL [test]> select * from t_contact;
++----+------+
+| id | card |
++----+------+
+|  1 | A    |
+|  1 | B    |
+|  2 | C    |
+|  4 | D    |
++----+------+
+```
+
+join 查询
+``` sql
+MySQL [test]> select * from t_user tu join t_contact tc on tu.id=tc.id;
++----+-------+----+------+
+| id | name  | id | card |
++----+-------+----+------+
+|  1 | Scott |  1 | A    |
+|  1 | Scott |  1 | B    |
+|  2 | Tiger |  2 | C    |
++----+-------+----+------+
+```
+
+inner join 查询
+只返回两个表中联结字段相等的行
+``` sql
+MySQL [test]> select * from t_user tu inner join t_contact tc on tu.id=tc.id;
++----+-------+----+------+
+| id | name  | id | card |
++----+-------+----+------+
+|  1 | Scott |  1 | A    |
+|  1 | Scott |  1 | B    |
+|  2 | Tiger |  2 | C    |
++----+-------+----+------+
+```
+
+left join 查询
+返回左表中的所有记录和右表中联结字段相等的记录
+``` sql
+MySQL [test]> select * from t_user tu left join t_contact tc on tu.id=tc.id;
++----+-------+------+------+
+| id | name  | id   | card |
++----+-------+------+------+
+|  1 | Scott |    1 | A    |
+|  1 | Scott |    1 | B    |
+|  2 | Tiger |    2 | C    |
+|  3 | Larry | NULL | NULL |
++----+-------+------+------+
+```
+
+right join 查询
+返回右表中的所有记录和左表中联结字段相等的记录
+``` sql
+MySQL [test]> select * from t_user tu right join t_contact tc on tu.id=tc.id;
++------+-------+----+------+
+| id   | name  | id | card |
++------+-------+----+------+
+|    1 | Scott |  1 | A    |
+|    1 | Scott |  1 | B    |
+|    2 | Tiger |  2 | C    |
+| NULL | NULL  |  4 | D    |
++------+-------+----+------+
+```
+
+
+### 命令行连接mysql
+        mysql -hip_address -uuser_name -Pport -ppassword db_name
+
+如果`-p`后面的密码中有特殊字符，就要加个`\`来转义
+        mysql -h192.168.1.100 -uroot -P3306 -pT3O\$8yKl%aRi user_db
+
+
+### mysql报错ERROR 1064 (42000)
+原因是使用了mysql的保留字。如果表的字段使用了mysql的保留字，在查询的时候要用反引号将其引起来。
+        SELECT * FROM t_user WHERE `key` = 'abc';
+
+
 ### 对MySQL数据库性能的测试工具
 这里有2款比较好的工具：sysbench和mysql-tpcc
 
