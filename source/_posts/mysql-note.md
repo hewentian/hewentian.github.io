@@ -272,6 +272,15 @@ mysql> FLUSH PRIVILEGES;
 ```
 
 
+### 创建数据库用户并授权
+``` sql
+CREATE USER bfg_user IDENTIFIED BY 'gXk9IDpybrJPVMKq';
+GRANT SELECT, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'bfg_user'@'%';
+-- GRANT ALL PRIVILEGES ON *.* TO 'bfg_user'@'%';
+FLUSH PRIVILEGES;
+```
+
+
 ### 创建数据库
 在MYSQL中用`数据库管理员`用户创建了一个db，其他MYSQL用户是暂时看不到的，除非得到`数据库管理员`用户的授权
 ``` sql
@@ -282,6 +291,18 @@ GRANT ALL ON bfg_db.* TO 'bfg_user'@'%' IDENTIFIED BY 'gXk9IDpybrJPVMKq';
 GRANT ALL ON bfg_db.* TO 'bfg_user'@'localhost' IDENTIFIED BY 'gXk9IDpybrJPVMKq';
 
 FLUSH PRIVILEGES;
+```
+
+
+### 查看用户的权限
+``` sql
+mysql> SHOW GRANTS;
++---------------------------------------------------------------------------+
+| Grants for canal@%                                                        |
++---------------------------------------------------------------------------+
+| GRANT SELECT, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'canal'@'%' |
++---------------------------------------------------------------------------+
+1 row in set (0.00 sec)
 ```
 
 

@@ -373,3 +373,6 @@ System.out.println(s); // abc，这里后面的空格也去掉了
 快速启动图标：~/.local/share/applications/jetbrains-idea.desktop
 
 
+### IntelliJ IDEA 版本控制不显示颜色提示的解决方法
+依次点击`File -> Settings -> Version Control`，在右则面板中可以看到`Unregistered roots`，选择下面的项目，然后点击右则的`+`，最后点击`Apply`即可。
+

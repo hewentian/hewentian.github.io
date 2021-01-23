@@ -1026,6 +1026,29 @@ $ sudo openvpn --config ~/Downloads/hewentian/hewentian.ovpn --auth-user-pass ~/
 ```
 
 
+### 安装forticlient VPN
+有时候，公司提供的可能是forticlient VPN。这时候，就不能使用openvpn来连接啦，要安装forticlient VPN。参考：
+https://kifarunix.com/install-forticlient-vpn-client-on-ubuntu-20-04-ubuntu-18-04/
+https://www.forticlient.com/repoinfo
+
+以`Ubuntu 18.04 LTS`为例，安装命令：
+Install gpg key
+
+        wget -O - https://repo.fortinet.com/repo/ubuntu/DEB-GPG-KEY | sudo apt-key add -
+
+Add the following line in `/etc/apt/sources.list`
+
+        deb [arch=amd64] https://repo.fortinet.com/repo/ubuntu/ /bionic multiverse
+
+Update package lists
+
+        sudo apt-get update
+
+Install FortiClient
+
+        sudo apt install forticlient
+
+
 ### linux 查询 CPU 信息
 ``` bash
 $ cat /proc/cpuinfo | grep "model name" && cat /proc/cpuinfo | grep "physical id"
