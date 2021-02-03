@@ -284,7 +284,7 @@ FLUSH PRIVILEGES;
 ### 创建数据库
 在MYSQL中用`数据库管理员`用户创建了一个db，其他MYSQL用户是暂时看不到的，除非得到`数据库管理员`用户的授权
 ``` sql
-CREATE DATABASE IF NOT EXISTS bfg_db COLLATE = 'utf8_general_ci' CHARACTER SET = 'utf8';
+CREATE DATABASE IF NOT EXISTS bfg_db COLLATE = 'utf8mb4_general_ci' CHARACTER SET = 'utf8mb4';
 
 GRANT ALL ON bfg_db.* TO 'bfg_user'@'%' IDENTIFIED BY 'gXk9IDpybrJPVMKq';
 

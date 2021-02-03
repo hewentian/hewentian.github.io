@@ -152,6 +152,7 @@ JAVA代码如下
 package com.hewentian.canal;
 
 import java.net.InetSocketAddress;
+import java.util.Date;
 import java.util.List;
 
 import com.alibaba.otter.canal.client.CanalConnectors;
@@ -188,6 +189,7 @@ public class SimpleCanalClientExample {
                 Message message = connector.getWithoutAck(batchSize); // 获取指定数量的数据
                 long batchId = message.getId();
                 int size = message.getEntries().size();
+                System.out.println("batchId: " + batchId);
 
                 if (batchId == -1 || size == 0) {
                     emptyCount++;
@@ -226,11 +228,18 @@ public class SimpleCanalClientExample {
             }
 
             EventType eventType = rowChage.getEventType();
-            System.out.println(String.format("================ binlog[%s:%s], name[%s,%s], eventType: %s",
+            long delayTime = new Date().getTime() - entry.getHeader().getExecuteTime();
+            System.out.println(String.format("================ binlog[%s:%s], name[%s,%s], eventType: %s, delayTime: %s",
                     entry.getHeader().getLogfileName(), entry.getHeader().getLogfileOffset(),
                     entry.getHeader().getSchemaName(), entry.getHeader().getTableName(),
-                    eventType));
+                    eventType, delayTime));
 
+            // DDL数据，打印SQL
+            if (eventType == EventType.QUERY || rowChage.getIsDdl()) {
+                System.out.println("sql -----> " + rowChage.getSql());
+            }
+
+            // DML数据，打印字段信息
             for (RowData rowData : rowChage.getRowDatasList()) {
                 if (eventType == EventType.DELETE) {
                     printColumn(rowData.getBeforeColumnsList());

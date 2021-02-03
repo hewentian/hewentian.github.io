@@ -832,6 +832,76 @@ $ sudo docker run \
 http://192.168.56.113:15672/
 
 
+### docker安装zookeeper
+1. 简单安装
+先建立保存数据的目录和设置好配置文件：
+``` bash
+$ cd /root/db/zookeeper
+$ mkdir data datalog logs
+```
+
+开始安装
+``` bash
+$ sudo docker pull zookeeper:3.6.2
+$
+$ sudo docker run \
+    -itd --name zookeeper-hwt \
+    -p 2181:2181 \
+    -e ZOO_TICK_TIME=2000 \
+    -e ZOO_INIT_LIMIT=10 \
+    -e ZOO_SYNC_LIMIT=5 \
+    -v /root/db/zookeeper/data:/data \
+    -v /root/db/zookeeper/datalog:/datalog \
+    -v /root/db/zookeeper/logs:/logs \
+    zookeeper:3.6.2
+```
+
+客户端登录
+``` bash
+$ sudo docker exec -it zookeeper-hwt zkCli.sh
+Connecting to localhost:2181
+```
+
+
+### docker安装kafka
+1. 简单安装
+先建立保存数据的目录和设置好配置文件：
+``` bash
+$ cd /root/db/kafka
+$
+```
+
+开始安装
+``` bash
+$ sudo docker pull wurstmeister/kafka:2.13-2.7.0
+$
+$ sudo docker run \
+    -itd --name kafka-hwt \
+    -p 9092:9092 \
+    -e KAFKA_BROKER_ID=0 \
+    -e KAFKA_ZOOKEEPER_CONNECT=192.168.56.113:2181/kafka \
+    -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.56.113:9092 \
+    -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
+    -v /root/db/kafka:/kafka \
+    wurstmeister/kafka:2.13-2.7.0
+```
+
+验证kafka是否可以使用
+``` bash
+$ sudo docker exec -it kafka-hwt bash
+$ cd /opt/kafka/bin/
+$
+$ 发送消息
+$ ./kafka-console-producer.sh --broker-list localhost:9092 --topic redsuns
+> hello word
+$
+$ 接收消息
+$ ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic redsuns --from-beginning
+```
+
+**注意**：因为上面的`KAFKA_ZOOKEEPER_CONNECT`将kafka的数据保存到了`/kafka`目录下，所以，当我们使用`Kafka Tool`工具连接kafka的时候要记得配置`chroot path: /kafka`，否则连不上。
+
+
 ### 进入指定的容器
 若启动容器的时候不是以交互模式，之后又想进入容器，则可以使用如下命令：
 ``` bash

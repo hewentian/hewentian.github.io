@@ -138,12 +138,12 @@ Implicit session: session { "id" : UUID("cbd0445f-667b-4d2a-92a8-66f8ad1d07ef") 
 MongoDB server version: 4.0.6
 > use admin
 switched to db admin
-> db.createUser({user:"admin",pwd:"12345",roles:["root"]})
+> db.createUser({user:"admin",pwd:"admin",roles:["root"]})
 Successfully added user: { "user" : "admin", "roles" : [ "root" ] }
 > 
 > show collections
 Warning: unable to run listCollections, attempting to approximate collection names by parsing connectionStatus
-> db.auth("admin","12345")
+> db.auth("admin","admin")
 1
 > show collections
 ```
@@ -181,6 +181,10 @@ bfg  0.000GB
 ```
 
 至此，数据库安装完毕（此安装过程2019年初才补上）。
+
+
+### 修改用户密码
+修改用户密码使用`db.changeUserPassword(username, password)`，Updates a user’s password. Run the method in the database where the user is defined, i.e. the database you created the user.
 
 
 ### shell命令行方式连接到mongodb
@@ -258,6 +262,21 @@ MongoCursor<Document> iterator = aggregate.iterator();
 例如我们要将`person`中`_id`为`123`的数据的`address`修改为：广东，语句如下：
 
 	db.getCollection('person').update({'_id':'123'},{$set:{'address':'广东'}})
+
+
+### 删除数据库
+``` bash
+> show dbs
+> use monitor
+> db.dropDatabase()
+```
+
+
+### 删除集合
+``` bash
+> show collections
+> db.collection_name.drop()
+```
 
 
 ### 删除数据
@@ -871,7 +890,7 @@ mongo可以通过`db.serverStatus()`查看mongod的运行状态
 mongo可以通过`db.currentOp()`可以查看当前正在执行的操作。这两个命令，必须用`admin`帐号才能操作。
 
 如果出现如下错误提示，则是由于auth太多了，退出，并且以admin帐号登录admin库来执行
-        mongo --host 192.168.1.100 --port 27017 --authenticationDatabase admin -u admin -p 12345
+        mongo --host 192.168.1.100 --port 27017 --authenticationDatabase admin -u admin -p admin
 
 ``` javascript
 db.currentOp()
