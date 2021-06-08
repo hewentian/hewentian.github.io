@@ -728,6 +728,47 @@ mysql> DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '1
 mysql> FLUSH PRIVILEGES;
 ```
 
+修改mysql的默认字符编码为UTF-8，打开容器中的`/etc/mysql/conf.d/mysql.cnf`，增加如下内容即可（其中最后三行为原有的内容）。
+``` bash
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+
+[mysqld]
+init_connect='SET collation_connection = utf8_unicode_ci'
+init_connect='SET NAMES utf8'
+character-set-server=utf8
+collation-server=utf8_unicode_ci
+
+log_bin=mysql-bin
+binlog_format=ROW
+server_id=1
+```
+
+重启mysql，然后查看编码。
+``` bash
+$ sudo docker restart mysql-hwt-5.7
+
+
+mysql> show variables like 'char%';
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8                       |
+| character_set_connection | utf8                       |
+| character_set_database   | utf8                       |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8                       |
+| character_set_server     | utf8                       |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
+8 rows in set (0.01 sec)
+
+```
+
 然后创建一个用于操作mysql的简单用户，参考之前的 [mysql 学习笔记](../../../../2017/12/07/mysql-note/)。
 
 
@@ -900,6 +941,42 @@ $ ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic redsuns 
 ```
 
 **注意**：因为上面的`KAFKA_ZOOKEEPER_CONNECT`将kafka的数据保存到了`/kafka`目录下，所以，当我们使用`Kafka Tool`工具连接kafka的时候要记得配置`chroot path: /kafka`，否则连不上。
+
+
+### docker安装zipkin
+拉取镜像
+``` bash
+$ sudo docker pull openzipkin/zipkin
+```
+
+1. 简单安装（数据保存到内存中）
+``` bash
+$ sudo docker run \
+    -itd --name zipkin-hwt \
+    -p 9411:9411 \
+    openzipkin/zipkin
+```
+
+访问WEB界面：
+http://192.168.56.113:9411/zipkin/
+
+
+2. 详细安装（数据保存到mysql中，并且从消息队列中读取数据）
+``` bash
+$ sudo docker run \
+    -itd --name zipkin-hwt \
+    -p 9411:9411 \
+    -e STORAGE_TYPE=mysql \
+    -e MYSQL_HOST=192.168.56.113 \
+    -e MYSQL_TCP_PORT=3306 \
+    -e MYSQL_DB=zipkin \
+    -e MYSQL_USER=zipkin \
+    -e MYSQL_PASS=HFWM8DBv6nfPXKg2 \
+    -e RABBIT_ADDRESSES=192.168.56.113:5672 \
+    -e RABBIT_USER=admin \
+    -e RABBIT_PASSWORD=admin \
+    openzipkin/zipkin
+```
 
 
 ### 进入指定的容器

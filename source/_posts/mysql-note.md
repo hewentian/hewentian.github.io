@@ -1177,6 +1177,60 @@ MySQL [test]> select * from t_user tu right join t_contact tc on tu.id=tc.id;
 ```
 
 
+### 查询满足多个属性的产品列表
+像淘宝中搜索满足多个条件的产品列表，准备数据如下：
+``` sql
+CREATE TABLE t_product (
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(20) NOT NULL COMMENT '产品名'
+);
+
+CREATE TABLE t_product_property (
+id INT AUTO_INCREMENT PRIMARY KEY,
+product_id INT NOT NULL COMMENT '产品id',
+property_name VARCHAR(20) NOT NULL COMMENT '属性名'
+);
+
+
+INSERT INTO t_product(id, name) VALUES (1,'car'),(2,'plane');
+INSERT INTO t_product_property(id, product_id, property_name)
+  VALUES(1,1,'drive'),(2,1,'black'),(3,1,'benz'),(4,2,'fly'),(5,2,'white'),(6,2,'boeing');
+```
+
+匹配一个属性：drive
+``` sql
+SELECT * FROM t_product WHERE id IN
+(
+  SELECT p.product_id FROM (
+    t_product_property p
+  ) WHERE p.id = 1
+);
+```
+
+匹配两个属性：drive, black
+``` sql
+SELECT * FROM t_product WHERE id IN
+(
+  SELECT p.product_id FROM (
+    t_product_property p,
+    (SELECT id, product_id FROM t_product_property) p2
+  ) WHERE p.id = 1 AND p2.id = 2 AND p.product_id = p2.product_id
+);
+```
+
+匹配三个属性:drive, black, benz
+``` sql
+SELECT * FROM t_product WHERE id IN
+(
+  SELECT p.product_id FROM (
+    t_product_property p,
+    (SELECT id, product_id FROM t_product_property) p2,
+    (SELECT id, product_id FROM t_product_property) p3
+  ) WHERE p.id = 1 AND p2.id = 2 AND p3.id = 3 AND p.product_id = p2.product_id AND p.product_id = p3.product_id
+);
+```
+
+
 ### 命令行连接mysql
         mysql -hip_address -uuser_name -Pport -ppassword db_name
 
@@ -1187,6 +1241,67 @@ MySQL [test]> select * from t_user tu right join t_contact tc on tu.id=tc.id;
 ### mysql报错ERROR 1064 (42000)
 原因是使用了mysql的保留字。如果表的字段使用了mysql的保留字，在查询的时候要用反引号将其引起来。
         SELECT * FROM t_user WHERE `key` = 'abc';
+
+
+### mysql update
+单表更新语法：
+``` sql
+UPDATE [LOW_PRIORITY] [IGNORE] table_name
+SET
+    column_name1 = expr1,
+    column_name2 = expr2,
+    ...
+[WHERE
+    condition];
+```
+
+也可以用从其他表SELECT出来的数据来SET值
+``` sql
+UPDATE table_name
+SET
+    column_name1 = (SELECT column_name1 FROM table_name2 WHERE column_name2 = 'h' ORDER BY RAND() LIMIT 1)
+WHERE
+    column_name1 IS NULL;
+```
+
+连表更新语法：
+``` sql
+UPDATE T1, T2
+[INNER JOIN | LEFT JOIN] T1 ON T1.C1 = T2. C1
+SET
+    T1.C2 = T2.C2,
+    T2.C3 = expr
+WHERE condition
+```
+
+示例：
+Suppose you want to adjust the salary of employees based on their performance.
+``` sql
+UPDATE employees e
+INNER JOIN merits m ON e.performance = m.performance
+SET
+    e.salary = e.salary + e.salary * m.percentage;
+```
+
+The UPDATE LEFT JOIN  statement basically updates a row in a table when it does not have a corresponding row in another table.
+
+For example, you can increase the salary for a new hire by 1.5%  using the following statement:
+``` sql
+UPDATE employees e
+LEFT JOIN merits m ON e.performance = m.performance
+SET
+    e.salary = e.salary + e.salary * 0.015
+WHERE
+    m.percentage IS NULL;
+```
+
+
+### FOREIGN KEY引用导致无法删表
+这时候，只要按如下方式删除，即可。
+``` sql
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS table_name;
+```
 
 
 ### 对MySQL数据库性能的测试工具

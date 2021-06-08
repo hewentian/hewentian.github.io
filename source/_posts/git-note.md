@@ -96,8 +96,8 @@ Git 比较不同版本文件差异的常用命令格式：
 ``` bash
 $ git diff	查看尚未暂存的文件中更新了哪些部分
 $ git diff filename	查看尚未暂存的某个文件更新了哪些部分
-$ git diff –cached	查看已经暂存起来的文件中和上次提交的版本之间的差异
-$ git diff –cached filename	查看已经暂存起来的某个文件和上次提交的版本之间的差异
+$ git diff –-cached	查看已经暂存起来的文件中和上次提交的版本之间的差异
+$ git diff –-cached filename	查看已经暂存起来的某个文件和上次提交的版本之间的差异
 $ git diff <commitId1> <commitId2>	查看某两个版本之间的差异
 $ git diff <commitId1>:filename <commitId2>:filename	查看某两个版本的某个文件之间的差异，方式一
 $ git diff <commitId1> <commitId2> -- filename	查看某两个版本的某个文件之间的差异，方式二

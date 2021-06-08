@@ -150,3 +150,29 @@ hexo deploy #将.deploy目录部署到GitHub, hexo d
 hexo help # 查看帮助
 hexo version #查看Hexo的版本
 
+
+### ENOSPC Error (Linux)报错的处理
+如果启动的时候报如下错误：
+``` bash
+$ hexo s
+INFO  Start processing
+FATAL Something's wrong. Maybe you can find the solution here: http://hexo.io/docs/troubleshooting.html
+Error: watch /home/hewentian/ProjectD/gitHub/hewentian.github.io/themes/landscape/ ENOSPC
+    at _errnoException (util.js:1022:11)
+    at FSWatcher.start (fs.js:1382:19)
+    at Object.fs.watch (fs.js:1408:11)
+    at createFsWatchInstance (/home/hewentian/ProjectD/gitHub/hewentian.github.io/node_modules/chokidar/lib/nodefs-handler.js:37:15)
+    at setFsWatchListener (/home/hewentian/ProjectD/gitHub/hewentian.github.io/node_modules/chokidar/lib/nodefs-handler.js:80:15)
+    at FSWatcher.NodeFsHandler._watchWithNodeFs (/home/hewentian/ProjectD/gitHub/hewentian.github.io/node_modules/chokidar/lib/nodefs-handler.js:228:14)
+    at FSWatcher.NodeFsHandler._handleDir (/home/hewentian/ProjectD/gitHub/hewentian.github.io/node_modules/chokidar/lib/nodefs-handler.js:407:19)
+    at FSWatcher.<anonymous> (/home/hewentian/ProjectD/gitHub/hewentian.github.io/node_modules/chokidar/lib/nodefs-handler.js:455:19)
+    at FSWatcher.<anonymous> (/home/hewentian/ProjectD/gitHub/hewentian.github.io/node_modules/chokidar/lib/nodefs-handler.js:460:16)
+    at FSReqWrap.oncomplete (fs.js:153:5)
+```
+
+可以尝试通过如下方式解决：
+``` bash
+$ npm dedupe
+$ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```
+

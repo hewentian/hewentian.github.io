@@ -287,3 +287,18 @@ console.log(jsonStr2);
 ```
 
 
+### 正则表达式
+``` javascript
+var phoneRegExp = new RegExp('^(06|08|09)[0-9]{8}$', 'i');
+var postCodeRegExp = new RegExp('^[0-9]{5}$', 'i');
+
+console.log(phoneRegExp.test('0612345678'));  // true
+console.log(phoneRegExp.test('06123456789')); // false
+console.log(phoneRegExp.test('0812345678'));  // true
+
+console.log(postCodeRegExp.test('12345'));    // true
+console.log(postCodeRegExp.test('12345a'));   // false
+console.log(postCodeRegExp.test('1234'));     // false
+```
+
+

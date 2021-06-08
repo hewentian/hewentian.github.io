@@ -1956,6 +1956,16 @@ Upload: 9.03 Mbit/s
 ```
 
 
+### linux下面合并图片
+垂直方向合并：
+
+        convert -append image1.png image2.png image3.png result.png
+
+垂直方向合并：
+
+        convert +append image1.png image2.png image3.png result.png
+
+
 ### 通过shadowsocks访问Google
 首先你得在海外有一台机器（假设IP为 111.112.113.114），在该机器上面安装`shadowsocks`服务端：
 ``` bash

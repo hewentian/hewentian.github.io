@@ -178,6 +178,28 @@ http://www.kafkatool.com/
 
 kafkatool连接kafka服务器后，记得要将kafkatool中topic的Message类型设置为String，否则将看到字节码。
 
+
+### 创建主题
+``` bash
+> bin/kafka-topics.sh --bootstrap-server broker_host:port --create --topic my-topic --partitions 1 \
+    --replication-factor 1 --config max.message.bytes=64000 --config flush.messages=1
+```
+
+
+### 修改主题
+增加分区数，分区只能增加不能减少
+``` bash
+> bin/kafka-topics.sh --bootstrap-server broker_host:port --alter --topic my_topic_name \
+    --partitions 40
+```
+
+
+### 删除主题
+``` bash
+> bin/kafka-topics.sh --bootstrap-server broker_host:port --delete --topic my_topic_name
+```
+
+
 [link_id_kafka-standalone]: ../../../../2018/10/24/kafka-standalone/
 [link_id_kafka-cluster]: ../../../../2018/10/27/kafka-cluster/
 [link_id_producer_api]: http://kafka.apache.org/documentation.html#producerapi
@@ -185,3 +207,4 @@ kafkatool连接kafka服务器后，记得要将kafkatool中topic的Message类型
 [link_id_streams_api]: http://kafka.apache.org/documentation/streams
 [link_id_connector_api]: http://kafka.apache.org/documentation.html#connect
 [link_id_tcp_protocol]: https://kafka.apache.org/protocol.html
+
