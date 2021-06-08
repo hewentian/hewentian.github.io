@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息方法是Window -&amp;gt; Preferences -&amp;gt; Java -&amp;gt; Code Style -&amp;gt; Code Templates在右则民展开Code -&amp;gt; New Java files点Edit...并加入如下代码123456789101112131415$&amp;#123;filecomment&amp;#125">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2019-11-12T09:44:25.753Z">
+<meta property="og:updated_time" content="2021-01-23T06:48:44.612Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="java 学习笔记">
 <meta name="twitter:description" content="想在eclipse中新建类的时候，自动在类的头部插入作者、时间等信息方法是Window -&amp;gt; Preferences -&amp;gt; Java -&amp;gt; Code Style -&amp;gt; Code Templates在右则民展开Code -&amp;gt; New Java files点Edit...并加入如下代码123456789101112131415$&amp;#123;filecomment&amp;#125">
@@ -62,7 +62,7 @@
       </nav>
       <nav id="sub-nav">
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
@@ -125,7 +125,7 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
 <p>可以看到，我们的程序BTraceTest的PID为4498，执行下面的程序，开启btrace<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ btrace 4498 Btrace.java</span><br><span class="line"></span><br><span class="line">name: Lily</span><br><span class="line">age: 23</span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br><span class="line"><span class="string">name: Lily</span></span><br><span class="line"><span class="string">age: 23</span></span><br><span class="line"><span class="string">I'</span>m Lily, 23</span><br><span class="line">name: Lily</span><br><span class="line">age: 23</span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br><span class="line"><span class="string">name: Lily</span></span><br><span class="line"><span class="string">age: 23</span></span><br><span class="line"><span class="string">I'</span>m Lily, 23</span><br><span class="line">name: Lily</span><br><span class="line">age: 23</span><br><span class="line">I<span class="string">'m Lily, 23</span></span><br></pre></td></tr></table></figure></p>
 <p>示例2：计算方法运行消耗的时间，这在实际中非常有用<br>将下面的代码保存为BtraceDuration.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;b&gt;BtraceDuration.java&lt;/b&gt; 是 </span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> &lt;a href="mailto:wentian.he@qq.com"&gt;hewentian&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2018-04-19 4:46:50 PM</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.8</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.sun.btrace.BTraceUtils.*;</span><br><span class="line"><span class="keyword">import</span> com.sun.btrace.annotations.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@BTrace</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BtraceDuration</span> </span>&#123;</span><br><span class="line">	<span class="meta">@OnMethod</span>(clazz = <span class="string">"com.hewentian.BTraceTest"</span>, method = <span class="string">"whoAreYou"</span>, location = <span class="meta">@Location</span>(Kind.RETURN))</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">whoAreYou</span><span class="params">(@Duration <span class="keyword">long</span> duration)</span> </span>&#123;</span><br><span class="line">		println(strcat(<span class="string">"duration(ms): "</span>, str(duration / <span class="number">1000000</span>))); <span class="comment">// duration的单位是纳秒，要除以 1,000,000 才是毫秒</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>同样是按示例1的流程执行即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ jps</span><br><span class="line"><span class="number">2614</span> org.eclipse.equinox.launcher_1.4.0.v20161219-<span class="number">1356</span>.jar</span><br><span class="line"><span class="number">5258</span> Jps</span><br><span class="line"><span class="number">5243</span> BTraceTest</span><br><span class="line"></span><br><span class="line">$ btrace <span class="number">5243</span> BtraceDuration.java </span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br><span class="line">duration(ms): <span class="number">5000</span></span><br></pre></td></tr></table></figure></p>
-<p>btrace的介绍就到这里，这只是入门。更多内容，参考了：<a href="http://calvin1978.blogcn.com/articles/btrace1.html。这篇文章写得非常好。" target="_blank" rel="noopener">http://calvin1978.blogcn.com/articles/btrace1.html。这篇文章写得非常好。</a></p>
+<p>btrace的介绍就到这里，这只是入门。更多内容，参考<a href="http://calvin1978.blogcn.com/articles/btrace1.html" target="_blank" rel="noopener">这篇文章</a>，它写得非常好。</p>
 <p>在我们对一个对象的方法加锁的时候，需要考虑业务的整体性，即为getter/setter方法同时加锁synchronized同步关键字，保证业务的原子性。以免出现脏读。</p>
 <p>关键字synchronized拥有重入锁的功能，也就是说在使用synchronized时，当一个线程得到了一个对象的锁后，再次请求此对象时是可以再次得到该对象的锁。</p>
 <p>同步方法直接在方法上加synchronized实现加锁，同步代码块则在方法内部加锁，很明显，同步方法锁的范围比较大，而同步代码块范围要小点，一般同步的范围越大，性能就越差，一般需要加锁进行同步的时候，肯定是范围越小越好，这样性能更好</p>
@@ -156,11 +156,32 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
 </li>
 </ol>
 <p>但是不间断空格有个问题，就是它无法被trim()所裁剪，也无法被正则表达式的\s所匹配，也无法被StringUtils的isBlank()所识别，也就是说，无法像裁剪寻常空格那样移除这个不间断空格。不过，我们可以利用不间断空格的Unicode编码来移除它，其编码为<code>\u00A0</code>。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="string">"abc"</span>;</span><br><span class="line">s = (<span class="keyword">char</span>) <span class="number">32</span> + s;</span><br><span class="line">s = s + (<span class="keyword">char</span>) <span class="number">160</span>;</span><br><span class="line"></span><br><span class="line">s = s.trim();</span><br><span class="line">System.out.println(s); <span class="comment">// abc ，前面的空格去掉了，但是后面的还在</span></span><br><span class="line"></span><br><span class="line">s = s.replaceAll(<span class="string">"[\\u00A0]+"</span>, <span class="string">""</span>);</span><br><span class="line">System.out.println(s); <span class="comment">// abc，这里后面的空格也去掉了</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="命令行下替换jar包中指定文件"><a href="#命令行下替换jar包中指定文件" class="headerlink" title="命令行下替换jar包中指定文件"></a>命令行下替换jar包中指定文件</h3><ol>
+<li><p>列出指定文件的路径</p>
+<pre><code>jar -tvf test.jar | grep config.properties
+</code></pre></li>
+<li><p>解压指定路径下的文件</p>
+<pre><code>jar -xvf test.jar conf/config.properties
+</code></pre></li>
+<li><p>修改文件</p>
+</li>
+<li><p>更新到jar包中</p>
+<pre><code>jar -uvf test.jar conf/config.properties
+</code></pre></li>
+</ol>
+<h3 id="IDEA一个工作空间打开多个项目"><a href="#IDEA一个工作空间打开多个项目" class="headerlink" title="IDEA一个工作空间打开多个项目"></a>IDEA一个工作空间打开多个项目</h3><p>如果，多个项目之间不是parent和module的关系，IDEA一个工作空间只能打开一个项目。这样的话，<br>如果有多个项目，来回切换视图让人烦不胜烦。在IDEA一个工作空间中打开多个项目的方法。</p>
+<ol>
+<li>首先打开一个项目；</li>
+<li>点击项目右边的Maven Project，并点击绿色的<code>+</code>号；</li>
+<li>找到要打开的另一个项目，选中pom.xml文件，点击 [ok] 即可。</li>
+</ol>
+<h3 id="Ubuntu卸载IDEA"><a href="#Ubuntu卸载IDEA" class="headerlink" title="Ubuntu卸载IDEA"></a>Ubuntu卸载IDEA</h3><p>缓存目录：~/.cache/JetBrains<br>配置目录：~/.config/JetBrains<br>插件目录：~/.local/share/JetBrains<br>快速启动图标：~/.local/share/applications/jetbrains-idea.desktop</p>
+<h3 id="IntelliJ-IDEA-版本控制不显示颜色提示的解决方法"><a href="#IntelliJ-IDEA-版本控制不显示颜色提示的解决方法" class="headerlink" title="IntelliJ IDEA 版本控制不显示颜色提示的解决方法"></a>IntelliJ IDEA 版本控制不显示颜色提示的解决方法</h3><p>依次点击<code>File -&gt; Settings -&gt; Version Control</code>，在右则面板中可以看到<code>Unregistered roots</code>，选择下面的项目，然后点击右则的<code>+</code>，最后点击<code>Apply</code>即可。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="ck7ttggr8001qcq3kltyzhhmz" class="article-share-link">Partager</a>
+      <a data-url="https://github.com/hewentian/2017/11/16/java-note/" data-id="ckpo1myx5001duu3kz5o6oh4r" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
@@ -172,17 +193,17 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
 <nav id="article-nav">
   
     <a href="/2017/12/02/hexo-note/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Récent</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          hexo学习笔记
+          hexo 学习笔记
         
       </div>
     </a>
   
   
     <a href="/2017/11/10/maven-note/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Ancien</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">maven 学习笔记</div>
     </a>
   
@@ -197,9 +218,9 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -209,7 +230,7 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -217,9 +238,21 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2021/04/01/mybatis-note/">mybatis 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/01/22/canal-note/">canal 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/08/springboot-note/">springboot 学习笔记</a>
+          </li>
         
           <li>
             <a href="/2020/01/14/spark-note/">spark 学习笔记</a>
@@ -227,18 +260,6 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
         
           <li>
             <a href="/2019/12/30/scala-note/">scala 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2019/07/26/docker-note/">docker 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2019/06/10/nginx-note/">nginx 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2019/01/20/hbase-cluster/">hbase 集群的搭建</a>
           </li>
         
       </ul>
@@ -263,8 +284,8 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Tim Ho<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      &copy; 2021 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
@@ -285,7 +306,8 @@ step2: Eclipse -&gt; Preferences -&gt; Remote Systems.
     
 
 <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> -->
-<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+<!-- <script src="//code.jquery.com/jquery-2.2.4.min.js"></script> -->
+<script src="/js/jquery-3.5.1.min.js"></script>
 
 
   <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
