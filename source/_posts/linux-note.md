@@ -585,6 +585,10 @@ echo "-------------------- end to backup data $(date) --------------------"
 
         curl -l -H "Content-type: application/json" -X POST -d '{"phone":"13800138000","password":"passwd"}' http://www.hewentian.com/apis/users
 
+4. post form请求
+
+        curl -X POST http://api.hewentian.com/echo/post/form -H "Content-Type: application/x-www-form-urlencoded" -d "param1=value1&param2=value2"
+
 
 ### ubuntu 16.04 安装 google-chrome-stable_current_amd64.deb 方法
 ``` bash
@@ -1046,6 +1050,8 @@ Update package lists
 
 Install FortiClient
 
+        dpkg -l | grep forticlient
+        sudo apt-get remove --purge forticlient
         sudo apt install forticlient
 
 
@@ -2282,6 +2288,13 @@ fi
 ```
 
 
+### ubuntu下查看内存信息
+``` bash
+$ sudo lshw -short -C memory
+$ sudo dmidecode | grep -A 15 Memory
+```
+
+
 ### 获取本机的公网IP
 
         curl ifconfig.me
@@ -2385,4 +2398,44 @@ fi
 
 然后修改复制出来的文件即可。
 
+
+### nmap工具的使用
+https://www.varonis.com/blog/nmap-commands/
+https://securitytrails.com/blog/nmap-commands
+
+安装非常简单：
+``` bash
+$ sudo apt install nmap
+```
+
+扫描指定IP的指定端口是否开放
+
+        nmap -p 80 192.168.8.112
+
+检测系统版本
+
+        nmap -A -T4 192.168.8.112
+
+检测打开的服务进程的版本
+
+        nmap -sV 192.168.8.112
+
+检测打开的基于TCP or UDP的服务
+
+        nmap -sT 192.168.8.112
+        nmap -sU 192.168.8.112
+
+使用CVE进行全漏洞检测
+
+        nmap -Pn --script vuln 192.168.8.112
+
+启动DOS攻击
+
+        nmap 192.168.8.112 -max-parallelism 800 -Pn --script http-slowloris --script-args http-slowloris.runforever=true
+
+FTP暴力攻击
+
+        nmap --script ftp-brute -p 21 192.168.8.112
+
+在上面的命令中加上`-v`会输出更多的信息，可以加多个`v`，如`-vvv`。
 

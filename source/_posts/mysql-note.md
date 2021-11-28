@@ -274,10 +274,19 @@ mysql> FLUSH PRIVILEGES;
 
 ### 创建数据库用户并授权
 ``` sql
-CREATE USER bfg_user IDENTIFIED BY 'gXk9IDpybrJPVMKq';
+CREATE USER 'bfg_user'@'%' IDENTIFIED BY 'gXk9IDpybrJPVMKq';
 GRANT SELECT, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'bfg_user'@'%';
 -- GRANT ALL PRIVILEGES ON *.* TO 'bfg_user'@'%';
 FLUSH PRIVILEGES;
+```
+
+
+### 修改用户密码
+https://linuxize.com/post/how-to-change-mysql-user-password/
+
+``` sql
+mysql> ALTER USER 'user-name'@'localhost' IDENTIFIED BY 'NEW_USER_PASSWORD';
+mysql> FLUSH PRIVILEGES;
 ```
 
 
@@ -291,6 +300,8 @@ GRANT ALL ON bfg_db.* TO 'bfg_user'@'%' IDENTIFIED BY 'gXk9IDpybrJPVMKq';
 GRANT ALL ON bfg_db.* TO 'bfg_user'@'localhost' IDENTIFIED BY 'gXk9IDpybrJPVMKq';
 
 FLUSH PRIVILEGES;
+
+mysql8.0之后要用上一节的方式创建用户和授权
 ```
 
 
@@ -1301,6 +1312,37 @@ WHERE
 ``` sql
 SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS table_name;
+```
+
+
+### 递归查询
+https://stackoverflow.com/questions/20215744/how-to-create-a-mysql-hierarchical-recursive-query
+
+``` sql
+CREATE TABLE t_category (
+id int primary key,
+name varchar(100),
+parent_id int
+);
+
+INSERT INTO t_category(id, name, parent_id) VALUES (1,'a',0), (2,'b',0), (3,'aa',1), (4,'ab',1), (5,'bb',2), (6,'aaa',3);
+
+
+with recursive cte (id, name, parent_id) as (
+  select     id,
+             name,
+             parent_id
+  from       t_category
+  where      id = 1
+  union all
+  select     c.id,
+             c.name,
+             c.parent_id
+  from       t_category c
+  inner join cte
+          on c.parent_id = cte.id
+)
+select * from cte;
 ```
 
 

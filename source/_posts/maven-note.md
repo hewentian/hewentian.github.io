@@ -295,3 +295,18 @@ pom.xml配置如下：
 ```
 
 
+### maven项目中pom.xml配置了私有仓库但无法引用问题
+
+解决方法：将`{MAVEN_HOME}/conf/settings.xml`文件中的仓库`mirrorOf`改为`!sonatype-repos-s`
+``` xml
+<mirror>
+    <id>alimaven</id>
+    <name>aliyun maven</name>
+    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+    <!--    <mirrorOf>*</mirrorOf>    -->      <!-- 表示只引用 settings.xml 文件中的仓库地址 -->
+    <mirrorOf>!sonatype-repos-s, *</mirrorOf>  <!-- 表示 settings.xml 和 pom.xml 文件中的仓库地址 都生效 -->
+</mirror>
+```
+
+
+

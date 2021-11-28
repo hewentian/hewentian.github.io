@@ -542,6 +542,16 @@ $ sudo docker run -p 8081:8080 -d hewentian/show-ip:v1.0.0
 http://localhost:8081/hello
 
 
+### 一些启动参数
+``` bash
+--network host      # 用了这个参数，表示使用本机的网络，一般可以省略-p参数
+--restart always    # 意外关闭（例如OOM）之后，的处理方式
+--cpus 2            # 使用的CPU数量
+--memory 2g         # 内存
+--memory-swap 2g    # 交换空间
+```
+
+
 ### docker安装nginx
 首先拉取镜像
 ``` bash
@@ -612,7 +622,13 @@ Commercial support is available at
 
 启动nginx：
 ``` bash
-$ sudo docker run --name nginx-test2 -p 8082:80 -d -v /home/hewentian/Documents/docker/nginx/www:/usr/share/nginx/html -v /home/hewentian/Documents/docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf -v /home/hewentian/Documents/docker/nginx/logs:/var/log/nginx nginx
+$ sudo docker run \
+    -itd --name nginx-test2 \
+    -p 8082:80 \
+    -v /home/hewentian/Documents/docker/nginx/www:/usr/share/nginx/html \
+    -v /home/hewentian/Documents/docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf \
+    -v /home/hewentian/Documents/docker/nginx/logs:/var/log/nginx \
+    nginx
 ```
 
 参数说明：
@@ -644,14 +660,14 @@ aof-load-truncated yes
 
 开始安装
 ``` bash
-$ sudo docker pull redis
+$ sudo docker pull redis:5.0.12
 $
 $ sudo docker run \
-    --name redis \
+    -itd --name redis \
     -p 6379:6379 \
     -v /root/db/redis/conf/redis.conf:/etc/redis/redis.conf \
     -v /root/db/redis/data:/data \
-    -d redis redis-server /etc/redis/redis.conf
+    redis:5.0.12 redis-server /etc/redis/redis.conf
 ```
 
 
@@ -726,6 +742,12 @@ $ sudo docker exec -it mysql-hwt mysql -uroot -p123456
 mysql> GRANT ALL ON *.* TO 'root'@'localhost' IDENTIFIED BY 'root';
 mysql> DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 mysql> FLUSH PRIVILEGES;
+
+-- 从mysql8.0开始，语法用下面的
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
+mysql> GRANT ALL ON *.* TO 'root'@'localhost';
+mysql> DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+mysql> FLUSH PRIVILEGES;
 ```
 
 修改mysql的默认字符编码为UTF-8，打开容器中的`/etc/mysql/conf.d/mysql.cnf`，增加如下内容即可（其中最后三行为原有的内容）。
@@ -796,9 +818,10 @@ $ sudo docker run \
     -v /root/db/mongodb/data:/data/db \
     -v /root/db/mongodb/configdb:/data/configdb \
     -v /root/db/mongodb/logs:/data/logs \
-    mongo:latest --auth \
+    --auth \
     -f /data/configdb/mongod.conf \
-    --bind_ip_all
+    --bind_ip_all \
+    mongo:latest
 ```
 
 1. 进入mongo，添加管理员。创建第一个用户admin，该用户需要有用户管理权限，其角色为root。
