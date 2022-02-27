@@ -54,7 +54,7 @@ store {
     datasource = "druid"
     ## mysql/oracle/postgresql/h2/oceanbase etc.
     dbType = "mysql"
-    driverClassName = "com.mysql.jdbc.Driver"
+    driverClassName = "com.mysql.cj.jdbc.Driver"
     ## if using mysql to store the data, recommend add rewriteBatchedStatements=true in jdbc connection param
     url = "jdbc:mysql://127.0.0.1:3306/seata?rewriteBatchedStatements=true"
     user = "mysql"
@@ -78,7 +78,7 @@ registry {
   nacos {
     application = "seata-server"
     serverAddr = "127.0.0.1:8848"
-    group = "SEATA_GROUP"
+    group = "DEFAULT_GROUP"
     namespace = ""
     cluster = "default"
     username = "nacos"
@@ -87,7 +87,7 @@ registry {
 }
 
 config {
-  type = "nacos"
+  type = "file"
 
   file {
     name = "file.conf"
@@ -105,8 +105,8 @@ registry {
   nacos {
     application = "seata-server"
     serverAddr = "127.0.0.1:8848"
-    group = "SEATA_GROUP"
-    namespace = "15e78691-d80c-46b0-885b-1c1fc2a94253"
+    group = "DEFAULT_GROUP"
+    namespace = ""
     cluster = "default"
     username = "nacos"
     password = "nacos"
@@ -118,8 +118,8 @@ config {
 
   nacos {
     serverAddr = "127.0.0.1:8848"
-    namespace = "15e78691-d80c-46b0-885b-1c1fc2a94253"
-    group = "SEATA_GROUP"
+    namespace = ""
+    group = "DEFAULT_GROUP"
     username = "nacos"
     password = "nacos"
     dataId = "seataServer.properties"
@@ -127,14 +127,10 @@ config {
 }
 ```
 
-在nacos中新建命名空间
-命名空间ID：15e78691-d80c-46b0-885b-1c1fc2a94253
-命名空间名: seata
-描述: seata 分布式事务
 
-接着，在新建的命名空间新建配置
+接着，在nacos新建配置
 Data Id: seataServer.properties
-Group: SEATA_GROUP
+Group: DEFAULT_GROUP
 配置格式： Properties
 
 ``` properties

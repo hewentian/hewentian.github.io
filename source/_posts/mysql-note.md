@@ -469,6 +469,25 @@ mysql> SELECT * FROM t_user;
 **VARCHAR存储的实际长度是它的值的长度+1，多出的这一个用于保存它实际使用了多大的长度。**
 
 
+### mysql中int型的取值范围
+https://dev.mysql.com/doc/refman/8.0/en/integer-types.html
+
+11.1.2 Integer Types (Exact Value) - INTEGER, INT, SMALLINT, TINYINT, MEDIUMINT, BIGINT
+MySQL supports the SQL standard integer types INTEGER (or INT) and SMALLINT. As an extension to the standard, MySQL also supports the integer types TINYINT, MEDIUMINT, and BIGINT. The following table shows the required storage and range for each integer type.
+
+Table 11.1 Required Storage and Range for Integer Types Supported by MySQL
+
++-----------+-----------------+----------------------+------------------------+----------------------+------------------------+
+| Type      | Storage (Bytes) | Minimum Value Signed | Minimum Value Unsigned | Maximum Value Signed | Maximum Value Unsigned |
++-----------+-----------------+----------------------+------------------------+----------------------+------------------------+
+| TINYINT   | 1	              | -128                 | 0                      | 127                  | 255                    |
+| SMALLINT  | 2	              | -32768               | 0                      | 32767                | 65535                  |
+| MEDIUMINT	| 3	              | -8388608             | 0                      | 8388607              | 16777215               |
+| INT       | 4	              | -2147483648          | 0                      | 2147483647           | 4294967295             |
+| BIGINT    | 8	              | -2^63                | 0                      | 2^63-1               | 2^64-1                 |
++-----------+-----------------+----------------------+------------------------+----------------------+------------------------+
+
+
 ### 复制表
 语法一，会复制完整的表结构（包括索引、主键等），但不包括数据：
 ``` sql
@@ -910,6 +929,14 @@ transaction-isolation=READ-COMMITTED
 查看当前会话的事务隔离级别：
 ``` mysql
 mysql> SELECT @@tx_isolation;
+或
+mysql> select @@transaction_isolation;
++-------------------------+
+| @@transaction_isolation |
++-------------------------+
+| REPEATABLE-READ         |
++-------------------------+
+1 row in set (0.02 sec)
 ```
 
 
@@ -1251,6 +1278,7 @@ SELECT * FROM t_product WHERE id IN
 
 ### mysql报错ERROR 1064 (42000)
 原因是使用了mysql的保留字。如果表的字段使用了mysql的保留字，在查询的时候要用反引号将其引起来。
+
         SELECT * FROM t_user WHERE `key` = 'abc';
 
 
@@ -1278,7 +1306,7 @@ WHERE
 连表更新语法：
 ``` sql
 UPDATE T1, T2
-[INNER JOIN | LEFT JOIN] T1 ON T1.C1 = T2. C1
+[INNER JOIN | LEFT JOIN] T1 ON T1.C1 = T2.C1
 SET
     T1.C2 = T2.C2,
     T2.C3 = expr
@@ -1343,6 +1371,226 @@ with recursive cte (id, name, parent_id) as (
           on c.parent_id = cte.id
 )
 select * from cte;
+```
+
+
+### MySQL JSON columns
+MySQL 5.7+ InnoDB databases and PostgreSQL 9.2+ both directly support JSON document types in a single field.
+
+Note that any database will accept JSON documents as a single string blob. However, MySQL and PostgreSQL support validated JSON data in real key/value pairs rather than a basic string.
+
+JSON value fields can’t be indexed, so avoid using it on columns which are updated or searched regularly.
+
+Note that JSON columns can’t be used as a primary key, be used as a foreign key, or have an index.
+
+``` sql
+CREATE TABLE `test` (
+  `id` int  PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `age` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+为表`test`增加一个JSON的列：
+
+        ALTER TABLE `test` ADD COLUMN `address` JSON NOT NULL DEFAULT ( JSON_OBJECT() );  -- 带默认值
+        ALTER TABLE `test` ADD COLUMN `address` JSON DEFAULT NULL;                        -- 默认为NULL
+
+
+在建表的时候，设置JSON列
+``` sql
+CREATE TABLE `test` (
+  `id` int  PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `age` int DEFAULT NULL,
+  `address` json NOT NULL DEFAULT (json_object())
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+一些操作
+``` sql
+mysql> SELECT * FROM test;
+Empty set (0.02 sec)
+
+mysql> INSERT INTO test (name, age) VALUES ('tim', 21);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> INSERT INTO test (name, age, address) VALUES ('ho', 21, '{"province": "广东", "city": "广州"}');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> INSERT INTO test (name, age, address) VALUES ('ho', 21, '["广东", "广州", "番禺"]');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM test;
++----+------+------+------------------------------------------+
+| id | name | age  | address                                  |
++----+------+------+------------------------------------------+
+|  1 | tim  |   21 | {}                                       |
+|  2 | ho   |   21 | {"city": "广州", "province": "广东"}     |
+|  3 | ho   |   21 | ["广东", "广州", "番禺"]                 |
++----+------+------+------------------------------------------+
+3 rows in set (0.01 sec)
+```
+
+下面的函数，可以创建JSON
+``` sql
+mysql> SELECT JSON_ARRAY(1, 2, 'abc');
++-------------------------+
+| JSON_ARRAY(1, 2, 'abc') |
++-------------------------+
+| [1, 2, "abc"]           |
++-------------------------+
+
+
+mysql> SELECT JSON_OBJECT('a', 1, 'b', 2);
++-----------------------------+
+| JSON_OBJECT('a', 1, 'b', 2) |
++-----------------------------+
+| {"a": 1, "b": 2}            |
++-----------------------------+
+
+
+mysql> SELECT JSON_TYPE('[1, 2, "abc"]');
++----------------------------+
+| JSON_TYPE('[1, 2, "abc"]') |
++----------------------------+
+| ARRAY                      |
++----------------------------+
+
+
+mysql> SELECT JSON_TYPE('{"a": 1, "b": 2}');
++-------------------------------+
+| JSON_TYPE('{"a": 1, "b": 2}') |
++-------------------------------+
+| OBJECT                        |
++-------------------------------+
+
+
+mysql> SELECT JSON_TYPE('{"a": 1, "b": 2');
+ERROR 3141 (22032): Invalid JSON text in argument 1 to function json_type: "Missing a comma or '}' after an object member." at position 15.
+mysql>
+```
+
+函数`JSON_VALID()`可以验证一段字符串，是否为正确的JSON。返回1表示正确，返回0表示错误。
+``` sql
+mysql> SELECT JSON_VALID('[1, 2, "abc"]');
++-----------------------------+
+| JSON_VALID('[1, 2, "abc"]') |
++-----------------------------+
+|                           1 |
++-----------------------------+
+
+mysql> SELECT JSON_VALID('{"a": 1, "b": 2}');
++--------------------------------+
+| JSON_VALID('{"a": 1, "b": 2}') |
++--------------------------------+
+|                              1 |
++--------------------------------+
+
+mysql> SELECT JSON_VALID('{"a": 1, "b": 2');
++-------------------------------+
+| JSON_VALID('{"a": 1, "b": 2') |
++-------------------------------+
+|                             0 |
++-------------------------------+
+```
+
+
+一些搜索操作
+``` sql
+mysql> SELECT * FROM test WHERE JSON_CONTAINS(address, '["广州"]');
++----+------+------+--------------------------------+
+| id | name | age  | address                        |
++----+------+------+--------------------------------+
+|  3 | ho   |   21 | ["广东", "广州", "番禺"]       |
++----+------+------+--------------------------------+
+1 row in set (0.03 sec)
+
+
+mysql> SELECT * FROM test WHERE JSON_CONTAINS(address, '{"city": "广州"}');
++----+------+------+------------------------------------------+
+| id | name | age  | address                                  |
++----+------+------+------------------------------------------+
+|  2 | ho   |   21 | {"city": "广州", "province": "广东"}     |
++----+------+------+------------------------------------------+
+1 row in set (0.01 sec)
+
+
+mysql> SELECT * FROM test WHERE JSON_SEARCH(address, 'one', '广%') IS NOT NULL;
++----+------+------+------------------------------------------+
+| id | name | age  | address                                  |
++----+------+------+------------------------------------------+
+|  2 | ho   |   21 | {"city": "广州", "province": "广东"}     |
+|  3 | ho   |   21 | ["广东", "广州", "番禺"]                 |
++----+------+------+------------------------------------------+
+2 rows in set (0.01 sec)
+
+mysql> SELECT * FROM test WHERE JSON_SEARCH(address, 'all', '广%') IS NOT NULL;
++----+------+------+------------------------------------------+
+| id | name | age  | address                                  |
++----+------+------+------------------------------------------+
+|  2 | ho   |   21 | {"city": "广州", "province": "广东"}     |
+|  3 | ho   |   21 | ["广东", "广州", "番禺"]                 |
++----+------+------+------------------------------------------+
+2 rows in set (0.01 sec)
+
+
+mysql> SELECT JSON_EXTRACT('{"city": "广州", "province": "广东"}', '$.province');
++------------------------------------------------------------------------+
+| JSON_EXTRACT('{"city": "广州", "province": "广东"}', '$.province')     |
++------------------------------------------------------------------------+
+| "广东"                                                                 |
++------------------------------------------------------------------------+
+1 row in set (0.01 sec)
+
+
+{
+  "a": 1,
+  "b": 2,
+  "c": [3, 4],
+  "d": {
+    "e": 5,
+    "f": 6
+  }
+}
+
+Example paths:
+$.a returns 1
+$.c returns [3, 4]
+$.c[1] returns 4
+$.d.e returns 5
+$**.e returns [5]
+
+
+mysql> SELECT id, name, age, address->"$[0]" FROM test ;
++----+------+------+------------------------------------------+
+| id | name | age  | address->"$[0]"                          |
++----+------+------+------------------------------------------+
+|  1 | tim  |   21 | {}                                       |
+|  2 | ho   |   21 | {"city": "广州", "province": "广东"}     |
+|  3 | ho   |   21 | "广东"                                   |    -- 注意这条数据
++----+------+------+------------------------------------------+
+3 rows in set (0.01 sec)
+
+mysql> SELECT id, name, age, address->"$.city" FROM test ;
++----+------+------+-------------------+
+| id | name | age  | address->"$.city" |
++----+------+------+-------------------+
+|  1 | tim  |   21 | NULL              |
+|  2 | ho   |   21 | "广州"            |                           -- 注意这条数据
+|  3 | ho   |   21 | NULL              |
++----+------+------+-------------------+
+3 rows in set (0.00 sec)
+
+
+mysql> SELECT * FROM test WHERE address->"$.city" IS NOT NULL;
++----+------+------+------------------------------------------+
+| id | name | age  | address                                  |
++----+------+------+------------------------------------------+
+|  2 | ho   |   21 | {"city": "广州", "province": "广东"}     |
++----+------+------+------------------------------------------+
+1 row in set (0.01 sec)
+
 ```
 
 

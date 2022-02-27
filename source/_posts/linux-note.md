@@ -62,25 +62,36 @@ $ sudo apt-get install vim
 ```
 
 
-### useradd与adduser区别
+还有的就是文件编码的问题，在windows下默认都是用ANSI格式编码，但是在ubuntu下面可能会是其他格式的编码，如果两个系统的编码不一致，就会产生乱码。
+最好是都采用UTF-8格式编码
+
+
+### linux创建用户
+创建用户
+        useradd -m username 创建用户，要加-m参数才会在/home目录下创建用户目录
+        passwd username  为useradd创建的用户设置密码
+        adduser username 创建用户，自动会在/home目录下创建用户目录，但是它一创建用户，就会要求输入密码
+
+useradd与adduser区别
 ``` bash
 $ adduser username	# 会在/home下建立一个文件夹username
 $ useradd username	# 不会在/home下建立一个文件夹username
 $ useradd -m username	# 跟adduser一样，会在/home下建立一个文件夹username
 ```
 
-### userdel删除用户账号
-userdel 会查询系统账户文件，例如`/etc/password`和`/etc/group`，它会删除所有和用户名相关的文件
+
+### linux删除用户
+若使用userdel username命令删除用户时，并不能删除该用户的所有信息，只是删除了/etc/passwd、/etc/shadow、/etc/group/、/etc/gshadow四个文件里的该账户和组的信息。默认情况下创建一个用户账号，会创建一个home目录和一个用户邮箱（在/var/spool/mail目录以用户名命名）。下次再创建用户时，就会出现：该用户已存在的提示。
 ``` bash
 $ userdel peter     # 不带选项使用 userdel，只会删除用户。用户的目录将仍会在/home目录下
 $ userdel -r peter  # 使用 -r 选项，在删除用户时将完全删除用户的目录、用户的邮件池
 ```
 
-还有的就是文件编码的问题，在windows下默认都是用ANSI格式编码，但是在ubuntu下面可能会是其他格式的编码，如果两个系统的编码不一致，就会产生乱码。
-最好是都采用UTF-8格式编码
+正确删除用户
+        userdel -r username
 
 
-ubuntu root默认密码（初始密码）
+### ubuntu root默认密码（初始密码）
 ubuntu安装好后，root初始密码（默认密码）是没有的，需要设置。
 
 1、先用安装时候的用户登录进入系统
@@ -102,9 +113,7 @@ $ su root
 切换用户到root试试.......
 
 
-
-
-如果执行./configure无法执行，
+### 如果执行./configure无法执行
 要安装：
 ``` bash
 $ sudo apt-get install build-essential
@@ -143,6 +152,7 @@ $ sudo apt-get install libpcre3 libpcre3-dev
 ``` bash
 $ sudo apt-get install zlib1g-dev
 ```
+
 
 ### 当你安装完ubuntu后，安装五笔输入法：
 1.打开命令行输入：
@@ -1967,7 +1977,7 @@ Upload: 9.03 Mbit/s
 
         convert -append image1.png image2.png image3.png result.png
 
-垂直方向合并：
+水平方向合并：
 
         convert +append image1.png image2.png image3.png result.png
 
@@ -2009,12 +2019,12 @@ $ docker pull shadowsocks/shadowsocks-libev
 
 $ docker run -d \
 --name ss-server \
--p 4343:4343 \
--p 4343:4343/udp \
+-p 1228:1228 \
+-p 1228:1228/udp \
 -e SERVER_ADDR=0.0.0.0 \
--e SERVER_PORT=4343 \
+-e SERVER_PORT=1228 \
 -e METHOD=aes-256-cfb \
--e PASSWORD="abcd1234*#(" \
+-e PASSWORD="abcd1234" \
 -e TIMEOUT=300 \
 -e DNS_ADDRS="8.8.8.8,8.8.4.4" \
 shadowsocks/shadowsocks-libev
@@ -2034,10 +2044,10 @@ $ vi shadowsocks.json
 
 {
     "server":"111.112.113.114",
-    "server_port":10086,
+    "server_port":1228,
     "local_address": "127.0.0.1",
     "local_port":1080,
-    "password":"myPassword",
+    "password":"abcd1234",
     "timeout":300,
     "method":"aes-256-cfb"
 }
@@ -2164,19 +2174,6 @@ top常用命令参数
         top -c                 每隔5秒显式进程的资源占用情况，并显示进程的命令行参数（默认只有进程名）
         top -p 3306 -p 6378    每隔5秒显示pid是3306和pid是6379的两个进程的资源占用情况
         top -d 2 -c -p 6379    每隔2秒显示pid是6379的进程的资源使用情况，并显示该进程启动的命令行参数
-
-
-### linux创建和删除用户
-创建用户
-        useradd -m username 创建用户，要加-m参数才会在/home目录下创建用户目录
-        passwd username  为useradd创建的用户设置密码
-        adduser username 创建用户，自动会在/home目录下创建用户目录，但是它一创建用户，就会要求输入密码
-
-删除用户
-若使用userdel username命令删除用户时，并不能删除该用户的所有信息，只是删除了/etc/passwd、/etc/shadow、/etc/group/、/etc/gshadow四个文件里的该账户和组的信息。默认情况下创建一个用户账号，会创建一个home目录和一个用户邮箱（在/var/spool/mail目录以用户名命名）。下次再创建用户时，就会出现：该用户已存在的提示。
-
-正确删除用户
-        userdel -r username
 
 
 ### 使用msmtp发送邮件
@@ -2438,4 +2435,9 @@ FTP暴力攻击
         nmap --script ftp-brute -p 21 192.168.8.112
 
 在上面的命令中加上`-v`会输出更多的信息，可以加多个`v`，如`-vvv`。
+
+
+### ubuntu安装GoldenDict英语词典
+在ubuntu的应用市场，可以直接安装GoldenDict。安装之后，要将本地的词典`牛津高阶英汉双解词典_第9版_v20191111`导入软件，步骤如下：`Edit->Dictionaries->Sources->Files->Add`。另外，可以开启双击单词，直接翻译功能。配置方式为，在软件首页，输入单词的右则，有一个`Scan Popup`按钮，只要点击它，即可开启。这样，我们在浏览器上面，见到不认识的单词，双击即可翻译。
+
 

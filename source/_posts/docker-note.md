@@ -680,22 +680,35 @@ $ cd conf
 $ vi mysql.cnf
 
 [client]
-port=3306
-default-character-set=utf8
+#port=3306
+default-character-set=utf8mb4
 
 [mysql]
-default-character-set=utf8
+default-character-set=utf8mb4
 
 [mysqld]
-port=3306
-character-set-server=utf8
+#port=3306
+character-set-server=utf8mb4
 max_connections=100
+#sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+#slow-query-log=1
+#default-time_zone = '+8:00'
+#secure-file-priv=""
+#log_timestamps=SYSTEM
+#skip-name-resolve
+#sort_buffer_size =2M
+#tmp_table_size=128M
+#innodb_buffer_pool_size = 8G
+#binlog_expire_logs_seconds=259200
+#performance_schema_max_table_instances=400
+#table_definition_cache=400
+#table_open_cache=256
 ```
 
 拉取镜像
 ``` bash
 $ sudo docker search mysql
-$ sudo docker pull mysql:5.6.42
+$ sudo docker pull mysql:8.0.26
 
 $ sudo docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
@@ -705,7 +718,7 @@ nginx               latest              e445ab08b2be        6 days ago          
 ubuntu              18.04               3556258649b2        6 days ago          64.2MB
 hello-world         latest              fce289e99eb9        7 months ago        1.84kB
 training/webapp     latest              6fae60ef3446        4 years ago         349MB
-mysql               5.6.42              27e29668a08a        12 months ago       256MB
+mysql               8.0.26              9da615fced53        2 months ago        514MB
 ```
 
 运行容器
@@ -715,7 +728,7 @@ $ sudo docker run \
     -itd --name mysql-hwt \
     -p 3306:3306 \
     -e MYSQL_ROOT_PASSWORD=123456 \
-    mysql:5.6.42
+    mysql:8.0.26
 ```
 
 2. 详细安装
@@ -727,13 +740,21 @@ $ sudo docker run \
     -v /root/db/mysql/data:/var/lib/mysql \
     -v /root/db/mysql/logs:/logs \
     -e MYSQL_ROOT_PASSWORD=123456 \
-    mysql:5.6.42
+    mysql:8.0.26
 
 
 $ sudo docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                PORTS                       NAMES
-524097ed5349        mysql:5.6.42        "docker-entrypoint.s…"   3 minutes ago       Up 3 minutes          0.0.0.0:3306->3306/tcp      mysql-hwt
+524097ed5349        mysql:8.0.26        "docker-entrypoint.s…"   3 minutes ago       Up 3 minutes          0.0.0.0:3306->3306/tcp      mysql-hwt
 ```
+
+当然，还有如下可选安装参数：
+
+        -e TZ=Asia/Shanghai \
+        --net=host \
+        --cpus=8 \
+        -m 8g \
+        --restart=always \
 
 进入mysql，将root用户密码修改，并且禁用root远程登录
 ``` bash
@@ -750,48 +771,70 @@ mysql> DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '1
 mysql> FLUSH PRIVILEGES;
 ```
 
-修改mysql的默认字符编码为UTF-8，打开容器中的`/etc/mysql/conf.d/mysql.cnf`，增加如下内容即可（其中最后三行为原有的内容）。
+查看编码
 ``` bash
-[client]
-default-character-set=utf8
-
-[mysql]
-default-character-set=utf8
-
-[mysqld]
-init_connect='SET collation_connection = utf8_unicode_ci'
-init_connect='SET NAMES utf8'
-character-set-server=utf8
-collation-server=utf8_unicode_ci
-
-log_bin=mysql-bin
-binlog_format=ROW
-server_id=1
-```
-
-重启mysql，然后查看编码。
-``` bash
-$ sudo docker restart mysql-hwt-5.7
-
-
 mysql> show variables like 'char%';
-+--------------------------+----------------------------+
-| Variable_name            | Value                      |
-+--------------------------+----------------------------+
-| character_set_client     | utf8                       |
-| character_set_connection | utf8                       |
-| character_set_database   | utf8                       |
-| character_set_filesystem | binary                     |
-| character_set_results    | utf8                       |
-| character_set_server     | utf8                       |
-| character_set_system     | utf8                       |
-| character_sets_dir       | /usr/share/mysql/charsets/ |
-+--------------------------+----------------------------+
++--------------------------+--------------------------------+
+| Variable_name            | Value                          |
++--------------------------+--------------------------------+
+| character_set_client     | utf8mb4                        |
+| character_set_connection | utf8mb4                        |
+| character_set_database   | utf8mb4                        |
+| character_set_filesystem | binary                         |
+| character_set_results    | utf8mb4                        |
+| character_set_server     | utf8mb4                        |
+| character_set_system     | utf8mb3                        |
+| character_sets_dir       | /usr/share/mysql-8.0/charsets/ |
++--------------------------+--------------------------------+
 8 rows in set (0.01 sec)
-
 ```
 
 然后创建一个用于操作mysql的简单用户，参考之前的 [mysql 学习笔记](../../../../2017/12/07/mysql-note/)。
+
+
+如果此时尝试用 Workbench 或 Navicat 连接，会报如下错误：
+
+        ERROR 2059 (HY000): Authentication plugin 'caching_sha2_password' cannot be loaded: dlopen(/usr/local/mysql/lib/plugin/caching_sha2_password.so, 2): image not found
+
+报错原因
+``` sql
+mysql> select version();
++-----------+
+| version() |
++-----------+
+| 8.0.26    |
++-----------+
+1 row in set (0.28 sec)
+
+mysql> show variables like 'default_authentication_plugin';
++-------------------------------+-----------------------+
+| Variable_name                 | Value                 |
++-------------------------------+-----------------------+
+| default_authentication_plugin | caching_sha2_password |
++-------------------------------+-----------------------+
+1 row in set (0.26 sec)
+
+mysql> select host,user,plugin from mysql.user;
++-----------+------------------+-----------------------+
+| host      | user             | plugin                |
++-----------+------------------+-----------------------+
+| %         | hwh              | caching_sha2_password |
+| localhost | mysql.infoschema | caching_sha2_password |
+| localhost | mysql.session    | caching_sha2_password |
+| localhost | mysql.sys        | caching_sha2_password |
+| localhost | root             | caching_sha2_password |
++-----------+------------------+-----------------------+
+5 rows in set (0.31 sec)
+```
+
+可以看到`mysql 8.0.26`版本默认的认证方式是`caching_sha2_password`，连接不上的原因在于连接数据库工具不支持该格式的密码。
+
+解决方法：修改密码加密方式
+``` sql
+ALTER user 'hwh'@'%' IDENTIFIED BY '123456' PASSWORD EXPIRE NEVER;
+ALTER user 'hwh'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
+FLUSH PRIVILEGES;
+```
 
 
 ### docker安装mongo
