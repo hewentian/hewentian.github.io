@@ -11,9 +11,9 @@ https://seata.io/zh-cn/docs/ops/deploy-guide-beginner.html
 
 Server端存储模式（store.mode）现有file、db、redis三种（后续将引入raft,mongodb），file模式无需改动，直接启动即可，下面专门讲下db模式启动步骤。
 注： 
-1. file模式为单机模式，全局事务会话信息内存中读写并持久化本地文件root.data，性能较高;
+1. file模式为单机模式，全局事务会话信息在内存中读写并持久化到本地文件root.data，性能较高;
 2. db模式为高可用模式，全局事务会话信息通过db共享，相应性能差些;
-3. redis模式Seata-Server 1.3及以上版本支持,性能较高,存在事务信息丢失风险,请提前配置合适当前场景的redis持久化配置.
+3. redis模式Seata-Server 1.3及以上版本支持，性能较高，存在事务信息丢失风险，请提前配置合适当前场景的redis持久化配置。
 
 
 #### 第一步：首先，到如下地址，下载最新版本，截止目前，最新版本为`seata-server-1.4.2.zip`
@@ -179,9 +179,9 @@ store.file.sessionReloadReadSize=100
 store.db.datasource=druid
 store.db.dbType=mysql
 store.db.driverClassName=com.mysql.cj.jdbc.Driver
-store.db.url=jdbc:mysql://127.0.0.1:3306/seata?useUnicode=true&rewriteBatchedStatements=true
-store.db.user=mysql
-store.db.password=mysql
+store.db.url=jdbc:mysql://mysql.hewentian.com:3306/seata?useUnicode=true&rewriteBatchedStatements=true
+store.db.user=root
+store.db.password=123456
 store.db.minConn=5
 store.db.maxConn=30
 store.db.globalTable=global_table
@@ -233,16 +233,16 @@ https://github.com/seata/seata/blob/1.4.2/script/config-center/config.txt
 service.vgroupMapping.hwt_tx_group=default
 store.mode=db
 store.db.driverClassName=com.mysql.cj.jdbc.Driver
-store.db.url=jdbc:mysql://127.0.0.1:3306/seata?useUnicode=true&rewriteBatchedStatements=true
-store.db.user=mysql
-store.db.password=mysql
+store.db.url=jdbc:mysql://mysql.hewentian.com:3306/seata?useUnicode=true&rewriteBatchedStatements=true
+store.db.user=root
+store.db.password=123456
 ```
 
 
 #### 第四步：启动
 启动命令如下：
 
-        sh {SEATA_HOME}/bin/seata-server.sh -h 127.0.0.1 -p 8091 -m db -n 1
+        bash {SEATA_HOME}/bin/seata-server.sh -h 127.0.0.1 -p 8091 -m db -n 1
 
 
 参数说明：

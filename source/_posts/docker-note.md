@@ -551,6 +551,14 @@ http://localhost:8081/hello
 --memory-swap 2g    # 交换空间
 ```
 
+当然，还有如下可选安装参数：
+
+        -e TZ=Asia/Shanghai \
+        --net=host \
+        --cpus=8 \
+        -m 8g \
+        --restart=always \
+
 
 ### docker安装nginx
 首先拉取镜像
@@ -647,7 +655,7 @@ $ mkdir data conf
 $ cd conf
 $ vi redis.conf
 
-requirepass abc12345
+requirepass abc123
 
 appendonly yes
 appendfilename "appendonly.aof"
@@ -660,14 +668,14 @@ aof-load-truncated yes
 
 开始安装
 ``` bash
-$ sudo docker pull redis:5.0.12
+$ sudo docker pull redis:7.0.2
 $
 $ sudo docker run \
-    -itd --name redis \
+    -itd --name redis-hwt \
     -p 6379:6379 \
     -v /root/db/redis/conf/redis.conf:/etc/redis/redis.conf \
     -v /root/db/redis/data:/data \
-    redis:5.0.12 redis-server /etc/redis/redis.conf
+    redis:7.0.2 redis-server /etc/redis/redis.conf
 ```
 
 
@@ -747,14 +755,6 @@ $ sudo docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                PORTS                       NAMES
 524097ed5349        mysql:8.0.26        "docker-entrypoint.s…"   3 minutes ago       Up 3 minutes          0.0.0.0:3306->3306/tcp      mysql-hwt
 ```
-
-当然，还有如下可选安装参数：
-
-        -e TZ=Asia/Shanghai \
-        --net=host \
-        --cpus=8 \
-        -m 8g \
-        --restart=always \
 
 进入mysql，将root用户密码修改，并且禁用root远程登录
 ``` bash

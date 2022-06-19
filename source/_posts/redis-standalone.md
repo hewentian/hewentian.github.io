@@ -128,3 +128,6 @@ bind 127.0.0.1 redis.hewentian.com  # 127.0.0.1只能在本机访问，如果要
 ```
 
 
+docker的安装方式，请参考[这里](../../../../2019/07/26/docker-note "docker 学习笔记")
+
+

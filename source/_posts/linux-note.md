@@ -1937,6 +1937,34 @@ $ cat a.txt | awk -F'###' '{print $1,$2}'
 也可以单独提取某一列。
 
 
+### cut的使用
+https://phoenixnap.com/kb/linux-cut
+
+有文件，内容如下
+``` bash
+$ cat a.txt
+1,2,3,4,5
+6,7,8,9,10
+a,b,c,d,e
+```
+
+提取第3-5个字符
+``` bash
+$ cut -c3-5 a.txt
+2,3
+7,8
+b,c
+```
+
+以逗号作为分隔符（默认以Tab为分隔符），提取第1、3两列
+``` bash
+cut -d, -f1,3 a.txt
+1,3
+6,8
+a,c
+```
+
+
 ### Linux下通过一行命令查找并杀掉进程
 如果我们运行了一个进程：
 ``` bash
@@ -1946,6 +1974,39 @@ $ nohup java -jar he-app.jar 2>&1 &
 通过一条命令杀掉它：
 ``` bash
 $ ps -ef | grep he-app.jar | grep -v grep | awk '{print $2}' | xargs kill -9
+```
+
+
+### 将行变成列
+https://askubuntu.com/questions/748524/how-to-convert-from-row-to-column
+
+有文件 a.txt，内容如下：
+``` bash
+$ cat a.txt
+1,2,3,4,5
+6,7,8,9,10
+a,b,c,d,e
+```
+
+将 a.txt 的行，以逗号分隔，变成列：
+``` bash
+$ cat a.txt | tr -s '[,]' '\n'
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+a
+b
+c
+d
+e
 ```
 
 

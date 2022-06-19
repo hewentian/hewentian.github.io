@@ -963,12 +963,21 @@ Warm Backup 温备：也是在数据库运行中进行备份，但是会对当�
 mysqldump不能导出视图。免费好用的开源热备份工具有XtraBackup。
 
 
+### 命令行连接mysql
+        mysql -hip_address -uuser_name -Pport -ppassword db_name
 
-### 连接到mysql
+如果`-p`后面的密码中有特殊字符，就要加个`\`来转义
+        mysql -h192.168.1.100 -uroot -P3306 -pT3O\$8yKl%aRi user_db
+
+
+示例：
 ``` sql
 $ mysql -h192.168.1.100 -uscoot -p
 $ mysql -h192.168.1.100 -uscoot -ptiger
 ```
+
+如果连接之后，查询表数据发现是乱码，可以在连接的时候，指定编码：
+        mysql -h192.168.1.100 -uscoot -ptiger --default-character-set=utf8
 
 
 ### 不登录MYSQL来执行查询
@@ -1269,13 +1278,6 @@ SELECT * FROM t_product WHERE id IN
 ```
 
 
-### 命令行连接mysql
-        mysql -hip_address -uuser_name -Pport -ppassword db_name
-
-如果`-p`后面的密码中有特殊字符，就要加个`\`来转义
-        mysql -h192.168.1.100 -uroot -P3306 -pT3O\$8yKl%aRi user_db
-
-
 ### mysql报错ERROR 1064 (42000)
 原因是使用了mysql的保留字。如果表的字段使用了mysql的保留字，在查询的时候要用反引号将其引起来。
 
@@ -1372,6 +1374,15 @@ with recursive cte (id, name, parent_id) as (
 )
 select * from cte;
 ```
+
+
+### jdbc连接参数说明
+有jdbc连接如下：
+
+        jdbc:mysql://mysql.hewentian.com:3306/seata?useUnicode=true&rewriteBatchedStatements=true
+
+
+rewriteBatchedStatements：根据MySQL官网的说明，连接参数中的`rewriteBatchedStatements`为true时，在执行executeBatch，并且操作类型为insert时，jdbc驱动会把对应的SQL优化成`insert into () values (), ()`的形式来提升批量插入的性能。根据实际的测试，该参数设置为true后，对应的批量插入性能为原来的10倍多，因此在数据源为MySQL时，建议把该参数设置为true。
 
 
 ### MySQL JSON columns

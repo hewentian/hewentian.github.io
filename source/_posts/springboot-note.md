@@ -122,9 +122,10 @@ logging.path： 设置目录，会在该目录下创建 spring.log 文件，并�
 
 
 ### 通过命令行设置属性值
-相信使用过一段时间Spring Boot的用户，一定知道这条命令：
+相信使用过一段时间Spring Boot的用户，一定知道这两条命令：
 
         java -jar xxx.jar --server.port=8888 --spring.profiles.active=dev
+        java -Dserver.port=8888 -Dspring.profiles.active=dev -jar xxx.jar
 
 通过使用`--server.port`属性来设置`xxx.jar`应用的端口为8888。
 

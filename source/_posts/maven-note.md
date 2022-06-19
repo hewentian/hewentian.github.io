@@ -115,7 +115,14 @@ For example, when you have JUnit 4.12 in classpath and including DBUnit dependen
 
 一般组合使用这些使用，如`mvn clean compile`、`mvn clean package`
 
-在`eclipse`中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8
+强制更新选项
+
+        mvn -Pdev clean install -U
+
+-U,--update-snapshots    Forces a check for missing releases and updated snapshots on remote repositories
+
+
+### 在`eclipse`中，遇到Missing artifact jdk.tools:jdk.tools:jar:1.8
 
 原因：tools.jar包是JDK的，而tools.jar并未在仓库`maven repository`中
 
@@ -308,5 +315,81 @@ pom.xml配置如下：
 </mirror>
 ```
 
+
+### -D选项
+指定系统属性的值
+
+        -D,--define <arg>    Define a system property
+
+例如pom.xml内有：
+        <properties>
+            <jdk.version>1.8</jdk.version>
+        </properties>
+
+执行：
+        mvn -Djdk.version=1.17 clean package
+
+则pom.xml内`jdk.version`的值将被替换成1.17
+
+
+### -P选项
+指定profile
+
+        -P,--activate-profiles <arg>    Comma-delimited list of profiles to activate
+
+例如pom.xml内有：
+        <profiles>
+            <profile>    <!-- 开发环境 -->
+                <id>dev</id>
+                <activation>
+                    <property>
+                        <name>dev</name>
+                        <value>dev</value>
+                    </property>
+                    <activeByDefault>true</activeByDefault>
+                </activation>
+                <build>
+                    <resources>
+                        <resource>
+                            <directory>src/main/profiles/dev</directory>
+                        </resource>
+                    </resources>
+                </build>
+            </profile>
+
+            <profile>    <!-- 测试环境 -->
+                <id>test</id>
+                <activation>
+                    <property>
+                        <name>test</name>
+                        <value>test</value>
+                    </property>
+                </activation>
+                <build>
+                    <resources>
+                        <resource>
+                            <directory>src/main/profiles/test</directory>
+                        </resource>
+                    </resources>
+                </build>
+            </profile>
+        </profiles>
+
+执行：
+        mvn -Pdev clean package
+
+将触发dev环境的profile配置
+
+
+### 标签optional的作用
+``` xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-devtools</artifactId>
+    <optional>true</optional>
+</dependency>
+```
+
+例如Project A的某个依赖D`<optional>true</optional>`，当别人通过pom依赖Project A的时候，D不会被传递依赖进来。
 
 

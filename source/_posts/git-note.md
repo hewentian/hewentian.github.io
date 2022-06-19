@@ -228,7 +228,7 @@ core.quotepath设为false的话，就不会对0x80以上的字符进行quote，�
 ``` bash
 $ git pull origin master
 $ git log
-$ git checkout -b fix20191106 03b361719f93a74bb5a5cdc22fd4f621adc2822a
+$ git checkout -b fix20191106 469ac6e84d78e84cec59f9c3af8453fb21ce222b
 $ git add {修改过的文件}
 $ git commit -m "修改原因说明"
 $ git push origin fix20191106
@@ -259,5 +259,15 @@ $ git push origin fix20191106
 
 3. 新建分支时建立跟踪关系
         $ git checkout -b <本地分支名> <远程主机名>/<远程分支名>
+
+
+### 版本回退
+首先使用`git log`找到要回退到的`commit id`，然后在本地`reset`回此`commit id`，最后强制推到远程。
+
+``` bash
+$ git log
+$ git reset --hard 469ac6e84d78e84cec59f9c3af8453fb21ce222b
+$ git push origin prod --force
+```
 
 

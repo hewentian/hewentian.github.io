@@ -357,6 +357,9 @@ System.out.println(s); // abc，这里后面的空格也去掉了
 
         jar -uvf test.jar conf/config.properties
 
+5. 删除jar包中指定的文件
+        zip -d test.jar com/hewentian/study/fileToDelete.class
+
 
 ### IDEA一个工作空间打开多个项目
 如果，多个项目之间不是parent和module的关系，IDEA一个工作空间只能打开一个项目。这样的话，
