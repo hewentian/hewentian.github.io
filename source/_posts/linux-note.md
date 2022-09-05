@@ -80,6 +80,19 @@ $ useradd -m username	# 跟adduser一样，会在/home下建立一个文件夹us
 ```
 
 
+### 将用户加入sudo用户组
+``` bash
+$ usermod -aG sudo username
+$ usermod -aG wheel username  # 如果系统是 CentOS，则这样添加，sudo 组在 CentOS 中叫 wheel
+```
+
+
+### 切换用户
+``` bash
+$ sudo su username
+```
+
+
 ### linux删除用户
 若使用userdel username命令删除用户时，并不能删除该用户的所有信息，只是删除了/etc/passwd、/etc/shadow、/etc/group/、/etc/gshadow四个文件里的该账户和组的信息。默认情况下创建一个用户账号，会创建一个home目录和一个用户邮箱（在/var/spool/mail目录以用户名命名）。下次再创建用户时，就会出现：该用户已存在的提示。
 ``` bash
@@ -598,6 +611,12 @@ echo "-------------------- end to backup data $(date) --------------------"
 4. post form请求
 
         curl -X POST http://api.hewentian.com/echo/post/form -H "Content-Type: application/x-www-form-urlencoded" -d "param1=value1&param2=value2"
+
+5. 上传文件
+
+        curl -v -XPOST 'http://localhost:8080/upload/file' -F "myFile=@/home/hewentian/Pictures/unix.jpeg;type=image/jpeg"
+        curl -v -XPOST 'http://localhost:8080/upload/two-file' -F "myFile=@/home/hewentian/Pictures/unix.jpeg;type=image/jpeg" -F "myOtherFile=@/home/hewentian/Pictures/me.png;type=image/png"
+        curl -v -XPOST 'http://localhost:8080/upload/multiple-file' -F "myFiles=@/home/hewentian/Pictures/unix.jpeg;type=image/jpeg,/home/hewentian/Pictures/me.png;type=image/png"
 
 
 ### ubuntu 16.04 安装 google-chrome-stable_current_amd64.deb 方法

@@ -271,3 +271,23 @@ $ git push origin prod --force
 ```
 
 
+### Change Git Remote Origin
+1. Change Git Remote URL
+``` bash
+$ git remote set-url <remote_name> <remote_url>
+
+eg:
+$ git remote -v
+$ git remote set-url origin https://git-repo/new-repository.git
+```
+
+2. Changing Git Remote to SSH
+``` bash
+$ git remote set-url <remote_name> <ssh_remote_url>
+
+eg:
+$ git remote -v
+$ git remote set-url origin git@github.com:user/repository.git
+```
+
+

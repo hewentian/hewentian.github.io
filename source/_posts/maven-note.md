@@ -256,6 +256,23 @@ pom.xml配置如下：
         </plugin>
     </plugins>
 </build>
+
+
+指定main方法的第二种方式
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-jar-plugin</artifactId>
+    <version>3.2.0</version>
+    <configuration>
+        <archive>
+            <index>true</index>
+            <manifest>
+                <addClasspath>true</addClasspath>
+                <mainClass>com.hewentian.hello.HelloWorld</mainClass>
+            </manifest>
+        </archive>
+    </configuration>
+</plugin>
 ```
 
 
@@ -299,6 +316,25 @@ pom.xml配置如下：
   </build>
   ...
 </project>
+
+
+将依赖打进jar包的示例：
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-shade-plugin</artifactId>
+    <version>3.2.2</version>
+    <configuration>
+        <createDependencyReducedPom>true</createDependencyReducedPom>
+    </configuration>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>shade</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
 ```
 
 

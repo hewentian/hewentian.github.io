@@ -617,6 +617,53 @@ sql> SELECT * FROM (SELECT * FROM t_user ORDER BY birthday DESC) t GROUP BY t.na
 ```
 
 
+### 日期类型函数
+``` sql
+mysql> SELECT NOW(), CURRENT_TIMESTAMP;
++---------------------+---------------------+
+| NOW()               | CURRENT_TIMESTAMP   |
++---------------------+---------------------+
+| 2022-07-11 14:18:13 | 2022-07-11 14:18:13 |
++---------------------+---------------------+
+
+mysql> SELECT ADDDATE(NOW(), -3);
++---------------------+
+| ADDDATE(NOW(), -3)  |
++---------------------+
+| 2022-07-08 14:25:26 |
++---------------------+
+
+mysql> SELECT DATE_FORMAT(NOW(), '%Y-%m-%d %h:%i:%s'), DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(NOW(), '%Y-%m-%d %T');
++-----------------------------------------+-----------------------------------------+-----------------------------------+
+| DATE_FORMAT(NOW(), '%Y-%m-%d %h:%i:%s') | DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s') | DATE_FORMAT(NOW(), '%Y-%m-%d %T') |
++-----------------------------------------+-----------------------------------------+-----------------------------------+
+| 2022-07-11 02:20:09                     | 2022-07-11 14:20:09                     | 2022-07-11 14:20:09               |
++-----------------------------------------+-----------------------------------------+-----------------------------------+
+
+mysql> SELECT STR_TO_DATE('2022-07-11', '%Y-%m-%d'), STR_TO_DATE('2022-07-11 00:02:10', '%Y-%m-%d %T');
++---------------------------------------+---------------------------------------------------+
+| STR_TO_DATE('2022-07-11', '%Y-%m-%d') | STR_TO_DATE('2022-07-11 00:02:10', '%Y-%m-%d %T') |
++---------------------------------------+---------------------------------------------------+
+| 2022-07-11                            | 2022-07-11 00:02:10                               |
++---------------------------------------+---------------------------------------------------+
+
+mysql> SELECT TIMESTAMP(DATE_FORMAT(NOW(), '%Y-%m-%d')), TIMESTAMPADD(SECOND, 86399, DATE_FORMAT(NOW(),'%Y-%m-%d'));
++-------------------------------------------+------------------------------------------------------------+
+| TIMESTAMP(DATE_FORMAT(NOW(), '%Y-%m-%d')) | TIMESTAMPADD(SECOND, 86399, DATE_FORMAT(NOW(),'%Y-%m-%d')) |
++-------------------------------------------+------------------------------------------------------------+
+| 2022-07-11 00:00:00                       | 2022-07-11 23:59:59                                        |
++-------------------------------------------+------------------------------------------------------------+
+
+mysql> SELECT STR_TO_DATE(DATE_FORMAT(NOW(), '%Y-%m-%d'), '%Y-%m-%d %T'), DATE_ADD(DATE_FORMAT(NOW(), '%Y-%m-%d'), INTERVAL 86399 SECOND);
++------------------------------------------------------------+-----------------------------------------------------------------+
+| STR_TO_DATE(DATE_FORMAT(NOW(), '%Y-%m-%d'), '%Y-%m-%d %T') | DATE_ADD(DATE_FORMAT(NOW(), '%Y-%m-%d'), INTERVAL 86399 SECOND) |
++------------------------------------------------------------+-----------------------------------------------------------------+
+| 2022-07-11 00:00:00                                        | 2022-07-11 23:59:59                                             |
++------------------------------------------------------------+-----------------------------------------------------------------+
+
+```
+
+
 ### MySQL数据库备份和还原常用的命令
 #### 一、备份命令
 如果只需要导出表的结构,可以使用mysqldump的`-d`选项
@@ -645,6 +692,8 @@ mysqldump -hhostname -uusername -ppassword --all-databases > ~/allbackupfile.sql
 8、备份MySQL数据库某个表中指定条件的数据
 mysqldump -hhostname -uusername -ppassword databasename specific_table1 --where='age > 10' > ~/backupfile.sql
 ```
+
+如果执行过程中报`mysqldump: Couldn't execute 'SELECT COLUMN_NAME, JSON_EXTRACT(HISTOGRAM, '$."number-of-buckets-specified"')`，则加上这个参数即可解决：`--column-statistics=0`
 
 #### 二、还原命令
 ``` sql
@@ -755,6 +804,35 @@ INSERT IGNORE INTO tableName(column_list)
 VALUES (value_list),
        (value_list),
        ...
+```
+
+
+### 插入数据的时候，如果存在，则更新
+``` sql
+mysql> INSERT INTO t_user(name, age) VALUES('scott', 20), ('tiger', 30);
+Query OK, 2 rows affected (0.00 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM t_user;
++----+-------+------+
+| id | name  | age  |
++----+-------+------+
+|  1 | scott |   20 |
+|  2 | tiger |   30 |
++----+-------+------+
+2 rows in set (0.01 sec)
+
+mysql> INSERT INTO t_user(id, name, age) VALUE(1, 'ken', 40) ON DUPLICATE KEY UPDATE name = 'ken', age = 40;
+Query OK, 2 rows affected (0.01 sec)
+
+mysql> SELECT * FROM t_user;
++----+-------+------+
+| id | name  | age  |
++----+-------+------+
+|  1 | ken   |   40 |
+|  2 | tiger |   30 |
++----+-------+------+
+2 rows in set (0.01 sec)
 ```
 
 
@@ -1221,6 +1299,42 @@ MySQL [test]> select * from t_user tu right join t_contact tc on tu.id=tc.id;
 |    2 | Tiger |  2 | C    |
 | NULL | NULL  |  4 | D    |
 +------+-------+----+------+
+```
+
+
+### Case Statement
+Here is the syntax for MySQL Case statement.
+
+        select
+        case
+            when condition1 then value1
+            when condition2 then value2
+            ...
+        end,
+        column2, column3, ...
+        from table_name
+
+示例
+``` sql
+mysql> select * from t_user;
++----+------+-----+
+| id | name | age |
++----+------+-----+
+|  1 | AAA  |  10 |
+|  2 | BBB  |  20 |
+|  3 | CCC  |  30 |
++----+------+-----+
+3 rows in set (0.01 sec)
+
+mysql> select id, name, case when age = 10 then '小孩' when age > 10 and age < 20 then '少年' when age >= 20 then '青年' end as age from t_user;
++----+------+--------+
+| id | name | age    |
++----+------+--------+
+|  1 | AAA  | 小孩   |
+|  2 | BBB  | 青年   |
+|  3 | CCC  | 青年   |
++----+------+--------+
+3 rows in set (0.00 sec)
 ```
 
 

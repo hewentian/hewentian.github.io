@@ -115,6 +115,7 @@ $ mkdir data conf
 $ cd conf
 $ vi redis.conf
 
+bind 192.168.56.113    # 这里要指定IP地址。如果用 127.0.0.1，则 sentinel 将获取到 127.0.0.1 ，这样将导致客户端连接到它本机了
 port 6379
 requirepass abc123
 masterauth abc123
@@ -136,10 +137,11 @@ $ cp -r redis-master redis-replica-2
 $
 $ vi redis-replica-1/conf/redis.conf
 
+bind 192.168.56.113
 port 6380
 requirepass abc123
 masterauth abc123
-replicaof 127.0.0.1 6379
+replicaof 192.168.56.113 6379
 
 appendonly yes
 appendfilename "appendonly.aof"
@@ -152,10 +154,11 @@ aof-load-truncated yes
 
 $ vi redis-replica-2/conf/redis.conf
 
+bind 192.168.56.113
 port 6381
 requirepass abc123
 masterauth abc123
-replicaof 127.0.0.1 6379
+replicaof 192.168.56.113 6379
 
 appendonly yes
 appendfilename "appendonly.aof"
@@ -200,8 +203,8 @@ $ redis.hewentian.com:6379> info replication
 # Replication
 role:master
 connected_slaves:2
-slave0:ip=127.0.0.1,port=6380,state=online,offset=98,lag=1
-slave1:ip=127.0.0.1,port=6381,state=online,offset=98,lag=0
+slave0:ip=192.168.56.113,port=6380,state=online,offset=98,lag=1
+slave1:ip=192.168.56.113,port=6381,state=online,offset=98,lag=0
 master_failover_state:no-failover
 master_replid:2539e5441c16b58f2b934274db472690a9dd9139
 master_replid2:0000000000000000000000000000000000000000
@@ -218,7 +221,7 @@ $ redis-cli -h redis.hewentian.com -p 6380 -a abc123 -n 0 --raw
 redis.hewentian.com:6380> info replication
 # Replication
 role:slave
-master_host:127.0.0.1
+master_host:192.168.56.113
 master_port:6379
 master_link_status:up
 master_last_io_seconds_ago:5
@@ -245,7 +248,7 @@ $ redis-cli -h redis.hewentian.com -p 6381 -a abc123 -n 0 --raw
 redis.hewentian.com:6381> info replication
 # Replication
 role:slave
-master_host:127.0.0.1
+master_host:192.168.56.113
 master_port:6379
 master_link_status:up
 master_last_io_seconds_ago:9
@@ -275,8 +278,9 @@ $ cd /root/db
 $ vi sentinel-1.conf
 
 port 26379
+requirepass abc123
 dir /tmp
-sentinel monitor mymaster 127.0.0.1 6379 2
+sentinel monitor mymaster 192.168.56.113 6379 2
 sentinel auth-pass mymaster abc123
 sentinel down-after-milliseconds mymaster 30000
 sentinel parallel-syncs mymaster 1
@@ -287,8 +291,9 @@ sentinel deny-scripts-reconfig yes
 $ vi sentinel-2.conf
 
 port 26380
+requirepass abc123
 dir /tmp
-sentinel monitor mymaster 127.0.0.1 6379 2
+sentinel monitor mymaster 192.168.56.113 6379 2
 sentinel auth-pass mymaster abc123
 sentinel down-after-milliseconds mymaster 30000
 sentinel parallel-syncs mymaster 1
@@ -299,8 +304,9 @@ sentinel deny-scripts-reconfig yes
 $ vi sentinel-3.conf
 
 port 26381
+requirepass abc123
 dir /tmp
-sentinel monitor mymaster 127.0.0.1 6379 2
+sentinel monitor mymaster 192.168.56.113 6379 2
 sentinel auth-pass mymaster abc123
 sentinel down-after-milliseconds mymaster 30000
 sentinel parallel-syncs mymaster 1
@@ -332,7 +338,7 @@ $ sudo docker run \
 
 查看连接情况：
 ``` bash
-$ redis-cli -h redis.hewentian.com -p 26379 --raw
+$ redis-cli -h redis.hewentian.com -p 26379 -a abc123 --raw
 redis.hewentian.com:26379> info sentinel
 # Sentinel
 sentinel_masters:1
@@ -341,11 +347,11 @@ sentinel_tilt_since_seconds:-1
 sentinel_running_scripts:0
 sentinel_scripts_queue_length:0
 sentinel_simulate_failure_flags:0
-master0:name=mymaster,status=ok,address=127.0.0.1:6379,slaves=2,sentinels=3
+master0:name=mymaster,status=ok,address=192.168.56.113:6379,slaves=2,sentinels=3
 redis.hewentian.com:26379>
 
 
-$ redis-cli -h redis.hewentian.com -p 26380 --raw
+$ redis-cli -h redis.hewentian.com -p 26380 -a abc123 --raw
 redis.hewentian.com:26380> info sentinel
 # Sentinel
 sentinel_masters:1
@@ -354,11 +360,11 @@ sentinel_tilt_since_seconds:-1
 sentinel_running_scripts:0
 sentinel_scripts_queue_length:0
 sentinel_simulate_failure_flags:0
-master0:name=mymaster,status=ok,address=127.0.0.1:6379,slaves=2,sentinels=3
+master0:name=mymaster,status=ok,address=192.168.56.113:6379,slaves=2,sentinels=3
 redis.hewentian.com:26380>
 
 
-$ redis-cli -h redis.hewentian.com -p 26381 --raw
+$ redis-cli -h redis.hewentian.com -p 26381 -a abc123 --raw
 redis.hewentian.com:26381> info sentinel
 # Sentinel
 sentinel_masters:1
@@ -367,7 +373,7 @@ sentinel_tilt_since_seconds:-1
 sentinel_running_scripts:0
 sentinel_scripts_queue_length:0
 sentinel_simulate_failure_flags:0
-master0:name=mymaster,status=ok,address=127.0.0.1:6379,slaves=2,sentinels=3
+master0:name=mymaster,status=ok,address=192.168.56.113:6379,slaves=2,sentinels=3
 redis.hewentian.com:26381>
 ```
 
@@ -401,17 +407,17 @@ $ sudo docker logs -f redis-sentinel-1
 1:X 15 Dec 2021 00:21:50.561 # Could not rename tmp config file (Device or resource busy)
 1:X 15 Dec 2021 00:21:50.561 # WARNING: Sentinel was not able to save the new configuration on disk!!!: Device or resource busy
 1:X 15 Dec 2021 00:21:50.561 # Sentinel ID is 4d87c515992607402e2d787d768798aa40708ccf
-1:X 15 Dec 2021 00:21:50.561 # +monitor master mymaster 127.0.0.1 6379 quorum 2
-1:X 15 Dec 2021 00:21:50.561 * +slave slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
+1:X 15 Dec 2021 00:21:50.561 # +monitor master mymaster 192.168.56.113 6379 quorum 2
+1:X 15 Dec 2021 00:21:50.561 * +slave slave 192.168.56.113:6380 192.168.56.113 6380 @ mymaster 192.168.56.113 6379
 1:X 15 Dec 2021 00:21:50.563 # Could not rename tmp config file (Device or resource busy)
 1:X 15 Dec 2021 00:21:50.563 # WARNING: Sentinel was not able to save the new configuration on disk!!!: Device or resource busy
-1:X 15 Dec 2021 00:21:50.563 * +slave slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
+1:X 15 Dec 2021 00:21:50.563 * +slave slave 192.168.56.113:6381 192.168.56.113 6381 @ mymaster 192.168.56.113 6379
 1:X 15 Dec 2021 00:21:50.565 # Could not rename tmp config file (Device or resource busy)
 1:X 15 Dec 2021 00:21:50.565 # WARNING: Sentinel was not able to save the new configuration on disk!!!: Device or resource busy
-1:X 15 Dec 2021 00:22:06.426 * +sentinel sentinel 6c0a9d267de6b16a3f7e6ff7bd16c10c84299c5b 127.0.0.1 26380 @ mymaster 127.0.0.1 6379
+1:X 15 Dec 2021 00:22:06.426 * +sentinel sentinel 6c0a9d267de6b16a3f7e6ff7bd16c10c84299c5b 192.168.56.113 26380 @ mymaster 192.168.56.113 6379
 1:X 15 Dec 2021 00:22:06.432 # Could not rename tmp config file (Device or resource busy)
 1:X 15 Dec 2021 00:22:06.433 # WARNING: Sentinel was not able to save the new configuration on disk!!!: Device or resource busy
-1:X 15 Dec 2021 00:22:18.257 * +sentinel sentinel 53c09ff57b5927ca5ccf4d76216bcb926c38ad1e 127.0.0.1 26381 @ mymaster 127.0.0.1 6379
+1:X 15 Dec 2021 00:22:18.257 * +sentinel sentinel 53c09ff57b5927ca5ccf4d76216bcb926c38ad1e 192.168.56.113 26381 @ mymaster 192.168.56.113 6379
 1:X 15 Dec 2021 00:22:18.267 # Could not rename tmp config file (Device or resource busy)
 1:X 15 Dec 2021 00:22:18.267 # WARNING: Sentinel was not able to save the new configuration on disk!!!: Device or resource busy
 ```
@@ -424,35 +430,35 @@ $ sudo docker stop redis-master
 
 查看`redis-sentinel-1`的日志输出如下：
 ``` bash
-1:X 15 Dec 2021 00:42:14.088 # +sdown master mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:14.173 # +odown master mymaster 127.0.0.1 6379 #quorum 2/2
+1:X 15 Dec 2021 00:42:14.088 # +sdown master mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:14.173 # +odown master mymaster 192.168.56.113 6379 #quorum 2/2
 1:X 15 Dec 2021 00:42:14.173 # +new-epoch 1
-1:X 15 Dec 2021 00:42:14.173 # +try-failover master mymaster 127.0.0.1 6379
+1:X 15 Dec 2021 00:42:14.173 # +try-failover master mymaster 192.168.56.113 6379
 1:X 15 Dec 2021 00:42:14.182 # Could not rename tmp config file (Device or resource busy)
 1:X 15 Dec 2021 00:42:14.182 # WARNING: Sentinel was not able to save the new configuration on disk!!!: Device or resource busy
 1:X 15 Dec 2021 00:42:14.183 # +vote-for-leader 6c0a9d267de6b16a3f7e6ff7bd16c10c84299c5b 1
 1:X 15 Dec 2021 00:42:14.208 # 4d87c515992607402e2d787d768798aa40708ccf voted for 6c0a9d267de6b16a3f7e6ff7bd16c10c84299c5b 1
 1:X 15 Dec 2021 00:42:14.209 # 53c09ff57b5927ca5ccf4d76216bcb926c38ad1e voted for 6c0a9d267de6b16a3f7e6ff7bd16c10c84299c5b 1
-1:X 15 Dec 2021 00:42:14.242 # +elected-leader master mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:14.242 # +failover-state-select-slave master mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:14.308 # +selected-slave slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:14.308 * +failover-state-send-slaveof-noone slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:14.364 * +failover-state-wait-promotion slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
+1:X 15 Dec 2021 00:42:14.242 # +elected-leader master mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:14.242 # +failover-state-select-slave master mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:14.308 # +selected-slave slave 192.168.56.113:6380 192.168.56.113 6380 @ mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:14.308 * +failover-state-send-slaveof-noone slave 192.168.56.113:6380 192.168.56.113 6380 @ mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:14.364 * +failover-state-wait-promotion slave 192.168.56.113:6380 192.168.56.113 6380 @ mymaster 192.168.56.113 6379
 1:X 15 Dec 2021 00:42:15.022 # Could not rename tmp config file (Device or resource busy)
 1:X 15 Dec 2021 00:42:15.023 # WARNING: Sentinel was not able to save the new configuration on disk!!!: Device or resource busy
-1:X 15 Dec 2021 00:42:15.023 # +promoted-slave slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:15.023 # +failover-state-reconf-slaves master mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:15.104 * +slave-reconf-sent slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:15.285 # -odown master mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:16.063 * +slave-reconf-inprog slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:16.064 * +slave-reconf-done slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:16.129 # +failover-end master mymaster 127.0.0.1 6379
-1:X 15 Dec 2021 00:42:16.129 # +switch-master mymaster 127.0.0.1 6379 127.0.0.1 6380
-1:X 15 Dec 2021 00:42:16.130 * +slave slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6380
-1:X 15 Dec 2021 00:42:16.131 * +slave slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380
+1:X 15 Dec 2021 00:42:15.023 # +promoted-slave slave 192.168.56.113:6380 192.168.56.113 6380 @ mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:15.023 # +failover-state-reconf-slaves master mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:15.104 * +slave-reconf-sent slave 192.168.56.113:6381 192.168.56.113 6381 @ mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:15.285 # -odown master mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:16.063 * +slave-reconf-inprog slave 192.168.56.113:6381 192.168.56.113 6381 @ mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:16.064 * +slave-reconf-done slave 192.168.56.113:6381 192.168.56.113 6381 @ mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:16.129 # +failover-end master mymaster 192.168.56.113 6379
+1:X 15 Dec 2021 00:42:16.129 # +switch-master mymaster 192.168.56.113 6379 192.168.56.113 6380
+1:X 15 Dec 2021 00:42:16.130 * +slave slave 192.168.56.113:6381 192.168.56.113 6381 @ mymaster 192.168.56.113 6380
+1:X 15 Dec 2021 00:42:16.131 * +slave slave 192.168.56.113:6379 192.168.56.113 6379 @ mymaster 192.168.56.113 6380
 1:X 15 Dec 2021 00:42:16.135 # Could not rename tmp config file (Device or resource busy)
 1:X 15 Dec 2021 00:42:16.136 # WARNING: Sentinel was not able to save the new configuration on disk!!!: Device or resource busy
-1:X 15 Dec 2021 00:42:46.200 # +sdown slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380
+1:X 15 Dec 2021 00:42:46.200 # +sdown slave 192.168.56.113:6379 192.168.56.113 6379 @ mymaster 192.168.56.113 6380
 ```
 
 由日志可知，端口为`6380`的redis已经被选举为master节点，我们看下`6380`、`6381`的情况：
@@ -461,7 +467,7 @@ redis.hewentian.com:6380> info replication
 # Replication
 role:master
 connected_slaves:1
-slave0:ip=127.0.0.1,port=6381,state=online,offset=262678,lag=1
+slave0:ip=192.168.56.113,port=6381,state=online,offset=262678,lag=1
 master_failover_state:no-failover
 master_replid:dc5c403d30736f872625b3669a7a721234cfe92f
 master_replid2:2539e5441c16b58f2b934274db472690a9dd9139
@@ -477,7 +483,7 @@ redis.hewentian.com:6380>
 redis.hewentian.com:6381> info replication
 # Replication
 role:slave
-master_host:127.0.0.1
+master_host:192.168.56.113
 master_port:6380
 master_link_status:up
 master_last_io_seconds_ago:0
@@ -508,8 +514,8 @@ $ sudo docker start redis-master
 
 查看`redis-sentinel-1`的日志输出如下：
 ``` bash
-1:X 15 Dec 2021 00:51:52.101 # -sdown slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380
-1:X 15 Dec 2021 00:52:02.065 * +convert-to-slave slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380
+1:X 15 Dec 2021 00:51:52.101 # -sdown slave 192.168.56.113:6379 192.168.56.113 6379 @ mymaster 192.168.56.113 6380
+1:X 15 Dec 2021 00:52:02.065 * +convert-to-slave slave 192.168.56.113:6379 192.168.56.113 6379 @ mymaster 192.168.56.113 6380
 ```
 
 由日志可知，端口为`6379`的redis已经变成slave节点，我们看下`6379`、`6380`、`6381`的情况：
@@ -517,7 +523,7 @@ $ sudo docker start redis-master
 redis.hewentian.com:6379> info replication
 # Replication
 role:slave
-master_host:127.0.0.1
+master_host:192.168.56.113
 master_port:6380
 master_link_status:up
 master_last_io_seconds_ago:0
@@ -544,8 +550,8 @@ redis.hewentian.com:6380> info replication
 # Replication
 role:master
 connected_slaves:2
-slave0:ip=127.0.0.1,port=6381,state=online,offset=367435,lag=1
-slave1:ip=127.0.0.1,port=6379,state=online,offset=367568,lag=0
+slave0:ip=192.168.56.113,port=6381,state=online,offset=367435,lag=1
+slave1:ip=192.168.56.113,port=6379,state=online,offset=367568,lag=0
 master_failover_state:no-failover
 master_replid:dc5c403d30736f872625b3669a7a721234cfe92f
 master_replid2:2539e5441c16b58f2b934274db472690a9dd9139
@@ -561,7 +567,7 @@ redis.hewentian.com:6380>
 redis.hewentian.com:6381> info replication
 # Replication
 role:slave
-master_host:127.0.0.1
+master_host:192.168.56.113
 master_port:6380
 master_link_status:up
 master_last_io_seconds_ago:0
