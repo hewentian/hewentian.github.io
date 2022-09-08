@@ -81,7 +81,7 @@ elasticsearch在索引数据的时候，如果存在副本，那么主分片会�
 ``` kibana
 PUT /my-index-000001/_settings
 {
-  "index" : {
+  "index": {
     "number_of_replicas" : 2
   }
 }
@@ -298,24 +298,23 @@ POST twitter/_update/1
 
 ### Delete API
 Removes a JSON document from the specified index.
-
 ``` kibana
 DELETE /<index>/_doc/<_id>
 ```
 
-在ES里面删除数据的时候要非常小心，如果全部都清空了，可能整个库的MAPPING都会有问题。这时，一些原先可以执行的语句可能会无法执行。
-
-
-### 清空数据
-注意是清空，不是删除，示例：
+根据查询结果删除，注意这里发的是`POST`请求
 ``` kibana
-POST /my_index/my_type/_delete_by_query?refresh&slices=3&pretty
+POST /my-index-000001/_delete_by_query?refresh&slices=3&pretty=true
 {
   "query": {
-    "match_all": {}
+    "match": {
+      "user.id": "elkbee"
+    }
   }
 }
 ```
+
+在ES里面删除数据的时候要非常小心，如果全部都清空了，可能整个库的mapping都会有问题。这时，一些原先可以执行的语句可能会无法执行。
 
 
 ### Search API 搜索
@@ -604,8 +603,14 @@ ES默认的分页机制一个不足的地方是，比如有5010条数据，当�
 
 
 要解决这个问题，可以使用下面的方式来改变ES默认深度分页的`index.max_result_window`最大窗口值
-
-    curl -XPUT http://127.0.0.1:9200/my_index/_settings -d '{ "index" : { "max_result_window" : 500000}}'
+``` kibana
+PUT /my_index/_settings
+{
+  "index": {
+    "max_result_window": 500000
+  }
+}
+```
 
 其中my_index为要修改的index名，500000为要调整的新的窗口数
 
@@ -713,68 +718,52 @@ do {
 
 
 {
-  "sort": [
-    {
-      "updatetime_6h": {
-        "order": "desc"
-      }
-    },
-    {
-      "_score": {
-        "order": "desc"
-      }
-    }
-  ],
   "query": {
-    "filtered": {
-      "query": {
-        "bool": {
-          "must_not": [],
-          "should": [
-            {
-              "bool": {
-                "should": [
-                  {
-                    "match_phrase": {
-                      "app_type.title": {
-                        "query": "china"
-                      }
-                    }
-                  },
-                  {
-                    "match_phrase": {
-                      "app_type.title": {
-                        "query": "中国"
-                      }
-                    }
+    "bool": {
+      "must_not": [],
+      "should": [
+        {
+          "bool": {
+            "should": [
+              {
+                "match_phrase": {
+                  "app_type.title": {
+                    "query": "china"
                   }
-                ]
-              }
-            },
-            {
-              "bool": {
-                "should": [
-                  {
-                    "match_phrase": {
-                      "app_type.body_text": {
-                        "query": "china"
-                      }
-                    }
-                  },
-                  {
-                    "match_phrase": {
-                      "app_type.body_text": {
-                        "query": "中国"
-                      }
-                    }
+                }
+              },
+              {
+                "match_phrase": {
+                  "app_type.title": {
+                    "query": "中国"
                   }
-                ]
+                }
               }
-            }
-          ],
-          "must": []
+            ]
+          }
+        },
+        {
+          "bool": {
+            "should": [
+              {
+                "match_phrase": {
+                  "app_type.body_text": {
+                    "query": "china"
+                  }
+                }
+              },
+              {
+                "match_phrase": {
+                  "app_type.body_text": {
+                    "query": "中国"
+                  }
+                }
+              }
+            ]
+          }
         }
-      },
+      ],
+      "must": [],
       "filter": {
         "bool": {
           "should": [],
@@ -787,10 +776,8 @@ do {
               }
             },
             {
-              "query": {
-                "wildcard": {
-                  "user_ids": "*760aa069-2ed2-40d6-89da-f62e83f82887*"
-                }
+              "wildcard": {
+                "user_ids": "*760aa069-2ed2-40d6-89da-f62e83f82887*"
               }
             }
           ]
@@ -799,7 +786,19 @@ do {
     }
   },
   "from": 0,
-  "size": 20
+  "size": 20,
+  "sort": [
+    {
+      "updatetime_6h": {
+        "order": "desc"
+      }
+    },
+    {
+      "_score": {
+        "order": "desc"
+      }
+    }
+  ]
 }
 
 

@@ -1,16 +1,17 @@
 ---
-title: elasticsearch 单节点安装
+title: elasticsearch 的安装
 date: 2018-09-16 11:18:34
 tags: elasticsearch
 categories: bigdata
 ---
 
-本文将说下`elasticsearch`的单节点安装，我的机器为`Ubuntu 18.04 LTS`，当前用户为`hewentian`
+### 单节点的安装
+本文将说下`elasticsearch`的单节点安装，我的机器为`Ubuntu 18.04 LTS`，当前用户为`hadoop`
 
 首先，我们要将`elasticsearch`安装包下载回来，截止本文写时，它的最新版本为`8.4.0`，可以在它的[官网](https://www.elastic.co/downloads/elasticsearch)下载。
 
 ``` bash
-$ cd /home/hewentian/ProjectD/
+$ cd /home/hadoop/
 $ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.4.0-linux-x86_64.tar.gz
 $ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.4.0-linux-x86_64.tar.gz.sha512
 
@@ -23,7 +24,7 @@ $ tar -xzf elasticsearch-8.4.0-linux-x86_64.tar.gz
 
 对`elasticsearch`进行设置（目前是单节点，所以也可以不对`elasticsearch.yml`进行设置，可直接跳过）：
 ``` bash
-$ cd /home/hewentian/ProjectD/elasticsearch-8.4.0/config
+$ cd /home/hadoop/elasticsearch-8.4.0/config
 $ vi elasticsearch.yml 		     # 增加下面的配置
 
 cluster.name: hewentian-cluster	 # 配置集群的名字
@@ -39,11 +40,13 @@ http.port: 9200			         # 默认也是这个端口
 # Path to log files:
 #
 #path.logs: /path/to/logs
+
+#cluster.initial_master_nodes: ["node-1"]  # 启动后，这个会自动产生
 ```
 
 内存大小的设置，根据机器内存大小而设置，一般不超过系统总内存的一半：
 ``` bash
-$ cd /home/hewentian/ProjectD/elasticsearch-8.4.0/config
+$ cd /home/hadoop/elasticsearch-8.4.0/config
 $ vi jvm.options
 
 -Xms1g
@@ -82,8 +85,8 @@ $ exit				            # 退出 root
 注意，不能以root帐号启动elasticsearch。要用普通用户，并且要以 sudo 方式启动。
 
 ``` bash
-$ cd /home/hewentian/ProjectD/elasticsearch-8.4.0/
-$ sudo su hewentian
+$ cd /home/hadoop/elasticsearch-8.4.0/
+$ sudo su hadoop
 $ ./bin/elasticsearch
 
 
@@ -132,7 +135,7 @@ Generate an enrollment token for Elasticsearch nodes with
 
 
 ``` bash
-$ curl --cacert /home/hewentian/ProjectD/elasticsearch-8.4.0/config/certs/http_ca.crt -u elastic https://192.168.56.113:9200
+$ curl --cacert /home/hadoop/elasticsearch-8.4.0/config/certs/http_ca.crt -u elastic https://192.168.56.113:9200
 Enter host password for user 'elastic':
 {
   "name" : "node-1",
@@ -160,7 +163,7 @@ Enter host password for user 'elastic':
 kibana的版本，要和elasticsearch的版本一致，我们都下载`8.4.0`，可以在它的[官网](https://www.elastic.co/downloads/kibana)下载。
 
 ``` bash
-$ cd /home/hewentian/ProjectD/
+$ cd /home/hadoop/
 $ wget https://artifacts.elastic.co/downloads/kibana/kibana-8.4.0-linux-x86_64.tar.gz
 $ wget https://artifacts.elastic.co/downloads/kibana/kibana-8.4.0-linux-x86_64.tar.gz.sha512
 
@@ -173,7 +176,7 @@ $ tar -xzf kibana-8.4.0-linux-x86_64.tar.gz
 
 配置kibana
 ``` bash
-$ vi /home/hewentian/ProjectD/kibana-8.4.0/config/kibana.yml
+$ vi /home/hadoop/kibana-8.4.0/config/kibana.yml
 
 server.port: 5601
 server.host: "192.168.56.113"
@@ -181,7 +184,7 @@ server.host: "192.168.56.113"
 
 启动 Kibana
 ``` bash
-$ /home/hewentian/ProjectD/kibana-8.4.0/
+$ /home/hadoop/kibana-8.4.0/
 $ ./bin/kibana
 
 
@@ -208,4 +211,99 @@ Go to http://192.168.56.113:5601/?code=299251 to get started.
 
 登录 Kibana 后，点击左则菜单的"Dev Tools"，即可以打开搜索的窗口。
 
+
+### 集群的安装
+https://www.elastic.co/guide/en/elasticsearch/reference/8.4/add-elasticsearch-nodes.html
+
+我们将安装3个节点的集群。在3个节点上面，都要`修改linux系统参数`，具体设置方式见上面单节点安装。
+
+我们将上面已经安装好的单节点，作为我们集群的第一个节点。然后，我们在另外两台机器上面，分别安装elasticsearch。
+
+在`192.168.56.112`上面安装：
+``` bash
+$ cd /home/hadoop/
+$ tar -xzf elasticsearch-8.4.0-linux-x86_64.tar.gz
+$ vi elasticsearch-8.4.0/config/elasticsearch.yml
+
+cluster.name: hewentian-cluster
+node.name: node-2
+
+network.host: 192.168.56.112
+http.port: 9200
+
+#transport.host    # Defaults to the address given by network.host
+#transport.port    # Defaults to 9300-9400
+
+#discovery.seed_hosts: ["192.168.56.111", "192.168.56.112", "192.168.56.113"]  # 这个不用配置，会自动产生
+#cluster.initial_master_nodes: ["node-1", "node-2", "node-3"]
+```
+
+内存大小的设置，参考上面单节点安装。
+
+到`192.168.56.113`节点上面的elasticsearch安装目录生成一个新的token：
+``` bash
+$ cd /home/hadoop/elasticsearch-8.4.0/
+$ ./bin/elasticsearch-create-enrollment-token -s node
+```
+
+然后回到我们准备安装的新节点，启动elasticsearch，将`<enrollment-token>`替换成上面产生的token：
+``` bash
+$ cd /home/hadoop/elasticsearch-8.4.0/
+$ ./bin/elasticsearch --enrollment-token <enrollment-token>
+```
+
+启动后，会自动在`/home/hadoop/elasticsearch-8.4.0/config`目前下生成一个`certs`目录，这个目录中的证书和`192.168.56.113`上的是一样的。
+
+验证安装是否成功：
+        curl --cacert /home/hadoop/elasticsearch-8.4.0/config/certs/http_ca.crt -u elastic https://192.168.56.112:9200
+
+将上面的安装步骤，在`192.168.56.111`上面安装也执行一次。到此，集群安装完毕。
+
+
+查看集群状态
+``` kibana
+GET _cat/health
+
+GET _cat/nodes
+```
+
+
+重启集群步骤：
+1. Disable shard allocation.
+``` kibana
+PUT _cluster/settings
+{
+  "persistent": {
+    "cluster.routing.allocation.enable": "primaries"
+  }
+}
+```
+
+2. Stop indexing and perform a flush.
+``` kibana
+POST /_flush
+```
+
+3. 重启所有节点，重启节点的时候使用`./bin/elasticsearch`就可以了，不用再带`<enrollment-token>`参数。
+
+4. Re-enable allocation.
+``` kibana
+PUT _cluster/settings
+{
+  "persistent": {
+    "cluster.routing.allocation.enable": null
+  }
+}
+```
+
+
+删除节点：
+``` kibana
+POST /_cluster/voting_config_exclusions?node_names=node_name
+
+eg:
+POST /_cluster/voting_config_exclusions?node_names=node-3
+```
+
+删除的节点重启后，会自动重新加入集群的。
 
