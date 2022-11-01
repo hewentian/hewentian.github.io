@@ -378,6 +378,70 @@ GET /twitter,my-index-000001/_search?pretty=true
     "match_all": {}
   }
 }
+
+
+简单联合查询
+GET /user/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "name": "scott"
+          }
+        }
+      ],
+      "should": [
+        {
+          "range": {
+            "age": {
+              "gte": 10,
+              "lte": 20
+            }
+          }
+        }
+      ]
+    }
+  },
+  "size": 20
+}
+
+
+term查询
+GET /user/_search
+{
+  "query": {
+    "term": {
+      "name": {
+        "value": "scott"
+      }
+    }
+  },
+  "size": 20
+}
+```
+
+
+### 聚合查询
+``` kibana
+GET /user/_search
+{
+  "query": {
+    "match": {
+      "name": "scott"
+    }
+  },
+  "aggs": {
+    "age-histogram": {
+      "histogram": {
+        "field": "age",
+        "interval": 22
+      }
+    }
+  },
+  "size": 0
+}
 ```
 
 

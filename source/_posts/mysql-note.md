@@ -1450,6 +1450,14 @@ WHERE
     m.percentage IS NULL;
 ```
 
+另一个例子：
+``` sql
+UPDATE t_user_info i
+INNER JOIN t_user u ON i.user_id = u.id AND (LOWER(u.nick_name) = i.name OR UPPER(u.nick_name) = i.name)
+SET i.remark = 'can update'
+WHERE i.is_deleted = 0 AND u.is_deleted = 0;
+```
+
 
 ### FOREIGN KEY引用导致无法删表
 这时候，只要按如下方式删除，即可。
@@ -1715,6 +1723,47 @@ mysql> SELECT * FROM test WHERE address->"$.city" IS NOT NULL;
 |  2 | ho   |   21 | {"city": "广州", "province": "广东"}     |
 +----+------+------+------------------------------------------+
 1 row in set (0.01 sec)
+
+```
+
+
+### LIKE 查询
+LIKE查询默认大小写不敏感，但是，我们可以强制它大小写敏感。
+``` sql
+CREATE TABLE `t_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'ID',
+  `name` varchar(100) NOT NULL COMMENT 'name'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO t_user(id, name) VALUE(1,'Tim');
+INSERT INTO t_user(id, name) VALUE(2,'tim');
+INSERT INTO t_user(id, name) VALUE(3,'Ho');
+
+mysql> SELECT * FROM t_user WHERE name LIKE '%t%';
++----+------+
+| id | name |
++----+------+
+|  1 | Tim  |
+|  2 | tim  |
++----+------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM t_user WHERE name LIKE '%T%';
++----+------+
+| id | name |
++----+------+
+|  1 | Tim  |
+|  2 | tim  |
++----+------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM t_user WHERE name LIKE BINARY '%t%';
++----+------+
+| id | name |
++----+------+
+|  2 | tim  |
++----+------+
+1 row in set (0.00 sec)
 
 ```
 

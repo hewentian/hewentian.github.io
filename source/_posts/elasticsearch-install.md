@@ -307,3 +307,4 @@ POST /_cluster/voting_config_exclusions?node_names=node-3
 
 删除的节点重启后，会自动重新加入集群的。
 
+

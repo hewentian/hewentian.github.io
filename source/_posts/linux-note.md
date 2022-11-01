@@ -1675,6 +1675,35 @@ $ exit
         sudo apt-get clean         会把你已安装的软件包的安装包也删除掉，当然多数情况下这些包没什么用了
         sudo apt-get autoremove    删除为了满足其他软件包的依赖而安装的，但现在不再需要的软件包
 
+进入 /var/log，将没用的、大的日志清理掉
+
+        cd /var/log
+        sudo du -sh *
+
+清理过时的snap
+
+        cd /var/lib/snapd/
+        sudo du -sh *
+        ls /var/lib/snapd/snaps      删除旧的snap版本，当前使用的，一般是最新版本
+
+使用Canonical Snapcraft团队的成员Alan Pope提供的小脚本：
+``` bash
+#!/bin/bash
+# Removes old vevisions of snaps
+# CLOSE ALL SNAPS BEFORE RUNNING THIS
+set -eu
+snap list --all | awk '/disabled/{print $1, $3}' |
+    while read snapname revision; do
+        snap remove "$snapname" --revision="$revision"
+    done
+```
+
+
+清理缓存
+
+        cd ~/.cache/
+        du -sh *
+
 
 ### linux系统ssh免密码登录另一台linux机器执行某个脚本
 例如，我要在本机通过ssh免密执行一个在IP为`192.168.30.241`的linux机器上的脚本，目标机器的用户为root，SSH端口为：12022
@@ -2515,6 +2544,10 @@ FTP暴力攻击
         nmap --script ftp-brute -p 21 192.168.8.112
 
 在上面的命令中加上`-v`会输出更多的信息，可以加多个`v`，如`-vvv`。
+
+
+### linux分区工具
+https://www.pragmaticlinux.com/2020/09/how-to-increase-the-disk-size-in-a-virtualbox-virtual-machine/
 
 
 ### ubuntu安装GoldenDict英语词典
