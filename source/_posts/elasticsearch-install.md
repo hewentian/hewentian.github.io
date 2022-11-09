@@ -308,3 +308,38 @@ POST /_cluster/voting_config_exclusions?node_names=node-3
 删除的节点重启后，会自动重新加入集群的。
 
 
+### 安装ik分词和pinyin分词
+下载和elasticsearch版本对应的ik分词和pinyin分词，下载地址如下：
+https://github.com/medcl/elasticsearch-analysis-ik/releases
+https://github.com/medcl/elasticsearch-analysis-pinyin/releases
+
+这里下载了 elasticsearch-analysis-ik-8.4.0.zip、elasticsearch-analysis-pinyin-8.4.0.zip，安装方式如下：
+``` bash
+$ cd /home/hadoop/elasticsearch-8.4.0/plugins
+$ mkdir ik pinyin
+$
+$ cd /home/hadoop/
+$ unzip -d /home/hadoop/elasticsearch-8.4.0/plugins/ik/ elasticsearch-analysis-ik-8.4.0.zip
+$ unzip -d /home/hadoop/elasticsearch-8.4.0/plugins/pinyin/ elasticsearch-analysis-pinyin-8.4.0.zip
+```
+
+
+重启elasticsearch
+``` bash
+$ cd /home/hadoop/elasticsearch-8.4.0/
+$ pkill -F pid
+$ ./bin/elasticsearch -d -p pid
+```
+
+
+查看已经安装的插件
+``` bin
+$ cd /home/hadoop/elasticsearch-8.4.0
+$ ./bin/elasticsearch-plugin list
+ik
+pinyin
+```
+
+由上面的输出可知，安装成功。
+
+

@@ -9,11 +9,10 @@ categories: bigdata
 [Elasticsearch 权威指南](https://www.elastic.co/guide/cn/elasticsearch/guide/current/index.html "Elasticsearch 权威指南")
 [Elasticsearch Reference](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html "Elasticsearch Reference")
 http://es.xiaoleilu.com/080_Structured_Search/20_contains.html
-https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core
 
-首先，你必须至少有一台`elasticsearch`服务器可以使用，如果还没安装，可以参考我的上两篇 [elasticsearch 单节点安装][link_id_elasticsearch-standalone]、[elasticsearch 集群的搭建][link_id_elasticsearch-cluster]
+首先，你必须至少有一台`elasticsearch`服务器可以使用，如果还没安装，可以参考我的上一篇 [elasticsearch 的安装][link_id_elasticsearch-install]
 
-使用JAVA API来操作`elasticsearch`的例子可以在这里找到：[EsJestUtil.java][link_id_EsJestUtil]、[EsJestDemo.java][link_id_EsJestDemo]
+使用JAVA API来操作`elasticsearch`的例子可以在这里找到：[ElasticsearchUtil.java][link_id_ElasticsearchUtil]、[ElasticsearchDemo.java][link_id_ElasticsearchDemo]
 
 
 ### elasticsearch使用示例
@@ -442,6 +441,26 @@ GET /user/_search
   },
   "size": 0
 }
+
+
+GET /user/_search
+{
+  "aggs": {
+    "name-term": {
+      "terms": {
+        "field": "name.keyword",
+        "size": 10
+      }
+    },
+    "age-term": {
+      "terms": {
+        "field": "age",
+        "size": 10
+      }
+    }
+  },
+  "size": 0
+}
 ```
 
 
@@ -635,6 +654,61 @@ ES一次查询，最多返回10条，但hits会显示total一共有多少条，�
 
 
 ### 深度翻页问题
+
+#### scroll search
+https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html#scroll-search-results
+
+We no longer recommend using the scroll API for deep pagination. If you need to preserve the index state while paging through more than 10,000 hits, use the search_after parameter with a point in time (PIT).
+
+Scrolling is not intended for real time user requests, but rather for processing large amounts of data, e.g. in order to reindex the contents of one data stream or index into a new data stream or index with a different configuration.
+
+The results that are returned from a scroll request reflect the state of the data stream or index at the time that the initial search request was made, like a snapshot in time. Subsequent changes to documents (index, update or delete) will only affect later search requests.
+
+In order to use scrolling, the initial search request should specify the scroll parameter in the query string, which tells Elasticsearch how long it should keep the “search context” alive (see Keeping the search context alive), eg ?scroll=1m.
+
+``` kibana
+POST /my-index-000001/_search?scroll=1m
+{
+  "size": 3,
+  "query": {
+    "match": {
+      "name": "scott"
+    }
+  },
+  "sort": [
+    {
+      "age": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+```
+
+
+The result from the above request includes a _scroll_id, which should be passed to the scroll API in order to retrieve the next batch of results.
+``` kibana
+POST /_search/scroll
+{
+  "scroll" : "1m",
+  "scroll_id" : "DXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAAD4WYm9laVYtZndUQlNsdDcwakFMNjU1QQ=="
+}
+```
+
+* GET or POST can be used and the URL should not include the index name — this is specified in the original search request instead.
+* The scroll parameter tells Elasticsearch to keep the search context open for another 1m.
+* The scroll_id parameter
+
+
+clear scroll
+``` kibana
+DELETE /_search/scroll
+{
+  "scroll_id" : "DXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAAD4WYm9laVYtZndUQlNsdDcwakFMNjU1QQ=="
+}
+```
+
+
 ES默认的分页机制一个不足的地方是，比如有5010条数据，当你仅想取第5000到5010条数据的时候，ES也会将前5000条数据加载到内存当中。从价值观上来看，使用大量的CPU，内存和带宽，分类过程确实会变得非常重要。 为此，我们强烈建议不要进行深度分页。
 ``` kibana
 {
@@ -680,23 +754,1264 @@ PUT /my_index/_settings
 
 或者分页使用ES的scroll api实现：
 ``` java
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
-QueryBuilder qb = termQuery("multi", "test");
+private static void scrollSearch() throws IOException {
+    String searchText = "scott";
 
-SearchResponse scrollResp = client.prepareSearch(test)
-        .addSort(FieldSortBuilder.DOC_FIELD_NAME, SortOrder.ASC)
-        .setScroll(new TimeValue(60000))
-        .setQuery(qb)
-        .setSize(100).get(); //max of 100 hits will be returned for each scroll
-//Scroll until no hits are returned
-do {
-    for (SearchHit hit : scrollResp.getHits().getHits()) {
-        //Handle the hit...
+    Time time = Time.of(t -> t.time("1m"));
+
+    ResponseBody<User> response = elasticsearchClient.search(s -> s
+                    .index(indexName)
+                    .query(q -> q
+                            .match(t -> t
+                                    .field("name")
+                                    .query(searchText)
+                            )
+                    )
+                    .scroll(time)
+                    .sort(SortOptions.of(so -> so.field(FieldSort.of(f -> f.field("age").order(SortOrder.Asc)))))
+                    .size(3)
+            , User.class
+    );
+
+    TotalHits total = response.hits().total();
+    boolean isExactResult = total.relation() == TotalHitsRelation.Eq;
+
+    if (isExactResult) {
+        System.out.println("There are " + total.value() + " results");
+    } else {
+        System.out.println("There are more than " + total.value() + " results");
     }
 
-    scrollResp = client.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(60000)).execute().actionGet();
-} while(scrollResp.getHits().getHits().length != 0); // Zero hits mark the end of the scroll and the while loop.
+    do {
+        System.out.println("-----------------------------------");
+        List<Hit<User>> hits = response.hits().hits();
+        for (Hit<User> hit : hits) {
+            User user = hit.source();
+            System.out.println("Found user: " + user + ", score " + hit.score());
+        }
+
+        String scrollId = response.scrollId();
+        System.out.println("scrollId: " + scrollId);
+
+        response = elasticsearchClient.scroll(s -> s.scrollId(scrollId).scroll(time), User.class);
+    } while (response.hits().hits().size() != 0);
+}
+```
+
+#### search_after(pit search)
+https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html#search-after
+
+Avoid using from and size to page too deeply or request too many results at once. Search requests usually span multiple shards. Each shard must load its requested hits and the hits for any previous pages into memory. For deep pages or large sets of results, these operations can significantly increase memory and CPU usage, resulting in degraded performance or node failures.
+
+By default, you cannot use from and size to page through more than 10,000 hits. This limit is a safeguard set by the index.max_result_window index setting. If you need to page through more than 10,000 hits, use the search_after parameter instead.
+
+You can use the search_after parameter to retrieve the next page of hits using a set of sort values from the previous page.
+
+Using search_after requires multiple search requests with the same query and sort values. The first step is to run an initial request.
+
+``` kibana
+GET /my-index-000001/_search
+{
+  "size": 3,
+  "query": {
+    "match": {
+      "name": "scott"
+    }
+  },
+  "sort": [
+    {
+      "age": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+```
+
+To retrieve the next page of results, repeat the request, take the sort values from the last hit, and insert those into the search_after array:
+``` kibana
+GET /my-index-000001/_search
+{
+  "size": 3,
+  "query": {
+    "match": {
+      "name": "scott"
+    }
+  },
+  "search_after": [20],
+  "sort": [
+    {
+      "age": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+```
+
+Repeat this process by updating the search_after array every time you retrieve a new page of results. If a refresh occurs between these requests, the order of your results may change, causing inconsistent results across pages. To prevent this, you can create a point in time (PIT) to preserve the current index state over your searches.
+
+``` kibana
+POST /my-index-000001/_pit?keep_alive=1m
+```
+
+The API returns a PIT ID.
+
+{
+  "id": "o93qAwEEdXNlchZfVWRURzY0UFJISzljbnZPTzhlaXhRABZWd1A3b3BIM1NpV1pTdHNsYmxENm5nAAAAAAAAAz-XFmNtX1lpSE9hVEx5T1Q2anRHQ1NZVWcAARZfVWRURzY0UFJISzljbnZPTzhlaXhRAAA="
+}
+
+
+To get the first page of results, submit a search request with a sort argument. If using a PIT, specify the PIT ID in the pit.id parameter and omit the target data stream or index from the request path.
+``` kibana
+GET /_search
+{
+  "size": 3,
+  "query": {
+    "match": {
+      "name": "scott"
+    }
+  },
+  "pit": {
+    "id": "o93qAwEEdXNlchZfVWRURzY0UFJISzljbnZPTzhlaXhRABZWd1A3b3BIM1NpV1pTdHNsYmxENm5nAAAAAAAAAz-XFmNtX1lpSE9hVEx5T1Q2anRHQ1NZVWcAARZfVWRURzY0UFJISzljbnZPTzhlaXhRAAA=",
+    "keep_alive": "1m"
+  },
+  "sort": [
+    {
+      "age": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+```
+
+To get the next page of results, rerun the previous search using the last hit’s sort values (including the tiebreaker) as the search_after argument. If using a PIT, use the latest PIT ID in the pit.id parameter. The search’s query and sort arguments must remain unchanged. If provided, the from argument must be 0 (default) or -1.
+``` kibana
+GET /_search
+{
+  "size": 3,
+  "query": {
+    "match": {
+      "name": "scott"
+    }
+  },
+  "pit": {
+    "id": "o93qAwEEdXNlchZfVWRURzY0UFJISzljbnZPTzhlaXhRABZWd1A3b3BIM1NpV1pTdHNsYmxENm5nAAAAAAAAAz-XFmNtX1lpSE9hVEx5T1Q2anRHQ1NZVWcAARZfVWRURzY0UFJISzljbnZPTzhlaXhRAAA=",
+    "keep_alive": "1m"
+  },
+  "search_after": [20, 7],
+  "track_total_hits": false,
+  "sort": [
+    {
+      "age": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+```
+
+When you’re finished, you should delete your PIT.
+``` kibana
+DELETE /_pit
+{
+    "id" : "o93qAwEEdXNlchZfVWRURzY0UFJISzljbnZPTzhlaXhRABZWd1A3b3BIM1NpV1pTdHNsYmxENm5nAAAAAAAAAz-XFmNtX1lpSE9hVEx5T1Q2anRHQ1NZVWcAARZfVWRURzY0UFJISzljbnZPTzhlaXhRAAA="
+}
+```
+
+
+### pinyin分词的使用
+1.1 使用pinyin分词器创建一个索引
+``` kibana
+PUT /my-index-000003/
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "pinyin_analyzer": {
+          "tokenizer": "my_pinyin"
+        }
+      },
+      "tokenizer": {
+        "my_pinyin": {
+          "type": "pinyin",
+          "keep_separate_first_letter": false,
+          "keep_full_pinyin": true,
+          "keep_original": true,
+          "limit_first_letter_length": 16,
+          "lowercase": true,
+          "remove_duplicated_term": true
+        }
+      }
+    }
+  }
+}
+```
+
+1.2 测试分词器，分析一个中文名字，例如中：刘德华
+``` kibana
+GET /my-index-000003/_analyze
+{
+  "text": [
+    "刘德华"
+  ],
+  "analyzer": "pinyin_analyzer"
+}
+
+
+{
+  "tokens": [
+    {
+      "token": "liu",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "刘德华",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "ldh",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "de",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 1
+    },
+    {
+      "token": "hua",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 2
+    }
+  ]
+}
+```
+
+1.3 创建mapping
+``` kibana
+POST /my-index-000003/_mapping
+{
+  "properties": {
+    "name": {
+      "type": "keyword",
+      "fields": {
+        "pinyin": {
+          "type": "text",
+          "store": false,
+          "term_vector": "with_offsets",
+          "analyzer": "pinyin_analyzer"
+        }
+      }
+    }
+  }
+}
+```
+
+1.4 索引数据
+``` kibana
+POST /my-index-000003/_create/andy
+{
+  "name": "刘德华"
+}
+```
+
+1.5 查询全部数据
+``` kibana
+GET /my-index-000003/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+{
+  "took": 891,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": {
+      "value": 1,
+      "relation": "eq"
+    },
+    "max_score": 1,
+    "hits": [
+      {
+        "_index": "my-index-000003",
+        "_id": "andy",
+        "_score": 1,
+        "_source": {
+          "name": "刘德华"
+        }
+      }
+    ]
+  }
+}
+```
+
+1.6 使用拼音分词搜索，下面的搜索方式，都能搜索到数据
+``` kibana
+GET /my-index-000003/_search
+{
+  "query": {
+    "match": {
+      "name": "刘德华"
+    }
+  }
+}
+
+GET /my-index-000003/_search
+{
+  "query": {
+    "match": {
+      "name.pinyin": "刘德华"
+    }
+  }
+}
+
+GET /my-index-000003/_search
+{
+  "query": {
+    "match": {
+      "name.pinyin": "ldh"
+    }
+  }
+}
+
+GET /my-index-000003/_search
+{
+  "query": {
+    "match": {
+      "name.pinyin": "liu"
+    }
+  }
+}
+
+GET /my-index-000003/_search
+{
+  "query": {
+    "match": {
+      "name.pinyin": "de hua"
+    }
+  }
+}
+```
+
+
+2.1 使用pinyin Token Filter，首先创建一个索引
+``` kibana
+PUT /my-index-000004/
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "user_name_analyzer": {
+          "tokenizer": "whitespace",
+          "filter": "pinyin_first_letter_and_full_pinyin_filter"
+        }
+      },
+      "filter": {
+        "pinyin_first_letter_and_full_pinyin_filter": {
+          "type": "pinyin",
+          "keep_first_letter": true,
+          "keep_full_pinyin": true,
+          "keep_none_chinese": true,
+          "keep_original": false,
+          "limit_first_letter_length": 16,
+          "lowercase": true,
+          "trim_whitespace": true,
+          "keep_none_chinese_in_first_letter": true
+        }
+      }
+    }
+  }
+}
+```
+
+2.2 测试分词器，分析一个中文名字，例如中：刘德华 张学友 郭富城 黎明 四大天王
+``` kibana
+GET /my-index-000004/_analyze
+{
+  "text": [
+    "刘德华 张学友 郭富城 黎明 四大天王"
+  ],
+  "analyzer": "user_name_analyzer"
+}
+
+
+{
+  "tokens": [
+    {
+      "token": "liu",
+      "start_offset": 0,
+      "end_offset": 3,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "ldh",
+      "start_offset": 0,
+      "end_offset": 3,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "de",
+      "start_offset": 0,
+      "end_offset": 3,
+      "type": "word",
+      "position": 1
+    },
+    {
+      "token": "hua",
+      "start_offset": 0,
+      "end_offset": 3,
+      "type": "word",
+      "position": 2
+    },
+    {
+      "token": "zhang",
+      "start_offset": 4,
+      "end_offset": 7,
+      "type": "word",
+      "position": 3
+    },
+    {
+      "token": "xue",
+      "start_offset": 4,
+      "end_offset": 7,
+      "type": "word",
+      "position": 4
+    },
+    {
+      "token": "you",
+      "start_offset": 4,
+      "end_offset": 7,
+      "type": "word",
+      "position": 5
+    },
+    {
+      "token": "zxy",
+      "start_offset": 4,
+      "end_offset": 7,
+      "type": "word",
+      "position": 5
+    },
+    {
+      "token": "guo",
+      "start_offset": 8,
+      "end_offset": 11,
+      "type": "word",
+      "position": 6
+    },
+    {
+      "token": "fu",
+      "start_offset": 8,
+      "end_offset": 11,
+      "type": "word",
+      "position": 7
+    },
+    {
+      "token": "cheng",
+      "start_offset": 8,
+      "end_offset": 11,
+      "type": "word",
+      "position": 8
+    },
+    {
+      "token": "gfc",
+      "start_offset": 8,
+      "end_offset": 11,
+      "type": "word",
+      "position": 8
+    },
+    {
+      "token": "li",
+      "start_offset": 12,
+      "end_offset": 14,
+      "type": "word",
+      "position": 9
+    },
+    {
+      "token": "ming",
+      "start_offset": 12,
+      "end_offset": 14,
+      "type": "word",
+      "position": 10
+    },
+    {
+      "token": "lm",
+      "start_offset": 12,
+      "end_offset": 14,
+      "type": "word",
+      "position": 10
+    },
+    {
+      "token": "si",
+      "start_offset": 15,
+      "end_offset": 19,
+      "type": "word",
+      "position": 11
+    },
+    {
+      "token": "da",
+      "start_offset": 15,
+      "end_offset": 19,
+      "type": "word",
+      "position": 12
+    },
+    {
+      "token": "tian",
+      "start_offset": 15,
+      "end_offset": 19,
+      "type": "word",
+      "position": 13
+    },
+    {
+      "token": "wang",
+      "start_offset": 15,
+      "end_offset": 19,
+      "type": "word",
+      "position": 14
+    },
+    {
+      "token": "sdtw",
+      "start_offset": 15,
+      "end_offset": 19,
+      "type": "word",
+      "position": 14
+    }
+  ]
+}
+```
+
+
+3.1 使用phrase query，首先创建一个索引
+``` kibana
+PUT /my-index-000005/
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "pinyin_analyzer": {
+          "tokenizer": "my_pinyin"
+        }
+      },
+      "tokenizer": {
+        "my_pinyin": {
+          "type": "pinyin",
+          "keep_first_letter": false,
+          "keep_separate_first_letter": false,
+          "keep_full_pinyin": true,
+          "keep_original": false,
+          "limit_first_letter_length": 16,
+          "lowercase": true
+        }
+      }
+    }
+  }
+}
+```
+
+3.2 测试分词器，分析一个中文名字，例如中：刘德华
+``` kibana
+GET /my-index-000005/_analyze
+{
+  "text": [
+    "刘德华"
+  ],
+  "analyzer": "pinyin_analyzer"
+}
+
+{
+  "tokens": [
+    {
+      "token": "liu",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "de",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 1
+    },
+    {
+      "token": "hua",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 2
+    }
+  ]
+}
+```
+
+3.3 索引数据
+``` kibana
+POST /my-index-000005/_create/andy
+{
+  "name": "刘德华"
+}
+```
+
+3.4 使用分词搜索，使用下面的搜索方式，是搜索不到数据的
+``` kibana
+GET /my-index-000005/_search
+{
+  "query": {
+    "match_phrase": {
+      "name.pinyin": "刘德华"
+    }
+  }
+}
+```
+
+
+4.1 另一种使用phrase query，首先创建一个索引
+``` kibana
+PUT /my-index-000006/
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "pinyin_analyzer": {
+          "tokenizer": "my_pinyin"
+        }
+      },
+      "tokenizer": {
+        "my_pinyin": {
+          "type": "pinyin",
+          "keep_first_letter": true,
+          "keep_separate_first_letter": true,
+          "keep_full_pinyin": true,
+          "keep_original": false,
+          "limit_first_letter_length": 16,
+          "lowercase": true
+        }
+      }
+    }
+  }
+}
+```
+
+4.2 创建mapping
+``` kibana
+POST /my-index-000006/_mapping
+{
+  "properties": {
+    "name": {
+      "type": "keyword",
+      "fields": {
+        "pinyin": {
+          "type": "text",
+          "store": false,
+          "term_vector": "with_offsets",
+          "analyzer": "pinyin_analyzer"
+        }
+      }
+    }
+  }
+}
+```
+
+4.3 测试分词器
+``` kibana
+GET /my-index-000006/_analyze
+{
+  "text": [
+    "刘德华"
+  ],
+  "analyzer": "pinyin_analyzer"
+}
+
+{
+  "tokens": [
+    {
+      "token": "l",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "liu",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "ldh",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "d",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 1
+    },
+    {
+      "token": "de",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 1
+    },
+    {
+      "token": "h",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 2
+    },
+    {
+      "token": "hua",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 2
+    }
+  ]
+}
+```
+
+4.4 索引数据
+``` kibana
+POST /my-index-000006/_create/andy
+{
+  "name": "刘德华"
+}
+```
+
+4.5 搜索数据，下面的搜索方式，都能搜索到数据
+``` kibana
+GET /my-index-000006/_search
+{
+  "query": {
+    "match_phrase": {
+      "name.pinyin": "刘德h"
+    }
+  }
+}
+
+GET /my-index-000006/_search
+{
+  "query": {
+    "match_phrase": {
+      "name.pinyin": "刘dh"
+    }
+  }
+}
+
+GET /my-index-000006/_search
+{
+  "query": {
+    "match_phrase": {
+      "name.pinyin": "liudh"
+    }
+  }
+}
+
+GET /my-index-000006/_search
+{
+  "query": {
+    "match_phrase": {
+      "name.pinyin": "liudeh"
+    }
+  }
+}
+
+GET /my-index-000006/_search
+{
+  "query": {
+    "match_phrase": {
+      "name.pinyin": "liude华"
+    }
+  }
+}
+```
+
+
+### ik分词的使用
+https://github.com/medcl/elasticsearch-analysis-ik
+
+ik_max_word 和 ik_smart 的区别
+ik_max_word：会将文本做最细粒度的拆分，比如会将“中华人民共和国国歌”拆分为“中华人民共和国,中华人民,中华,华人,人民共和国,人民,人,民,共和国,共和,和,国国,国歌”，会穷尽各种可能的组合，适合 Term Query；
+ik_smart：会做最粗粒度的拆分，比如会将“中华人民共和国国歌”拆分为“中华人民共和国,国歌”，适合 Phrase 查询。
+
+
+1.1 使用ik分词器创建一个索引
+``` kibana
+PUT /my-index-000007/
+```
+
+1.2 创建mapping
+``` kibana
+POST /my-index-000007/_mapping
+{
+  "properties": {
+    "content": {
+      "type": "text",
+      "analyzer": "ik_max_word",
+      "search_analyzer": "ik_smart"
+    }
+  }
+}
+```
+
+1.3 测试分词器
+``` kibana
+GET /my-index-000007/_analyze
+{
+  "text": [
+    "中华人民共和国MN",
+    "刘德华"
+  ],
+  "tokenizer": "ik_max_word"
+}
+
+{
+  "tokens": [
+    {
+      "token": "中华人民共和国",
+      "start_offset": 0,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 0
+    },
+    {
+      "token": "中华人民",
+      "start_offset": 0,
+      "end_offset": 4,
+      "type": "CN_WORD",
+      "position": 1
+    },
+    {
+      "token": "中华",
+      "start_offset": 0,
+      "end_offset": 2,
+      "type": "CN_WORD",
+      "position": 2
+    },
+    {
+      "token": "华人",
+      "start_offset": 1,
+      "end_offset": 3,
+      "type": "CN_WORD",
+      "position": 3
+    },
+    {
+      "token": "人民共和国",
+      "start_offset": 2,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 4
+    },
+    {
+      "token": "人民",
+      "start_offset": 2,
+      "end_offset": 4,
+      "type": "CN_WORD",
+      "position": 5
+    },
+    {
+      "token": "共和国",
+      "start_offset": 4,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 6
+    },
+    {
+      "token": "共和",
+      "start_offset": 4,
+      "end_offset": 6,
+      "type": "CN_WORD",
+      "position": 7
+    },
+    {
+      "token": "国",
+      "start_offset": 6,
+      "end_offset": 7,
+      "type": "CN_CHAR",
+      "position": 8
+    },
+    {
+      "token": "mn",
+      "start_offset": 7,
+      "end_offset": 9,
+      "type": "ENGLISH",
+      "position": 9
+    },
+    {
+      "token": "刘德华",
+      "start_offset": 10,
+      "end_offset": 13,
+      "type": "CN_WORD",
+      "position": 110
+    }
+  ]
+}
+```
+
+1.4 索引数据
+``` kibana
+POST /my-index-000007/_create/1
+{
+  "content": "美国留给叙利亚的是个烂摊子吗"
+}
+
+POST /my-index-000007/_create/2
+{
+  "content": "公安厅：各地校车将享最高路权"
+}
+
+POST /my-index-000007/_create/3
+{
+  "content": "中日渔警冲突调查：日警平均每天扣1艘中国渔船"
+}
+
+POST /my-index-000007/_create/4
+{
+  "content": "中国驻纽约领事馆遭亚裔男子枪击 嫌犯已自首"
+}
+```
+
+1.5 搜索数据
+``` kibana
+GET /my-index-000007/_search
+{
+  "query": {
+    "match": {
+      "content": "中国"
+    }
+  },
+  "highlight": {
+    "pre_tags": [
+      "<tag1>",
+      "<tag2>"
+    ],
+    "post_tags": [
+      "</tag1>",
+      "</tag2>"
+    ],
+    "fields": {
+      "content": {}
+    }
+  }
+}
+
+{
+  "took": 70,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": {
+      "value": 2,
+      "relation": "eq"
+    },
+    "max_score": 0.642793,
+    "hits": [
+      {
+        "_index": "my-index-000007",
+        "_id": "3",
+        "_score": 0.642793,
+        "_source": {
+          "content": "中日渔警冲突调查：日警平均每天扣1艘中国渔船"
+        },
+        "highlight": {
+          "content": [
+            "中日渔警冲突调查：日警平均每天扣1艘<tag1>中国</tag1>渔船"
+          ]
+        }
+      },
+      {
+        "_index": "my-index-000007",
+        "_id": "4",
+        "_score": 0.642793,
+        "_source": {
+          "content": "中国驻纽约领事馆遭亚裔男子枪击 嫌犯已自首"
+        },
+        "highlight": {
+          "content": [
+            "<tag1>中国</tag1>驻纽约领事馆遭亚裔男子枪击 嫌犯已自首"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+
+### pinyin分词、ik分词联合使用
+1.1 首先创建一个索引
+``` kibana
+PUT /my-index-000008/
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "ik_smart_pinyin": {
+          "tokenizer": "ik_smart",
+          "filter": "pinyin_first_letter_and_full_pinyin_filter"
+        },
+        "ik_max_pinyin": {
+          "tokenizer": "ik_max_word",
+          "filter": "pinyin_first_letter_and_full_pinyin_filter"
+        }
+      },
+      "filter": {
+        "pinyin_first_letter_and_full_pinyin_filter": {
+          "type": "pinyin",
+          "keep_separate_first_letter": false,
+          "keep_full_pinyin": true,
+          "keep_original": true,
+          "limit_first_letter_length": 16,
+          "lowercase": true,
+          "remove_duplicated_term": true
+        }
+      }
+    }
+  }
+}
+```
+
+1.2 创建mapping
+``` kibana
+POST /my-index-000008/_mapping
+{
+  "properties": {
+    "content": {
+      "type": "text",
+      "analyzer": "ik_smart_pinyin",
+      "search_analyzer": "ik_max_pinyin"
+    }
+  }
+}
+```
+
+1.3 测试分词器
+``` kibana
+GET /my-index-000008/_analyze
+{
+  "text": [
+    "中华人民共和国MN",
+    "刘德华"
+  ],
+  "analyzer": "ik_smart_pinyin"
+}
+
+{
+  "tokens": [
+    {
+      "token": "zhong",
+      "start_offset": 0,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 0
+    },
+    {
+      "token": "hua",
+      "start_offset": 0,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 1
+    },
+    {
+      "token": "ren",
+      "start_offset": 0,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 2
+    },
+    {
+      "token": "min",
+      "start_offset": 0,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 3
+    },
+    {
+      "token": "gong",
+      "start_offset": 0,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 4
+    },
+    {
+      "token": "he",
+      "start_offset": 0,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 5
+    },
+    {
+      "token": "guo",
+      "start_offset": 0,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 6
+    },
+    {
+      "token": "中华人民共和国",
+      "start_offset": 0,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 6
+    },
+    {
+      "token": "zhrmghg",
+      "start_offset": 0,
+      "end_offset": 7,
+      "type": "CN_WORD",
+      "position": 6
+    },
+    {
+      "token": "m",
+      "start_offset": 7,
+      "end_offset": 9,
+      "type": "ENGLISH",
+      "position": 7
+    },
+    {
+      "token": "n",
+      "start_offset": 7,
+      "end_offset": 9,
+      "type": "ENGLISH",
+      "position": 8
+    },
+    {
+      "token": "mn",
+      "start_offset": 7,
+      "end_offset": 9,
+      "type": "ENGLISH",
+      "position": 8
+    },
+    {
+      "token": "liu",
+      "start_offset": 10,
+      "end_offset": 13,
+      "type": "CN_WORD",
+      "position": 109
+    },
+    {
+      "token": "de",
+      "start_offset": 10,
+      "end_offset": 13,
+      "type": "CN_WORD",
+      "position": 110
+    },
+    {
+      "token": "hua",
+      "start_offset": 10,
+      "end_offset": 13,
+      "type": "CN_WORD",
+      "position": 111
+    },
+    {
+      "token": "刘德华",
+      "start_offset": 10,
+      "end_offset": 13,
+      "type": "CN_WORD",
+      "position": 111
+    },
+    {
+      "token": "ldh",
+      "start_offset": 10,
+      "end_offset": 13,
+      "type": "CN_WORD",
+      "position": 111
+    }
+  ]
+}
+```
+
+1.4 索引数据
+``` kibana
+POST /my-index-000008/_create/1
+{
+  "content": "香港的刘德华"
+}
+
+POST /my-index-000008/_create/2
+{
+  "content": "香港的郭富城"
+}
+
+POST /my-index-000008/_create/3
+{
+  "content": "香港的林忆莲"
+}
+
+POST /my-index-000008/_create/4
+{
+  "content": "香港的周星驰"
+}
+```
+
+1.5 搜索数据，下面的搜索方式，都能搜索到数据
+``` kibana
+GET /my-index-000008/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "content": "liu"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET /my-index-000008/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "content": "刘"
+          }
+        }
+      ]
+    }
+  }
+}
 ```
 
 
@@ -998,8 +2313,7 @@ do {
 
 未完待续……
 
-[link_id_elasticsearch-standalone]: ../../../../2018/09/16/elasticsearch-standalone "elasticsearch 单节点安装"
-[link_id_elasticsearch-cluster]: ../../../../2018/09/17/elasticsearch-cluster "elasticsearch 集群的搭建"
-[link_id_EsJestUtil]: https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/utils/EsJestUtil.java
-[link_id_EsJestDemo]: https://github.com/hewentian/bigdata/blob/master/codes/hadoop-demo/src/main/java/com/hewentian/hadoop/es/EsJestDemo.java
+[link_id_elasticsearch-install]: ../../../../2018/09/16/elasticsearch-install "elasticsearch 的安装"
+[link_id_ElasticsearchUtil]: https://github.com/hewentian/study-lib/blob/main/codes/bigdata/elasticsearch/src/main/java/com/hewentian/elasticsearch/util/ElasticsearchUtil.java
+[link_id_ElasticsearchDemo]: https://github.com/hewentian/study-lib/blob/main/codes/bigdata/elasticsearch/src/main/java/com/hewentian/elasticsearch/ElasticsearchDemo.java
 
