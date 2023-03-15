@@ -23,9 +23,9 @@ HAVING c > 1;
 
 当使用`CONCAT(str1,str2,...)`函数的时候，只要有一个参数为`NULL`，则整个结果为`NULL`，而有时候这不是我们所想要的结果，这时候，我们可以使用`IFNULL(expr1,expr2)`函数来做一个转换，当`expr1`为`NULL`的时候，表达式的结果为`expr2`，否则为`expr1`，示例如下：
 ``` sql
-SELECT CONCAT('Tim', ' ', 'Ho') FROM DUAL; # Tim Ho
-SELECT IFNULL(NULL, 'expr2') FROM DUAL;    # expr2
-SELECT IFNULL('expr1', 'expr2') FROM DUAL; # expr1
+SELECT CONCAT('Tim', ' ', 'Ho') FROM DUAL; -- Tim Ho
+SELECT IFNULL(NULL, 'expr2') FROM DUAL;    -- expr2
+SELECT IFNULL('expr1', 'expr2') FROM DUAL; -- expr1
 ```
 
 
@@ -379,7 +379,7 @@ DROP PROCEDURE IF EXISTS `proc_count_student`$$
 
 CREATE PROCEDURE `proc_count_student`(OUT cs INT)
 BEGIN
-    # CALL proc_count_student(@cs)
+    -- CALL proc_count_student(@cs)
     SELECT COUNT(*) INTO cs FROM student;
 END$$
 
@@ -505,7 +505,7 @@ CREATE TABLE tableName_new AS SELECT * FROM tableName_old;
 ``` sql
 ALTER TABLE [表名] MODIFY COLUMN [字段名] [类型];
 
-示例: sys_user表里的user_name字段，由原来长度是10个字符，修改改成40个字符
+-- 示例: sys_user表里的user_name字段，由原来长度是10个字符，修改改成40个字符
 ALTER TABLE sys_user MODIFY COLUMN user_name VARCHAR(40);
 ```
 
@@ -514,7 +514,7 @@ ALTER TABLE sys_user MODIFY COLUMN user_name VARCHAR(40);
 ``` sql
 ALTER TABLE [表名] CHANGE [旧字段名] [新字段名] [类型];
 
-示例: sys_user表里的user_name字段，修改改成user_name_new
+-- 示例: sys_user表里的user_name字段，修改改成user_name_new
 ALTER TABLE sys_user CHANGE user_name user_name_new VARCHAR(40);
 ```
 
@@ -1766,6 +1766,11 @@ mysql> SELECT * FROM t_user WHERE name LIKE BINARY '%t%';
 1 row in set (0.00 sec)
 
 ```
+
+
+### mysql 时间 datetime 索引不生效问题
+1、在查询数据条数约占总条数五分之一以下时能够使用到索引，但超过五分之一时，则使用全表扫描了；
+2、查询条件有日期索引和其他条件的话，只有所有条件都有索引的情况下，才会走日期索引。
 
 
 ### 对MySQL数据库性能的测试工具

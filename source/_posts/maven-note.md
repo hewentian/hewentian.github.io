@@ -198,7 +198,7 @@ For example, when you have JUnit 4.12 in classpath and including DBUnit dependen
 
 ### maven跳过单元测试的方式
 1. `-DskipTests`： 编译测试用例类生成相应的class文件至target/test-classes下，但不执行测试用例，当然，也可以直接在POM文件中写上：
-``` bash
+``` xml
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
@@ -358,11 +358,13 @@ pom.xml配置如下：
         -D,--define <arg>    Define a system property
 
 例如pom.xml内有：
+``` xml
         <properties>
             <jdk.version>1.8</jdk.version>
         </properties>
-
+```
 执行：
+
         mvn -Djdk.version=1.17 clean package
 
 则pom.xml内`jdk.version`的值将被替换成1.17
@@ -374,6 +376,7 @@ pom.xml配置如下：
         -P,--activate-profiles <arg>    Comma-delimited list of profiles to activate
 
 例如pom.xml内有：
+``` xml
         <profiles>
             <profile>    <!-- 开发环境 -->
                 <id>dev</id>
@@ -393,7 +396,7 @@ pom.xml配置如下：
                 </build>
             </profile>
 
-            <profile>    <!-- 测试环境 -->
+           <profile>    <!-- 测试环境 -->
                 <id>test</id>
                 <activation>
                     <property>
@@ -410,8 +413,10 @@ pom.xml配置如下：
                 </build>
             </profile>
         </profiles>
+```
 
 执行：
+
         mvn -Pdev clean package
 
 将触发dev环境的profile配置

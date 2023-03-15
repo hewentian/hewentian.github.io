@@ -53,6 +53,18 @@ $ vi jvm.options
 -Xmx1g
 ```
 
+**Do not modify the root jvm.options file. Use files in jvm.options.d/ instead.**
+
+To configure the heap size, add the Xms and Xmx JVM arguments to a custom JVM options file with the extension `.options` and store it in the `jvm.options.d/` directory. For example, to set the maximum heap size to 2GB, set both Xms and Xmx to 2g:
+-Xms2g
+-Xmx2g
+
+
+**cluster.initial_master_nodes**
+https://www.elastic.co/guide/en/elasticsearch/reference/8.5/modules-discovery-settings.html
+
+(Static) Sets the initial set of master-eligible nodes in a brand-new cluster. By default this list is empty, meaning that this node expects to join a cluster that has already been bootstrapped. Remove this setting once the cluster has formed. Do not use this setting when restarting nodes or when adding new nodes to an existing cluster.
+
 ### 修改linux系统参数
 你在安装的过程中，有可能会遇到下面的问题之一：
 

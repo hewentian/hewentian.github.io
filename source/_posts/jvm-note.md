@@ -167,6 +167,18 @@ public static int method(List<Integer> list) {
 }
 ```
 
+而改成下面这种，则可以通过编译
+``` java
+public static void method(String s) {
+    System.out.println("invoke method(String s)");
+}
+
+public static void method(List<Integer> list) {
+    System.out.println("invoke method(List<Integer> list)");
+}
+```
+
+
 ### 自动装箱的陷阱
 ``` java
 public static void main(String[] args) throws Exception {
@@ -181,6 +193,7 @@ public static void main(String[] args) throws Exception {
     // 在 JDK1.8 中的结果如下
     System.out.println(c == d);             // true, [-127, 128]之间的Integer数字会被缓存
     System.out.println(e == f);             // false
+    System.out.println(e.equals(f));        // true
     System.out.println(c == (a + b));       // true
     System.out.println(c.equals(a + b));    // true
     System.out.println(g == (a + b));       // true
@@ -292,13 +305,13 @@ Java内存模型中涉及到的概念有：
 关于主内存与工作内存之间具体的交互协议，即一个变量如何从主内存复制到工作内存、如何从工作内存同步回主内存之类的实现细节，JAVA内存模型中定义了以下8种操作来完成，虚拟机实现时必须保证下面提及的每一种操作都是原子的、不可再分的（对于double和long类型的变量来说，load、store、read和write操作在某些平台上允许有例外）。
 
 * lock（锁定）：作用于主内存的变量，它把一个变量标识为一条线程独占的状态；
-* unlock（解锁）：作用于主内存的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他线程锁定；
 * read（读取）：作用于主内存的变量，它把一个变量的值从主内存传输到线程的工作内存中，以便随后的load动作使用；
 * load（载入）：作用于工作内存的变量，它把read操作从主内存中得到的变量值放入工作内存的变量副本中；
 * use（使用）：作用于工作内存的变量，它把工作内存中一个变量的值传递给执行引擎，每当虚拟机遇到一个需要使用到变量的值的字节码指令时将会执行这个操作；
 * assign（赋值）：作用于工作内存的变量，它把一个从执行引擎接收到的值赋给工作内存的变量，每当虚拟机遇到一个给变量赋值的字节码指令时执行这个操作；
 * store（存储）：作用于工作内存的变量，它把工作内存中一个变量的值传送到主内存中，以便随后的write操作使用；
 * write（写入）：作用于主内存的变量，它把store操作从工作内存中得到的变量的值放入主内存的变量中。
+* unlock（解锁）：作用于主内存的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他线程锁定；
 
 
 ### volatile变量的使用场景
@@ -375,7 +388,7 @@ while (!initialized) {
 doSomethingWithConfig();
 ```
 
-如果initialiezd是普通变量，没有被volatile修饰，那么线程A执行的代码的修改初始化完成的结果`initialized = true`就有可能先于之前的三行代码执行，而此时线程B发现initialized为true了，就执行`doSomethingWithConfig()`方法，但是里面的配置信息都是null的，就会出现问题了。现在initialized是volatile类型变量，保证禁止代码重排序优化，那么就可以保证`initialized = true`执行的时候，前边的三行代码一定执行完成了，那么线程B读取的配置文件信息就是正确的。
+如果initialized是普通变量，没有被volatile修饰，那么线程A执行的代码的修改初始化完成的结果`initialized = true`就有可能先于之前的三行代码执行，而此时线程B发现initialized为true了，就执行`doSomethingWithConfig()`方法，但是里面的配置信息都是null的，就会出现问题了。现在initialized是volatile类型变量，保证禁止代码重排序优化，那么就可以保证`initialized = true`执行的时候，前边的三行代码一定执行完成了，那么线程B读取的配置文件信息就是正确的。
 
 
 由于volatile变量只能保证可见性，在不符合以下两条规则的运算场景中，我们仍然要通过加锁（使用synchronized或java.util.concurrent中的原子类）来保证原子性。
@@ -398,7 +411,7 @@ while(!shutdownRequest) {
 
 
 ### 线程状态转换
-Java语言定义了5种线程状态，在任意一个时间点，一个线程只能有且只有其中的一种状态，这5种状态分别如下：
+Java语言定义了6种线程状态，在任意一个时间点，一个线程只能有且只有其中的一种状态，这6种状态分别如下：
 
 * 新建（New）：创建后尚未启动的线程处于这种状态；
 * 运行（Runnable）：Runnable包括了操作系统线程状态中的Running和Ready，也就是处于此状态的线程有可能正在执行，也有可能正在等待着CPU为它分配执行时间；
@@ -415,7 +428,7 @@ Java语言定义了5种线程状态，在任意一个时间点，一个线程只
 * 阻塞（Blocked）：线程被阻塞了，“阻塞状态”与“等待状态”的区别是：“阻塞状态”在等待着获取到一个排他锁，这个事件将在另外一个线程放弃这个锁的时候发生；而“等待状态”则是在等待一段时间，或者唤醒动作的发生。在程序等待进入同步区域的时候，线程将进入这种状态。
 * 结束（Terminated）：已终止线程的线程状态，线程已经执行结束。
 
-上述5种状态在遇到特定事件发生的时候会互相转换，它们的转换关系如下图所示：
+上述6种状态在遇到特定事件发生的时候会互相转换，它们的转换关系如下图所示：
 ![](/img/thread-state-transform.png "图片来源：周志明先生的《深入理解JAVA虚拟机JVM高级特性与最佳实践》")
 
 

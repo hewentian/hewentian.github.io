@@ -291,3 +291,16 @@ $ git remote set-url origin git@github.com:user/repository.git
 ```
 
 
+### 将本地的prod分支代码，盖掉远程的pre
+``` bash
+$ git checkout prod                              # 切换到本地的 prod 分支
+$ git branch -d pre                              # 删掉本地的 pre 分支
+$ git checkout -b pre                            # 以 prod 为基础，切出新的 pre 分支
+$ git branch --set-upstream-to=origin/pre pre    # 将本地的 pre 分支，与 origin 建立联系
+$ git status                                     # 查看状态
+$ git push --force origin pre                    # 加上参数 --force 强推到 origin
+```
+
+注意：如果gitLab仓库上面，pre分支是被保护的，则要临时解除保护，否则就算加了 --force 也可能推送失败。
+
+
