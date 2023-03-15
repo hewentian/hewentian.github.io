@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="设置用户名和邮箱全局设置方式：12$ git config --global user.name &quot;hewentian&quot;$ git config --global user.email &quot;wentian.he@qq.com&quot; 单独对某个仓库设置方式：12$ git config user.name &quot;hewentian&quot;$ git config user.email &quot;wentian.he@qq.">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2021-03-08T03:37:05.090Z">
+<meta property="og:updated_time" content="2023-02-14T08:38:14.570Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git 学习笔记">
 <meta name="twitter:description" content="设置用户名和邮箱全局设置方式：12$ git config --global user.name &quot;hewentian&quot;$ git config --global user.email &quot;wentian.he@qq.com&quot; 单独对某个仓库设置方式：12$ git config user.name &quot;hewentian&quot;$ git config user.email &quot;wentian.he@qq.">
@@ -142,7 +142,7 @@ Did you intend to checkout &apos;origin/dev2&apos; which can not be resolved as 
 <li>在新分支修复，然后将此分支推到生产；</li>
 <li>在生产构建该分支。</li>
 </ol>
-<p>相关操作如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git pull origin master</span><br><span class="line">$ git <span class="built_in">log</span></span><br><span class="line">$ git checkout -b fix20191106 03b361719f93a74bb5a5cdc22fd4f621adc2822a</span><br><span class="line">$ git add &#123;修改过的文件&#125;</span><br><span class="line">$ git commit -m <span class="string">"修改原因说明"</span></span><br><span class="line">$ git push origin fix20191106</span><br></pre></td></tr></table></figure></p>
+<p>相关操作如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git pull origin master</span><br><span class="line">$ git <span class="built_in">log</span></span><br><span class="line">$ git checkout -b fix20191106 469ac6e84d78e84cec59f9c3af8453fb21ce222b</span><br><span class="line">$ git add &#123;修改过的文件&#125;</span><br><span class="line">$ git commit -m <span class="string">"修改原因说明"</span></span><br><span class="line">$ git push origin fix20191106</span><br></pre></td></tr></table></figure></p>
 <h3 id="将本地仓库提交到多个远程仓库"><a href="#将本地仓库提交到多个远程仓库" class="headerlink" title="将本地仓库提交到多个远程仓库"></a>将本地仓库提交到多个远程仓库</h3><p>一般情况下，在本地有一个gitLab，在生产也有一个gitLab。我们要将本地代码提交到生产的gitLab，方法如下：<br>将本地仓库和生产的远程仓库绑定：</p>
 <pre><code>cd ~/ProjectD/gitHub/bigdata
 git remote add prod git@github.com:hewentian/bigdata.git
@@ -162,11 +162,23 @@ git push prod develop
 <li>新建分支时建立跟踪关系<pre><code>$ git checkout -b &lt;本地分支名&gt; &lt;远程主机名&gt;/&lt;远程分支名&gt;
 </code></pre></li>
 </ol>
+<h3 id="版本回退"><a href="#版本回退" class="headerlink" title="版本回退"></a>版本回退</h3><p>首先使用<code>git log</code>找到要回退到的<code>commit id</code>，然后在本地<code>reset</code>回此<code>commit id</code>，最后强制推到远程。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span></span><br><span class="line">$ git reset --hard 469ac6e84d78e84cec59f9c3af8453fb21ce222b</span><br><span class="line">$ git push origin prod --force</span><br></pre></td></tr></table></figure>
+<h3 id="Change-Git-Remote-Origin"><a href="#Change-Git-Remote-Origin" class="headerlink" title="Change Git Remote Origin"></a>Change Git Remote Origin</h3><ol>
+<li><p>Change Git Remote URL</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git remote <span class="built_in">set</span>-url &lt;remote_name&gt; &lt;remote_url&gt;</span><br><span class="line"></span><br><span class="line">eg:</span><br><span class="line">$ git remote -v</span><br><span class="line">$ git remote <span class="built_in">set</span>-url origin https://git-repo/new-repository.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Changing Git Remote to SSH</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git remote <span class="built_in">set</span>-url &lt;remote_name&gt; &lt;ssh_remote_url&gt;</span><br><span class="line"></span><br><span class="line">eg:</span><br><span class="line">$ git remote -v</span><br><span class="line">$ git remote <span class="built_in">set</span>-url origin git@github.com:user/repository.git</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="将本地的prod分支代码，盖掉远程的pre"><a href="#将本地的prod分支代码，盖掉远程的pre" class="headerlink" title="将本地的prod分支代码，盖掉远程的pre"></a>将本地的prod分支代码，盖掉远程的pre</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout prod                              <span class="comment"># 切换到本地的 prod 分支</span></span><br><span class="line">$ git branch -d pre                              <span class="comment"># 删掉本地的 pre 分支</span></span><br><span class="line">$ git checkout -b pre                            <span class="comment"># 以 prod 为基础，切出新的 pre 分支</span></span><br><span class="line">$ git branch --<span class="built_in">set</span>-upstream-to=origin/pre pre    <span class="comment"># 将本地的 pre 分支，与 origin 建立联系</span></span><br><span class="line">$ git status                                     <span class="comment"># 查看状态</span></span><br><span class="line">$ git push --force origin pre                    <span class="comment"># 加上参数 --force 强推到 origin</span></span><br></pre></td></tr></table></figure>
+<p>注意：如果gitLab仓库上面，pre分支是被保护的，则要临时解除保护，否则就算加了 –force 也可能推送失败。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="ckpo1mywr0009uu3k8vt6jcqz" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/10/17/git-note/" data-id="clf9thvkg00086h3kuomiz4uw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li></ul>
@@ -205,7 +217,7 @@ git push prod develop
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -215,7 +227,7 @@ git push prod develop
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -228,23 +240,23 @@ git push prod develop
       <ul>
         
           <li>
+            <a href="/2022/03/07/xxl-job-note/">xxl-job 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/28/seata-note/">seata 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/25/spring-note/">spring 学习笔记</a>
+          </li>
+        
+          <li>
             <a href="/2021/04/01/mybatis-note/">mybatis 学习笔记</a>
           </li>
         
           <li>
             <a href="/2021/01/22/canal-note/">canal 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2020/06/08/springboot-note/">springboot 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/14/spark-note/">spark 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2019/12/30/scala-note/">scala 学习笔记</a>
           </li>
         
       </ul>
@@ -269,7 +281,7 @@ git push prod develop
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2021 Tim Ho<br>
+      &copy; 2023 Tim Ho<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

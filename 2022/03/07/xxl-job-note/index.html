@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>xxl-job 学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇将说说分布式任务调度平台XXL-JOB的安装使用。 下载123456$ cd /home/hewentian/ProjectD/gitHub/$ git clone https://github.com/xuxueli/xxl-job.git$ cd xxl-job/$ git checkout -b 2.3.0 origin/2.3.0$ lsdoc  LICENSE  NOTICE  po">
+<meta name="keywords" content="job">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xxl-job 学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2022/03/07/xxl-job-note/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="本篇将说说分布式任务调度平台XXL-JOB的安装使用。 下载123456$ cd /home/hewentian/ProjectD/gitHub/$ git clone https://github.com/xuxueli/xxl-job.git$ cd xxl-job/$ git checkout -b 2.3.0 origin/2.3.0$ lsdoc  LICENSE  NOTICE  po">
+<meta property="og:locale" content="en-US">
+<meta property="og:image" content="https://github.com/img/xxl-job-1.png">
+<meta property="og:image" content="https://github.com/img/xxl-job-2.png">
+<meta property="og:image" content="https://github.com/img/xxl-job-3.png">
+<meta property="og:image" content="https://github.com/img/xxl-job-4.png">
+<meta property="og:image" content="https://github.com/img/xxl-job-5.png">
+<meta property="og:updated_time" content="2022-03-07T09:27:55.167Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="xxl-job 学习笔记">
+<meta name="twitter:description" content="本篇将说说分布式任务调度平台XXL-JOB的安装使用。 下载123456$ cd /home/hewentian/ProjectD/gitHub/$ git clone https://github.com/xuxueli/xxl-job.git$ cd xxl-job/$ git checkout -b 2.3.0 origin/2.3.0$ lsdoc  LICENSE  NOTICE  po">
+<meta name="twitter:image" content="https://github.com/img/xxl-job-1.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-xxl-job-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/03/07/xxl-job-note/" class="article-date">
+  <time datetime="2022-03-07T06:31:20.000Z" itemprop="datePublished">2022-03-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      xxl-job 学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇将说说分布式任务调度平台<a href="https://www.xuxueli.com/xxl-job/" target="_blank" rel="noopener">XXL-JOB</a>的安装使用。</p>
+<h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/ProjectD/gitHub/</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/xuxueli/xxl-job.git</span><br><span class="line">$ <span class="built_in">cd</span> xxl-job/</span><br><span class="line">$ git checkout -b 2.3.0 origin/2.3.0</span><br><span class="line">$ ls</span><br><span class="line">doc  LICENSE  NOTICE  pom.xml  README.md  xxl-job-admin  xxl-job-core  xxl-job-executor-samples</span><br></pre></td></tr></table></figure>
+<p>下载后，将代码导入IDEA，这样方便修改文件。</p>
+<h3 id="初始化数据库"><a href="#初始化数据库" class="headerlink" title="初始化数据库"></a>初始化数据库</h3><p>数据库文件在<code>/home/hewentian/ProjectD/gitHub/xxl-job/doc/db/tables_xxl_job.sql</code><br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; source /home/hewentian/ProjectD/gitHub/xxl-job/doc/db/tables_xxl_job.sql</span><br><span class="line"></span><br><span class="line">mysql&gt; show tables;</span><br><span class="line">+<span class="comment">--------------------+</span></span><br><span class="line">| Tables_in_xxl_job  |</span><br><span class="line">+<span class="comment">--------------------+</span></span><br><span class="line">| xxl_job_group      |</span><br><span class="line">| xxl_job_info       |</span><br><span class="line">| xxl_job_lock       |</span><br><span class="line">| xxl_job_log        |</span><br><span class="line">| xxl_job_log_report |</span><br><span class="line">| xxl_job_logglue    |</span><br><span class="line">| xxl_job_registry   |</span><br><span class="line">| xxl_job_user       |</span><br><span class="line">+<span class="comment">--------------------+</span></span><br><span class="line">8 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></p>
+<h3 id="部署调度中心"><a href="#部署调度中心" class="headerlink" title="部署调度中心"></a>部署调度中心</h3><p>调度中心项目：xxl-job-admin</p>
+<p>配置日志存放路径，<code>/home/hewentian/ProjectD/gitHub/xxl-job/xxl-job-admin/src/main/resources/logback.xml</code>，仅配置下面这一项即可：</p>
+<pre><code>&lt;property name=&quot;log.path&quot; value=&quot;/home/hewentian/logs/xxl-job/xxl-job-admin.log&quot;/&gt;
+</code></pre><p>配置项目基本配置文件，<code>/home/hewentian/ProjectD/gitHub/xxl-job/xxl-job-admin/src/main/resources/application.properties</code>，修改项如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">spring.datasource.url=jdbc:mysql://mysql.hewentian.com:3306/xxl_job?useUnicode=<span class="literal">true</span>&amp;characterEncoding=UTF-8&amp;autoReconnect=<span class="literal">true</span>&amp;serverTimezone=Asia/Shanghai</span><br><span class="line">spring.datasource.username=root</span><br><span class="line">spring.datasource.password=123456</span><br><span class="line">spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver</span><br></pre></td></tr></table></figure></p>
+<p>启动项目：启动类为<code>com.xxl.job.admin.XxlJobAdminApplication</code></p>
+<p>WEB访问地址：<br><a href="http://localhost:8080/xxl-job-admin" target="_blank" rel="noopener">http://localhost:8080/xxl-job-admin</a></p>
+<p>默认用户名/密码：admin/123456</p>
+<p><img src="/img/xxl-job-1.png" alt=""></p>
+<h3 id="部署执行器项目"><a href="#部署执行器项目" class="headerlink" title="部署执行器项目"></a>部署执行器项目</h3><p>执行器项目，我部署的是：xxl-job-executor-samples/xxl-job-executor-sample-springboot</p>
+<p>配置日志存放路径，<code>/home/hewentian/ProjectD/gitHub/xxl-job/xxl-job-executor-samples/xxl-job-executor-sample-springboot/src/main/resources/logback.xml</code>，仅配置下面这一项即可：</p>
+<pre><code>&lt;property name=&quot;log.path&quot; value=&quot;/home/hewentian/logs/xxl-job/xxl-job-executor-sample-springboot.log&quot;/&gt;
+</code></pre><p>配置项目基本配置文件，<code>/home/hewentian/ProjectD/gitHub/xxl-job/xxl-job-executor-samples/xxl-job-executor-sample-springboot/src/main/resources/application.properties</code>，修改项如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xxl.job.admin.addresses=http://127.0.0.1:8080/xxl-job-admin</span><br><span class="line">xxl.job.executor.logpath=/home/hewentian/logs/xxl-job/jobhandler</span><br></pre></td></tr></table></figure></p>
+<p>启动项目：启动类为<code>com.xxl.job.executor.XxlJobExecutorApplication</code></p>
+<h3 id="在调度中心新建任务"><a href="#在调度中心新建任务" class="headerlink" title="在调度中心新建任务"></a>在调度中心新建任务</h3><p>登录下面的地址，进行配置：<br><a href="http://localhost:8080/xxl-job-admin" target="_blank" rel="noopener">http://localhost:8080/xxl-job-admin</a></p>
+<p>项目中的代码如下：<br><img src="/img/xxl-job-2.png" alt=""></p>
+<p>执行器管理：<br><img src="/img/xxl-job-3.png" alt=""></p>
+<p>任务管理：<br><img src="/img/xxl-job-4.png" alt=""></p>
+<p>调度日志：<br><img src="/img/xxl-job-5.png" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2022/03/07/xxl-job-note/" data-id="clf9thvnu003s6h3kp6rvyej5" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/job/">job</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/11/28/seata-note/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">seata 学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/03/07/xxl-job-note/">xxl-job 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/28/seata-note/">seata 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/25/spring-note/">spring 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/01/mybatis-note/">mybatis 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/01/22/canal-note/">canal 学习笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2023 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> -->
+<!-- <script src="//code.jquery.com/jquery-2.2.4.min.js"></script> -->
+<script src="/js/jquery-3.5.1.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

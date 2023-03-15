@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>seata 学习笔记 | Tim Ho&#39;s Technology Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安装安装过程参考https://seata.io/zh-cn/docs/ops/deploy-guide-beginner.html Server端存储模式（store.mode）现有file、db、redis三种（后续将引入raft,mongodb），file模式无需改动，直接启动即可，下面专门讲下db模式启动步骤。注：   file模式为单机模式，全局事务会话信息在内存中读写并持久化到本地文件">
+<meta name="keywords" content="seata">
+<meta property="og:type" content="article">
+<meta property="og:title" content="seata 学习笔记">
+<meta property="og:url" content="https://github.com/hewentian/2021/11/28/seata-note/index.html">
+<meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
+<meta property="og:description" content="安装安装过程参考https://seata.io/zh-cn/docs/ops/deploy-guide-beginner.html Server端存储模式（store.mode）现有file、db、redis三种（后续将引入raft,mongodb），file模式无需改动，直接启动即可，下面专门讲下db模式启动步骤。注：   file模式为单机模式，全局事务会话信息在内存中读写并持久化到本地文件">
+<meta property="og:locale" content="en-US">
+<meta property="og:updated_time" content="2022-03-11T02:15:33.934Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="seata 学习笔记">
+<meta name="twitter:description" content="安装安装过程参考https://seata.io/zh-cn/docs/ops/deploy-guide-beginner.html Server端存储模式（store.mode）现有file、db、redis三种（后续将引入raft,mongodb），file模式无需改动，直接启动即可，下面专门讲下db模式启动步骤。注：   file模式为单机模式，全局事务会话信息在内存中读写并持久化到本地文件">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tim Ho&#39;s Technology Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">心如止水</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives/">Archives</a>
+        
+          <a class="main-nav-link" href="/categories/">Categories</a>
+        
+          <a class="main-nav-link" href="/tags/">Tags</a>
+        
+          <a class="main-nav-link" href="/about/">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/hewentian"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-seata-note" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/11/28/seata-note/" class="article-date">
+  <time datetime="2021-11-28T09:45:55.000Z" itemprop="datePublished">2021-11-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      seata 学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>安装过程参考<br><a href="https://seata.io/zh-cn/docs/ops/deploy-guide-beginner.html" target="_blank" rel="noopener">https://seata.io/zh-cn/docs/ops/deploy-guide-beginner.html</a></p>
+<p>Server端存储模式（store.mode）现有file、db、redis三种（后续将引入raft,mongodb），file模式无需改动，直接启动即可，下面专门讲下db模式启动步骤。<br>注： </p>
+<ol>
+<li>file模式为单机模式，全局事务会话信息在内存中读写并持久化到本地文件root.data，性能较高;</li>
+<li>db模式为高可用模式，全局事务会话信息通过db共享，相应性能差些;</li>
+<li>redis模式Seata-Server 1.3及以上版本支持，性能较高，存在事务信息丢失风险，请提前配置合适当前场景的redis持久化配置。</li>
+</ol>
+<h4 id="第一步：首先，到如下地址，下载最新版本，截止目前，最新版本为seata-server-1-4-2-zip"><a href="#第一步：首先，到如下地址，下载最新版本，截止目前，最新版本为seata-server-1-4-2-zip" class="headerlink" title="第一步：首先，到如下地址，下载最新版本，截止目前，最新版本为seata-server-1.4.2.zip"></a>第一步：首先，到如下地址，下载最新版本，截止目前，最新版本为<code>seata-server-1.4.2.zip</code></h4><p><a href="https://seata.io/en-us/blog/download.html" target="_blank" rel="noopener">https://seata.io/en-us/blog/download.html</a></p>
+<p>解压</p>
+<pre><code>unzip -O CP936 seata-server-1.4.2.zip
+</code></pre><h4 id="第二步：建表（仅db模式）"><a href="#第二步：建表（仅db模式）" class="headerlink" title="第二步：建表（仅db模式）"></a>第二步：建表（仅db模式）</h4><p>建表语句，可以在下面的地址找到（注意版本号）<br><a href="https://github.com/seata/seata/blob/1.4.2/script/server/db/mysql.sql">https://github.com/seata/seata/blob/1.4.2/script/server/db/mysql.sql</a></p>
+<p>全局事务会话信息由3块内容构成，全局事务–&gt;分支事务–&gt;全局锁，对应表global_table、branch_table、lock_table</p>
+<h4 id="第三步，方式一：注册到nacos，配置信息存放在file"><a href="#第三步，方式一：注册到nacos，配置信息存放在file" class="headerlink" title="第三步，方式一：注册到nacos，配置信息存放在file"></a>第三步，方式一：注册到nacos，配置信息存放在file</h4><p>打开文件<code>{SEATA_HOME}/conf/file.conf</code>，主要修改部分，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">service &#123;</span><br><span class="line">  # transaction service group mapping</span><br><span class="line">  vgroupMapping.hwt_tx_group = &quot;default&quot; # 修改事务组名称为：hwt_tx_group，和客户端自定义的名称对应</span><br><span class="line">  # only support when registry.type=file, please don&apos;t set multiple addresses</span><br><span class="line">  default.grouplist = &quot;127.0.0.1:8091&quot;</span><br><span class="line">  # degrade, current not support</span><br><span class="line">  enableDegrade = false</span><br><span class="line">  # disable seata</span><br><span class="line">  disableGlobalTransaction = false</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">store &#123;</span><br><span class="line">  mode = &quot;db&quot;</span><br><span class="line"></span><br><span class="line">  ## database store property</span><br><span class="line">  db &#123;</span><br><span class="line">    ## the implement of javax.sql.DataSource, such as DruidDataSource(druid)/BasicDataSource(dbcp)/HikariDataSource(hikari) etc.</span><br><span class="line">    datasource = &quot;druid&quot;</span><br><span class="line">    ## mysql/oracle/postgresql/h2/oceanbase etc.</span><br><span class="line">    dbType = &quot;mysql&quot;</span><br><span class="line">    driverClassName = &quot;com.mysql.cj.jdbc.Driver&quot;</span><br><span class="line">    ## if using mysql to store the data, recommend add rewriteBatchedStatements=true in jdbc connection param</span><br><span class="line">    url = &quot;jdbc:mysql://127.0.0.1:3306/seata?rewriteBatchedStatements=true&quot;</span><br><span class="line">    user = &quot;mysql&quot;</span><br><span class="line">    password = &quot;mysql&quot;</span><br><span class="line">    minConn = 5</span><br><span class="line">    maxConn = 100</span><br><span class="line">    globalTable = &quot;global_table&quot;</span><br><span class="line">    branchTable = &quot;branch_table&quot;</span><br><span class="line">    lockTable = &quot;lock_table&quot;</span><br><span class="line">    queryLimit = 100</span><br><span class="line">    maxWait = 5000</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>打开文件<code>{SEATA_HOME}/conf/registry.conf</code>，主要修改部分，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">registry &#123;</span><br><span class="line">  type = &quot;nacos&quot;</span><br><span class="line"></span><br><span class="line">  nacos &#123;</span><br><span class="line">    application = &quot;seata-server&quot;</span><br><span class="line">    serverAddr = &quot;127.0.0.1:8848&quot;</span><br><span class="line">    group = &quot;DEFAULT_GROUP&quot;</span><br><span class="line">    namespace = &quot;&quot;</span><br><span class="line">    cluster = &quot;default&quot;</span><br><span class="line">    username = &quot;nacos&quot;</span><br><span class="line">    password = &quot;nacos&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">config &#123;</span><br><span class="line">  type = &quot;file&quot;</span><br><span class="line"></span><br><span class="line">  file &#123;</span><br><span class="line">    name = &quot;file.conf&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="第三步，方式二：注册到nacos，配置信息存放在nacos"><a href="#第三步，方式二：注册到nacos，配置信息存放在nacos" class="headerlink" title="第三步，方式二：注册到nacos，配置信息存放在nacos"></a>第三步，方式二：注册到nacos，配置信息存放在nacos</h4><p>打开文件<code>{SEATA_HOME}/conf/registry.conf</code>，主要修改部分，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">registry &#123;</span><br><span class="line">  type = &quot;nacos&quot;</span><br><span class="line"></span><br><span class="line">  nacos &#123;</span><br><span class="line">    application = &quot;seata-server&quot;</span><br><span class="line">    serverAddr = &quot;127.0.0.1:8848&quot;</span><br><span class="line">    group = &quot;DEFAULT_GROUP&quot;</span><br><span class="line">    namespace = &quot;&quot;</span><br><span class="line">    cluster = &quot;default&quot;</span><br><span class="line">    username = &quot;nacos&quot;</span><br><span class="line">    password = &quot;nacos&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">config &#123;</span><br><span class="line">  type = &quot;nacos&quot;</span><br><span class="line"></span><br><span class="line">  nacos &#123;</span><br><span class="line">    serverAddr = &quot;127.0.0.1:8848&quot;</span><br><span class="line">    namespace = &quot;&quot;</span><br><span class="line">    group = &quot;DEFAULT_GROUP&quot;</span><br><span class="line">    username = &quot;nacos&quot;</span><br><span class="line">    password = &quot;nacos&quot;</span><br><span class="line">    dataId = &quot;seataServer.properties&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接着，在nacos新建配置<br>Data Id: seataServer.properties<br>Group: DEFAULT_GROUP<br>配置格式： Properties</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line">transport.type=TCP</span><br><span class="line">transport.server=NIO</span><br><span class="line">transport.heartbeat=true</span><br><span class="line">transport.enableClientBatchSendRequest=false</span><br><span class="line">transport.threadFactory.bossThreadPrefix=NettyBoss</span><br><span class="line">transport.threadFactory.workerThreadPrefix=NettyServerNIOWorker</span><br><span class="line">transport.threadFactory.serverExecutorThreadPrefix=NettyServerBizHandler</span><br><span class="line">transport.threadFactory.shareBossWorker=false</span><br><span class="line">transport.threadFactory.clientSelectorThreadPrefix=NettyClientSelector</span><br><span class="line">transport.threadFactory.clientSelectorThreadSize=1</span><br><span class="line">transport.threadFactory.clientWorkerThreadPrefix=NettyClientWorkerThread</span><br><span class="line">transport.threadFactory.bossThreadSize=1</span><br><span class="line">transport.threadFactory.workerThreadSize=default</span><br><span class="line">transport.shutdown.wait=3</span><br><span class="line">service.vgroupMapping.hwt_tx_group=default</span><br><span class="line">service.default.grouplist=127.0.0.1:8091</span><br><span class="line">service.enableDegrade=false</span><br><span class="line">service.disableGlobalTransaction=false</span><br><span class="line">client.rm.asyncCommitBufferLimit=10000</span><br><span class="line">client.rm.lock.retryInterval=10</span><br><span class="line">client.rm.lock.retryTimes=30</span><br><span class="line">client.rm.lock.retryPolicyBranchRollbackOnConflict=true</span><br><span class="line">client.rm.reportRetryCount=5</span><br><span class="line">client.rm.tableMetaCheckEnable=false</span><br><span class="line">client.rm.tableMetaCheckerInterval=60000</span><br><span class="line">client.rm.sqlParserType=druid</span><br><span class="line">client.rm.reportSuccessEnable=false</span><br><span class="line">client.rm.sagaBranchRegisterEnable=false</span><br><span class="line">client.tm.commitRetryCount=5</span><br><span class="line">client.tm.rollbackRetryCount=5</span><br><span class="line">client.tm.defaultGlobalTransactionTimeout=60000</span><br><span class="line">client.tm.degradeCheck=false</span><br><span class="line">client.tm.degradeCheckAllowTimes=10</span><br><span class="line">client.tm.degradeCheckPeriod=2000</span><br><span class="line">store.mode=db</span><br><span class="line">store.publicKey=</span><br><span class="line">store.file.dir=file_store/data</span><br><span class="line">store.file.maxBranchSessionSize=16384</span><br><span class="line">store.file.maxGlobalSessionSize=512</span><br><span class="line">store.file.fileWriteBufferCacheSize=16384</span><br><span class="line">store.file.flushDiskMode=async</span><br><span class="line">store.file.sessionReloadReadSize=100</span><br><span class="line">store.db.datasource=druid</span><br><span class="line">store.db.dbType=mysql</span><br><span class="line">store.db.driverClassName=com.mysql.cj.jdbc.Driver</span><br><span class="line">store.db.url=jdbc:mysql://mysql.hewentian.com:3306/seata?useUnicode=true&amp;rewriteBatchedStatements=true</span><br><span class="line">store.db.user=root</span><br><span class="line">store.db.password=123456</span><br><span class="line">store.db.minConn=5</span><br><span class="line">store.db.maxConn=30</span><br><span class="line">store.db.globalTable=global_table</span><br><span class="line">store.db.branchTable=branch_table</span><br><span class="line">store.db.queryLimit=100</span><br><span class="line">store.db.lockTable=lock_table</span><br><span class="line">store.db.maxWait=5000</span><br><span class="line">store.redis.mode=single</span><br><span class="line">store.redis.single.host=127.0.0.1</span><br><span class="line">store.redis.single.port=6379</span><br><span class="line">store.redis.sentinel.masterName=</span><br><span class="line">store.redis.sentinel.sentinelHosts=</span><br><span class="line">store.redis.maxConn=10</span><br><span class="line">store.redis.minConn=1</span><br><span class="line">store.redis.maxTotal=100</span><br><span class="line">store.redis.database=0</span><br><span class="line">store.redis.password=</span><br><span class="line">store.redis.queryLimit=100</span><br><span class="line">server.recovery.committingRetryPeriod=1000</span><br><span class="line">server.recovery.asynCommittingRetryPeriod=1000</span><br><span class="line">server.recovery.rollbackingRetryPeriod=1000</span><br><span class="line">server.recovery.timeoutRetryPeriod=1000</span><br><span class="line">server.maxCommitRetryTimeout=-1</span><br><span class="line">server.maxRollbackRetryTimeout=-1</span><br><span class="line">server.rollbackRetryTimeoutUnlockEnable=false</span><br><span class="line">client.undo.dataValidation=true</span><br><span class="line">client.undo.logSerialization=jackson</span><br><span class="line">client.undo.onlyCareUpdateColumns=true</span><br><span class="line">server.undo.logSaveDays=7</span><br><span class="line">server.undo.logDeletePeriod=86400000</span><br><span class="line">client.undo.logTable=undo_log</span><br><span class="line">client.undo.compress.enable=true</span><br><span class="line">client.undo.compress.type=zip</span><br><span class="line">client.undo.compress.threshold=64k</span><br><span class="line">log.exceptionRate=100</span><br><span class="line">transport.serialization=seata</span><br><span class="line">transport.compressor=none</span><br><span class="line">metrics.enabled=false</span><br><span class="line">metrics.registryType=compact</span><br><span class="line">metrics.exporterList=prometheus</span><br><span class="line">metrics.exporterPrometheusPort=9898</span><br></pre></td></tr></table></figure>
+<p>配置的内容可以从下面的文件获取（注意版本号）<br><a href="https://github.com/seata/seata/blob/1.4.2/script/config-center/config.txt">https://github.com/seata/seata/blob/1.4.2/script/config-center/config.txt</a></p>
+<p>主要修改点，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">service.vgroupMapping.hwt_tx_group=default</span><br><span class="line">store.mode=db</span><br><span class="line">store.db.driverClassName=com.mysql.cj.jdbc.Driver</span><br><span class="line">store.db.url=jdbc:mysql://mysql.hewentian.com:3306/seata?useUnicode=true&amp;rewriteBatchedStatements=true</span><br><span class="line">store.db.user=root</span><br><span class="line">store.db.password=123456</span><br></pre></td></tr></table></figure></p>
+<h4 id="第四步：启动"><a href="#第四步：启动" class="headerlink" title="第四步：启动"></a>第四步：启动</h4><p>启动命令如下：</p>
+<pre><code>bash {SEATA_HOME}/bin/seata-server.sh -h 127.0.0.1 -p 8091 -m db -n 1
+</code></pre><p>参数说明：</p>
+<pre><code>-h: 注册到注册中心的ip
+-p: Server rpc 监听端口
+-m: 全局事务会话信息存储模式，file、db、redis，优先读取启动参数 (Seata-Server 1.3及以上版本支持redis)
+-n: Server node，多个Server时，需区分各自节点，用于生成不同区间的transactionId，以免冲突
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/hewentian/2021/11/28/seata-note/" data-id="clf9thvmu002v6h3kxemn2sca" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/seata/">seata</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/03/07/xxl-job-note/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          xxl-job 学习笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/09/25/spring-note/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">spring 学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/03/07/xxl-job-note/">xxl-job 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/28/seata-note/">seata 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/25/spring-note/">spring 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/01/mybatis-note/">mybatis 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/01/22/canal-note/">canal 学习笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">link</h3>
+    <div class="widget">
+      <li><a href="https://github.com/hewentian" title="Tim Ho's Blog">我的github</a></li>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2023 Tim Ho<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives/" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories/" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags/" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> -->
+<!-- <script src="//code.jquery.com/jquery-2.2.4.min.js"></script> -->
+<script src="/js/jquery-3.5.1.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

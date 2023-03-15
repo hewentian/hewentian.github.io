@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Tim Ho&#39;s Technology Blog">
 <meta property="og:description" content="下面分别说说在Windows和Linux平台下面安装JDK1.在Windows下面安装JDKJDK环境变量配置的步骤如下： 1. 我的电脑 -&amp;gt; 属性 -&amp;gt; 高级 -&amp;gt; 环境变量； 2. 配置用户变量：     a.新建 JAVA_HOME     C:\Program Files\Java\jdk1.8.0_101 （JDK的安装路径，务必替换成你自已的）     b.新建 P">
 <meta property="og:locale" content="en-US">
-<meta property="og:updated_time" content="2020-10-07T07:30:03.974Z">
+<meta property="og:updated_time" content="2022-07-16T15:07:39.102Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="安装 JDK">
 <meta name="twitter:description" content="下面分别说说在Windows和Linux平台下面安装JDK1.在Windows下面安装JDKJDK环境变量配置的步骤如下： 1. 我的电脑 -&amp;gt; 属性 -&amp;gt; 高级 -&amp;gt; 环境变量； 2. 配置用户变量：     a.新建 JAVA_HOME     C:\Program Files\Java\jdk1.8.0_101 （JDK的安装路径，务必替换成你自已的）     b.新建 P">
@@ -119,7 +119,7 @@
 <h3 id="2-在Linux下面安装JDK"><a href="#2-在Linux下面安装JDK" class="headerlink" title="2.在Linux下面安装JDK"></a>2.在<code>Linux</code>下面安装<code>JDK</code></h3><p>第一步：下载<code>jdk-8u102-linux-x64.tar.gz</code><br>直接在<code>ORACLE</code>的官网中下载就可以:<br><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" target="_blank" rel="noopener">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a><br>PS：要注意系统版本的选择，32位 还是 64位，执行如下命令即可知道答案<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ uname -a</span><br><span class="line">Linux hewentian-Lenovo-IdeaPad-Y470 4.10.0-28-generic <span class="comment">#32~16.04.2-Ubuntu SMP Thu Jul 20 10:19:48 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux</span></span><br></pre></td></tr></table></figure></p>
 <p>第二步：解压安装<br>接着就是解压<code>tar.gz</code>的文件了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/hewentian/Downloads</span><br><span class="line">$ tar -xzvf jdk-8u102-linux-x64.tar.gz</span><br></pre></td></tr></table></figure></p>
 <p>解压后会得到<code>jdk1.8.0_102</code>文件夹，接着就是将解压出来的文件夹移动到<code>/usr/local</code>的目录下<br>在这之前当然需要你拥有root的权限<code>su root</code>(对于ubuntu)再输入root账户的密码，做好这些准备之后，我们就可以把jdk的文件移动到我们想要的位置了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ su root</span><br><span class="line">Password: </span><br><span class="line">$ mv jdk1.8.0_102 /usr/<span class="built_in">local</span></span><br></pre></td></tr></table></figure></p>
-<p>第三步：修改环境变量，若<code>PATH</code>已存在，则用冒号作间隔，将jdk的bin目录地址加上，这样java的环境变量将配置成功了，配置完成如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/profile </span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/<span class="built_in">local</span>/jdk1.8.0_102</span><br><span class="line"><span class="built_in">export</span> JRE_HOME=<span class="variable">$JAVA_HOME</span>/jre</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib:<span class="variable">$JRE_HOME</span>/lib:<span class="variable">$CLASSPATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$JRE_HOME</span>/bin:<span class="variable">$JAVA_HOME</span>:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure></p>
+<p>第三步：修改环境变量，若<code>PATH</code>已存在，则用冒号作间隔，将jdk的bin目录地址加上，这样java的环境变量将配置成功了，配置完成如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/profile </span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/<span class="built_in">local</span>/jdk1.8.0_102</span><br><span class="line"><span class="built_in">export</span> JRE_HOME=<span class="variable">$JAVA_HOME</span>/jre</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib:<span class="variable">$JAVA_HOME</span>/lib/tools.jar:<span class="variable">$JRE_HOME</span>/lib:<span class="variable">$CLASSPATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$JRE_HOME</span>/bin:<span class="variable">$JAVA_HOME</span>:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure></p>
 <p>记得保存 后执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></p>
 <p>第四步：但这样默认使用的JDK可能还不是我们刚才安装的，因为ubuntu可能还会有默认的jdk，如openjdk；所以，为了使默认使用的是我们安装的jdk，还需执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo update-alternatives --install /usr/bin/java java /usr/<span class="built_in">local</span>/jdk1.8.0_102/bin/java 300  </span><br><span class="line">$ sudo update-alternatives --install /usr/bin/javac javac /usr/<span class="built_in">local</span>/jdk1.8.0_102/bin/javac 300    </span><br><span class="line"></span><br><span class="line">$ sudo update-alternatives --config java</span><br><span class="line">$ sudo update-alternatives --config javac</span><br><span class="line">这时如果有多个jdk的话（比如openJDK和SUN JDK），就会出来一个列表，当前默认的会在列表前面有一个<span class="string">"`*`"</span>号，</span><br><span class="line">这时我们就要选择我们刚装的SUN JDK的java的那个序号，输入这个序号，回车就行了。</span><br></pre></td></tr></table></figure></p>
 <p>第五步：成功执行命令后，我们安装的JDK就是系统默认的了，执行如下命令，就可以成功看到JDK的相关信息了如：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ java -version　</span><br><span class="line">java version <span class="string">"1.8.0_102"</span></span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_102-b14)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.102-b14, mixed mode)</span><br></pre></td></tr></table></figure></p>
@@ -128,7 +128,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/hewentian/2017/12/08/jdk-install/" data-id="ckpo1myx4001buu3kzweskuif" class="article-share-link">Share</a>
+      <a data-url="https://github.com/hewentian/2017/12/08/jdk-install/" data-id="clf9thvlm001c6h3kus7dqror" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jdk/">jdk</a></li></ul>
@@ -167,7 +167,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/bigdata/">bigdata</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/container/">container</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web-server/">web server</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -177,7 +177,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -190,23 +190,23 @@
       <ul>
         
           <li>
+            <a href="/2022/03/07/xxl-job-note/">xxl-job 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/28/seata-note/">seata 学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/25/spring-note/">spring 学习笔记</a>
+          </li>
+        
+          <li>
             <a href="/2021/04/01/mybatis-note/">mybatis 学习笔记</a>
           </li>
         
           <li>
             <a href="/2021/01/22/canal-note/">canal 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2020/06/08/springboot-note/">springboot 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/14/spark-note/">spark 学习笔记</a>
-          </li>
-        
-          <li>
-            <a href="/2019/12/30/scala-note/">scala 学习笔记</a>
           </li>
         
       </ul>
@@ -231,7 +231,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2021 Tim Ho<br>
+      &copy; 2023 Tim Ho<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
