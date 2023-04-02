@@ -908,10 +908,6 @@ EXIT;
 重启mysql
 
 
-### DELETE和TRUNCATE的区别
-TRUNCATE TABLE 属于DDL，它虽然和对整张表执行DELETE操作产生的效果差不多，但是它是不能回滚的。
-
-
 ### 三大范式
 第一范式(1NF)：在关系模式R中的每一个具体关系r，必须要有主键，并且每个属性值都是不可再分的最小数据单位，则称R是第一范式的关系；
 第二范式(2NF)：如果关系模式R中的所有非主属性都完全依赖于主关键字，则称关系R是属于第二范式的；
@@ -959,76 +955,6 @@ SELECT * FROM t_user USE INDEX(idx_name) WHERE name='Tim' AND age=22;
 mysql> SET GLOBAL innodb_optimize_fulltext_only=1;
 mysql> OPTIMIZE TABLE table_name;
 ```
-
-### 锁问题
-锁问题有三个：
-1. 脏读：首先了解一下脏数据，脏数据是指事务对缓冲池中行记录的修改，并且还没有被提交。如果读到了脏数据，即一个事务可以读到另外一个事务中未提交的数据，这显然违反了数据库的隔离性。而对脏页的读取，是非常正常的。脏页是因为数据库实例内存和磁盘的异步造成的，这并不影响数据的一致性，因为内存中的数据最终是要刷新回磁盘的。
-
-2. 不可重复读：在同一个事务中多次读取同一个表，在多次读取之间，还有另外一个事务对该表进行了DML，从而导致多次读取到的数据可能不一致。与脏读的区别是：脏读读取到的是未提交的数据，而不可重复读读到的是已经提交的数据。这违反了数据库事务的一致性。
-
-3. 丢失更新：就是一个事务的更新操作，会被另一个事务的更新操作所覆盖，从而导致数据的不一致。可以将事务的处理模式变成串行的，这样来避免。在更新数据的时候，特别是敏感数据的时候，一定要先加一个排他X锁，这样也方便对帐户余额进行先检查，再更新。而不是仅仅学会了简单的SELECT、UPDATE操作就开始处理数据。
-``` mysql
-SELECT cash FROM account WHERE user='user_name' FOR UPDATE;
-```
-
-
-### 事务的ACID特性
-    事务是作为一个逻辑单元执行的一系列操作，一个逻辑工作单元必须有四个属性，
-称为 ACID（原子性、一致性、隔离性和持久性）属性，只有这样才能成为一个事务。
-
-原子性（Atomicity）
-整个事务中的所有操作，要么全部成功执行，要么全部失败。
-
-一致性（Consistency）
-事务提交前后，表的所有约束条件都保持完好。对表的修改符合所有的Keys、数据类型、Checks和触发器的约束，没有约束被破坏。
-
-隔离性（Isolation）
-一个事务，无法访问到另一个事务未提交的数据。
-
-持久性（Durability）
-事务成功执行后，对数据的修改会持久保存在数据库中，不会被回滚，就算系统死机。
-
-
-### 事务的隔离级别
-对于InnoDB存储引擎而言，它默认的事务隔离级别为REPEATABLE READ，完全遵循和满足事务的ACID特性。而Oracle、sqlServer则是READ COMMITTED。
-
-SQL标准定义了4个隔离级别：
-READ UNCOMMITTED：会出现脏读、不可重复读、幻读（隔离级别最低，并发性能高）
-READ COMMITTED：会出现不可重复读、幻读问题（锁定正在读取的行）
-REPEATABLE READ：会出幻读（锁定所读取的所有行）
-SERIALIZABLE：保证所有的情况不会发生（锁表）
-
-可以在数据库启动的时候设置它的默认隔离级别：
-``` mysql
-[mysqld]
-transaction-isolation=READ-COMMITTED
-```
-
-查看当前会话的事务隔离级别：
-``` mysql
-mysql> SELECT @@tx_isolation;
-或
-mysql> select @@transaction_isolation;
-+-------------------------+
-| @@transaction_isolation |
-+-------------------------+
-| REPEATABLE-READ         |
-+-------------------------+
-1 row in set (0.02 sec)
-```
-
-
-### 分布式事务
-InnoDB存储引擎提供了对XA事务的支持，并通过XA事务来支持分布式事务的实现。分布式事务指的是允许多个独立的事务资源参与到一个全局的事务中。事务资源通常是关系型数据库系统，但也可以是其他类型的资源。全局事务要求在其中的所有参与事务要么都提交，要么都ROLLBACK，这对于事务原有的ACID要求又有了提高。另外，在使用分布式事务时，InnoDB存储引擎的事务隔离级别必须设置为SERIALIZABLE。
-XA事务允许不同数据库之间的分布式事务，如一台服务器是MySQL数据库，另一台是Oracle数据库，只要参与在全局事务中的每个节点都支持XA事务。分布式事务可能在银行系统的转帐中比较常见。可以通过变量查看数据库是否启用了XA事务支持（默认为ON）：
-``` mysql
-mysql> SHOW VARIABLES LIKE 'innodb_support_xa';
-```
-
-MySQL数据库是自动提交的。当用户显式的使用命令`START TRANSACTION`或`BEGIN`来开启一个事务时，MySQL会自动地执行`SET AUTOCOMMIT=0`命令，并在`COMMIT`或`ROLLBACK`结束一个事务后，再执行`SET AUTOCOMMIT=1`。
-
-
-对长事务的处理，是将长事务分解为多个小事务来分批处理。在应用程序中，最好是将事务的START TRANSACTION、COMMIT、ROLLBACK操作交给程序端来控制，而不是在存储过程中。
 
 
 ### 备份与恢复
@@ -1087,9 +1013,11 @@ $ mysql -h192.168.1.100 -uscoot -ptiger test -e "SELECT * FROM t_user"
 MYSQL中支持以下五类约束：
 1. NOT NULL：非空约束，指定某列不能为空；
 2. UNIQUE：唯一约束，指定某列或者几列组合不能重复，允许空；
-3. PRIMARY KEY：主键，指定该列的值可以唯一的表示每条记录；
-4. FOREIGN KEY：外键，指定该行记录从属于主表中的一条记录，主要用于保证参照完整性；
-5. CHECK：检查，指定一个布尔表达式，用于指定对应列的值必须满足该表达式。
+3. PRIMARY KEY：主键，指定该列的值可以唯一的表示每条记录，代表该字段的值不可重复且不能为null；
+4. FOREIGN KEY：外键，指定该行记录从属于另一张表中的一条记录，主要用于保证参照完整性；
+5. CHECK：检查，指定一个布尔表达式，用于指定对应列的值必须满足该表达式；
+6. DEFAULT：默认约束，若该字段的值不手动插入时会有默认的值；
+7. AUTO_INCREMENT：自增约束，描述的列必须是一个键列且是整型，一张表最多只有一个自增长列，一般是主键。
 
 
 ### NOT NULL约束
@@ -1438,7 +1366,7 @@ SET
     e.salary = e.salary + e.salary * m.percentage;
 ```
 
-The UPDATE LEFT JOIN  statement basically updates a row in a table when it does not have a corresponding row in another table.
+The UPDATE LEFT JOIN statement basically updates a row in a table when it does not have a corresponding row in another table.
 
 For example, you can increase the salary for a new hire by 1.5%  using the following statement:
 ``` sql

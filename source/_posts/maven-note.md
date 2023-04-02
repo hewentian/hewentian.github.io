@@ -110,7 +110,7 @@ For example, when you have JUnit 4.12 in classpath and including DBUnit dependen
 安装到本地仓库，把打好的包放入本地仓库(~/.m2/repository)
         mvn install
 
-安装到远程仓库，把打好的包发布到远程仓库
+安装到远程仓库，把打好的包发布到远程仓库，如nexus
         mvn deploy
 
 一般组合使用这些使用，如`mvn clean compile`、`mvn clean package`
@@ -432,5 +432,79 @@ pom.xml配置如下：
 ```
 
 例如Project A的某个依赖D`<optional>true</optional>`，当别人通过pom依赖Project A的时候，D不会被传递依赖进来。
+
+
+### 上传jar包到nexus私有仓库
+第一步：配置本地 settings.xml 文件
+在上传 jar 包之前，需要以下信息，nexus私有仓库地址（url），仓库名、用户名、密码。
+
+``` xml
+  <servers>
+    <server>
+      <id>my-releases</id>
+      <username>admin</username>
+      <password>admin23</password>
+     </server>
+
+     <server>
+       <id>my-snapshots</id>
+       <username>admin</username>
+       <password>admin123</password>
+    </server>
+  </servers>
+```
+
+说明：
+* id 可以随便写，要与你的java项目的pom文件里snapshotRepository的id值保持一致
+* username 你的nexus登录账号，默认是admin
+* password 你的nexus登录账号的密码
+
+
+在已有的java项目的pom.xml文件里添加nexus私服地址
+``` xml
+	<distributionManagement>
+		<repository>
+			<id>my-releases</id>
+			<name>my-releases-repository</name>
+			<url>http://localhost:8081/repository/maven-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>my-snapshots</id>
+			<name>my-snapshots-repository</name>
+			<url>http://localhost:8081/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+```
+
+注意：
+1. 该段代码<distributionManagement>应当与pom文件里的<dependencies>平级。
+2. distributionManagement中id里的值，必须要与maven的配置文件settings.xml里<server>的id值保持一致。这样才能让你
+   的java项目与maven关联起来，而maven又与nexus关联。
+
+
+第二步：本地打好jar包
+这一步比较简单，通过 mvn install ， 或通过命令方式打jar包
+
+
+mvn install:install-file -Dfile="" -DgroupId="" -DartifactId="" -Dversion="" -Dpackaging="jar"
+
+
+第三步：上传jar包到nexus仓库
+
+mvn deploy:deploy-file -Dfile="" -DgroupId="" -DartifactId="" -Dversion="" -Dpackaging="jar" -DrepositoryId="" -Durl=""
+
+命令行示例：
+mvn package deploy:deploy-file
+-DgroupId=com.hewentian
+-DartifactId=demo
+-Dversion=0.0.1-SNAPSHOT
+-Dpackaging=jar
+-Dfile=target/demo-0.0.1-SNAPSHOT.jar
+-DgeneratePom=true
+-DrepositoryId=my-snapshots
+-Durl=http://localhost:8081/repository/maven-snapshots/
+
+
+如果我有在项目中的pom文件中有配置distributionManagement，则直接使用 mvn deploy 即可部署到nexus
 
 
